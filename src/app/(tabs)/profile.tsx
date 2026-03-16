@@ -98,6 +98,25 @@ export default function ProfileTab() {
           </Text>
         </TouchableOpacity>
 
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => {
+            if (
+              !checkAuth({
+                message: "Войдите, чтобы посмотреть купленные отчёты",
+              })
+            ) {
+              return;
+            }
+            router.push("/reports" as Href);
+          }}
+        >
+          <Text style={styles.actionButtonTitle}>Купленные отчёты</Text>
+          <Text style={styles.actionButtonSubtitle}>
+            Список оплаченных отчётов по авто
+          </Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.logoutButton} onPress={logout}>
           <Text style={styles.logoutButtonText}>Выйти из аккаунта</Text>
         </TouchableOpacity>
