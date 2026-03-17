@@ -12,28 +12,61 @@ import {
   View,
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
+import { normalizePhone } from "../../shared/utils/phone";
+import { AuthHeader } from "../../widgets/header/AuthHeader";
+import { MobileMenu } from "../../widgets/mobileMenu/MobileMenu";
 
 export default function RegisterScreen() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-   const [role, setRole] = useState<"client" | "picker">("picker");
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState<"client" | "picker">("picker");
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
 
   const handleRegister = async () => {
-    if (!name || !phone) {
-      alert("Заполните имя и телефон");
+    const trimmedName = name.trim();
+    const trimmedPhone = phone.trim();
+    const trimmedEmail = email.trim();
+
+    if (!trimmedName) {
+      alert("Введите имя (минимум 2 символа)");
+      return;
+    }
+
+    if (trimmedName.length < 2) {
+      alert("Имя слишком короткое");
+      return;
+    }
+
+    const phoneRegex =
+      /^(\+7|7|8)?[\s-]?\(?[0-9]{3}\)?[\s-]?[0-9]{3}[\s-]?[0-9]{2}[\s-]?[0-9]{2}$/;
+    if (!trimmedPhone || !phoneRegex.test(trimmedPhone)) {
+      alert("Введите корректный номер телефона в формате +7 XXX XXX-XX-XX");
+      return;
+    }
+
+    const normalizedPhone = normalizePhone(trimmedPhone);
+    if (!normalizedPhone) {
+      alert("Введите корректный номер телефона в формате +7 XXX XXX-XX-XX");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
+      alert("Введите корректный e-mail");
       return;
     }
 
     setLoading(true);
     try {
-      const success = await register(name, phone, role);
+      const success = await register(trimmedName, trimmedPhone, trimmedEmail, role);
       if (success) {
-        alert(`✅ Зарегистрирован!\n${name}\nТелефон: ${phone}`);
-        router.back(); // ← Назад к логину или профилю
+        alert(`✅ Зарегистрирован!\n${trimmedName}\nТелефон: ${trimmedPhone}`);
+        // После успешной регистрации отправляем на главную
+        router.replace("/");
       } else {
-        alert("Ошибка регистрации");
+        alert("Пользователь с таким телефоном или почтой уже существует");
       }
     } catch (error) {
       alert("Ошибка регистрации");
@@ -43,124 +76,147 @@ export default function RegisterScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.formCard}>
-          <Text style={styles.title}>Зарегистрироваться</Text>
+    <>
+      <AuthHeader />
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.formCard}>
+            <Text style={styles.title}>Зарегистрируйтесь</Text>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Имя</Text>
-            <TextInput
-              style={styles.input}
-              value={name}
-              onChangeText={setName}
-              placeholder="Иван Иванов"
-              editable={!loading}
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Телефон</Text>
-            <TextInput
-              style={styles.input}
-              value={phone}
-              onChangeText={setPhone}
-              placeholder="+7 (999) 123-45-67"
-              keyboardType="phone-pad"
-              editable={!loading}
-            />
-          </View>
-
-          {/* Тип пользователя */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Тип пользователя</Text>
-            <View style={styles.roleRow}>
-              <TouchableOpacity
-                style={[
-                  styles.roleOption,
-                  role === "picker" && styles.roleOptionActive,
-                ]}
-                activeOpacity={0.8}
-                disabled={loading}
-                onPress={() => setRole("picker")}
-              >
-                <View
-                  style={[
-                    styles.radioOuter,
-                    role === "picker" && styles.radioOuterActive,
-                  ]}
-                >
-                  {role === "picker" && <View style={styles.radioInner} />}
-                </View>
-                <Text style={styles.roleText}>Подборщик</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.roleOption,
-                  role === "client" && styles.roleOptionActive,
-                ]}
-                activeOpacity={0.8}
-                disabled={loading}
-                onPress={() => setRole("client")}
-              >
-                <View
-                  style={[
-                    styles.radioOuter,
-                    role === "client" && styles.radioOuterActive,
-                  ]}
-                >
-                  {role === "client" && <View style={styles.radioInner} />}
-                </View>
-                <Text style={styles.roleText}>Клиент</Text>
-              </TouchableOpacity>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Имя</Text>
+              <TextInput
+                style={styles.input}
+                value={name}
+                onChangeText={setName}
+                placeholder="Укажите ваше имя"
+                editable={!loading}
+              />
             </View>
-          </View>
 
-          {/* Чекбокс согласия */}
-          <TouchableOpacity style={styles.checkboxContainer}>
-            <View style={styles.checkbox}>
-              <Text style={styles.checkmark}>✓</Text>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Телефон</Text>
+              <TextInput
+                style={styles.input}
+                value={phone}
+                onChangeText={setPhone}
+                placeholder="+7 (_) _--"
+                keyboardType="phone-pad"
+                editable={!loading}
+              />
             </View>
-            <Text style={styles.checkboxText}>
-              Согласен с <Text style={styles.link}>условиями</Text> и{" "}
-              <Text style={styles.link}>политикой конфиденциальности</Text>
-            </Text>
-          </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.submitButton, loading && styles.buttonDisabled]}
-            onPress={handleRegister}
-            disabled={loading}
-          >
-            {loading ? (
-              <Text style={styles.loadingText}>Регистрация...</Text>
-            ) : (
-              <Text style={styles.submitText}>Зарегистрироваться</Text>
-            )}
-          </TouchableOpacity>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Почта</Text>
+              <TextInput
+                style={styles.input}
+                value={email}
+                onChangeText={setEmail}
+                placeholder="name@example.com"
+                autoCapitalize="none"
+                keyboardType="email-address"
+                editable={!loading}
+              />
+            </View>
 
-          {/* Линк: уже есть аккаунт */}
-          <TouchableOpacity
-            style={styles.loginLinkWrapper}
-            onPress={() => {
-              if (!loading) {
-                router.back();
-              }
-            }}
-            disabled={loading}
-          >
-            <Text style={styles.loginQuestion}>
-              Уже есть аккаунт?{" "}
-              <Text style={styles.loginLink}>Войти</Text>
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+            {/* Тип пользователя */}
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Тип пользователя</Text>
+              <View style={styles.roleRow}>
+                <TouchableOpacity
+                  style={[
+                    styles.roleOption,
+                    role === "picker" && styles.roleOptionActive,
+                  ]}
+                  activeOpacity={0.8}
+                  disabled={loading}
+                  onPress={() => setRole("picker")}
+                >
+                  <View
+                    style={[
+                      styles.radioOuter,
+                      role === "picker" && styles.radioOuterActive,
+                    ]}
+                  >
+                    {role === "picker" && <View style={styles.radioInner} />}
+                  </View>
+                  <Text style={styles.roleText}>Подборщик</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    styles.roleOption,
+                    role === "client" && styles.roleOptionActive,
+                  ]}
+                  activeOpacity={0.8}
+                  disabled={loading}
+                  onPress={() => setRole("client")}
+                >
+                  <View
+                    style={[
+                      styles.radioOuter,
+                      role === "client" && styles.radioOuterActive,
+                    ]}
+                  >
+                    {role === "client" && <View style={styles.radioInner} />}
+                  </View>
+                  <Text style={styles.roleText}>Ищу авто</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Чекбокс согласия */}
+            <TouchableOpacity style={styles.checkboxContainer}>
+              <View style={styles.checkbox}>
+                <Text style={styles.checkmark}>✓</Text>
+              </View>
+              <Text style={styles.checkboxText}>
+                Я согласен с <Text style={styles.link}>политикой</Text> и{" "}
+                <Text style={styles.link}>обработки персональных данных</Text>
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.submitButton, loading && styles.buttonDisabled]}
+              onPress={handleRegister}
+              disabled={loading}
+            >
+              {loading ? (
+                <Text style={styles.loadingText}>Регистрация...</Text>
+              ) : (
+                <Text style={styles.submitText}>Ок</Text>
+              )}
+            </TouchableOpacity>
+
+            {/* Линк: уже есть аккаунт */}
+            <TouchableOpacity
+              style={styles.loginLinkWrapper}
+              onPress={() => {
+                if (!loading) {
+                  router.back();
+                }
+              }}
+              disabled={loading}
+            >
+              <Text style={styles.loginQuestion}>
+                Уже есть аккаунт? <Text style={styles.loginLink}>Войти</Text>
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+      <MobileMenu
+  active="home"
+  onPress={(key) => {
+    // сюда твоя логика: навигация или редирект
+    // например: если не залогинен — router.push("/(auth)/register")
+    // если залогинен — router.push в нужный таб по key
+  }}
+/>
+    </>
   );
 }
 
@@ -186,6 +242,7 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   title: {
+    fontFamily: "ModerusticBold",
     fontSize: 28,
     fontWeight: "600",
     textAlign: "center",
@@ -215,12 +272,12 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 6,
-    backgroundColor: "#DB4431",
+    backgroundColor: "#F3E4E2",
     justifyContent: "center",
     alignItems: "center",
   },
   checkmark: {
-    color: "white",
+    color: "#DB4431",
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -310,4 +367,39 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textDecorationLine: "underline",
   },
+  header: {
+    height: 56,
+    paddingHorizontal: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#FFFFFF",
+  },
+  headerLogoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  headerLogoText: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#1E1E1E",
+    // fontFamily: "ModerusticBold",
+  },
+  headerBurger: {
+    width: 24,
+    height: 24,
+    justifyContent: "space-between",
+    paddingVertical: 2,
+  },
+  headerBurgerLine: {
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: "#1E1E1E",
+  },
+  headerLogoImage: {
+    width: 120,          // подгони под размер из Фигмы
+    height: 24,          // подгони под размер из Фигмы
+    resizeMode: "contain",
+  },
+  
 });

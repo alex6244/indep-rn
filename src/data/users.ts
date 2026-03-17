@@ -2,11 +2,12 @@ export type UserRole = "client" | "picker";
 
 export interface User {
   id: string;
-  login: string;
-  password: string;
+  login: string;      // для бэка / логина по email, если понадобится
+  password: string;   // для бэка; сейчас в мок-авторизации не используется из форм
   role: UserRole;
   name: string;
   phone: string;
+  email?: string;     // новая почта для мок-логики name+phone+email
 }
 
 export const mockUsers: { client: User; picker: User } = {
@@ -17,6 +18,7 @@ export const mockUsers: { client: User; picker: User } = {
     role: "client",
     name: "Аркадий Паровозов",
     phone: "+7 995 185 88 90",
+    email: "client@test.com",
   },
   picker: {
     id: "picker_1",
@@ -25,6 +27,7 @@ export const mockUsers: { client: User; picker: User } = {
     role: "picker",
     name: "Иван Подборщик",
     phone: "+7 999 123 45 67",
+    email: "picker@test.com",
   },
 };
 

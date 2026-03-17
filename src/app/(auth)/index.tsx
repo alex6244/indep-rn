@@ -12,98 +12,147 @@ import {
   View,
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
+import { AuthHeader } from "../../widgets/header/AuthHeader";
+import { normalizePhone } from "../../shared/utils/phone";
 
 export default function LoginScreen() {
-  const [loginValue, setLoginValue] = useState("");
-  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, loading: authLoading } = useAuth();
 
   const handleSubmit = async () => {
-    if (!loginValue || !password) {
-      alert("Введите логин и пароль");
+    if (authLoading) {
+      alert("Подождите, идёт инициализация авторизации");
+      return;
+    }
+    const trimmedName = name.trim();
+    const trimmedPhone = phone.trim();
+    const trimmedEmail = email.trim();
+
+    if (!trimmedName) {
+      alert("Введите имя (минимум 2 символа)");
+      return;
+    }
+
+    if (trimmedName.length < 2) {
+      alert("Имя слишком короткое");
+      return;
+    }
+
+    const phoneRegex =
+      /^(\+7|7|8)?[\s-]?\(?[0-9]{3}\)?[\s-]?[0-9]{3}[\s-]?[0-9]{2}[\s-]?[0-9]{2}$/;
+    if (!trimmedPhone || !phoneRegex.test(trimmedPhone)) {
+      alert("Введите корректный номер телефона в формате +7 XXX XXX-XX-XX");
+      return;
+    }
+
+    const normalizedPhone = normalizePhone(trimmedPhone);
+    if (!normalizedPhone) {
+      alert("Введите корректный номер телефона в формате +7 XXX XXX-XX-XX");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
+      alert("Введите корректный e-mail");
       return;
     }
 
     setLoading(true);
-    const success = await login(loginValue, password);
+    const success = await login(trimmedName, trimmedPhone, trimmedEmail);
     setLoading(false);
 
     if (success) {
-      router.back(); // Закрыть модалку → вернуться в профиль/предыдущий экран
+      router.replace("/");
     } else {
-      alert("Неверный логин или пароль");
+      alert("Пользователь с таким телефоном и почтой не найден");
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.formCard}>
-          <Text style={styles.title}>Войти</Text>
+    <>
+      <AuthHeader />
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.formCard}>
+            <Text style={styles.title}>Войти</Text>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Логин</Text>
-            <TextInput
-              style={styles.input}
-              value={loginValue}
-              onChangeText={setLoginValue}
-              placeholder="client@test.com"
-              autoCapitalize="none"
-              keyboardType="email-address"
-              editable={!loading}
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Пароль</Text>
-            <TextInput
-              style={styles.input}
-              value={password}
-              onChangeText={setPassword}
-              placeholder="Пароль"
-              secureTextEntry
-              editable={!loading}
-            />
-          </View>
-
-          <TouchableOpacity style={styles.checkboxContainer}>
-            <View style={styles.checkbox}>
-              <Text style={styles.checkmark}>✓</Text>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Имя</Text>
+              <TextInput
+                style={styles.input}
+                value={name}
+                onChangeText={setName}
+                placeholder="Укажите ваше имя"
+                editable={!loading}
+              />
             </View>
-            <Text style={styles.checkboxText}>
-              Даю согласие на{" "}
-              <Text style={styles.link}>обработку персональных данных</Text>
-            </Text>
-          </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.submitButton, loading && styles.buttonDisabled]}
-            onPress={handleSubmit}
-            disabled={loading}
-          >
-            {loading ? (
-              <Text style={styles.loadingText}>Загрузка...</Text>
-            ) : (
-              <Text style={styles.submitText}>Войти</Text>
-            )}
-          </TouchableOpacity>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Телефон</Text>
+              <TextInput
+                style={styles.input}
+                value={phone}
+                onChangeText={setPhone}
+                placeholder="+7 (_) _--"
+                keyboardType="phone-pad"
+                editable={!loading}
+              />
+            </View>
 
-          <Text style={styles.registerLink}>
-            У вас ещё нет аккаунта?{" "}
-            <Text
-              style={styles.registerLinkText}
-              onPress={() => router.push("/(auth)/register")}
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Почта</Text>
+              <TextInput
+                style={styles.input}
+                value={email}
+                onChangeText={setEmail}
+                placeholder="name@example.com"
+                autoCapitalize="none"
+                keyboardType="email-address"
+                editable={!loading}
+              />
+            </View>
+
+            <TouchableOpacity style={styles.checkboxContainer}>
+              <View style={styles.checkbox}>
+                <Text style={styles.checkmark}>✓</Text>
+              </View>
+              <Text style={styles.checkboxText}>
+                Даю согласие на{" "}
+                <Text style={styles.link}>обработку персональных данных</Text>
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.submitButton, loading && styles.buttonDisabled]}
+              onPress={handleSubmit}
+              disabled={loading}
             >
-              Зарегистрироваться
+              {loading ? (
+                <Text style={styles.loadingText}>Загрузка...</Text>
+              ) : (
+                <Text style={styles.submitText}>Войти</Text>
+              )}
+            </TouchableOpacity>
+
+            <Text style={styles.registerLink}>
+              У вас ещё нет аккаунта?{" "}
+              <Text
+                style={styles.registerLinkText}
+                onPress={() => router.push("/(auth)/register")}
+              >
+                Зарегистрируйся
+              </Text>
             </Text>
-          </Text>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </>
   );
 }
 

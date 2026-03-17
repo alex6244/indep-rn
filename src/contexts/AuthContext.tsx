@@ -8,11 +8,18 @@ import React, {
   useState,
 } from "react";
 import { mockUsers, type User } from "../data/users";
+import { normalizePhone } from "../shared/utils/phone";
 
 interface AuthContextType {
   user: User | null;
-  login: (login: string, password: string) => Promise<boolean>;
-  register: (name: string, phone: string, role: User["role"]) => Promise<boolean>;
+  // Унифицированные поля формы: имя + телефон + почта
+  login: (name: string, phone: string, email: string) => Promise<boolean>;
+  register: (
+    name: string,
+    phone: string,
+    email: string,
+    role: User["role"],
+  ) => Promise<boolean>;
   logout: () => Promise<void>;
   loading: boolean;
 }
@@ -24,13 +31,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  // Локальное хранилище мок-пользователей
+  const [users, setUsers] = useState<User[]>([]);
 
-  // ✅ useCallback для стабильности функций
+  const USERS_KEY = "users";
+  const USER_KEY = "user";
+
   const checkAuth = useCallback(async () => {
     try {
-      const userData = await AsyncStorage.getItem("user");
+      // Восстанавливаем текущего пользователя
+      const userData = await AsyncStorage.getItem(USER_KEY);
       if (userData) {
         setUser(JSON.parse(userData));
+      }
+
+      // Восстанавливаем список пользователей
+      const storedUsers = await AsyncStorage.getItem(USERS_KEY);
+      if (storedUsers) {
+        const parsed: User[] = JSON.parse(storedUsers);
+        setUsers(parsed);
+      } else {
+        // Если в хранилище пусто — инициализируем mockUsers и сохраняем
+        const initial = [mockUsers.client, mockUsers.picker];
+        setUsers(initial);
+        await AsyncStorage.setItem(USERS_KEY, JSON.stringify(initial));
       }
     } catch (error) {
       console.log("Auth check error:", error);
@@ -40,55 +64,101 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = useCallback(
-    async (login: string, password: string): Promise<boolean> => {
+    async (name: string, phone: string, email: string): Promise<boolean> => {
       return new Promise((resolve) => {
         setTimeout(() => {
-          if (
-            login === mockUsers.client.login &&
-            password === mockUsers.client.password
-          ) {
-            const userData = mockUsers.client;
-            AsyncStorage.setItem("user", JSON.stringify(userData));
-            setUser(userData); // ✅ Теперь работает!
-            resolve(true);
-          } else if (
-            login === mockUsers.picker.login &&
-            password === mockUsers.picker.password
-          ) {
-            const userData = mockUsers.picker;
-            AsyncStorage.setItem("user", JSON.stringify(userData));
-            setUser(userData);
+          const normalizedPhone = normalizePhone(phone);
+          if (!normalizedPhone) {
+            console.log("[auth] login: invalid phone after normalize", {
+              raw: phone,
+            });
+            resolve(false);
+            return;
+          }
+
+          const found = users.find(
+            (u) => u.phone === normalizedPhone && u.email === email,
+          );
+
+          if (found) {
+            AsyncStorage.setItem(USER_KEY, JSON.stringify(found));
+            setUser(found);
+            console.log("[auth] login success", {
+              phone: normalizedPhone,
+              email,
+            });
             resolve(true);
           } else {
+            console.log("[auth] login fail: not found", {
+              phone: normalizedPhone,
+              email,
+              usersCount: users.length,
+            });
             resolve(false);
           }
-        }, 1000);
+        }, 500);
       });
     },
-    [],
+    [users],
   );
 
-  // ✅ register ПЕРЕМЕЩЕН ВНУТРЬ!
   const register = useCallback(
-    async (name: string, phone: string, role: User["role"]): Promise<boolean> => {
+    async (
+      name: string,
+      phone: string,
+      email: string,
+      role: User["role"],
+    ): Promise<boolean> => {
       return new Promise((resolve) => {
         setTimeout(() => {
+          const normalizedPhone = normalizePhone(phone);
+          if (!normalizedPhone) {
+            console.log("[auth] register: invalid phone after normalize", {
+              raw: phone,
+            });
+            resolve(false);
+            return;
+          }
+
+          // Проверяем, что такого телефона или почты ещё нет
+          const exists = users.some(
+            (u) => u.phone === normalizedPhone || u.email === email,
+          );
+
+          if (exists) {
+            console.log("[auth] register: user already exists", {
+              phone: normalizedPhone,
+              email,
+            });
+            resolve(false);
+            return;
+          }
+
           const newUser: User = {
             id: Date.now().toString(),
-            login: phone, // Телефон = логин
-            password: "123", // Фикс для теста
+            login: email || phone, // login для совместимости
+            password: "123", // фикс для мок-логики, сейчас не используется формой
             name,
-            phone,
+            phone: normalizedPhone,
+            email,
             role,
           };
 
-          AsyncStorage.setItem("user", JSON.stringify(newUser));
+          const updated = [...users, newUser];
+          setUsers(updated);
+          AsyncStorage.setItem(USERS_KEY, JSON.stringify(updated));
+          AsyncStorage.setItem(USER_KEY, JSON.stringify(newUser));
           setUser(newUser);
+          console.log("[auth] register success", {
+            phone: normalizedPhone,
+            email,
+            usersCount: updated.length,
+          });
           resolve(true);
         }, 1000);
       });
     },
-    [],
+    [users],
   );
 
   const logout = useCallback(async () => {
