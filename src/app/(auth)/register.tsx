@@ -64,7 +64,7 @@ export default function RegisterScreen() {
       if (success) {
         alert(`✅ Зарегистрирован!\n${trimmedName}\nТелефон: ${trimmedPhone}`);
         // После успешной регистрации отправляем на главную
-        router.replace("/");
+        router.replace("/(tabs)/profile");
       } else {
         alert("Пользователь с таким телефоном или почтой уже существует");
       }

@@ -65,7 +65,7 @@ export default function LoginScreen() {
     setLoading(false);
 
     if (success) {
-      router.replace("/");
+      router.replace("/(tabs)/profile");
     } else {
       alert("Пользователь с таким телефоном и почтой не найден");
     }
