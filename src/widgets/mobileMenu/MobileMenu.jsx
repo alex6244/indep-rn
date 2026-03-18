@@ -1,10 +1,21 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import CallIcon from "../../assets/icons/mobilemenu/callpin.svg";
+import CatalogIcon from "../../assets/icons/mobilemenu/catalogpin.svg";
+import HomeIcon from "../../assets/icons/mobilemenu/homepin.svg";
+import ProfileIcon from "../../assets/icons/mobilemenu/profilepin.svg";
+
+const iconsMap = {
+  home: HomeIcon,
+  catalog: CatalogIcon,
+  call: CallIcon,
+  profile: ProfileIcon,
+};
 
 const items = [
   { label: 'Главная', key: 'home' },
-  { label: 'Чат', key: 'chat' },
-  { label: 'Звонки', key: 'call' },
+  { label: 'Каталог', key: 'catalog' },
+  { label: 'Позвонить', key: 'call' },
   { label: 'Профиль', key: 'profile' },
 ];
 
@@ -12,6 +23,7 @@ export const MobileMenu = ({ active = 'home', onPress }) => {
   return (
     <View style={styles.container}>
       {items.map((item) => {
+        const Icon = iconsMap[item.key];
         const isActive = item.key === active;
         const color = isActive ? '#DB4431' : '#A0A0A0';
 
@@ -21,10 +33,15 @@ export const MobileMenu = ({ active = 'home', onPress }) => {
             style={styles.item}
             onPress={() => onPress?.(item.key)}
           >
-            <Text style={[styles.icon, { color }]}>●</Text>
+            {Icon && (
+              <View style={styles.iconWrapper}>
+                <Icon width={24} height={24} />
+              </View>
+            )}
             <Text style={[styles.label, { color }]}>{item.label}</Text>
           </TouchableOpacity>
         );
+        
       })}
     </View>
   );
@@ -43,8 +60,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  icon: {
-    fontSize: 18,
+  iconWrapper: {
     marginBottom: 2,
   },
   label: {

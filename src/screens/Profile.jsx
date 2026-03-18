@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import ImageCarousel from '../../components/image-carousel'
+import ImageCarousel from '../../components/image-carousel';
 import { Header } from "../widgets/header/Header";
 import { MobileMenu } from "../widgets/mobileMenu/MobileMenu";
 
@@ -97,7 +97,7 @@ const Profile = () => {
           ))}
 
           {/* Micro Banner */}
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.microBanner}
             onPress={() => navigateTo("reports")}
           >
@@ -106,6 +106,15 @@ const Profile = () => {
             </Text>
             <Text style={styles.microText2}>Доступно: 4 отчёта</Text>
             <Text style={styles.microText3}>Пакет истекает 08.09.2027</Text>
+          </TouchableOpacity> */}
+
+          <TouchableOpacity style={styles.microBanner} onPress={() => navigateTo("reports")}>
+            <MicroBanner style={StyleSheet.absoluteFillObject} width="100%" height="100%" />
+            <View style={styles.microContent}>
+              <Text style={styles.microText1}>...</Text>
+              <Text style={styles.microText2}>...</Text>
+              <Text style={styles.microText3}>...</Text>
+            </View>
           </TouchableOpacity>
         </View>
 
