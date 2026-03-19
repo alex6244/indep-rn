@@ -14,7 +14,6 @@ import {
 import { useAuth } from "../../contexts/AuthContext";
 import { normalizePhone } from "../../shared/utils/phone";
 import { AuthHeader } from "../../widgets/header/AuthHeader";
-import { MobileMenu } from "../../widgets/mobileMenu/MobileMenu";
 
 export default function RegisterScreen() {
   const [name, setName] = useState("");
@@ -208,14 +207,6 @@ export default function RegisterScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-      <MobileMenu
-  active="home"
-  onPress={(key) => {
-    // сюда твоя логика: навигация или редирект
-    // например: если не залогинен — router.push("/(auth)/register")
-    // если залогинен — router.push в нужный таб по key
-  }}
-/>
     </>
   );
 }

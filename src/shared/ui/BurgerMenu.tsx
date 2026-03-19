@@ -1,5 +1,5 @@
 import { router, type Href } from "expo-router";
-import React, { useEffect } from "react";
+import React from "react";
 import {
   Modal,
   StyleSheet,
@@ -33,34 +33,6 @@ export function BurgerMenu({
   footer,
   panelStyle,
 }: Props) {
-  useEffect(() => {
-    if (!open) return;
-
-    console.log("[debug] BurgerMenu opened", { itemsCount: items.length });
-
-    // #region agent log
-    fetch(
-      "http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Debug-Session-Id": "7a6ed6",
-        },
-        body: JSON.stringify({
-          sessionId: "7a6ed6",
-          runId: "debug_initial",
-          hypothesisId: "H4",
-          location: "src/shared/ui/BurgerMenu.tsx:useEffect(open)",
-          message: "burger_menu_opened",
-          data: { itemsCount: items.length },
-          timestamp: Date.now(),
-        }),
-      },
-    ).catch(() => {});
-    // #endregion
-  }, [open, items.length]);
-
   return (
     <Modal
       transparent
@@ -71,31 +43,7 @@ export function BurgerMenu({
       <TouchableOpacity
         style={styles.overlay}
         activeOpacity={1}
-        onPress={() => {
-          console.log("[debug] BurgerMenu overlay closed");
-          // #region agent log
-          fetch(
-            "http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "X-Debug-Session-Id": "7a6ed6",
-              },
-              body: JSON.stringify({
-                sessionId: "7a6ed6",
-                runId: "debug_initial",
-                hypothesisId: "H4",
-                location: "src/shared/ui/BurgerMenu.tsx:overlay.onPress",
-                message: "burger_menu_overlay_closed",
-                data: {},
-                timestamp: Date.now(),
-              }),
-            },
-          ).catch(() => {});
-          // #endregion
-          onClose();
-        }}
+        onPress={onClose}
       >
         <View
           style={[styles.panel, panelStyle]}
@@ -107,30 +55,23 @@ export function BurgerMenu({
               key={it.key}
               style={styles.item}
               onPress={() => {
-                console.log("[debug] BurgerMenu item pressed", {
-                  key: it.key,
-                  href: it.href ?? null,
-                });
                 // #region agent log
-                fetch(
-                  "http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b",
-                  {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                      "X-Debug-Session-Id": "7a6ed6",
-                    },
-                    body: JSON.stringify({
-                      sessionId: "7a6ed6",
-                      runId: "debug_initial",
-                      hypothesisId: "H4",
-                      location: "src/shared/ui/BurgerMenu.tsx:item.onPress",
-                      message: "burger_menu_item_pressed",
-                      data: { key: it.key, href: it.href ?? null },
-                      timestamp: Date.now(),
-                    }),
+                fetch("http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "X-Debug-Session-Id": "7a6ed6",
                   },
-                ).catch(() => {});
+                  body: JSON.stringify({
+                    sessionId: "7a6ed6",
+                    runId: "route-check",
+                    hypothesisId: "H2",
+                    location: "src/shared/ui/BurgerMenu.tsx:item.onPress",
+                    message: "burger_item_pressed",
+                    data: { key: it.key, href: it.href ?? null, hasOnPress: !!it.onPress },
+                    timestamp: Date.now(),
+                  }),
+                }).catch(() => {});
                 // #endregion
                 onClose();
                 if (it.onPress) return it.onPress();

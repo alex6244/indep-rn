@@ -1,6 +1,6 @@
 import { BurgerMenu } from "@/src/shared/ui/BurgerMenu";
 import { useRouter, type Href } from "expo-router";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Modal,
@@ -16,14 +16,17 @@ import CooperationIcon from "../../assets/icons/burger/ads.svg";
 import FavIcon from "../../assets/icons/burger/favourites.svg";
 import LogoutIcon from "../../assets/icons/burger/logout.svg";
 import SelectionIcon from "../../assets/icons/burger/selection.svg";
-import Logo from "../../assets/logo.svg";
 import FavouriteBanner from "../../assets/profile/favouritebanner.svg";
-import MicroBanner from "../../assets/profile/microbanner.svg";
-import ReportsIcon from "../../assets/profile/reports.svg";
-import WalletIcon from "../../assets/profile/wallet.svg";
-
 import { useAuth } from "../../contexts/AuthContext";
 import { useProtected } from "../../hooks/useProtected";
+import { DeleteProfileConfirmModal } from "../../widgets/profile/DeleteProfileConfirmModal";
+import { PickerProfileHeader } from "../../widgets/profile/PickerProfileHeader";
+import { ProfileDeletedModal } from "../../widgets/profile/ProfileDeletedModal";
+import { ProfileStats } from "../../widgets/profile/ProfileStats";
+import { ReportsBanner } from "../../widgets/profile/ReportsBanner";
+import { ClientEmptyState } from "../../widgets/profile/ClientEmptyState";
+import { ClientProfileHeader } from "../../widgets/profile/ClientProfileHeader";
+import { ClientReportCard } from "../../widgets/profile/ClientReportCard";
 
 export default function ProfileTab() {
   const router = useRouter();
@@ -70,7 +73,6 @@ export default function ProfileTab() {
 
   const initials = getInitials(user.name || user.login);
   const isPicker = user.role === "picker";
-  const roleLabel = isPicker ? "Подборщик" : "Клиент";
 
   if (isPicker) {
     return (
@@ -83,70 +85,13 @@ export default function ProfileTab() {
     );
   }
 
-  const handleMyAds = () => {
-    if (
-      !checkAuth({
-        message: "Войдите, чтобы просмотреть свои объявления",
-      })
-    ) {
-      return;
-    }
-    // TODO: когда появится экран объявлений, заменить путь
-    // router.push("/my-ads" as Href);
-  };
-
   return (
-    <View style={styles.screen}>
-      <View style={styles.card}>
-        <View style={styles.avatarWrapper}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{initials}</Text>
-          </View>
-        </View>
-
-        <Text style={styles.cardTitle}>Привет, {user.name || user.login}!</Text>
-
-        {!!user.phone && (
-          <Text style={styles.cardSubtitle}>📱 {user.phone}</Text>
-        )}
-
-        <View style={styles.roleBadge}>
-          <Text style={styles.roleBadgeText}>Роль: {roleLabel}</Text>
-        </View>
-      </View>
-
-      <View style={styles.actionsCard}>
-        <TouchableOpacity style={styles.actionButton} onPress={handleMyAds}>
-          <Text style={styles.actionButtonTitle}>Мои объявления</Text>
-          <Text style={styles.actionButtonSubtitle}>
-            Смотреть добавленные отчёты и автомобили
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => {
-            if (
-              !checkAuth({
-                message: "Войдите, чтобы посмотреть купленные отчёты",
-              })
-            ) {
-              return;
-            }
-            router.push("/reports" as Href);
-          }}
-        >
-          <Text style={styles.actionButtonTitle}>Купленные отчёты</Text>
-          <Text style={styles.actionButtonSubtitle}>
-            Список оплаченных отчётов по авто
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-          <Text style={styles.logoutButtonText}>Выйти из аккаунта</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    <ClientProfile
+      initials={initials}
+      name={user.name || user.login}
+      phone={user.phone}
+      onLogout={logout}
+    />
   );
 }
 
@@ -189,119 +134,99 @@ function PickerProfile({
     [],
   );
 
+  useEffect(() => {
+    // #region agent log
+    fetch("http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "7a6ed6",
+      },
+      body: JSON.stringify({
+        sessionId: "7a6ed6",
+        runId: "route-check",
+        hypothesisId: "H3",
+        location: "src/app/(tabs)/profile.tsx:PickerProfile.useEffect",
+        message: "picker_profile_mounted",
+        data: {},
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+  }, []);
+
+  const handleDeleteConfirm = async () => {
+    // #region agent log
+    fetch("http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "7a6ed6",
+      },
+      body: JSON.stringify({
+        sessionId: "7a6ed6",
+        runId: "route-check",
+        hypothesisId: "H4",
+        location: "src/app/(tabs)/profile.tsx:handleDeleteConfirm.beforeLogout",
+        message: "delete_confirm_clicked",
+        data: {},
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+    setConfirmDeleteOpen(false);
+    await onLogout();
+    // #region agent log
+    fetch("http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "7a6ed6",
+      },
+      body: JSON.stringify({
+        sessionId: "7a6ed6",
+        runId: "route-check",
+        hypothesisId: "H4",
+        location: "src/app/(tabs)/profile.tsx:handleDeleteConfirm.afterLogout",
+        message: "logout_resolved_after_delete_confirm",
+        data: {},
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+    setDeletedOpen(true);
+  };
+
   return (
     <SafeAreaView style={styles.pickerScreen}>
-      {/* Header */}
-      <View style={styles.pickerHeader}>
-        <Logo width={110} height={28} />
-        <TouchableOpacity
-          style={styles.burgerButton}
-          onPress={() => {
-            console.log("[debug] profile picker burger pressed");
-            // #region agent log
-            fetch(
-              "http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "X-Debug-Session-Id": "7a6ed6",
-                },
-                body: JSON.stringify({
-                  sessionId: "7a6ed6",
-                  runId: "debug_initial",
-                  hypothesisId: "H4",
-                  location: "src/app/(tabs)/profile.tsx:picker.burgerButton.onPress",
-                  message: "picker_burger_open_pressed",
-                  data: {},
-                  timestamp: Date.now(),
-                }),
-              },
-            ).catch(() => {});
-            // #endregion
-            setMenuOpen(true);
-          }}
-          accessibilityRole="button"
-        >
-          <View style={styles.burgerLine} />
-          <View style={styles.burgerLine} />
-          <View style={styles.burgerLine} />
-        </TouchableOpacity>
-      </View>
+      <PickerProfileHeader
+        initials={initials}
+        name={name}
+        phone={phone}
+        onOpenEdit={() => setEditMenuOpen(true)}
+        onOpenBurger={() => setMenuOpen(true)}
+      />
 
       <ScrollView contentContainerStyle={styles.pickerContent}>
-        {/* Profile card */}
-        <View style={styles.profileTop}>
-          <View style={styles.avatarCircle}>
-            <Text style={styles.avatarInitials}>{initials}</Text>
-          </View>
+        <ProfileStats
+          published={stats.published}
+          balanceLabel={formatRub(stats.balance)}
+        />
 
-          <View style={styles.profileMeta}>
-            <View style={styles.nameRow}>
-              <Text style={styles.profileName} numberOfLines={1}>
-                {name}
-              </Text>
-              <TouchableOpacity
-                onPress={() => setEditMenuOpen(true)}
-                style={styles.editIconButton}
-                accessibilityRole="button"
-              >
-                <Text style={styles.editIconText}>✎</Text>
-              </TouchableOpacity>
-            </View>
-            {!!phone && <Text style={styles.profilePhone}>{phone}</Text>}
-          </View>
-        </View>
-
-        {/* Stats */}
-        <View style={styles.statCard}>
-          <Text style={styles.statLabel}>Опубликовано объявлений</Text>
-          <Text style={styles.statValue}>{stats.published}</Text>
-          <ReportsIcon width={64} height={64} style={styles.statIcon} />
-        </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statLabel}>Ваш баланс</Text>
-          <Text style={styles.statValue}>{formatRub(stats.balance)}</Text>
-          <WalletIcon width={64} height={64} style={styles.statIcon} />
-        </View>
-
-        {/* Reports banner */}
-        <TouchableOpacity
-          style={styles.microBanner}
-          activeOpacity={0.9}
+        <ReportsBanner
+          reportsUsed={stats.reportsUsed}
+          reportsTotal={stats.reportsTotal}
+          reportsAvailable={stats.reportsAvailable}
+          expiresAt={stats.expiresAt}
           onPress={() => router.push("/reports" as Href)}
-        >
-          <MicroBanner
-            style={StyleSheet.absoluteFillObject}
-            width="100%"
-            height="100%"
-          />
-          <View style={styles.microContent}>
-            <Text style={styles.microText1}>
-              Вы использовали {stats.reportsUsed} из {stats.reportsTotal}{" "}
-              отчётов
-            </Text>
-            <Text style={styles.microText2}>
-              Доступно: {stats.reportsAvailable} отчёта
-            </Text>
-            <Text style={styles.microText3}>
-              Пакет истекает {stats.expiresAt}
-            </Text>
-          </View>
-        </TouchableOpacity>
+        />
 
-        {/* Quick actions */}
         <View style={styles.quickRow}>
           <TouchableOpacity
             style={styles.favCard}
-            onPress={() => {
-              // TODO: когда сделаешь экран избранного — поменяешь путь
-              // router.push("/(tabs)/favorites" as Href);
-              router.push("/(tabs)/favorites" as Href);
-            }}
+            onPress={() => router.push("/(tabs)/favorites" as Href)}
           >
             <FavouriteBanner
-              pointerEvents="none"
               style={StyleSheet.absoluteFillObject}
               width="100%"
               height="100%"
@@ -312,7 +237,6 @@ function PickerProfile({
           </TouchableOpacity>
         </View>
 
-        {/* My reports */}
         <Text style={styles.sectionTitle}>Мои отчёты</Text>
         <View style={styles.reportCard}>
           <View style={styles.reportImagePlaceholder} />
@@ -333,9 +257,7 @@ function PickerProfile({
 
       <TouchableOpacity
         style={styles.fab}
-        onPress={() => {
-          // TODO: создать новый отчёт / объявление
-        }}
+        onPress={() => {}}
         accessibilityRole="button"
       >
         <Text style={styles.fabPlus}>＋</Text>
@@ -378,9 +300,7 @@ function PickerProfile({
               router.replace("/" as Href);
             }}
           >
-            <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
-            >
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
               <LogoutIcon width={22} height={22} />
               <Text style={{ fontSize: 14, fontWeight: "600", color: "#666" }}>
                 Выйти из аккаунта
@@ -406,40 +326,15 @@ function PickerProfile({
               style={styles.editMenuItem}
               onPress={() => {
                 setEditMenuOpen(false);
-                // TODO: смена телефона
               }}
             >
-              <Text style={styles.editMenuItemText}>
-                Изменить номер телефона
-              </Text>
+              <Text style={styles.editMenuItemText}>Изменить номер телефона</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.editMenuItem}
               onPress={() => {
                 setEditMenuOpen(false);
                 setConfirmDeleteOpen(true);
-                console.log("[debug] profile delete profile confirm modal opened");
-                // #region agent log
-                fetch(
-                  "http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b",
-                  {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                      "X-Debug-Session-Id": "7a6ed6",
-                    },
-                    body: JSON.stringify({
-                      sessionId: "7a6ed6",
-                      runId: "debug_initial",
-                      hypothesisId: "H1",
-                      location: "src/app/(tabs)/profile.tsx:editMenu.deleteProfile.onPress",
-                      message: "delete_profile_confirm_modal_opened",
-                      data: {},
-                      timestamp: Date.now(),
-                    }),
-                  },
-                ).catch(() => {});
-                // #endregion
               }}
             >
               <Text style={[styles.editMenuItemText, styles.dangerText]}>
@@ -450,129 +345,140 @@ function PickerProfile({
         </TouchableOpacity>
       </Modal>
 
-      {/* Confirm delete */}
-      <Modal
-        transparent
+      <DeleteProfileConfirmModal
         visible={confirmDeleteOpen}
-        animationType="fade"
-        onRequestClose={() => setConfirmDeleteOpen(false)}
-      >
-        <TouchableOpacity
-          style={styles.confirmBackdrop}
-          activeOpacity={1}
-          onPress={() => setConfirmDeleteOpen(false)}
-        >
-          <View style={styles.confirmCard} onStartShouldSetResponder={() => true}>
-            <View style={styles.confirmHeaderRow}>
-              <Text style={styles.confirmTitle}>
-                Вы уверены, что хотите удалить эту страницу?
-              </Text>
-              <TouchableOpacity
-                style={styles.confirmClose}
-                onPress={() => setConfirmDeleteOpen(false)}
-                accessibilityRole="button"
-              >
-                <Text style={styles.confirmCloseText}>×</Text>
-              </TouchableOpacity>
-            </View>
+        onClose={() => setConfirmDeleteOpen(false)}
+        onConfirmDelete={handleDeleteConfirm}
+      />
 
-            <Text style={styles.confirmBody}>
-              После удаления страницы она будет безвозвратно удалена и восстановить
-              её будет невозможно.
-            </Text>
-
-            <View style={styles.confirmRow}>
-              <TouchableOpacity
-                style={styles.confirmCancel}
-                onPress={() => setConfirmDeleteOpen(false)}
-              >
-                <Text style={styles.confirmCancelText}>Отмена</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.confirmDelete}
-                onPress={async () => {
-                  setConfirmDeleteOpen(false);
-                  await onLogout();
-                  setDeletedOpen(true);
-                  console.log("[debug] profile confirmed delete; deletedOpen should be true now");
-                  // #region agent log
-                  fetch(
-                    "http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b",
-                    {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                        "X-Debug-Session-Id": "7a6ed6",
-                      },
-                      body: JSON.stringify({
-                        sessionId: "7a6ed6",
-                        runId: "debug_initial",
-                        hypothesisId: "H2",
-                        location: "src/app/(tabs)/profile.tsx:confirmDelete.onPress.after",
-                        message: "delete_profile_confirmed_maybe_logged_out",
-                        data: {},
-                        timestamp: Date.now(),
-                      }),
-                    },
-                  ).catch(() => {});
-                  // #endregion
-                }}
-              >
-                <Text style={styles.confirmDeleteText}>Удалить страницу</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </TouchableOpacity>
-      </Modal>
-
-      {/* Deleted placeholder */}
-      <Modal
-        transparent
+      <ProfileDeletedModal
         visible={deletedOpen}
-        animationType="fade"
-        onRequestClose={() => setDeletedOpen(false)}
-      >
-        <TouchableOpacity
-          style={styles.confirmBackdrop}
-          activeOpacity={1}
-          onPress={() => setDeletedOpen(false)}
-        >
-          <View style={styles.confirmCard} onStartShouldSetResponder={() => true}>
-            <Text style={styles.confirmTitle}>Страница удалена</Text>
-            <TouchableOpacity
-              style={styles.openButton}
-              onPress={() => {
-                setDeletedOpen(false);
-                console.log("[debug] deleted modal confirmed; redirecting to / (auth group)");
-                // #region agent log
-                fetch(
-                  "http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b",
-                  {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                      "X-Debug-Session-Id": "7a6ed6",
-                    },
-                    body: JSON.stringify({
-                      sessionId: "7a6ed6",
-                      runId: "debug_initial",
-                      hypothesisId: "H3",
-                      location: "src/app/(tabs)/profile.tsx:deletedModal.onPressPonyatno",
-                      message: "deleted_modal_confirmed",
-                      data: { redirectTo: "/(auth)" },
-                      timestamp: Date.now(),
-                    }),
-                  },
-                ).catch(() => {});
-                // #endregion
-                router.replace("/(auth)" as Href);
-              }}
-            >
-              <Text style={styles.openButtonText}>Понятно</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+        onClose={() => {
+          setDeletedOpen(false);
+          router.replace("/(auth)" as Href);
+        }}
+      />
+    </SafeAreaView>
+  );
+}
+
+type ClientProfileProps = {
+  initials: string;
+  name: string;
+  phone?: string;
+  onLogout: () => Promise<void>;
+};
+
+function ClientProfile({ name, phone, onLogout }: ClientProfileProps) {
+  const router = useRouter();
+  const [menuOpen, setMenuOpen] = useState(false);
+  // По умолчанию у нового клиента нет купленных отчётов.
+  const reports = useMemo(() => [], []);
+  const hasReports = reports.length > 0;
+
+  return (
+    <SafeAreaView style={styles.pickerScreen}>
+      <ClientProfileHeader
+        name={name}
+        phone={phone}
+        showTitle={hasReports}
+        onOpenBurger={() => setMenuOpen(true)}
+      />
+
+      <ScrollView contentContainerStyle={styles.pickerContent}>
+        {hasReports ? (
+          <>
+            {reports.map((r) => (
+              <ClientReportCard
+                key={r.id}
+                report={r}
+                onOpen={() => router.push("/reports" as Href)}
+                onDownloadPdf={() => {
+                  // заглушка под будущую загрузку PDF
+                }}
+              />
+            ))}
+          </>
+        ) : (
+          <>
+            <View style={styles.quickRow}>
+              <TouchableOpacity
+                style={styles.favCard}
+                onPress={() => router.push("/(tabs)/favorites" as Href)}
+              >
+                <FavouriteBanner
+                  style={StyleSheet.absoluteFillObject}
+                  width="100%"
+                  height="100%"
+                />
+                <View style={styles.favContent}>
+                  <Text style={styles.favText}>Избранное</Text>
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.favCard}
+                onPress={() => router.push("/selection" as Href)}
+              >
+                <View style={styles.favContent}>
+                  <Text style={styles.favText}>Лучшие предложения на авто</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            <ClientEmptyState
+              onOpenCatalog={() => router.push("/(tabs)/catalog" as Href)}
+            />
+          </>
+        )}
+      </ScrollView>
+
+      <BurgerMenu
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        items={[
+          {
+            key: "favorites",
+            label: "Избранное",
+            href: "/(tabs)/favorites" as Href,
+            Icon: FavIcon,
+          },
+          {
+            key: "selection",
+            label: "Подбор авто",
+            href: "/selection" as Href,
+            Icon: SelectionIcon,
+          },
+          {
+            key: "coop",
+            label: "Сотрудничество",
+            href: "/cooperation" as Href,
+            Icon: CooperationIcon,
+          },
+          {
+            key: "about",
+            label: "О нас",
+            href: "/about" as Href,
+            Icon: AboutIcon,
+          },
+        ]}
+        footer={
+          <TouchableOpacity
+            style={{ padding: 16 }}
+            onPress={async () => {
+              await onLogout();
+              router.replace("/" as Href);
+            }}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+              <LogoutIcon width={22} height={22} />
+              <Text style={{ fontSize: 14, fontWeight: "600", color: "#666" }}>
+                Выйти из аккаунта
+              </Text>
+            </View>
+          </TouchableOpacity>
+        }
+      />
     </SafeAreaView>
   );
 }
@@ -645,27 +551,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "700",
     color: "#FFFFFF",
-  },
-  favCard: {
-    flex: 1,
-    height: 62,
-    borderRadius: 12,
-    overflow: "hidden",
-    justifyContent: "center",
-  },
-  favContent: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    paddingHorizontal: 12,
-    zIndex: 1,
-  },
-
-  favText: {
-    fontSize: 12,
-    color: "#989898",
-    fontWeight: "600",
   },
   roleBadge: {
     marginTop: 10,
@@ -748,201 +633,49 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
   },
-
-  // Picker profile styles (Figma-like)
   pickerScreen: {
     flex: 1,
     backgroundColor: "#F7F7F7",
   },
-  pickerHeader: {
-    height: 56,
-    paddingHorizontal: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "#FFFFFF",
-  },
-  burgerButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  burgerLine: {
-    width: 22,
-    height: 2,
-    borderRadius: 2,
-    backgroundColor: "#DB4431",
-    marginVertical: 2,
-  },
-  burgerLogout: {
-    padding: 16,
-  },
-  burgerLogoutText: {
-    width: 234,
-    height: 19,
-    resizeMode: "contain", // это вообще для Image, для Text не нужно
-    fontSize: 14, // подгони под макет
-    color: "#666",
-    fontWeight: "600",
-  },
   pickerContent: {
-    paddingHorizontal: 16,
     paddingBottom: 120,
-  },
-  profileTop: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 16,
-  },
-  avatarCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "#1E1E1E",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarInitials: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  profileMeta: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  nameRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  profileName: {
-    flex: 1,
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#1E1E1E",
-    marginRight: 10,
-  },
-  editIconButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
-    backgroundColor: "#FFFFFF",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  editIconText: {
-    color: "#DB4431",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  profilePhone: {
-    marginTop: 4,
-    fontSize: 12,
-    color: "#777",
-  },
-  statsRow: {
-    flexDirection: "row",
-    gap: 12,
-    marginTop: 16,
-  },
-  statCard: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 18,
-    padding: 14,
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 2,
-  },
-  statLabel: {
-    fontSize: 11,
-    color: "#999",
-  },
-  statValue: {
-    marginTop: 8,
-    fontSize: 22,
-    fontWeight: "800",
-    color: "#1E1E1E",
-  },
-  reportsBanner: {
-    marginTop: 12,
-    backgroundColor: "#DB4431",
-    borderRadius: 18,
-    padding: 16,
-  },
-  bannerSmall: {
-    color: "rgba(255,255,255,0.85)",
-    fontSize: 11,
-  },
-  bannerTitle: {
-    marginTop: 6,
-    marginBottom: 6,
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "800",
-  },
-  microBanner: {
-    marginTop: 12,
-    borderRadius: 18,
-    overflow: "hidden",
-    minHeight: 95,
-    padding: 16,
-    justifyContent: "center",
-    position: "relative",
-  },
-  microContent: {
-    zIndex: 1,
-  },
-  microText1: {
-    color: "rgba(255,255,255,0.85)",
-    fontSize: 11,
-  },
-  microText2: {
-    marginTop: 6,
-    marginBottom: 6,
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "800",
-  },
-  microText3: {
-    color: "rgba(255,255,255,0.85)",
-    fontSize: 11,
   },
   quickRow: {
     flexDirection: "row",
     gap: 12,
     marginTop: 12,
+    marginHorizontal: 16,
   },
-  quickItem: {
+  favCard: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 18,
-    padding: 14,
-    alignItems: "center",
+    height: 62,
+    borderRadius: 12,
+    overflow: "hidden",
     justifyContent: "center",
-    gap: 6,
   },
-  quickEmoji: {
-    fontSize: 22,
+  favContent: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingHorizontal: 12,
+    zIndex: 1,
   },
-  quickText: {
+  favText: {
     fontSize: 12,
-    color: "#777",
-    textAlign: "center",
+    color: "#989898",
+    fontWeight: "600",
   },
   sectionTitle: {
     marginTop: 18,
+    marginHorizontal: 16,
     fontSize: 18,
     fontWeight: "800",
     color: "#1E1E1E",
   },
   reportCard: {
     marginTop: 12,
+    marginHorizontal: 16,
     backgroundColor: "#FFFFFF",
     borderRadius: 18,
     overflow: "hidden",
@@ -1004,46 +737,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
   },
-  sideMenu: {
-    width: "78%",
-    backgroundColor: "#FFFFFF",
-    paddingTop: 16,
-    paddingHorizontal: 16,
-    paddingBottom: 20,
-  },
-  sideMenuHeader: {
-    paddingBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#EEE",
-    marginBottom: 10,
-  },
-  sideMenuLogo: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: "#DB4431",
-  },
-  sideMenuItem: {
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F2F2F2",
-  },
-  sideMenuItemText: {
-    fontSize: 14,
-    color: "#1E1E1E",
-    fontWeight: "600",
-  },
-  sideMenuFooter: {
-    marginTop: "auto",
-    paddingTop: 14,
-  },
-  logoutRow: {
-    paddingVertical: 12,
-  },
-  logoutRowText: {
-    color: "#666",
-    fontSize: 14,
-    fontWeight: "600",
-  },
   editMenu: {
     position: "absolute",
     top: 90,
@@ -1069,80 +762,5 @@ const styles = StyleSheet.create({
   },
   dangerText: {
     color: "#DB4431",
-  },
-  confirmBackdrop: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.35)",
-    justifyContent: "center",
-    padding: 16,
-  },
-  confirmCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 18,
-    padding: 16,
-  },
-  confirmHeaderRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  confirmClose: {
-    width: 28,
-    height: 28,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  confirmCloseText: {
-    fontSize: 22,
-    lineHeight: 22,
-    color: "#777",
-    fontWeight: "700",
-  },
-  confirmTitle: {
-    fontSize: 16,
-    fontWeight: "800",
-    color: "#1E1E1E",
-  },
-  confirmBody: {
-    marginTop: 8,
-    fontSize: 12,
-    color: "#777",
-    lineHeight: 16,
-  },
-  confirmRow: {
-    marginTop: 14,
-    flexDirection: "row",
-    gap: 10,
-  },
-  confirmCancel: {
-    flex: 1,
-    backgroundColor: "#DB4431",
-    borderRadius: 12,
-    paddingVertical: 10,
-    alignItems: "center",
-  },
-  confirmCancelText: {
-    color: "#FFFFFF",
-    fontWeight: "700",
-    fontSize: 13,
-  },
-  confirmDelete: {
-    flex: 1,
-    backgroundColor: "#555",
-    borderRadius: 12,
-    paddingVertical: 10,
-    alignItems: "center",
-  },
-  confirmDeleteText: {
-    color: "#FFFFFF",
-    fontWeight: "700",
-    fontSize: 13,
-  },
-  statIcon: {
-    position: "absolute",
-    right: 8,
-    bottom: 8,
   },
 });
