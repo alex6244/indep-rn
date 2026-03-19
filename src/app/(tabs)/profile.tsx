@@ -1,9 +1,8 @@
 import { BurgerMenu } from "@/src/shared/ui/BurgerMenu";
 import { useRouter, type Href } from "expo-router";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   ActivityIndicator,
-  Modal,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -16,22 +15,20 @@ import CooperationIcon from "../../assets/icons/burger/ads.svg";
 import FavIcon from "../../assets/icons/burger/favourites.svg";
 import LogoutIcon from "../../assets/icons/burger/logout.svg";
 import SelectionIcon from "../../assets/icons/burger/selection.svg";
-import FavouriteBanner from "../../assets/profile/favouritebanner.svg";
 import { useAuth } from "../../contexts/AuthContext";
-import { useProtected } from "../../hooks/useProtected";
-import { DeleteProfileConfirmModal } from "../../widgets/profile/DeleteProfileConfirmModal";
 import { PickerProfileHeader } from "../../widgets/profile/PickerProfileHeader";
-import { ProfileDeletedModal } from "../../widgets/profile/ProfileDeletedModal";
 import { ProfileStats } from "../../widgets/profile/ProfileStats";
 import { ReportsBanner } from "../../widgets/profile/ReportsBanner";
 import { ClientEmptyState } from "../../widgets/profile/ClientEmptyState";
 import { ClientProfileHeader } from "../../widgets/profile/ClientProfileHeader";
 import { ClientReportCard } from "../../widgets/profile/ClientReportCard";
+import { ProfileEditMenu } from "../../widgets/profile/ProfileEditMenu";
+import { ProfileQuickActions } from "../../widgets/profile/ProfileQuickActions";
+import { useProfileEditFlow } from "../../widgets/profile/useProfileEditFlow";
 
 export default function ProfileTab() {
   const router = useRouter();
   const { user, loading, logout } = useAuth();
-  const { checkAuth } = useProtected();
 
   if (loading) {
     return (
@@ -87,7 +84,6 @@ export default function ProfileTab() {
 
   return (
     <ClientProfile
-      initials={initials}
       name={user.name || user.login}
       phone={user.phone}
       onLogout={logout}
@@ -118,9 +114,7 @@ function PickerProfile({
 }) {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [editMenuOpen, setEditMenuOpen] = useState(false);
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
-  const [deletedOpen, setDeletedOpen] = useState(false);
+  const editFlow = useProfileEditFlow(onLogout, router);
 
   const stats = useMemo(
     () => ({
@@ -134,76 +128,13 @@ function PickerProfile({
     [],
   );
 
-  useEffect(() => {
-    // #region agent log
-    fetch("http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Debug-Session-Id": "7a6ed6",
-      },
-      body: JSON.stringify({
-        sessionId: "7a6ed6",
-        runId: "route-check",
-        hypothesisId: "H3",
-        location: "src/app/(tabs)/profile.tsx:PickerProfile.useEffect",
-        message: "picker_profile_mounted",
-        data: {},
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
-  }, []);
-
-  const handleDeleteConfirm = async () => {
-    // #region agent log
-    fetch("http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Debug-Session-Id": "7a6ed6",
-      },
-      body: JSON.stringify({
-        sessionId: "7a6ed6",
-        runId: "route-check",
-        hypothesisId: "H4",
-        location: "src/app/(tabs)/profile.tsx:handleDeleteConfirm.beforeLogout",
-        message: "delete_confirm_clicked",
-        data: {},
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
-    setConfirmDeleteOpen(false);
-    await onLogout();
-    // #region agent log
-    fetch("http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Debug-Session-Id": "7a6ed6",
-      },
-      body: JSON.stringify({
-        sessionId: "7a6ed6",
-        runId: "route-check",
-        hypothesisId: "H4",
-        location: "src/app/(tabs)/profile.tsx:handleDeleteConfirm.afterLogout",
-        message: "logout_resolved_after_delete_confirm",
-        data: {},
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
-    setDeletedOpen(true);
-  };
-
   return (
     <SafeAreaView style={styles.pickerScreen}>
       <PickerProfileHeader
         initials={initials}
         name={name}
         phone={phone}
-        onOpenEdit={() => setEditMenuOpen(true)}
+        onOpenEdit={() => editFlow.setEditMenuOpen(true)}
         onOpenBurger={() => setMenuOpen(true)}
       />
 
@@ -221,21 +152,11 @@ function PickerProfile({
           onPress={() => router.push("/reports" as Href)}
         />
 
-        <View style={styles.quickRow}>
-          <TouchableOpacity
-            style={styles.favCard}
-            onPress={() => router.push("/(tabs)/favorites" as Href)}
-          >
-            <FavouriteBanner
-              style={StyleSheet.absoluteFillObject}
-              width="100%"
-              height="100%"
-            />
-            <View style={styles.favContent}>
-              <Text style={styles.favText}>Избранное</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+        <ProfileQuickActions
+          variant="picker"
+          onOpenFavorites={() => router.push("/(tabs)/favorites" as Href)}
+          onOpenBest={() => router.push("/selection" as Href)}
+        />
 
         <Text style={styles.sectionTitle}>Мои отчёты</Text>
         <View style={styles.reportCard}>
@@ -310,60 +231,22 @@ function PickerProfile({
         }
       />
 
-      <Modal
-        transparent
-        visible={editMenuOpen}
-        animationType="fade"
-        onRequestClose={() => setEditMenuOpen(false)}
-      >
-        <TouchableOpacity
-          style={styles.menuOverlay}
-          activeOpacity={1}
-          onPress={() => setEditMenuOpen(false)}
-        >
-          <View style={styles.editMenu} onStartShouldSetResponder={() => true}>
-            <TouchableOpacity
-              style={styles.editMenuItem}
-              onPress={() => {
-                setEditMenuOpen(false);
-              }}
-            >
-              <Text style={styles.editMenuItemText}>Изменить номер телефона</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.editMenuItem}
-              onPress={() => {
-                setEditMenuOpen(false);
-                setConfirmDeleteOpen(true);
-              }}
-            >
-              <Text style={[styles.editMenuItemText, styles.dangerText]}>
-                Удалить профиль
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
-
-      <DeleteProfileConfirmModal
-        visible={confirmDeleteOpen}
-        onClose={() => setConfirmDeleteOpen(false)}
-        onConfirmDelete={handleDeleteConfirm}
-      />
-
-      <ProfileDeletedModal
-        visible={deletedOpen}
-        onClose={() => {
-          setDeletedOpen(false);
-          router.replace("/(auth)" as Href);
-        }}
+      <ProfileEditMenu
+        editMenuOpen={editFlow.editMenuOpen}
+        confirmDeleteOpen={editFlow.confirmDeleteOpen}
+        deletedOpen={editFlow.deletedOpen}
+        onCloseEditMenu={() => editFlow.setEditMenuOpen(false)}
+        onChangePhone={() => {}}
+        onOpenDeleteConfirm={() => editFlow.setConfirmDeleteOpen(true)}
+        onCloseDeleteConfirm={() => editFlow.setConfirmDeleteOpen(false)}
+        onConfirmDelete={editFlow.handleDeleteConfirm}
+        onCloseDeleted={editFlow.handleCloseDeleted}
       />
     </SafeAreaView>
   );
 }
 
 type ClientProfileProps = {
-  initials: string;
   name: string;
   phone?: string;
   onLogout: () => Promise<void>;
@@ -372,8 +255,18 @@ type ClientProfileProps = {
 function ClientProfile({ name, phone, onLogout }: ClientProfileProps) {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const editFlow = useProfileEditFlow(onLogout, router);
   // По умолчанию у нового клиента нет купленных отчётов.
-  const reports = useMemo(() => [], []);
+  const reports = useMemo<
+    {
+      id: string;
+      price: string;
+      title: string;
+      subtitle: string;
+      city: string;
+      imageUrl: string;
+    }[]
+  >(() => [], []);
   const hasReports = reports.length > 0;
 
   return (
@@ -382,6 +275,7 @@ function ClientProfile({ name, phone, onLogout }: ClientProfileProps) {
         name={name}
         phone={phone}
         showTitle={hasReports}
+        onOpenEdit={() => editFlow.setEditMenuOpen(true)}
         onOpenBurger={() => setMenuOpen(true)}
       />
 
@@ -401,30 +295,11 @@ function ClientProfile({ name, phone, onLogout }: ClientProfileProps) {
           </>
         ) : (
           <>
-            <View style={styles.quickRow}>
-              <TouchableOpacity
-                style={styles.favCard}
-                onPress={() => router.push("/(tabs)/favorites" as Href)}
-              >
-                <FavouriteBanner
-                  style={StyleSheet.absoluteFillObject}
-                  width="100%"
-                  height="100%"
-                />
-                <View style={styles.favContent}>
-                  <Text style={styles.favText}>Избранное</Text>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.favCard}
-                onPress={() => router.push("/selection" as Href)}
-              >
-                <View style={styles.favContent}>
-                  <Text style={styles.favText}>Лучшие предложения на авто</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
+            <ProfileQuickActions
+              variant="client"
+              onOpenFavorites={() => router.push("/(tabs)/favorites" as Href)}
+              onOpenBest={() => router.push("/selection" as Href)}
+            />
 
             <ClientEmptyState
               onOpenCatalog={() => router.push("/(tabs)/catalog" as Href)}
@@ -478,6 +353,18 @@ function ClientProfile({ name, phone, onLogout }: ClientProfileProps) {
             </View>
           </TouchableOpacity>
         }
+      />
+
+      <ProfileEditMenu
+        editMenuOpen={editFlow.editMenuOpen}
+        confirmDeleteOpen={editFlow.confirmDeleteOpen}
+        deletedOpen={editFlow.deletedOpen}
+        onCloseEditMenu={() => editFlow.setEditMenuOpen(false)}
+        onChangePhone={() => {}}
+        onOpenDeleteConfirm={() => editFlow.setConfirmDeleteOpen(true)}
+        onCloseDeleteConfirm={() => editFlow.setConfirmDeleteOpen(false)}
+        onConfirmDelete={editFlow.handleDeleteConfirm}
+        onCloseDeleted={editFlow.handleCloseDeleted}
       />
     </SafeAreaView>
   );
@@ -730,37 +617,5 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "700",
     marginTop: -2,
-  },
-  menuOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.35)",
-    flexDirection: "row",
-    justifyContent: "flex-end",
-  },
-  editMenu: {
-    position: "absolute",
-    top: 90,
-    right: 16,
-    width: 260,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
-    paddingVertical: 6,
-    shadowColor: "#000",
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 6,
-  },
-  editMenuItem: {
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-  },
-  editMenuItemText: {
-    fontSize: 14,
-    color: "#1E1E1E",
-    fontWeight: "600",
-  },
-  dangerText: {
-    color: "#DB4431",
   },
 });

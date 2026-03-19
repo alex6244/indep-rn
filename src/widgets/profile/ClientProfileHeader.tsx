@@ -8,6 +8,7 @@ type Props = {
   showTitle?: boolean;
   title?: string;
   onOpenBurger: () => void;
+  onOpenEdit?: () => void;
 };
 
 export function ClientProfileHeader({
@@ -16,6 +17,7 @@ export function ClientProfileHeader({
   showTitle = false,
   title = "Мои отчёты",
   onOpenBurger,
+  onOpenEdit,
 }: Props) {
   return (
     <View style={styles.header}>
@@ -34,9 +36,20 @@ export function ClientProfileHeader({
       </TouchableOpacity>
       {!showTitle && (
         <View style={styles.meta}>
-          <Text style={styles.name} numberOfLines={1}>
-            {name}
-          </Text>
+          <View style={styles.nameRow}>
+            <Text style={styles.name} numberOfLines={1}>
+              {name}
+            </Text>
+            {onOpenEdit ? (
+              <TouchableOpacity
+                onPress={onOpenEdit}
+                style={styles.editIconButton}
+                accessibilityRole="button"
+              >
+                <Text style={styles.editIconText}>✎</Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
           {!!phone && <Text style={styles.phone}>{phone}</Text>}
         </View>
       )}
@@ -84,9 +97,28 @@ const styles = StyleSheet.create({
     bottom: -32,
   },
   name: {
+    flex: 1,
     fontSize: 16,
     fontWeight: "700",
     color: "#1E1E1E",
+  },
+  nameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  editIconButton: {
+    width: 26,
+    height: 26,
+    borderRadius: 8,
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  editIconText: {
+    color: "#DB4431",
+    fontSize: 14,
+    fontWeight: "700",
   },
   phone: {
     marginTop: 2,
