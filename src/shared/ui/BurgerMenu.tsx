@@ -1,4 +1,5 @@
-import React from "react";
+import { router, type Href } from "expo-router";
+import React, { useEffect } from "react";
 import {
   Modal,
   StyleSheet,
@@ -7,7 +8,7 @@ import {
   View,
   type ViewStyle,
 } from "react-native";
-import { router, type Href } from "expo-router";
+import Logo from "../../assets/logo.svg";
 
 export type BurgerMenuItem = {
   key: string;
@@ -25,18 +26,112 @@ type Props = {
   panelStyle?: ViewStyle;
 };
 
-export function BurgerMenu({ open, onClose, items, footer, panelStyle }: Props) {
-  return (
-    <Modal transparent visible={open} animationType="fade" onRequestClose={onClose}>
-      <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={onClose}>
-        <View style={[styles.panel, panelStyle]} onStartShouldSetResponder={() => true}>
-          <Text style={styles.logo}>INDEP</Text>
+export function BurgerMenu({
+  open,
+  onClose,
+  items,
+  footer,
+  panelStyle,
+}: Props) {
+  useEffect(() => {
+    if (!open) return;
 
+    console.log("[debug] BurgerMenu opened", { itemsCount: items.length });
+
+    // #region agent log
+    fetch(
+      "http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Debug-Session-Id": "7a6ed6",
+        },
+        body: JSON.stringify({
+          sessionId: "7a6ed6",
+          runId: "debug_initial",
+          hypothesisId: "H4",
+          location: "src/shared/ui/BurgerMenu.tsx:useEffect(open)",
+          message: "burger_menu_opened",
+          data: { itemsCount: items.length },
+          timestamp: Date.now(),
+        }),
+      },
+    ).catch(() => {});
+    // #endregion
+  }, [open, items.length]);
+
+  return (
+    <Modal
+      transparent
+      visible={open}
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      <TouchableOpacity
+        style={styles.overlay}
+        activeOpacity={1}
+        onPress={() => {
+          console.log("[debug] BurgerMenu overlay closed");
+          // #region agent log
+          fetch(
+            "http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-Debug-Session-Id": "7a6ed6",
+              },
+              body: JSON.stringify({
+                sessionId: "7a6ed6",
+                runId: "debug_initial",
+                hypothesisId: "H4",
+                location: "src/shared/ui/BurgerMenu.tsx:overlay.onPress",
+                message: "burger_menu_overlay_closed",
+                data: {},
+                timestamp: Date.now(),
+              }),
+            },
+          ).catch(() => {});
+          // #endregion
+          onClose();
+        }}
+      >
+        <View
+          style={[styles.panel, panelStyle]}
+          onStartShouldSetResponder={() => true}
+        >
+          <Logo width={110} height={28} />
           {items.map((it) => (
             <TouchableOpacity
               key={it.key}
               style={styles.item}
               onPress={() => {
+                console.log("[debug] BurgerMenu item pressed", {
+                  key: it.key,
+                  href: it.href ?? null,
+                });
+                // #region agent log
+                fetch(
+                  "http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      "X-Debug-Session-Id": "7a6ed6",
+                    },
+                    body: JSON.stringify({
+                      sessionId: "7a6ed6",
+                      runId: "debug_initial",
+                      hypothesisId: "H4",
+                      location: "src/shared/ui/BurgerMenu.tsx:item.onPress",
+                      message: "burger_menu_item_pressed",
+                      data: { key: it.key, href: it.href ?? null },
+                      timestamp: Date.now(),
+                    }),
+                  },
+                ).catch(() => {});
+                // #endregion
                 onClose();
                 if (it.onPress) return it.onPress();
                 if (it.href) router.push(it.href);
@@ -83,7 +178,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: "#F2F2F2",
+    borderBottomColor: "#505050",
     gap: 10,
   },
   icon: {

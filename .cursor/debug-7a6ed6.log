@@ -538,3 +538,7 @@
 {"sessionId":"7a6ed6","runId":"pre-fix","hypothesisId":"H1","location":"register.tsx:52","message":"Render register title","data":{},"timestamp":1773753745505}
 {"sessionId":"7a6ed6","runId":"pre-fix","hypothesisId":"H1","location":"register.tsx:52","message":"Render register title","data":{},"timestamp":1773753748193}
 {"sessionId":"7a6ed6","runId":"pre-fix","hypothesisId":"H2","location":"register.tsx:142","message":"Render register button text","data":{},"timestamp":1773753748194}
+{"sessionId":"7a6ed6","runId":"debug_initial","hypothesisId":"H1","location":"src/app/(tabs)/profile.tsx:editMenu.deleteProfile.onPress","message":"delete_profile_confirm_modal_opened","data":{},"timestamp":1773846040948}
+{"sessionId":"7a6ed6","runId":"debug_initial","hypothesisId":"H2","location":"src/contexts/AuthContext.tsx:logout.start","message":"logout_started","data":{},"timestamp":1773846042649}
+{"sessionId":"7a6ed6","runId":"debug_initial","hypothesisId":"H2","location":"src/contexts/AuthContext.tsx:logout.end","message":"logout_finished","data":{},"timestamp":1773846042650}
+{"sessionId":"7a6ed6","runId":"debug_initial","hypothesisId":"H2","location":"src/app/(tabs)/profile.tsx:confirmDelete.onPress.after","message":"delete_profile_confirmed_maybe_logged_out","data":{},"timestamp":1773846042661}

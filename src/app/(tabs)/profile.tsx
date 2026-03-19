@@ -11,17 +11,19 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import AboutIcon from "../../assets/icons/burger/about.svg";
+import CooperationIcon from "../../assets/icons/burger/ads.svg";
+import FavIcon from "../../assets/icons/burger/favourites.svg";
+import LogoutIcon from "../../assets/icons/burger/logout.svg";
+import SelectionIcon from "../../assets/icons/burger/selection.svg";
 import Logo from "../../assets/logo.svg";
 import FavouriteBanner from "../../assets/profile/favouritebanner.svg";
 import MicroBanner from "../../assets/profile/microbanner.svg";
 import ReportsIcon from "../../assets/profile/reports.svg";
 import WalletIcon from "../../assets/profile/wallet.svg";
+
 import { useAuth } from "../../contexts/AuthContext";
 import { useProtected } from "../../hooks/useProtected";
-import FavIcon from "../../assets/icons/burger/favourites.svg";
-import SelectionIcon from "../../assets/icons/burger/selection.svg";
-import AboutIcon from "../../assets/icons/burger/about.svg";
-import LogoutIcon from "../../assets/icons/burger/logout.svg";
 
 export default function ProfileTab() {
   const router = useRouter();
@@ -194,7 +196,31 @@ function PickerProfile({
         <Logo width={110} height={28} />
         <TouchableOpacity
           style={styles.burgerButton}
-          onPress={() => setMenuOpen(true)}
+          onPress={() => {
+            console.log("[debug] profile picker burger pressed");
+            // #region agent log
+            fetch(
+              "http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-Debug-Session-Id": "7a6ed6",
+                },
+                body: JSON.stringify({
+                  sessionId: "7a6ed6",
+                  runId: "debug_initial",
+                  hypothesisId: "H4",
+                  location: "src/app/(tabs)/profile.tsx:picker.burgerButton.onPress",
+                  message: "picker_burger_open_pressed",
+                  data: {},
+                  timestamp: Date.now(),
+                }),
+              },
+            ).catch(() => {});
+            // #endregion
+            setMenuOpen(true);
+          }}
           accessibilityRole="button"
         >
           <View style={styles.burgerLine} />
@@ -323,22 +349,45 @@ function PickerProfile({
             key: "favorites",
             label: "Избранное",
             href: "/(tabs)/favorites" as Href,
-            icon: 
+            Icon: FavIcon,
           },
           {
             key: "selection",
             label: "Подбор авто",
             href: "/selection" as Href,
+            Icon: SelectionIcon,
           },
           {
-            key: "logout",
-            label: "Выйти из аккаунта",
-            onPress: async () => {
-              await onLogout();
-              router.replace("/" as Href);
-            },
+            key: "coop",
+            label: "Сотрудничество",
+            href: "/cooperation" as Href,
+            Icon: CooperationIcon,
+          },
+          {
+            key: "about",
+            label: "О нас",
+            href: "/about" as Href,
+            Icon: AboutIcon,
           },
         ]}
+        footer={
+          <TouchableOpacity
+            style={{ padding: 16 }}
+            onPress={async () => {
+              await onLogout();
+              router.replace("/" as Href);
+            }}
+          >
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
+            >
+              <LogoutIcon width={22} height={22} />
+              <Text style={{ fontSize: 14, fontWeight: "600", color: "#666" }}>
+                Выйти из аккаунта
+              </Text>
+            </View>
+          </TouchableOpacity>
+        }
       />
 
       <Modal
@@ -369,6 +418,28 @@ function PickerProfile({
               onPress={() => {
                 setEditMenuOpen(false);
                 setConfirmDeleteOpen(true);
+                console.log("[debug] profile delete profile confirm modal opened");
+                // #region agent log
+                fetch(
+                  "http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      "X-Debug-Session-Id": "7a6ed6",
+                    },
+                    body: JSON.stringify({
+                      sessionId: "7a6ed6",
+                      runId: "debug_initial",
+                      hypothesisId: "H1",
+                      location: "src/app/(tabs)/profile.tsx:editMenu.deleteProfile.onPress",
+                      message: "delete_profile_confirm_modal_opened",
+                      data: {},
+                      timestamp: Date.now(),
+                    }),
+                  },
+                ).catch(() => {});
+                // #endregion
               }}
             >
               <Text style={[styles.editMenuItemText, styles.dangerText]}>
@@ -386,15 +457,30 @@ function PickerProfile({
         animationType="fade"
         onRequestClose={() => setConfirmDeleteOpen(false)}
       >
-        <View style={styles.confirmBackdrop}>
-          <View style={styles.confirmCard}>
-            <Text style={styles.confirmTitle}>
-              Вы уверены, что хотите удалить эту страницу?
-            </Text>
+        <TouchableOpacity
+          style={styles.confirmBackdrop}
+          activeOpacity={1}
+          onPress={() => setConfirmDeleteOpen(false)}
+        >
+          <View style={styles.confirmCard} onStartShouldSetResponder={() => true}>
+            <View style={styles.confirmHeaderRow}>
+              <Text style={styles.confirmTitle}>
+                Вы уверены, что хотите удалить эту страницу?
+              </Text>
+              <TouchableOpacity
+                style={styles.confirmClose}
+                onPress={() => setConfirmDeleteOpen(false)}
+                accessibilityRole="button"
+              >
+                <Text style={styles.confirmCloseText}>×</Text>
+              </TouchableOpacity>
+            </View>
+
             <Text style={styles.confirmBody}>
-              После удаления страницы она будет безвозвратно удалена и
-              восстановить её будет невозможно.
+              После удаления страницы она будет безвозвратно удалена и восстановить
+              её будет невозможно.
             </Text>
+
             <View style={styles.confirmRow}>
               <TouchableOpacity
                 style={styles.confirmCancel}
@@ -404,16 +490,39 @@ function PickerProfile({
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.confirmDelete}
-                onPress={() => {
+                onPress={async () => {
                   setConfirmDeleteOpen(false);
+                  await onLogout();
                   setDeletedOpen(true);
+                  console.log("[debug] profile confirmed delete; deletedOpen should be true now");
+                  // #region agent log
+                  fetch(
+                    "http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b",
+                    {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        "X-Debug-Session-Id": "7a6ed6",
+                      },
+                      body: JSON.stringify({
+                        sessionId: "7a6ed6",
+                        runId: "debug_initial",
+                        hypothesisId: "H2",
+                        location: "src/app/(tabs)/profile.tsx:confirmDelete.onPress.after",
+                        message: "delete_profile_confirmed_maybe_logged_out",
+                        data: {},
+                        timestamp: Date.now(),
+                      }),
+                    },
+                  ).catch(() => {});
+                  // #endregion
                 }}
               >
                 <Text style={styles.confirmDeleteText}>Удалить страницу</Text>
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
       </Modal>
 
       {/* Deleted placeholder */}
@@ -423,17 +532,46 @@ function PickerProfile({
         animationType="fade"
         onRequestClose={() => setDeletedOpen(false)}
       >
-        <View style={styles.confirmBackdrop}>
-          <View style={styles.confirmCard}>
+        <TouchableOpacity
+          style={styles.confirmBackdrop}
+          activeOpacity={1}
+          onPress={() => setDeletedOpen(false)}
+        >
+          <View style={styles.confirmCard} onStartShouldSetResponder={() => true}>
             <Text style={styles.confirmTitle}>Страница удалена</Text>
             <TouchableOpacity
               style={styles.openButton}
-              onPress={() => setDeletedOpen(false)}
+              onPress={() => {
+                setDeletedOpen(false);
+                console.log("[debug] deleted modal confirmed; redirecting to / (auth group)");
+                // #region agent log
+                fetch(
+                  "http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      "X-Debug-Session-Id": "7a6ed6",
+                    },
+                    body: JSON.stringify({
+                      sessionId: "7a6ed6",
+                      runId: "debug_initial",
+                      hypothesisId: "H3",
+                      location: "src/app/(tabs)/profile.tsx:deletedModal.onPressPonyatno",
+                      message: "deleted_modal_confirmed",
+                      data: { redirectTo: "/(auth)" },
+                      timestamp: Date.now(),
+                    }),
+                  },
+                ).catch(() => {});
+                // #endregion
+                router.replace("/(auth)" as Href);
+              }}
             >
               <Text style={styles.openButtonText}>Понятно</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </TouchableOpacity>
       </Modal>
     </SafeAreaView>
   );
@@ -637,6 +775,17 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: "#DB4431",
     marginVertical: 2,
+  },
+  burgerLogout: {
+    padding: 16,
+  },
+  burgerLogoutText: {
+    width: 234,
+    height: 19,
+    resizeMode: "contain", // это вообще для Image, для Text не нужно
+    fontSize: 14, // подгони под макет
+    color: "#666",
+    fontWeight: "600",
   },
   pickerContent: {
     paddingHorizontal: 16,
@@ -931,6 +1080,25 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 18,
     padding: 16,
+  },
+  confirmHeaderRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  confirmClose: {
+    width: 28,
+    height: 28,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  confirmCloseText: {
+    fontSize: 22,
+    lineHeight: 22,
+    color: "#777",
+    fontWeight: "700",
   },
   confirmTitle: {
     fontSize: 16,

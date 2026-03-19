@@ -162,8 +162,54 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const logout = useCallback(async () => {
+    console.log("[debug] AuthContext.logout start");
+    // #region agent log
+    fetch(
+      "http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Debug-Session-Id": "7a6ed6",
+        },
+        body: JSON.stringify({
+          sessionId: "7a6ed6",
+          runId: "debug_initial",
+          hypothesisId: "H2",
+          location: "src/contexts/AuthContext.tsx:logout.start",
+          message: "logout_started",
+          data: {},
+          timestamp: Date.now(),
+        }),
+      },
+    ).catch(() => {});
+    // #endregion
+
     await AsyncStorage.removeItem("user");
     setUser(null);
+
+    console.log("[debug] AuthContext.logout end");
+    // #region agent log
+    fetch(
+      "http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Debug-Session-Id": "7a6ed6",
+        },
+        body: JSON.stringify({
+          sessionId: "7a6ed6",
+          runId: "debug_initial",
+          hypothesisId: "H2",
+          location: "src/contexts/AuthContext.tsx:logout.end",
+          message: "logout_finished",
+          data: {},
+          timestamp: Date.now(),
+        }),
+      },
+    ).catch(() => {});
+    // #endregion
   }, []);
 
   useEffect(() => {
