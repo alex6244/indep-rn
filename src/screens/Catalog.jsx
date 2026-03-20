@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -21,11 +21,58 @@ import { cars as catalogCars } from '../data/cars';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
+const YEAR_MIN = 1880;
+const YEAR_MAX = new Date().getFullYear();
+
 const Catalog = ({ navigation }) => {
   const { isFavorite, setFavorite } = useFavorites();
   const [activeMenu, setActiveMenu] = useState('home');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const filtersX = useRef(new Animated.Value(-SCREEN_WIDTH)).current;
+  const [cars, setCars] = useState(catalogCars);
+  const [filteredCars, setFilteredCars] = useState(catalogCars);
+
+  // Filter criteria (controlled inputs).
+  const [brandQuery, setBrandQuery] = useState('');
+  const [modelQuery, setModelQuery] = useState('');
+  const [paymentType, setPaymentType] = useState(null); // 'cash' | 'credit' | null
+
+  const [priceFromText, setPriceFromText] = useState('');
+  const [priceToText, setPriceToText] = useState('');
+  const [yearFromText, setYearFromText] = useState('');
+  const [yearToText, setYearToText] = useState('');
+  const [mileageFromText, setMileageFromText] = useState('');
+  const [mileageToText, setMileageToText] = useState('');
+
+  const [bodyTypes, setBodyTypes] = useState([]); // string[]
+  const [features, setFeatures] = useState([]); // string[]
+
+  const [hasDiscount, setHasDiscount] = useState(false);
+  const [vatReturn, setVatReturn] = useState(false);
+  const [weeklyOffer, setWeeklyOffer] = useState(false);
+
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // #region agent log
+    fetch("http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "7a6ed6",
+      },
+      body: JSON.stringify({
+        sessionId: "7a6ed6",
+        runId: "route-debug",
+        hypothesisId: "H8_LEGACY_CATALOG_SCREEN_MOUNT",
+        location: "src/screens/Catalog.jsx:Catalog.useEffect",
+        message: "legacy_catalog_screen_mounted",
+        data: {},
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+  }, []);
 
   const openFilters = () => {
     setFiltersOpen(true);
@@ -47,6 +94,186 @@ const Catalog = ({ navigation }) => {
   const handleBottomMenu = (key) => {
     setActiveMenu(key);
     // navigation?.navigate(key); // сюда подвяжешь реальные роуты
+  };
+
+  const parseNumberOrNull = (text) => {
+    const raw = text ?? '';
+    const trimmed = String(raw).trim();
+    if (!trimmed) return null;
+
+    // Remove spaces and any non-number chars (currency, ₽, etc).
+    // Allow "." or "," as decimal separator.
+    const cleaned = trimmed
+      .replace(/\s+/g, '')
+      .replace(/[^\d.,-]/g, '')
+      .replace(',', '.');
+
+    if (!cleaned) return null;
+
+    const n = Number(cleaned);
+    return Number.isFinite(n) ? n : null;
+  };
+
+  const onlyDigits = (s) => String(s ?? '').replace(/\D/g, '');
+
+  const toggleInArray = (value, setArr) => {
+    setArr((prev) => {
+      const exists = prev.includes(value);
+      return exists ? prev.filter((x) => x !== value) : [...prev, value];
+    });
+  };
+
+  const matchesCriteria = (car, criteria) => {
+    const norm = (s) => (s ?? '').toString().trim().toLowerCase();
+
+    const brandNeed = norm(criteria.brandQuery);
+    const modelNeed = norm(criteria.modelQuery);
+
+    const brandOk =
+      !brandNeed ||
+      norm(car.brand).includes(brandNeed) ||
+      norm(car.title).includes(brandNeed);
+
+    const modelOk = !modelNeed || norm(car.title).includes(modelNeed);
+
+    const priceOk =
+      (criteria.priceFrom == null || car.price >= criteria.priceFrom) &&
+      (criteria.priceTo == null || car.price <= criteria.priceTo);
+
+    const yearOk =
+      (criteria.yearFrom == null || car.year >= criteria.yearFrom) &&
+      (criteria.yearTo == null || car.year <= criteria.yearTo);
+
+    const mileageOk =
+      (criteria.mileageFrom == null || car.mileage >= criteria.mileageFrom) &&
+      (criteria.mileageTo == null || car.mileage <= criteria.mileageTo);
+
+    const bodyOk =
+      criteria.bodyTypes.length === 0 ||
+      (car.bodyType && criteria.bodyTypes.includes(car.bodyType));
+
+    // Intersection: at least one selected feature must match.
+    const featuresOk =
+      criteria.features.length === 0 ||
+      (car.features &&
+        car.features.some((f) => criteria.features.includes(f)));
+
+    const paymentOk =
+      criteria.paymentType == null ||
+      (car.paymentType && car.paymentType === criteria.paymentType);
+
+    const discountOk = criteria.hasDiscount ? car.hasDiscount === true : true;
+    const vatOk = criteria.vatReturn ? car.vatReturn === true : true;
+    const weeklyOk = criteria.weeklyOffer ? car.weeklyOffer === true : true;
+
+    return (
+      brandOk &&
+      modelOk &&
+      priceOk &&
+      yearOk &&
+      mileageOk &&
+      bodyOk &&
+      featuresOk &&
+      paymentOk &&
+      discountOk &&
+      vatOk &&
+      weeklyOk
+    );
+  };
+
+  const applyFilters = () => {
+    setError(null);
+
+    const priceFrom = parseNumberOrNull(priceFromText);
+    const priceTo = parseNumberOrNull(priceToText);
+    const yearFrom = parseNumberOrNull(yearFromText);
+    const yearTo = parseNumberOrNull(yearToText);
+    const mileageFrom = parseNumberOrNull(mileageFromText);
+    const mileageTo = parseNumberOrNull(mileageToText);
+
+    // Error handling: if user entered non-empty but parsing failed -> show error.
+    if (priceFromText.trim() !== '' && priceFrom == null) {
+      setError('Некорректный ввод цены (От).');
+      return false;
+    }
+    if (priceToText.trim() !== '' && priceTo == null) {
+      setError('Некорректный ввод цены (До).');
+      return false;
+    }
+    if (yearFromText.trim() !== '' && yearFrom == null) {
+      setError('Некорректный ввод года (От).');
+      return false;
+    }
+    if (yearToText.trim() !== '' && yearTo == null) {
+      setError('Некорректный ввод года (До).');
+      return false;
+    }
+    if (mileageFromText.trim() !== '' && mileageFrom == null) {
+      setError('Некорректный ввод пробега (От).');
+      return false;
+    }
+    if (mileageToText.trim() !== '' && mileageTo == null) {
+      setError('Некорректный ввод пробега (До).');
+      return false;
+    }
+
+    if (yearFrom != null && yearFrom < YEAR_MIN) {
+      setError(`Год (От) должен быть не меньше ${YEAR_MIN}.`);
+      return false;
+    }
+    if (yearTo != null && yearTo > YEAR_MAX) {
+      setError(`Год (До) не должен быть больше ${YEAR_MAX}.`);
+      return false;
+    }
+    if (yearFrom != null && yearTo != null && yearFrom > yearTo) {
+      setError('Год (От) не должен быть больше года (До).');
+      return false;
+    }
+
+    if (mileageFrom != null && mileageTo != null && mileageFrom > mileageTo) {
+      setError('Пробег (От) не должен быть больше пробега (До).');
+      return false;
+    }
+
+    const criteria = {
+      brandQuery,
+      modelQuery,
+      paymentType,
+      priceFrom,
+      priceTo,
+      yearFrom,
+      yearTo,
+      mileageFrom,
+      mileageTo,
+      bodyTypes,
+      features,
+      hasDiscount,
+      vatReturn,
+      weeklyOffer,
+    };
+
+    const next = cars.filter((car) => matchesCriteria(car, criteria));
+    setFilteredCars(next);
+    return true;
+  };
+
+  const resetFilters = () => {
+    setError(null);
+    setBrandQuery('');
+    setModelQuery('');
+    setPaymentType(null);
+    setPriceFromText('');
+    setPriceToText('');
+    setYearFromText('');
+    setYearToText('');
+    setMileageFromText('');
+    setMileageToText('');
+    setBodyTypes([]);
+    setFeatures([]);
+    setHasDiscount(false);
+    setVatReturn(false);
+    setWeeklyOffer(false);
+    setFilteredCars(cars);
   };
 
   return (
@@ -92,8 +319,11 @@ const Catalog = ({ navigation }) => {
 
         {/* Список машин */}
         <View style={styles.carsGrid}>
-          {catalogCars.map((car) => (
-            <View key={car.id} style={styles.carCard}>
+          {filteredCars.length === 0 ? (
+            <Text style={styles.emptyStateText}>Ничего не найдено</Text>
+          ) : (
+            filteredCars.map((car) => (
+              <View key={car.id} style={styles.carCard}>
               {/* Карусель фоток (простая прокрутка) */}
               <ScrollView
                 horizontal
@@ -138,7 +368,8 @@ const Catalog = ({ navigation }) => {
 
               <Text style={styles.carAddress}>{car.address}</Text>
             </View>
-          ))}
+            ))
+          )}
         </View>
 
         {/* CTA "Смотреть все" */}
@@ -186,11 +417,15 @@ const Catalog = ({ navigation }) => {
                 <Text style={styles.filterLabel}>Автомобиль</Text>
                 <TextInput
                   placeholder="Марка"
+                  value={brandQuery}
+                  onChangeText={setBrandQuery}
                   style={styles.input}
                   placeholderTextColor="#979797"
                 />
                 <TextInput
                   placeholder="Модель"
+                  value={modelQuery}
+                  onChangeText={setModelQuery}
                   style={styles.input}
                   placeholderTextColor="#979797"
                 />
@@ -202,6 +437,8 @@ const Catalog = ({ navigation }) => {
                 <EntitiesToggle
                   leftLabel="Наличные"
                   rightLabel="В кредит"
+                  value={paymentType}
+                  onChange={setPaymentType}
                 />
               </View>
 
@@ -212,12 +449,16 @@ const Catalog = ({ navigation }) => {
                   <TextInput
                     placeholder="От"
                     keyboardType="numeric"
+                    value={priceFromText}
+                    onChangeText={setPriceFromText}
                     style={[styles.input, styles.inputHalf]}
                     placeholderTextColor="#979797"
                   />
                   <TextInput
                     placeholder="До"
                     keyboardType="numeric"
+                    value={priceToText}
+                    onChangeText={setPriceToText}
                     style={[styles.input, styles.inputHalf]}
                     placeholderTextColor="#979797"
                   />
@@ -232,12 +473,18 @@ const Catalog = ({ navigation }) => {
                   <TextInput
                     placeholder="От 2000"
                     keyboardType="numeric"
+                    value={yearFromText}
+                    onChangeText={(t) =>
+                      setYearFromText(onlyDigits(t).slice(0, 4))
+                    }
                     style={[styles.input, styles.inputHalf]}
                     placeholderTextColor="#979797"
                   />
                   <TextInput
                     placeholder="До 2026"
                     keyboardType="numeric"
+                    value={yearToText}
+                    onChangeText={(t) => setYearToText(onlyDigits(t).slice(0, 4))}
                     style={[styles.input, styles.inputHalf]}
                     placeholderTextColor="#979797"
                   />
@@ -251,14 +498,42 @@ const Catalog = ({ navigation }) => {
                   <TextInput
                     placeholder="От 0"
                     keyboardType="numeric"
+                    value={mileageFromText}
+                    onChangeText={(t) =>
+                      setMileageFromText(onlyDigits(t).slice(0, 7))
+                    }
                     style={[styles.input, styles.inputHalf]}
                     placeholderTextColor="#979797"
                   />
                   <TextInput
                     placeholder="До 400 000"
                     keyboardType="numeric"
+                    value={mileageToText}
+                    onChangeText={(t) => setMileageToText(onlyDigits(t).slice(0, 7))}
                     style={[styles.input, styles.inputHalf]}
                     placeholderTextColor="#979797"
+                  />
+                </View>
+              </View>
+
+              {/* Плашки */}
+              <View style={styles.filterBlock}>
+                <Text style={styles.filterLabel}></Text>
+                <View style={styles.marksRow}>
+                  <MarkButton
+                    label="Со скидками"
+                    selected={hasDiscount}
+                    onToggle={() => setHasDiscount((v) => !v)}
+                  />
+                  <MarkButton
+                    label="Возврат НДС"
+                    selected={vatReturn}
+                    onToggle={() => setVatReturn((v) => !v)}
+                  />
+                  <MarkButton
+                    label="Предложение недели"
+                    selected={weeklyOffer}
+                    onToggle={() => setWeeklyOffer((v) => !v)}
                   />
                 </View>
               </View>
@@ -268,7 +543,12 @@ const Catalog = ({ navigation }) => {
                 <Text style={styles.filterLabel}>Кузов</Text>
                 <View style={styles.marksRow}>
                   {['Седан', 'Кроссовер', 'Хэтчбек'].map((m) => (
-                    <MarkButton key={m} label={m} />
+                    <MarkButton
+                      key={m}
+                      label={m}
+                      selected={bodyTypes.includes(m)}
+                      onToggle={() => toggleInArray(m, setBodyTypes)}
+                    />
                   ))}
                 </View>
               </View>
@@ -279,7 +559,12 @@ const Catalog = ({ navigation }) => {
                 <View style={styles.marksRow}>
                   {['Без ДТП', 'Отличное состояние', 'Маленький пробег', 'На гарантии'].map(
                     (m) => (
-                      <MarkButton key={m} label={m} />
+                      <MarkButton
+                        key={m}
+                        label={m}
+                        selected={features.includes(m)}
+                        onToggle={() => toggleInArray(m, setFeatures)}
+                      />
                     ),
                   )}
                 </View>
@@ -288,17 +573,24 @@ const Catalog = ({ navigation }) => {
 
             {/* Нижние кнопки панели фильтров */}
             <View style={styles.filtersBottom}>
-              <Text style={styles.filtersFound}>Найдено 6158 объявлений</Text>
+              {error ? <Text style={styles.filtersError}>{error}</Text> : null}
+              <Text style={styles.filtersFound}>Найдено {filteredCars.length} объявлений</Text>
               <View style={styles.filtersButtonsRow}>
                 <TouchableOpacity
                   style={[styles.btn, styles.btnDark, styles.filtersBtnHalf]}
-                  onPress={closeFilters}
+                  onPress={() => {
+                    resetFilters();
+                    closeFilters();
+                  }}
                 >
                   <Text style={styles.btnTextPrimary}>Сбросить все</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.btn, styles.btnPrimary, styles.filtersBtnHalf]}
-                  onPress={closeFilters}
+                  onPress={() => {
+                    const ok = applyFilters();
+                    if (ok) closeFilters();
+                  }}
                 >
                   <Text style={styles.btnTextPrimary}>Показать</Text>
                 </TouchableOpacity>
@@ -558,6 +850,18 @@ const styles = StyleSheet.create({
     color: '#979797',
     textAlign: 'center',
     marginBottom: 8,
+  },
+  filtersError: {
+    fontSize: 12,
+    color: '#DB4431',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  emptyStateText: {
+    color: '#979797',
+    fontSize: 14,
+    textAlign: 'center',
+    paddingVertical: 24,
   },
   filtersButtonsRow: {
     flexDirection: 'row',

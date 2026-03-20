@@ -12,6 +12,16 @@ export interface Car {
   driveType: string;
   address: string;
   images: string[];
+
+  // Optional fields for catalog filters.
+  bodyType?: 'Седан' | 'Кроссовер' | 'Хэтчбек';
+  features?: string[];
+  paymentType?: 'cash' | 'credit';
+
+  // Flags for "pлашки" in catalog filters.
+  hasDiscount?: boolean;
+  vatReturn?: boolean;
+  weeklyOffer?: boolean;
 }
 
 export const cars: Car[] = [
@@ -26,6 +36,12 @@ export const cars: Car[] = [
     power: 115,
     driveType: "2WD",
     address: "г. Москва, ул. Волкова",
+    bodyType: "Кроссовер",
+    features: ["Без ДТП", "На гарантии"],
+    paymentType: "credit",
+    hasDiscount: true,
+    vatReturn: false,
+    weeklyOffer: true,
     images: [
       "https://via.placeholder.com/400x180",
       "https://via.placeholder.com/400x180?2",
@@ -43,6 +59,12 @@ export const cars: Car[] = [
     power: 249,
     driveType: "4WD",
     address: "г. Москва, ул. Волкова",
+    bodyType: "Седан",
+    features: ["Отличное состояние", "Маленький пробег"],
+    paymentType: "cash",
+    hasDiscount: false,
+    vatReturn: true,
+    weeklyOffer: false,
     images: [
       "https://via.placeholder.com/400x180?4",
       "https://via.placeholder.com/400x180?5",

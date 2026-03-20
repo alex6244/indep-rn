@@ -55,24 +55,6 @@ export function BurgerMenu({
               key={it.key}
               style={styles.item}
               onPress={() => {
-                // #region agent log
-                fetch("http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    "X-Debug-Session-Id": "7a6ed6",
-                  },
-                  body: JSON.stringify({
-                    sessionId: "7a6ed6",
-                    runId: "route-check",
-                    hypothesisId: "H2",
-                    location: "src/shared/ui/BurgerMenu.tsx:item.onPress",
-                    message: "burger_item_pressed",
-                    data: { key: it.key, href: it.href ?? null, hasOnPress: !!it.onPress },
-                    timestamp: Date.now(),
-                  }),
-                }).catch(() => {});
-                // #endregion
                 onClose();
                 if (it.onPress) return it.onPress();
                 if (it.href) router.push(it.href);

@@ -20,31 +20,9 @@ const items = [
 ];
 
 export const MobileMenu = ({ active = 'home', onPress }) => {
-  return (
-    <View style={styles.container}>
-      {items.map((item) => {
-        const Icon = iconsMap[item.key];
-        const isActive = item.key === active;
-        const color = isActive ? '#DB4431' : '#A0A0A0';
-
-        return (
-          <TouchableOpacity
-            key={item.key}
-            style={styles.item}
-            onPress={() => onPress?.(item.key)}
-          >
-            {Icon && (
-              <View style={styles.iconWrapper}>
-                <Icon width={24} height={24} />
-              </View>
-            )}
-            <Text style={[styles.label, { color }]}>{item.label}</Text>
-          </TouchableOpacity>
-        );
-        
-      })}
-    </View>
-  );
+  // Отключаем legacy нижнюю панель (MobileMenu).
+  // Навигацию оставляем через Expo Router Tabs из `src/app/(tabs)/_layout.tsx`.
+  return null;
 };
 
 const styles = StyleSheet.create({

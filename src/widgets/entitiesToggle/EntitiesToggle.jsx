@@ -5,8 +5,19 @@ export const EntitiesToggle = ({
   leftLabel = 'Хочу продать авто',
   rightLabel = 'Хочу купить авто',
   activeColor = '#080717',
+  value,
+  onChange,
 }) => {
   const [tab, setTab] = useState('right');
+
+  const isControlled = value !== undefined;
+  const activeTab = isControlled
+    ? value === 'cash'
+      ? 'left'
+      : value === 'credit'
+        ? 'right'
+        : null
+    : tab;
 
   const activeBg = activeColor;
   const activeText = '#FFFFFF';
@@ -18,14 +29,22 @@ export const EntitiesToggle = ({
         <TouchableOpacity
           style={[
             styles.button,
-            tab === 'left' && { backgroundColor: activeBg },
+            activeTab === 'left' && { backgroundColor: activeBg },
           ]}
-          onPress={() => setTab('left')}
+          onPress={() => {
+            if (isControlled) {
+              onChange?.('cash');
+              return;
+            }
+            setTab('left');
+          }}
         >
           <Text
             style={[
               styles.text,
-              { color: tab === 'left' ? activeText : inactiveText },
+              {
+                color: activeTab === 'left' ? activeText : inactiveText,
+              },
             ]}
           >
             {leftLabel}
@@ -35,14 +54,22 @@ export const EntitiesToggle = ({
         <TouchableOpacity
           style={[
             styles.button,
-            tab === 'right' && { backgroundColor: activeBg },
+            activeTab === 'right' && { backgroundColor: activeBg },
           ]}
-          onPress={() => setTab('right')}
+          onPress={() => {
+            if (isControlled) {
+              onChange?.('credit');
+              return;
+            }
+            setTab('right');
+          }}
         >
           <Text
             style={[
               styles.text,
-              { color: tab === 'right' ? activeText : inactiveText },
+              {
+                color: activeTab === 'right' ? activeText : inactiveText,
+              },
             ]}
           >
             {rightLabel}
@@ -50,15 +77,15 @@ export const EntitiesToggle = ({
         </TouchableOpacity>
       </View>
 
-      {tab === 'left' && (
+      {activeTab === 'left' && (
         <View style={styles.content}>
-          <Text>Контент для «Хочу продать авто»</Text>
+          <Text>{leftLabel}</Text>
         </View>
       )}
 
-      {tab === 'right' && (
+      {activeTab === 'right' && (
         <View style={styles.content}>
-          <Text>Контент для «Хочу купить авто»</Text>
+          <Text>{rightLabel}</Text>
         </View>
       )}
     </View>

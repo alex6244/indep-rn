@@ -1,7 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function FavoritesTab() {
+  useEffect(() => {
+    // #region agent log
+    fetch("http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "7a6ed6",
+      },
+      body: JSON.stringify({
+        sessionId: "7a6ed6",
+        runId: "route-debug",
+        hypothesisId: "H7_TAB_FAVORITES_MOUNT",
+        location: "src/app/(tabs)/favorites.tsx:FavoritesTab.useEffect",
+        message: "tabs_favorites_component_mounted",
+        data: {},
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+  }, []);
+
   return (
     <View style={styles.screen}>
       <Text style={styles.title}>Избранное</Text>
