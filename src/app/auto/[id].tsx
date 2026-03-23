@@ -1,16 +1,13 @@
-// Твой код + 2 строки для "тихи VSCode"
-import { Link, useLocalSearchParams } from "expo-router"; // 👈 + Link
-import { useNavigation } from "@react-navigation/native";
+import { Link, useLocalSearchParams } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import Auto from "../../screens/Auto";
 
 export default function AutoRoute() {
   const { id } = useLocalSearchParams<{ id?: string }>();
-  const navigation = useNavigation<any>();
 
   return (
     <View style={styles.container}>
-      <Auto navigation={navigation} />
+      <Auto />
       {id ? (
         <Text style={styles.debug}>ID: {id}</Text>
       ) : (

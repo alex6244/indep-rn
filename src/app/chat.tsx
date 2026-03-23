@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-export default function ChatTab() {
+export default function ChatScreen() {
   return (
     <View style={styles.screen}>
       <Text style={styles.title}>Чат</Text>

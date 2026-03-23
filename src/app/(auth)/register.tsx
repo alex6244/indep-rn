@@ -67,7 +67,7 @@ export default function RegisterScreen() {
       } else {
         alert("Пользователь с таким телефоном или почтой уже существует");
       }
-    } catch (error) {
+    } catch {
       alert("Ошибка регистрации");
     } finally {
       setLoading(false);

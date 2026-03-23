@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,6 @@ import {
   TextInput,
 } from 'react-native';
 import { Header } from '../widgets/header/Header';
-import { MobileMenu } from '../widgets/mobileMenu/MobileMenu';
 import { FavoriteButton } from '../features/favorites/ui/FavoriteButton';
 import { RangeSlider } from '../shared/ui/RangeSlider';
 import { EntitiesToggle } from '../widgets/entitiesToggle/EntitiesToggle';
@@ -26,10 +25,9 @@ const YEAR_MAX = new Date().getFullYear();
 
 const Catalog = ({ navigation }) => {
   const { isFavorite, setFavorite } = useFavorites();
-  const [activeMenu, setActiveMenu] = useState('home');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const filtersX = useRef(new Animated.Value(-SCREEN_WIDTH)).current;
-  const [cars, setCars] = useState(catalogCars);
+  const [cars] = useState(catalogCars);
   const [filteredCars, setFilteredCars] = useState(catalogCars);
 
   // Filter criteria (controlled inputs).
@@ -53,27 +51,6 @@ const Catalog = ({ navigation }) => {
 
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    // #region agent log
-    fetch("http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Debug-Session-Id": "7a6ed6",
-      },
-      body: JSON.stringify({
-        sessionId: "7a6ed6",
-        runId: "route-debug",
-        hypothesisId: "H8_LEGACY_CATALOG_SCREEN_MOUNT",
-        location: "src/screens/Catalog.jsx:Catalog.useEffect",
-        message: "legacy_catalog_screen_mounted",
-        data: {},
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
-  }, []);
-
   const openFilters = () => {
     setFiltersOpen(true);
     Animated.timing(filtersX, {
@@ -89,11 +66,6 @@ const Catalog = ({ navigation }) => {
       duration: 300,
       useNativeDriver: true,
     }).start(() => setFiltersOpen(false));
-  };
-
-  const handleBottomMenu = (key) => {
-    setActiveMenu(key);
-    // navigation?.navigate(key); // сюда подвяжешь реальные роуты
   };
 
   const parseNumberOrNull = (text) => {

@@ -1,24 +1,34 @@
 import React from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import type { ImageSourcePropType } from "react-native";
+import { Image } from "expo-image";
 
-const cars = [
+type PickedCar = {
+  id: string;
+  name: string;
+  text: string;
+  /** Bundled asset (Metro) */
+  image: ImageSourcePropType;
+};
+
+const cars: PickedCar[] = [
   {
     id: "1",
     name: "BMW X5",
     text: "Подобрали BMW X5 до 2.9 млн рублей с пробегом до 70 тыс. км у официального дилера.",
-    imageUrl: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=500",
+    image: require("../../assets/reviews/1.webp"),
   },
   {
     id: "2",
     name: "Kia Venga",
     text: "Проверили юридическую чистоту и историю обслуживания перед покупкой.",
-    imageUrl: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=500",
+    image: require("../../assets/reviews/2.webp"),
   },
   {
     id: "3",
     name: "Audi A6",
     text: "Состояние ЛКП и агрегатов соответствует заявленному пробегу.",
-    imageUrl: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=500",
+    image: require("../../assets/reviews/3.webp"),
   },
 ];
 
@@ -29,7 +39,14 @@ export function PickedCarsSection() {
       <View style={styles.stack}>
         {cars.map((car) => (
           <View key={car.id} style={styles.card}>
-            <Image source={{ uri: car.imageUrl }} style={styles.image} />
+            <View style={styles.imageWrap}>
+              <Image
+                source={car.image}
+                style={styles.image}
+                contentFit="cover"
+                transition={150}
+              />
+            </View>
             <View style={styles.body}>
               <Text style={styles.name}>{car.name}</Text>
               <Text style={styles.text}>{car.text}</Text>
@@ -44,41 +61,56 @@ export function PickedCarsSection() {
 const styles = StyleSheet.create({
   section: {
     marginTop: 18,
+    paddingHorizontal: 16,
   },
   title: {
-    fontSize: 30,
+    fontSize: 22,
     fontWeight: "700",
     color: "#1E1E1E",
-    marginBottom: 10,
+    marginBottom: 12,
+    letterSpacing: -0.3,
   },
   stack: {
-    gap: 10,
+    gap: 12,
   },
   card: {
-    borderRadius: 14,
-    backgroundColor: "#F1F1F1",
-    padding: 10,
+    borderRadius: 16,
+    backgroundColor: "#FFFFFF",
+    padding: 12,
     flexDirection: "row",
-    gap: 10,
+    gap: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "#E8E8E8",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
   },
-  image: {
+  imageWrap: {
     width: 120,
     height: 100,
-    borderRadius: 8,
+    borderRadius: 12,
+    overflow: "hidden",
+    backgroundColor: "#EEE",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
   },
   body: {
     flex: 1,
+    justifyContent: "center",
   },
   name: {
     fontSize: 16,
     fontWeight: "700",
     color: "#1E1E1E",
-    marginBottom: 4,
+    marginBottom: 6,
   },
   text: {
-    fontSize: 12,
+    fontSize: 13,
     color: "#666",
-    lineHeight: 16,
+    lineHeight: 18,
   },
 });
-

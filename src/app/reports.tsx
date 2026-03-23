@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, type Href } from "expo-router";
 import { reports } from "../data/reports";
 import { ReportsBreadcrumb } from "../widgets/reports/ReportsBreadcrumb";
 import { ReportsHeader } from "../widgets/reports/ReportsHeader";
@@ -10,7 +10,7 @@ export default function ReportsScreen() {
   const router = useRouter();
 
   const openReportDetails = (id: string) => {
-    router.push({ pathname: "/reports/[id]", params: { id } } as any);
+    router.push(`/reports/${id}` as Href);
   };
 
   return (

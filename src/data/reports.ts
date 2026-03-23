@@ -1,3 +1,11 @@
+// Deep import: avoids Metro interop where `import { Image }` becomes `Image.default` without static `resolveAssetSource`.
+import resolveAssetSource from "react-native/Libraries/Image/resolveAssetSource";
+
+/** Local bundled images (no network) for mocks */
+const PLACEHOLDER_MAIN = resolveAssetSource(require("../assets/logo.png"))!.uri;
+const PLACEHOLDER_CAR_1 = resolveAssetSource(require("../assets/cars1.jpg"))!.uri;
+const PLACEHOLDER_CAR_2 = resolveAssetSource(require("../assets/cars2.jpg"))!.uri;
+
 export type Report = {
   id: string;
   price: string;
@@ -16,7 +24,7 @@ export type Report = {
     summaryText: string;
   };
 
-  ptsData: Array<{ label: string; value: string }>;
+  ptsData: { label: string; value: string }[];
   mileageText: string;
 
   owners: {
@@ -26,20 +34,20 @@ export type Report = {
 
   legalCleanliness: {
     badgeText: string;
-    items: Array<{ text: string; tone: "ok" | "bad" }>;
+    items: { text: string; tone: "ok" | "bad" }[];
   };
 
   commercialUsage: {
     badgeText: string;
-    items: Array<{ text: string; tone: "ok" | "bad" }>;
+    items: { text: string; tone: "ok" | "bad" }[];
   };
 
-  penalties: Array<{
+  penalties: {
     amountText: string;
     dateText: string;
     descriptionText: string;
     paid: boolean;
-  }>;
+  }[];
 
   costEstimation: {
     text: string;
@@ -58,20 +66,20 @@ export const reports: Report[] = [
     title: "Mercedes-Benz GLC AMG 43 AMG II (X254)",
     subtitle: "Active - 1,2 л (115 л.с.) 6MT 2WD - 2025 г.",
     city: "г. Москва",
-    imageUrl: "https://via.placeholder.com/400x180",
+    imageUrl: PLACEHOLDER_MAIN,
     carouselImages: [
-      "https://via.placeholder.com/800x420",
-      "https://via.placeholder.com/200x120?1",
-      "https://via.placeholder.com/200x120?2",
-      "https://via.placeholder.com/200x120?3",
+      PLACEHOLDER_CAR_1,
+      PLACEHOLDER_CAR_2,
+      PLACEHOLDER_MAIN,
+      PLACEHOLDER_CAR_1,
     ],
     photosCountText: "67+ фото",
     defects: {
-      schemeImageUrl: "https://via.placeholder.com/520x260",
+      schemeImageUrl: PLACEHOLDER_CAR_1,
       photoImageUrls: [
-        "https://via.placeholder.com/200x120?scheme1",
-        "https://via.placeholder.com/200x120?scheme2",
-        "https://via.placeholder.com/200x120?scheme3",
+        PLACEHOLDER_CAR_2,
+        PLACEHOLDER_MAIN,
+        PLACEHOLDER_CAR_1,
       ],
       summaryText:
         "Косметические царапины на переднем бампере, без влияния на безопасность.",
@@ -87,14 +95,23 @@ export const reports: Report[] = [
     ],
     mileageText: "200 000 км",
     owners: {
-      jur: { title: "Юридическое лицо", value: "18 апреля 2023 - 8 октября 2025 (2 года 6 месяцев)" },
-      phys: { title: "Физическое лицо", value: "7 октября 2025 - настоящее время (3 месяца)" },
+      jur: {
+        title: "Юридическое лицо",
+        value: "18 апреля 2023 - 8 октября 2025 (2 года 6 месяцев)",
+      },
+      phys: {
+        title: "Физическое лицо",
+        value: "7 октября 2025 - настоящее время (3 месяца)",
+      },
     },
     legalCleanliness: {
       badgeText: "Все в порядке",
       items: [
         { text: "Сведения о нахождении в залоге не обнаружены", tone: "ok" },
-        { text: "Ограничения на регистрационные действия не обнаружены", tone: "ok" },
+        {
+          text: "Ограничения на регистрационные действия не обнаружены",
+          tone: "ok",
+        },
         { text: "Сведения о нахождении в розыске не обнаружены", tone: "ok" },
       ],
     },
@@ -134,21 +151,19 @@ export const reports: Report[] = [
     title: "BMW X5",
     subtitle: "xDrive30d - 3.0 AT 4WD - 2022 г.",
     city: "г. Москва",
-    imageUrl: "https://via.placeholder.com/400x180?2",
+    imageUrl: PLACEHOLDER_CAR_2,
     carouselImages: [
-      "https://via.placeholder.com/800x420?2",
-      "https://via.placeholder.com/200x120?4",
-      "https://via.placeholder.com/200x120?5",
-      "https://via.placeholder.com/200x120?6",
+      PLACEHOLDER_CAR_2,
+      PLACEHOLDER_CAR_1,
+      PLACEHOLDER_MAIN,
+      PLACEHOLDER_CAR_2,
     ],
     photosCountText: "67+ фото",
     defects: {
-      schemeImageUrl: "https://via.placeholder.com/520x260?def2",
-      photoImageUrls: [
-        "https://via.placeholder.com/200x120?def2a",
-        "https://via.placeholder.com/200x120?def2b",
-      ],
-      summaryText: "Сколы и потертости лакокрасочного покрытия без критических повреждений.",
+      schemeImageUrl: PLACEHOLDER_CAR_2,
+      photoImageUrls: [PLACEHOLDER_CAR_1, PLACEHOLDER_MAIN],
+      summaryText:
+        "Сколы и потертости лакокрасочного покрытия без критических повреждений.",
     },
     ptsData: [
       { label: "VIN", value: "WBAX************" },
@@ -162,13 +177,19 @@ export const reports: Report[] = [
     mileageText: "80 000 км",
     owners: {
       jur: { title: "Юридическое лицо", value: "— (нет данных)" },
-      phys: { title: "Физическое лицо", value: "12 марта 2022 - настоящее время (1 год 3 месяца)" },
+      phys: {
+        title: "Физическое лицо",
+        value: "12 марта 2022 - настоящее время (1 год 3 месяца)",
+      },
     },
     legalCleanliness: {
       badgeText: "Все в порядке",
       items: [
         { text: "Сведения о нахождении в залоге не обнаружены", tone: "ok" },
-        { text: "Ограничения на регистрационные действия не обнаружены", tone: "ok" },
+        {
+          text: "Ограничения на регистрационные действия не обнаружены",
+          tone: "ok",
+        },
         { text: "Сведения о нахождении в розыске не обнаружены", tone: "ok" },
       ],
     },
@@ -200,4 +221,3 @@ export const reports: Report[] = [
 export function getReportById(id: string): Report | undefined {
   return reports.find((r) => r.id === id);
 }
-

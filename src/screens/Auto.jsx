@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Header } from "../widgets/header/Header";
-import { MobileMenu } from "../widgets/mobileMenu/MobileMenu";
 import { FavoriteButton } from "../features/favorites/ui/FavoriteButton";
 import { RangeSlider } from "../shared/ui/RangeSlider";
 import { EntitiesToggle } from "../widgets/entitiesToggle/EntitiesToggle";
@@ -20,13 +19,7 @@ const THUMBS = [
   "https://via.placeholder.com/200x120?3",
 ];
 
-const Auto = ({ navigation }) => {
-  const [activeMenu, setActiveMenu] = useState("home");
-
-  const handleBottomMenu = (key) => {
-    setActiveMenu(key);
-    // navigation?.navigate(key); // сюда привяжешь реальные роуты
-  };
+const Auto = () => {
 
   return (
     <View style={styles.root}>
@@ -213,7 +206,6 @@ const Auto = ({ navigation }) => {
         </Card>
       </ScrollView>
 
-      <MobileMenu active={activeMenu} onPress={handleBottomMenu} />
     </View>
   );
 };

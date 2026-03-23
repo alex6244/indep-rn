@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React from "react";
 import {
   Image,
   ScrollView,
@@ -8,15 +8,7 @@ import {
   View,
 } from "react-native";
 import { Header } from "../widgets/header/Header";
-import { MobileMenu } from "../widgets/mobileMenu/MobileMenu";
-
 const ProfileScreen = () => {
-  const [activeMenu, setActiveMenu] = useState("profile");
-
-  const handleMenuPress = (key) => {
-    setActiveMenu(key);
-  };
-
   const navigateTo = (screen) => {
     console.log(`Navigate to ${screen}`);
     // navigation.navigate(screen);
@@ -96,7 +88,6 @@ const ProfileScreen = () => {
         </View>
       </ScrollView>
 
-      <MobileMenu active={activeMenu} onPress={handleMenuPress} />
     </View>
   );
 };

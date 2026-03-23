@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -8,8 +8,6 @@ import {
   View,
 } from "react-native";
 import { Header } from "../widgets/header/Header";
-import { MobileMenu } from "../widgets/mobileMenu/MobileMenu";
-
 const RadioChip = ({ label }) => (
   <View style={styles.radioChip}>
     <View style={styles.radioCircle} />
@@ -18,12 +16,6 @@ const RadioChip = ({ label }) => (
 );
 
 const NewCar = () => {
-  const [activeMenu, setActiveMenu] = useState("home");
-
-  const handleMenuPress = (key) => {
-    setActiveMenu(key);
-  };
-
   return (
     <View style={styles.root}>
       <Header title="Создать объявление" />
@@ -252,7 +244,6 @@ const NewCar = () => {
         </TouchableOpacity>
       </ScrollView>
 
-      <MobileMenu active={activeMenu} onPress={handleMenuPress} />
     </View>
   );
 };

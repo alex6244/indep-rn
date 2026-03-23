@@ -1,4 +1,3 @@
-// src/app/_layout.tsx ← ДОБАВЬ AuthProvider ВЕРХОМ!
 import { Stack } from "expo-router";
 import { AuthProvider } from "../contexts/AuthContext";
 import { FavoritesProvider } from "../contexts/FavoritesContext";

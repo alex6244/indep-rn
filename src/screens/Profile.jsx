@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
 import {
-  Dimensions,
   Image,
   ScrollView,
   StyleSheet,
@@ -10,36 +8,9 @@ import {
 } from "react-native";
 import ImageCarousel from '../../components/image-carousel';
 import { Header } from "../widgets/header/Header";
-import { MobileMenu } from "../widgets/mobileMenu/MobileMenu";
 import MicroBanner from "../assets/profile/microbanner.svg";
 
-const { width } = Dimensions.get("window");
-
 const Profile = () => {
-  const [activeMenu, setActiveMenu] = useState("profile");
-
-  useEffect(() => {
-    // #region agent log
-    fetch("http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Debug-Session-Id": "7a6ed6",
-      },
-      body: JSON.stringify({
-        sessionId: "7a6ed6",
-        runId: "route-debug",
-        hypothesisId: "H2_LEGACY_PROFILE_COMPONENT_MOUNT",
-        location: "src/screens/Profile.jsx:Profile.useEffect",
-        message: "legacy_profile_component_mounted",
-        data: { activeMenu },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
-    // Active menu is just for context; the mount is the key.
-  }, []);
-
   const stats = [
     { label: "Опубликовано объявлений", value: "120", icon: "reports.svg" },
     { label: "Ваш баланс", value: "2 000 ₽", icon: "wallet.svg" },
@@ -219,7 +190,6 @@ const Profile = () => {
             style={styles.fabIcon}
           />
         </TouchableOpacity>
-        <MobileMenu active={activeMenu} onPress={setActiveMenu} />
       </View>
     </View>
   );

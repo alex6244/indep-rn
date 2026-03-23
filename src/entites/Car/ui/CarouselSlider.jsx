@@ -1,14 +1,11 @@
-import React, { useRef, useState } from 'react';
-import { View, Image, Text } from 'react-native';
+import React, { useRef } from 'react';
+import { View, Image, Text, Dimensions } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import { styles } from './CarouselSlider.styles';
-import { Dimensions } from 'react-native';
 
 export const CarouselSlider = ({ cars }) => {
   const carouselRef = useRef();
-  const [activeIndex, setActiveIndex] = useState(0);
   const { width: screenWidth } = Dimensions.get('window');
-
 
   const renderCar = ({ item }) => (
     <View style={styles.slide}>
@@ -28,7 +25,6 @@ export const CarouselSlider = ({ cars }) => {
         loop={true}
         autoplay={true}
         autoplayInterval={5000}
-        onSnapToItem={(index) => setActiveIndex(index)}
       />
     </View>
   );
