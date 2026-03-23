@@ -53,52 +53,51 @@
 >
   <Tabs.Screen name="index" options={{ title: "Главная" }} />
   <Tabs.Screen name="catalog" options={{ title: "Каталог" }} />
-  <Tabs.Screen name="chat" options={{ title: "Чат" }} />
   <Tabs.Screen name="calls" options={{ title: "Звонки" }} />
   <Tabs.Screen name="profile" options={{ title: "Профиль" }} />
+  <Tabs.Screen
+    name="favorites"
+    options={{
+      title: "Избранное",
+      tabBarButton: () => null,
+    }}
+  />
 </Tabs>
 ```
 
-- Все основные пользовательские разделы (главная, каталог, профиль и т.д.) находятся внутри `(tabs)`, поэтому нижняя панель всегда видна при навигации между ними.
+- Нижняя панель видна при навигации между вкладками внутри `(tabs)`. `favorites` скрыт в таббаре, но доступен по роуту.
 
 ### Авторизация (src/app/(auth)/**)
 
 - `src/app/(auth)/index.tsx` — **логин**:
-  - Поля: `login` (email/phone), `password`.
-  - Вызывает `useAuth().login(login, password)` с mock-пользователями.
-  - При успехе — `router.back()`.
+  - Поля: `name`, `phone`, `email`.
+  - Вызывает `useAuth().login(name, phone, email)` с mock-пользователями.
+  - При успехе — `router.replace("/(tabs)/profile")`.
   - Ссылка на `/(auth)/register`.
 - `src/app/(auth)/register.tsx` — **регистрация**:
-  - Поля: имя, телефон, тип пользователя (`client` / `picker`), чекбокс согласия.
-  - Вызывает `useAuth().register(name, phone, role)`; сохраняет пользователя и делает `router.back()`.
+  - Поля: имя, телефон, email, тип пользователя (`client` / `picker`), чекбокс согласия.
+  - Вызывает `useAuth().register(name, phone, email, role)` и редиректит на `/(tabs)/profile`.
 
 ## Ключевые экраны
 
 ### Главная (src/app/index.tsx)
 
-- Адаптация главной страницы сайта под RN:
-  - Хедер с логотипом, поиском и кнопками навигации (`Каталог`, `Подбор авто`, `Профиль`).
-  - Hero-баннер.
-  - Блок преимуществ.
-  - Шаги “Хочу продать авто”.
-  - Блок “Лучшие предложения” с карточкой авто.
-- Навигация:
-  - `router.push("/(tabs)/catalog")` — переход к вкладке каталога.
-  - Кнопка “Профиль”:
-    - гость → `/(auth)`,
-    - авторизованный → `/(tabs)/profile`.
-  - “Купить отчёт” использует `useProtected` для проверки авторизации.
+- При cold start `src/app/index.tsx` делает редирект на домашнюю вкладку: `/(tabs)`.
+
+### Лендинг (src/app/landing.tsx)
+
+- Старый полноэкранный маркетинговый контент вынесен в `src/app/landing.tsx`.
+- Маршрут: `/landing`.
 
 ### Каталог
 
-- `src/app/catalog.tsx` — обёртка над существующим экраном каталога (можно рефакторить/типизировать отдельно).
 - `src/app/(tabs)/catalog.tsx` — табовый роут:
 
 ```tsx
-import Catalog from "../catalog";
+import Catalog from "../../screens/Catalog";
 
 export default function CatalogTab() {
-  return <Catalog />;
+  return <Catalog navigation={undefined} />;
 }
 ```
 
@@ -128,17 +127,17 @@ export default function CatalogTab() {
 ### AuthContext (src/contexts/AuthContext.tsx)
 
 - Интерфейс `User`:
-  - `id`, `login`, `password`, `role`, `name`, `phone`.
+  - `id`, `login`, `role`, `name`, `phone`, `email?`.
 - Методы:
-  - `login(login, password)`:
-    - сверяет с `mockUsers.client` / `mockUsers.picker`,
+  - `login(name, phone, email)`:
+    - нормализует телефон (`normalizePhone`),
+    - сверяет `phone + email` с `mockUsers.client` / `mockUsers.picker`,
     - сохраняет юзера в AsyncStorage,
     - устанавливает `user`.
-  - `register(name, phone, role)`:
-    - создаёт нового пользователя,
-    - логин = телефон, пароль для демо = `"123"`,
-    - роль задаётся явно (`"client"` / `"picker"`),
-    - сохраняет в AsyncStorage.
+  - `register(name, phone, email, role)`:
+    - создаёт нового пользователя (пароль для демо фиксируется),
+    - сохраняет пользователя в AsyncStorage,
+    - устанавливает `user`.
   - `logout()` — очищает AsyncStorage и сбрасывает `user`.
 - `loading` — флаг инициализации (чтения пользователя из AsyncStorage при старте).
 

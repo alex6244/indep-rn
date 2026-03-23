@@ -1,24 +1,25 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Image,
   Animated,
   Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
   TextInput,
-} from 'react-native';
-import { Header } from '../widgets/header/Header';
-import { FavoriteButton } from '../features/favorites/ui/FavoriteButton';
-import { RangeSlider } from '../shared/ui/RangeSlider';
-import { EntitiesToggle } from '../widgets/entitiesToggle/EntitiesToggle';
-import { MarkButton } from '../features/filters/ui/MarkButton';
-import { useFavorites } from '../contexts/FavoritesContext';
-import { cars as catalogCars } from '../data/cars';
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useFavorites } from "../contexts/FavoritesContext";
+import { cars as catalogCars } from "../data/cars";
+import { FavoriteButton } from "../features/favorites/ui/FavoriteButton";
+import { MarkButton } from "../features/filters/ui/MarkButton";
+import { RangeSlider } from "../shared/ui/RangeSlider";
+import { EntitiesToggle } from "../widgets/entitiesToggle/EntitiesToggle";
+import { Header } from "../widgets/header/Header";
+import BackCaret from "../assets/icons/backCaret.svg";
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const YEAR_MIN = 1880;
 const YEAR_MAX = new Date().getFullYear();
@@ -31,16 +32,16 @@ const Catalog = ({ navigation }) => {
   const [filteredCars, setFilteredCars] = useState(catalogCars);
 
   // Filter criteria (controlled inputs).
-  const [brandQuery, setBrandQuery] = useState('');
-  const [modelQuery, setModelQuery] = useState('');
+  const [brandQuery, setBrandQuery] = useState("");
+  const [modelQuery, setModelQuery] = useState("");
   const [paymentType, setPaymentType] = useState(null); // 'cash' | 'credit' | null
 
-  const [priceFromText, setPriceFromText] = useState('');
-  const [priceToText, setPriceToText] = useState('');
-  const [yearFromText, setYearFromText] = useState('');
-  const [yearToText, setYearToText] = useState('');
-  const [mileageFromText, setMileageFromText] = useState('');
-  const [mileageToText, setMileageToText] = useState('');
+  const [priceFromText, setPriceFromText] = useState("");
+  const [priceToText, setPriceToText] = useState("");
+  const [yearFromText, setYearFromText] = useState("");
+  const [yearToText, setYearToText] = useState("");
+  const [mileageFromText, setMileageFromText] = useState("");
+  const [mileageToText, setMileageToText] = useState("");
 
   const [bodyTypes, setBodyTypes] = useState([]); // string[]
   const [features, setFeatures] = useState([]); // string[]
@@ -69,16 +70,16 @@ const Catalog = ({ navigation }) => {
   };
 
   const parseNumberOrNull = (text) => {
-    const raw = text ?? '';
+    const raw = text ?? "";
     const trimmed = String(raw).trim();
     if (!trimmed) return null;
 
     // Remove spaces and any non-number chars (currency, ₽, etc).
     // Allow "." or "," as decimal separator.
     const cleaned = trimmed
-      .replace(/\s+/g, '')
-      .replace(/[^\d.,-]/g, '')
-      .replace(',', '.');
+      .replace(/\s+/g, "")
+      .replace(/[^\d.,-]/g, "")
+      .replace(",", ".");
 
     if (!cleaned) return null;
 
@@ -86,7 +87,7 @@ const Catalog = ({ navigation }) => {
     return Number.isFinite(n) ? n : null;
   };
 
-  const onlyDigits = (s) => String(s ?? '').replace(/\D/g, '');
+  const onlyDigits = (s) => String(s ?? "").replace(/\D/g, "");
 
   const toggleInArray = (value, setArr) => {
     setArr((prev) => {
@@ -96,7 +97,7 @@ const Catalog = ({ navigation }) => {
   };
 
   const matchesCriteria = (car, criteria) => {
-    const norm = (s) => (s ?? '').toString().trim().toLowerCase();
+    const norm = (s) => (s ?? "").toString().trim().toLowerCase();
 
     const brandNeed = norm(criteria.brandQuery);
     const modelNeed = norm(criteria.modelQuery);
@@ -127,8 +128,7 @@ const Catalog = ({ navigation }) => {
     // Intersection: at least one selected feature must match.
     const featuresOk =
       criteria.features.length === 0 ||
-      (car.features &&
-        car.features.some((f) => criteria.features.includes(f)));
+      (car.features && car.features.some((f) => criteria.features.includes(f)));
 
     const paymentOk =
       criteria.paymentType == null ||
@@ -164,28 +164,28 @@ const Catalog = ({ navigation }) => {
     const mileageTo = parseNumberOrNull(mileageToText);
 
     // Error handling: if user entered non-empty but parsing failed -> show error.
-    if (priceFromText.trim() !== '' && priceFrom == null) {
-      setError('Некорректный ввод цены (От).');
+    if (priceFromText.trim() !== "" && priceFrom == null) {
+      setError("Некорректный ввод цены (От).");
       return false;
     }
-    if (priceToText.trim() !== '' && priceTo == null) {
-      setError('Некорректный ввод цены (До).');
+    if (priceToText.trim() !== "" && priceTo == null) {
+      setError("Некорректный ввод цены (До).");
       return false;
     }
-    if (yearFromText.trim() !== '' && yearFrom == null) {
-      setError('Некорректный ввод года (От).');
+    if (yearFromText.trim() !== "" && yearFrom == null) {
+      setError("Некорректный ввод года (От).");
       return false;
     }
-    if (yearToText.trim() !== '' && yearTo == null) {
-      setError('Некорректный ввод года (До).');
+    if (yearToText.trim() !== "" && yearTo == null) {
+      setError("Некорректный ввод года (До).");
       return false;
     }
-    if (mileageFromText.trim() !== '' && mileageFrom == null) {
-      setError('Некорректный ввод пробега (От).');
+    if (mileageFromText.trim() !== "" && mileageFrom == null) {
+      setError("Некорректный ввод пробега (От).");
       return false;
     }
-    if (mileageToText.trim() !== '' && mileageTo == null) {
-      setError('Некорректный ввод пробега (До).');
+    if (mileageToText.trim() !== "" && mileageTo == null) {
+      setError("Некорректный ввод пробега (До).");
       return false;
     }
 
@@ -198,12 +198,12 @@ const Catalog = ({ navigation }) => {
       return false;
     }
     if (yearFrom != null && yearTo != null && yearFrom > yearTo) {
-      setError('Год (От) не должен быть больше года (До).');
+      setError("Год (От) не должен быть больше года (До).");
       return false;
     }
 
     if (mileageFrom != null && mileageTo != null && mileageFrom > mileageTo) {
-      setError('Пробег (От) не должен быть больше пробега (До).');
+      setError("Пробег (От) не должен быть больше пробега (До).");
       return false;
     }
 
@@ -231,15 +231,15 @@ const Catalog = ({ navigation }) => {
 
   const resetFilters = () => {
     setError(null);
-    setBrandQuery('');
-    setModelQuery('');
+    setBrandQuery("");
+    setModelQuery("");
     setPaymentType(null);
-    setPriceFromText('');
-    setPriceToText('');
-    setYearFromText('');
-    setYearToText('');
-    setMileageFromText('');
-    setMileageToText('');
+    setPriceFromText("");
+    setPriceToText("");
+    setYearFromText("");
+    setYearToText("");
+    setMileageFromText("");
+    setMileageToText("");
     setBodyTypes([]);
     setFeatures([]);
     setHasDiscount(false);
@@ -255,15 +255,12 @@ const Catalog = ({ navigation }) => {
       <ScrollView contentContainerStyle={styles.content}>
         {/* Хлебные крошки */}
         <View style={styles.breadcrumbs}>
-          <Text style={styles.breadcrumbText}>Главная {'>'} Каталог</Text>
+          <Text style={styles.breadcrumbText}>Главная {">"} Каталог</Text>
         </View>
 
         {/* Полоса фильтров над списком */}
         <View style={styles.filtersBar}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          >
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {/* сортировка */}
             <View style={styles.sortButton}>
               <Text style={styles.sortIcon}>⇅</Text>
@@ -278,7 +275,7 @@ const Catalog = ({ navigation }) => {
             </TouchableOpacity>
 
             {/* активные фильтры – просто чипы */}
-            {['от 2023 до 2025 г.', 'Со скидками', 'Седан'].map((label) => (
+            {["от 2023 до 2025 г.", "Со скидками", "Седан"].map((label) => (
               <View key={label} style={styles.filterChip}>
                 <Text style={styles.filterChipText}>{label}</Text>
               </View>
@@ -296,56 +293,57 @@ const Catalog = ({ navigation }) => {
           ) : (
             filteredCars.map((car) => (
               <View key={car.id} style={styles.carCard}>
-              {/* Карусель фоток (простая прокрутка) */}
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={styles.carImagesScroll}
-              >
-                {car.images.map((uri, idx) => (
-                  <Image
-                    key={idx}
-                    source={{ uri }}
-                    style={styles.carImage}
-                  />
-                ))}
-              </ScrollView>
+                {/* Карусель фоток (простая прокрутка) */}
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  style={styles.carImagesScroll}
+                >
+                  {car.images.map((uri, idx) => (
+                    <Image key={idx} source={{ uri }} style={styles.carImage} />
+                  ))}
+                </ScrollView>
 
-              {/* Инфо по машине */}
-              <View style={styles.carInfo}>
-                <View style={styles.carPriceRow}>
-                  <Text style={styles.carPrice}>
-                    {new Intl.NumberFormat("ru-RU").format(car.price)} ₽
-                  </Text>
-                  <Text style={styles.carMileage}>
-                    {new Intl.NumberFormat("ru-RU").format(car.mileage)} км
+                {/* Инфо по машине */}
+                <View style={styles.carInfo}>
+                  <View style={styles.carPriceRow}>
+                    <Text style={styles.carPrice}>
+                      {new Intl.NumberFormat("ru-RU").format(car.price)} ₽
+                    </Text>
+                    <Text style={styles.carMileage}>
+                      {new Intl.NumberFormat("ru-RU").format(car.mileage)} км
+                    </Text>
+                  </View>
+                  <Text style={styles.carTitle}>{car.title}</Text>
+                  <Text style={styles.carSub}>
+                    {car.engine} л ({car.power} л.с.) {car.driveType} -{" "}
+                    {car.year} г.
                   </Text>
                 </View>
-                <Text style={styles.carTitle}>{car.title}</Text>
-                <Text style={styles.carSub}>
-                  {car.engine} л ({car.power} л.с.) {car.driveType} - {car.year} г.
-                </Text>
-              </View>
 
-              {/* Кнопки */}
-              <View style={styles.carButtonsRow}>
-                <TouchableOpacity style={[styles.btn, styles.btnPrimary, { flex: 1 }]}>
-                  <Text style={styles.btnTextPrimary}>Купить отчет</Text>
-                </TouchableOpacity>
-                <FavoriteButton
-                  initialActive={isFavorite(String(car.id))}
-                  onChange={(next) => setFavorite(String(car.id), next)}
-                />
-              </View>
+                {/* Кнопки */}
+                <View style={styles.carButtonsRow}>
+                  <TouchableOpacity
+                    style={[styles.btn, styles.btnPrimary, { flex: 1 }]}
+                  >
+                    <Text style={styles.btnTextPrimary}>Купить отчет</Text>
+                  </TouchableOpacity>
+                  <FavoriteButton
+                    initialActive={isFavorite(String(car.id))}
+                    onChange={(next) => setFavorite(String(car.id), next)}
+                  />
+                </View>
 
-              <Text style={styles.carAddress}>{car.address}</Text>
-            </View>
+                <Text style={styles.carAddress}>{car.address}</Text>
+              </View>
             ))
           )}
         </View>
 
         {/* CTA "Смотреть все" */}
-        <TouchableOpacity style={[styles.btn, styles.btnPrimary, styles.seeAllBtn]}>
+        <TouchableOpacity
+          style={[styles.btn, styles.btnPrimary, styles.seeAllBtn]}
+        >
           <Text style={styles.btnTextPrimary}>Смотреть все</Text>
         </TouchableOpacity>
 
@@ -382,6 +380,10 @@ const Catalog = ({ navigation }) => {
               contentContainerStyle={styles.filtersContent}
               showsVerticalScrollIndicator={false}
             >
+              <TouchableOpacity onPress={closeFilters} style={styles.backBtn}>
+                <BackCaret width={18} height={18} />
+                    <Text style={styles.backBtnText}>Назад</Text>
+              </TouchableOpacity>
               <Text style={styles.filtersTitle}>Фильтры</Text>
 
               {/* Марка / Модель – вместо селектов просто инпуты */}
@@ -456,7 +458,9 @@ const Catalog = ({ navigation }) => {
                     placeholder="До 2026"
                     keyboardType="numeric"
                     value={yearToText}
-                    onChangeText={(t) => setYearToText(onlyDigits(t).slice(0, 4))}
+                    onChangeText={(t) =>
+                      setYearToText(onlyDigits(t).slice(0, 4))
+                    }
                     style={[styles.input, styles.inputHalf]}
                     placeholderTextColor="#979797"
                   />
@@ -481,7 +485,9 @@ const Catalog = ({ navigation }) => {
                     placeholder="До 400 000"
                     keyboardType="numeric"
                     value={mileageToText}
-                    onChangeText={(t) => setMileageToText(onlyDigits(t).slice(0, 7))}
+                    onChangeText={(t) =>
+                      setMileageToText(onlyDigits(t).slice(0, 7))
+                    }
                     style={[styles.input, styles.inputHalf]}
                     placeholderTextColor="#979797"
                   />
@@ -514,7 +520,7 @@ const Catalog = ({ navigation }) => {
               <View style={styles.filterBlock}>
                 <Text style={styles.filterLabel}>Кузов</Text>
                 <View style={styles.marksRow}>
-                  {['Седан', 'Кроссовер', 'Хэтчбек'].map((m) => (
+                  {["Седан", "Кроссовер", "Хэтчбек"].map((m) => (
                     <MarkButton
                       key={m}
                       label={m}
@@ -529,16 +535,19 @@ const Catalog = ({ navigation }) => {
               <View style={styles.filterBlock}>
                 <Text style={styles.filterLabel}>Особенности</Text>
                 <View style={styles.marksRow}>
-                  {['Без ДТП', 'Отличное состояние', 'Маленький пробег', 'На гарантии'].map(
-                    (m) => (
-                      <MarkButton
-                        key={m}
-                        label={m}
-                        selected={features.includes(m)}
-                        onToggle={() => toggleInArray(m, setFeatures)}
-                      />
-                    ),
-                  )}
+                  {[
+                    "Без ДТП",
+                    "Отличное состояние",
+                    "Маленький пробег",
+                    "На гарантии",
+                  ].map((m) => (
+                    <MarkButton
+                      key={m}
+                      label={m}
+                      selected={features.includes(m)}
+                      onToggle={() => toggleInArray(m, setFeatures)}
+                    />
+                  ))}
                 </View>
               </View>
             </ScrollView>
@@ -546,7 +555,9 @@ const Catalog = ({ navigation }) => {
             {/* Нижние кнопки панели фильтров */}
             <View style={styles.filtersBottom}>
               {error ? <Text style={styles.filtersError}>{error}</Text> : null}
-              <Text style={styles.filtersFound}>Найдено {filteredCars.length} объявлений</Text>
+              <Text style={styles.filtersFound}>
+                Найдено {filteredCars.length} объявлений
+              </Text>
               <View style={styles.filtersButtonsRow}>
                 <TouchableOpacity
                   style={[styles.btn, styles.btnDark, styles.filtersBtnHalf]}
@@ -578,7 +589,7 @@ const Catalog = ({ navigation }) => {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   content: {
     padding: 16,
@@ -589,7 +600,7 @@ const styles = StyleSheet.create({
   },
   breadcrumbText: {
     fontSize: 12,
-    color: '#979797',
+    color: "#979797",
   },
   filtersBar: {
     marginBottom: 16,
@@ -598,48 +609,48 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: '#F7F7F7',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#F7F7F7",
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 8,
   },
   sortIcon: {
     fontSize: 18,
-    color: '#080717',
+    color: "#080717",
   },
   allFiltersButton: {
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 12,
-    backgroundColor: '#DB4431',
+    backgroundColor: "#DB4431",
     marginRight: 8,
   },
   allFiltersText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   filterChip: {
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 12,
-    backgroundColor: '#F7F7F7',
+    backgroundColor: "#F7F7F7",
     marginRight: 8,
   },
   filterChipText: {
     fontSize: 12,
-    color: '#807E7E',
+    color: "#807E7E",
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 12,
   },
   carsGrid: {
     gap: 12,
   },
   carCard: {
-    backgroundColor: '#F7F7F7',
+    backgroundColor: "#F7F7F7",
     borderRadius: 16,
     padding: 12,
   },
@@ -656,18 +667,18 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   carPriceRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 4,
   },
   carPrice: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   carMileage: {
     fontSize: 10,
-    color: '#FFFFFF',
-    backgroundColor: '#DB4431',
+    color: "#FFFFFF",
+    backgroundColor: "#DB4431",
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 999,
@@ -678,11 +689,11 @@ const styles = StyleSheet.create({
   },
   carSub: {
     fontSize: 12,
-    color: '#808080',
+    color: "#808080",
   },
   carButtonsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
     marginTop: 8,
   },
@@ -694,19 +705,19 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   btnPrimary: {
-    backgroundColor: '#DB4431',
+    backgroundColor: "#DB4431",
   },
   btnDark: {
-    backgroundColor: '#080717',
+    backgroundColor: "#080717",
   },
   btnTextPrimary: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   seeAllBtn: {
     marginTop: 16,
@@ -715,33 +726,33 @@ const styles = StyleSheet.create({
     marginTop: 24,
     paddingVertical: 16,
     borderTopWidth: 1,
-    borderTopColor: '#DEDEDE',
+    borderTopColor: "#DEDEDE",
   },
   footerLogo: {
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: "700",
     marginBottom: 8,
   },
   footerLinks: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 12,
     marginBottom: 8,
   },
   footerLink: {
     fontSize: 12,
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
   },
   footerCopyright: {
     fontSize: 10,
-    color: '#888',
+    color: "#888",
   },
   bottomArea: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: '#F7F7F7',
+    backgroundColor: "#F7F7F7",
   },
   bottomCtaWrapper: {
     paddingHorizontal: 16,
@@ -749,34 +760,46 @@ const styles = StyleSheet.create({
   },
   filtersOverlay: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
   },
   filtersBackdrop: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.35)',
+    backgroundColor: "rgba(0,0,0,0.35)",
   },
   filtersPanel: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderTopRightRadius: 12,
     borderBottomRightRadius: 12,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   filtersContent: {
     padding: 16,
     paddingBottom: 120,
   },
+  backBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+    marginBottom: 12,
+  },
+  backBtnText: {
+    color: "#DB4431",
+    fontSize: 14,
+    fontWeight: "500",
+    marginLeft: 8,
+  },
   filtersTitle: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 16,
   },
   filterBlock: {
@@ -784,59 +807,59 @@ const styles = StyleSheet.create({
   },
   filterLabel: {
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: "500",
     marginBottom: 8,
   },
   input: {
     borderRadius: 8,
-    backgroundColor: '#F8F8F8',
+    backgroundColor: "#F8F8F8",
     paddingHorizontal: 12,
     paddingVertical: 8,
     fontSize: 14,
-    color: '#000',
+    color: "#000",
     marginBottom: 8,
   },
   inputsRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
   },
   inputHalf: {
     flex: 1,
   },
   marksRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
   },
   filtersBottom: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     bottom: 0,
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: '#EEEEEE',
-    backgroundColor: '#FFFFFF',
+    borderTopColor: "#EEEEEE",
+    backgroundColor: "#FFFFFF",
   },
   filtersFound: {
     fontSize: 12,
-    color: '#979797',
-    textAlign: 'center',
+    color: "#979797",
+    textAlign: "center",
     marginBottom: 8,
   },
   filtersError: {
     fontSize: 12,
-    color: '#DB4431',
-    textAlign: 'center',
+    color: "#DB4431",
+    textAlign: "center",
     marginBottom: 8,
   },
   emptyStateText: {
-    color: '#979797',
+    color: "#979797",
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
     paddingVertical: 24,
   },
   filtersButtonsRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
   },
   filtersBtnHalf: {
@@ -845,4 +868,3 @@ const styles = StyleSheet.create({
 });
 
 export default Catalog;
-

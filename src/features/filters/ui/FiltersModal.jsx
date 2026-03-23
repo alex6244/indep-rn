@@ -1,14 +1,13 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from "react";
 import {
-  View,
-  Text,
-  TouchableOpacity,
   Animated,
   Dimensions,
   StyleSheet,
-} from 'react-native';
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 export const FiltersModal = ({ children }) => {
   const [open, setOpen] = useState(false);
@@ -31,17 +30,17 @@ export const FiltersModal = ({ children }) => {
     }).start(() => setOpen(false));
   };
 
-  const bgColor = open ? '#F3E4E2' : '#DB4431';
-  const textColor = open ? '#DB4431' : '#FFFFFF';
+  const bgColor = open ? "#F3E4E2" : "#DB4431";
+  const textColor = open ? "#DB4431" : "#FFFFFF";
 
   return (
     <>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={[styles.button, { backgroundColor: bgColor }]}
         onPress={open ? closeFilters : openFilters}
       >
         <Text style={[styles.buttonText, { color: textColor }]}>Фильтры</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {open && (
         <View style={styles.overlay} pointerEvents="box-none">
@@ -53,7 +52,7 @@ export const FiltersModal = ({ children }) => {
           <Animated.View
             style={[styles.panel, { transform: [{ translateX }] }]}
           >
-            {typeof children === 'function' ? children(closeFilters) : children}
+            {typeof children === "function" ? children(closeFilters) : children}
           </Animated.View>
         </View>
       )}
@@ -73,16 +72,15 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.35)',
+    backgroundColor: "rgba(0,0,0,0.35)",
   },
   panel: {
-    width: '80%',
-    backgroundColor: '#fff',
+    width: "80%",
+    backgroundColor: "#fff",
     padding: 16,
   },
 });
-

@@ -5,7 +5,7 @@ export default function CallsTab() {
   return (
     <View style={styles.screen}>
       <Text style={styles.title}>Звонки</Text>
-      <Text style={styles.text}>Экран находится в разработке.</Text>
+      <Text style={styles.text}>Экран скоро будет, отвечаю.</Text>
     </View>
   );
 }

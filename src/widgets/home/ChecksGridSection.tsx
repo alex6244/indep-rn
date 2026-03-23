@@ -1,5 +1,5 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useMemo, useState } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import C1 from "../../assets/mainpage/parameters/tech/1.svg";
 import C2 from "../../assets/mainpage/parameters/tech/2.svg";
 import C3 from "../../assets/mainpage/parameters/tech/3.svg";
@@ -17,17 +17,45 @@ const items = [
 ];
 
 export function ChecksGridSection() {
+  const [gridWidth, setGridWidth] = useState(0);
+
+  const columns = 3;
+  const gap = 10;
+  const totalRows = Math.ceil(items.length / columns);
+  const cardWidth = useMemo(() => {
+    if (!gridWidth) return undefined;
+    return (gridWidth - gap * (columns - 1)) / columns;
+  }, [gridWidth]);
+
   return (
     <View style={styles.section}>
       <Text style={styles.title}>Что проверяют подборщики</Text>
       <Text style={styles.subtitle}>Техническая сторона</Text>
-      <View style={styles.grid}>
-        {items.map((item) => (
-          <View key={item.key} style={styles.card}>
-            <item.Icon width={48} height={48} />
-            <Text style={styles.cardText}>{item.title}</Text>
-          </View>
-        ))}
+      <View style={styles.grid} onLayout={(e) => setGridWidth(e.nativeEvent.layout.width)}>
+        <FlatList
+          data={items}
+          keyExtractor={(item) => item.key}
+          numColumns={columns}
+          scrollEnabled={false}
+          columnWrapperStyle={styles.columnWrapper}
+          renderItem={({ item, index }) => {
+            const rowIndex = Math.floor(index / columns);
+            const isLastRow = rowIndex === totalRows - 1;
+
+            return (
+              <View
+                style={[
+                  styles.card,
+                  cardWidth ? { width: cardWidth } : null,
+                  isLastRow ? null : { marginBottom: gap },
+                ]}
+              >
+                <item.Icon width={48} height={48} />
+                <Text style={styles.cardText}>{item.title}</Text>
+              </View>
+            );
+          }}
+        />
       </View>
     </View>
   );
@@ -49,12 +77,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
+    width: "100%",
+  },
+  columnWrapper: {
+    justifyContent: "space-between",
   },
   card: {
-    width: "31.5%",
     borderRadius: 12,
     backgroundColor: "#F1F1F1",
     padding: 10,

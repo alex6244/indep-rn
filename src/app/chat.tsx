@@ -5,7 +5,7 @@ export default function ChatScreen() {
   return (
     <View style={styles.screen}>
       <Text style={styles.title}>Чат</Text>
-      <Text style={styles.text}>Экран находится в разработке.</Text>
+      <Text style={styles.text}>Экран скоро будет, отвечаю.</Text>
     </View>
   );
 }

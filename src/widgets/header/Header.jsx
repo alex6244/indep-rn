@@ -7,11 +7,7 @@ import {
   StyleSheet,
   SafeAreaView,
 } from 'react-native';
-import { FiltersModal } from '../../features/filters/ui/FiltersModal';
 import { FavoriteButton } from '../../features/favorites/ui/FavoriteButton';
-import { MarkButton } from '../../features/filters/ui/MarkButton';
-import { RangeSlider } from '../../shared/ui/RangeSlider';
-import { EntitiesToggle } from '../entitiesToggle/EntitiesToggle';
 
 export const Header = ({ title = 'Каталог' }) => {
   const [burgerOpen, setBurgerOpen] = useState(false);
@@ -29,27 +25,6 @@ export const Header = ({ title = 'Каталог' }) => {
           <Text style={styles.title}>{title}</Text>
 
           <View style={styles.right}>
-            <FiltersModal>
-              {(close) => (
-                <>
-                  <View style={styles.marksRow}>
-                    {['BMW', 'Audi', 'Mercedes'].map((m) => (
-                      <MarkButton key={m} label={m} />
-                    ))}
-                  </View>
-
-                  <RangeSlider
-                    label="Цена"
-                    min={0}
-                    max={50000}
-                    initial={20000}
-                  />
-
-                  <EntitiesToggle />
-                </>
-              )}
-            </FiltersModal>
-
             <FavoriteButton />
           </View>
         </View>

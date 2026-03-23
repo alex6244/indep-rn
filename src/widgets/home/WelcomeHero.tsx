@@ -1,14 +1,28 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import HeroIllustration from "../../assets/banners/1.svg";
 import Logo from "../../assets/logo.svg";
-
 type Props = {
   onOpenBurger: () => void;
   onOpenCatalog: () => void;
 };
 
 export function WelcomeHero({ onOpenBurger, onOpenCatalog }: Props) {
+  const { width: screenWidth } = useWindowDimensions();
+
+  // Adaptive typography/sizing to avoid truncation/overlap on narrow screens.
+  const heroTitleFontSize = screenWidth < 360 ? 24 : 28;
+  const heroTitleLineHeight = Math.round(heroTitleFontSize * 1.15);
+  const heroArtHeight = Math.round(
+    Math.min(280, Math.max(210, screenWidth * 0.72)),
+  );
+
   return (
     <View>
       <View style={styles.topBar}>
@@ -25,10 +39,19 @@ export function WelcomeHero({ onOpenBurger, onOpenCatalog }: Props) {
       </View>
 
       <View style={styles.heroCard}>
-        <Text style={styles.heroTitle}>Честный подбор — спокойная покупка</Text>
-        <View style={styles.heroArt}>
+        <Text
+          style={[
+            styles.heroTitle,
+            { fontSize: heroTitleFontSize, lineHeight: heroTitleLineHeight },
+          ]}
+        >
+          Честный подбор — спокойная покупка
+        </Text>
+
+        <View style={[styles.heroArt, { height: heroArtHeight }]}>
           <HeroIllustration width="100%" height="100%" />
         </View>
+
         <TouchableOpacity style={styles.heroButton} onPress={onOpenCatalog}>
           <Text style={styles.heroButtonText}>Перейти в каталог авто</Text>
         </TouchableOpacity>
@@ -61,42 +84,30 @@ const styles = StyleSheet.create({
   heroCard: {
     backgroundColor: "#F1F1F1",
     borderRadius: 16,
-    // чтобы позиционирование top/left работало предсказуемо
-    position: "relative",
-    // высота карточки должна вместить title + banner + button
+    paddingHorizontal: 20,
+    paddingTop: 24,
+    paddingBottom: 20,
     minHeight: 380,
+    justifyContent: "flex-start",
   },
   heroTitle: {
-    width: 290,
-    height: 64,
-    marginTop: 40, // top 40
-    marginLeft: 23, // left 23
-    fontSize: 28,
-    lineHeight: 32,
     fontWeight: "500",
-    // если шрифт подключен, используем его:
-    fontFamily: "Moderustic",
     color: "#1E1E1E",
+    maxWidth: "92%", // чтобы текст не упирался в края
   },
   heroArt: {
-    width: 279,
-    height: 277,
-    marginTop: 108, // top 108
-    marginBottom: 28, // bottom 28
     alignSelf: "center",
+    width: "100%",
+    marginTop: 8,
   },
   heroButton: {
-    width: 285,
-    height: 38,
-    marginTop: 324, // top 324
-    marginLeft: 25, // left 25
     borderRadius: 12,
-    paddingLeft: 10,
-    paddingRight: 10,
-    // paddingVertical по макету не задан, чтобы попасть в fixed height
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#DB4431",
+    width: "100%",
+    marginTop: "auto",
+    paddingVertical: 10,
   },
   heroButtonText: {
     fontSize: 16,
