@@ -13,6 +13,7 @@ import { BestOffersSection } from "../../widgets/home/BestOffersSection";
 import { ChecksGridSection } from "../../widgets/home/ChecksGridSection";
 import { HowItWorksSection } from "../../widgets/home/HowItWorksSection";
 import { PickedCarsSection } from "../../widgets/home/PickedCarsSection";
+import { PickerOnboardingSection } from "../../widgets/home/PickerOnboardingSection";
 import { PricingSection } from "../../widgets/home/PricingSection";
 import { RoleToggle } from "../../widgets/home/RoleToggle";
 import { WelcomeHero } from "../../widgets/home/WelcomeHero";
@@ -26,17 +27,27 @@ export default function HomeTab() {
   return (
     <SafeAreaView style={styles.screen}>
       <ScrollView contentContainerStyle={styles.content}>
-        <WelcomeHero
-          onOpenBurger={() => setMenuOpen(true)}
-          onOpenCatalog={() => router.push("/(tabs)/catalog" as Href)}
-        />
-        <BenefitsRow />
-        <RoleToggle value={roleView} onChange={setRoleView} />
-        <HowItWorksSection />
-        <ChecksGridSection />
-        <PickedCarsSection />
-        <PricingSection />
-        <BestOffersSection />
+        {roleView === "picker" ? (
+          <PickerOnboardingSection
+            onOpenBurger={() => setMenuOpen(true)}
+            onPressRegister={() => router.push("/(auth)/register" as Href)}
+            toggle={<RoleToggle value={roleView} onChange={setRoleView} />}
+          />
+        ) : (
+          <>
+            <WelcomeHero
+              onOpenBurger={() => setMenuOpen(true)}
+              onOpenCatalog={() => router.push("/(tabs)/catalog" as Href)}
+            />
+            <BenefitsRow />
+            <RoleToggle value={roleView} onChange={setRoleView} />
+            <HowItWorksSection />
+            <ChecksGridSection />
+            <PickedCarsSection />
+            <PricingSection />
+            <BestOffersSection />
+          </>
+        )}
       </ScrollView>
 
       <BurgerMenu

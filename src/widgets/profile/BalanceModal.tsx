@@ -1,3 +1,4 @@
+import { BlurView } from "expo-blur";
 import React from "react";
 import {
   Modal,
@@ -7,7 +8,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { BlurView } from "expo-blur";
 
 type Props = {
   visible: boolean;
@@ -33,7 +33,11 @@ export function BalanceModal({
       onRequestClose={onClose}
     >
       <View style={styles.root}>
-        <BlurView intensity={26} tint="light" style={StyleSheet.absoluteFillObject} />
+        <BlurView
+          intensity={26}
+          tint="light"
+          style={StyleSheet.absoluteFillObject}
+        />
         <Pressable style={styles.backdrop} onPress={onClose} />
 
         <View style={styles.sheetWrap} pointerEvents="box-none">
@@ -55,14 +59,21 @@ export function BalanceModal({
                 style={[styles.actionBtn, styles.keepBtn]}
                 onPress={onKeepInWallet ?? onClose}
               >
-                <Text style={styles.keepText}>Оставить в кошельке</Text>
+                <Text
+                  style={styles.keepText}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                >
+                  Оставить в кошельке
+                </Text>
               </TouchableOpacity>
-
               <TouchableOpacity
                 style={[styles.actionBtn, styles.withdrawBtn]}
                 onPress={onWithdraw ?? onClose}
               >
-                <Text style={styles.withdrawText}>Вывести</Text>
+                <Text style={styles.withdrawText} numberOfLines={1}>
+                  Вывести
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -132,19 +143,23 @@ const styles = StyleSheet.create({
     marginTop: 22,
     flexDirection: "row",
     gap: 12,
+    alignItems: "center",
+    justifyContent: "center",
   },
   actionBtn: {
-    flex: 1,
-    minHeight: 56,
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 10,
+    paddingHorizontal: 8,
   },
   keepBtn: {
+    width: 191,
+    height: 43,
     backgroundColor: "#777777",
   },
   withdrawBtn: {
+    width: 114,
+    height: 43,
     backgroundColor: "#E14332",
   },
   keepText: {

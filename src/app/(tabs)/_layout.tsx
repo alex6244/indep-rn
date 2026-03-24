@@ -2,9 +2,9 @@ import { Tabs } from "expo-router";
 import React from "react";
 import { Platform, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Homepin from "../../assets/icons/mobilemenu/homepin.svg";
-import Catalogpin from "../../assets/icons/mobilemenu/catalogpin.svg";
 import Callpin from "../../assets/icons/mobilemenu/callpin.svg";
+import Catalogpin from "../../assets/icons/mobilemenu/catalogpin.svg";
+import Homepin from "../../assets/icons/mobilemenu/homepin.svg";
 import Profilepin from "../../assets/icons/mobilemenu/profilepin.svg";
 
 const ACTIVE = "#DB4431";
@@ -35,15 +35,20 @@ export default function TabLayout() {
           borderTopColor: "#E5E5EA",
           height: 78 + bottomInset,
           paddingBottom: bottomInset,
-          paddingTop: 10,
+          paddingTop: 6, // было 10
         },
         tabBarLabelStyle: {
           fontSize: 10,
           fontWeight: "500",
-          marginBottom: 2,
+          lineHeight: 12,
+          textAlign: "center",
+          marginBottom: 0, // было 2
         },
         tabBarItemStyle: {
-          paddingTop: 4,
+          width: 62,
+          height: 62,
+          alignItems: "center",
+          justifyContent: "center",
         },
       }}
     >
