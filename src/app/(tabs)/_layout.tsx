@@ -16,7 +16,7 @@ type SvgTabIconProps = {
 };
 
 function SvgTabIcon({ Icon, color }: SvgTabIconProps) {
-  return <Icon width={24} height={24} color={color} />;
+  return <Icon width={27} height={27} color={color} />;
 }
 
 export default function TabLayout() {
@@ -35,17 +35,22 @@ export default function TabLayout() {
           borderTopColor: "#E5E5EA",
           height: 78 + bottomInset,
           paddingBottom: bottomInset,
-          paddingTop: 6, // было 10
+          paddingTop: 6,
+        },
+        tabBarIconStyle: {
+          marginTop: 2,
+          marginBottom: 1,
         },
         tabBarLabelStyle: {
           fontSize: 10,
           fontWeight: "500",
           lineHeight: 12,
           textAlign: "center",
-          marginBottom: 0, // было 2
+          marginBottom: 1,
         },
         tabBarItemStyle: {
-          width: 62,
+          flex: 1,
+          minWidth: 0,
           height: 62,
           alignItems: "center",
           justifyContent: "center",
@@ -92,7 +97,7 @@ export default function TabLayout() {
         name="favorites"
         options={{
           title: "Избранное",
-          tabBarButton: () => null,
+          href: null,
         }}
       />
     </Tabs>

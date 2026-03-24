@@ -27,21 +27,29 @@ export default function HomeTab() {
   return (
     <SafeAreaView style={styles.screen}>
       <ScrollView contentContainerStyle={styles.content}>
+        <WelcomeHero
+          onOpenBurger={() => setMenuOpen(true)}
+          onOpenCatalog={() => router.push("/(tabs)/catalog" as Href)}
+        />
         {roleView === "picker" ? (
-          <PickerOnboardingSection
-            onOpenBurger={() => setMenuOpen(true)}
-            onPressRegister={() => router.push("/(auth)/register" as Href)}
-            toggle={<RoleToggle value={roleView} onChange={setRoleView} />}
-          />
+          <>
+            <RoleToggle value={roleView} onChange={setRoleView} />
+            <PickerOnboardingSection
+              onPressRegister={() => router.push("/(auth)/register" as Href)}
+            />
+          </>
         ) : (
           <>
-            <WelcomeHero
-              onOpenBurger={() => setMenuOpen(true)}
-              onOpenCatalog={() => router.push("/(tabs)/catalog" as Href)}
-            />
             <BenefitsRow />
             <RoleToggle value={roleView} onChange={setRoleView} />
             <HowItWorksSection />
+            <TouchableOpacity
+              style={styles.catalogCtaButton}
+              onPress={() => router.push("/(tabs)/catalog" as Href)}
+              accessibilityRole="button"
+            >
+              <Text style={styles.catalogCtaText}>Перейти в каталог авто</Text>
+            </TouchableOpacity>
             <ChecksGridSection />
             <PickedCarsSection />
             <PricingSection />
@@ -105,8 +113,22 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingTop: 10,
     paddingBottom: 30,
+  },
+  catalogCtaButton: {
+    marginTop: 16,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#DB4431",
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+  },
+  catalogCtaText: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#FFFFFF",
   },
   footerRow: {
     flexDirection: "row",
