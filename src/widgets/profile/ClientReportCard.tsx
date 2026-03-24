@@ -1,5 +1,6 @@
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import type { ImageSourcePropType } from "react-native";
 
 type ClientReport = {
   id: string;
@@ -7,7 +8,7 @@ type ClientReport = {
   title: string;
   subtitle: string;
   city: string;
-  imageUrl: string;
+  imageUrl: ImageSourcePropType;
 };
 
 type Props = {
@@ -19,7 +20,7 @@ type Props = {
 export function ClientReportCard({ report, onOpen, onDownloadPdf }: Props) {
   return (
     <View style={styles.card}>
-      <Image source={{ uri: report.imageUrl }} style={styles.image} />
+      <Image source={report.imageUrl} style={styles.image} />
       <View style={styles.body}>
         <Text style={styles.price}>{report.price}</Text>
         <Text style={styles.subtitle} numberOfLines={2}>

@@ -1,14 +1,15 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ReportsIcon from "../../assets/profile/reports.svg";
 import WalletIcon from "../../assets/profile/wallet.svg";
 
 type Props = {
   published: number;
   balanceLabel: string;
+  onPressBalance?: () => void;
 };
 
-export function ProfileStats({ published, balanceLabel }: Props) {
+export function ProfileStats({ published, balanceLabel, onPressBalance }: Props) {
   return (
     <View style={styles.statsRow}>
       <View style={styles.statCard}>
@@ -16,11 +17,16 @@ export function ProfileStats({ published, balanceLabel }: Props) {
         <Text style={styles.statValue}>{published}</Text>
         <ReportsIcon width={64} height={64} style={styles.statIcon} />
       </View>
-      <View style={styles.statCard}>
+      <TouchableOpacity
+        style={styles.statCard}
+        onPress={onPressBalance}
+        activeOpacity={0.86}
+        accessibilityRole="button"
+      >
         <Text style={styles.statLabel}>Ваш баланс</Text>
         <Text style={styles.statValue}>{balanceLabel}</Text>
         <WalletIcon width={64} height={64} style={styles.statIcon} />
-      </View>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -37,6 +43,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 18,
     padding: 14,
+    paddingRight: 58,
     shadowColor: "#000",
     shadowOpacity: 0.04,
     shadowRadius: 10,
@@ -57,5 +64,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 8,
     bottom: 8,
+    opacity: 0.95,
   },
 });

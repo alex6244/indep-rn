@@ -6,6 +6,7 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import HeroIllustration from "../../assets/banners/1.svg";
 import Logo from "../../assets/logo.svg";
 type Props = {
@@ -15,6 +16,7 @@ type Props = {
 
 export function WelcomeHero({ onOpenBurger, onOpenCatalog }: Props) {
   const { width: screenWidth } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
 
   // Adaptive typography/sizing to avoid truncation/overlap on narrow screens.
   const heroTitleFontSize = screenWidth < 360 ? 24 : 28;
@@ -25,7 +27,7 @@ export function WelcomeHero({ onOpenBurger, onOpenCatalog }: Props) {
 
   return (
     <View>
-      <View style={styles.topBar}>
+      <View style={[styles.topBar, { paddingTop: insets.top + 6 }]}>
         <Logo width={82} height={22} />
         <TouchableOpacity
           style={styles.burgerButton}

@@ -5,30 +5,29 @@ import {
   TouchableOpacity,
   Modal,
   StyleSheet,
-  SafeAreaView,
 } from 'react-native';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FavoriteButton } from '../../features/favorites/ui/FavoriteButton';
 
 export const Header = ({ title = 'Каталог' }) => {
   const [burgerOpen, setBurgerOpen] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const closeBurger = () => setBurgerOpen(false);
 
   return (
     <>
-      <SafeAreaView>
-        <View style={styles.container}>
-          <TouchableOpacity onPress={() => setBurgerOpen(true)}>
-            <Text style={styles.burger}>≡</Text>
-          </TouchableOpacity>
+      <View style={[styles.container, { paddingTop: insets.top + 6 }]}>
+        <TouchableOpacity onPress={() => setBurgerOpen(true)}>
+          <Text style={styles.burger}>≡</Text>
+        </TouchableOpacity>
 
-          <Text style={styles.title}>{title}</Text>
+        <Text style={styles.title}>{title}</Text>
 
-          <View style={styles.right}>
-            <FavoriteButton />
-          </View>
+        <View style={styles.right}>
+          <FavoriteButton />
         </View>
-      </SafeAreaView>
+      </View>
 
       <Modal
         transparent
@@ -57,7 +56,7 @@ export const Header = ({ title = 'Каталог' }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 56,
+    minHeight: 56,
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',

@@ -1,10 +1,9 @@
-// Deep import: avoids Metro interop where `import { Image }` becomes `Image.default` without static `resolveAssetSource`.
-import resolveAssetSource from "react-native/Libraries/Image/resolveAssetSource";
+import type { ImageSourcePropType } from "react-native";
 
 /** Local bundled images (no network) for mocks */
-const PLACEHOLDER_MAIN = resolveAssetSource(require("../assets/logo.png"))!.uri;
-const PLACEHOLDER_CAR_1 = resolveAssetSource(require("../assets/cars1.jpg"))!.uri;
-const PLACEHOLDER_CAR_2 = resolveAssetSource(require("../assets/cars2.jpg"))!.uri;
+const PLACEHOLDER_MAIN = require("../assets/logo.png");
+const PLACEHOLDER_CAR_1 = require("../assets/cars1.jpg");
+const PLACEHOLDER_CAR_2 = require("../assets/cars2.jpg");
 
 export type Report = {
   id: string;
@@ -12,15 +11,15 @@ export type Report = {
   title: string;
   subtitle: string;
   city: string;
-  imageUrl: string;
+  imageUrl: ImageSourcePropType;
 
   // Detailed report fields (for /reports/[id]).
-  carouselImages: string[];
+  carouselImages: ImageSourcePropType[];
   photosCountText?: string;
 
   defects: {
-    schemeImageUrl: string;
-    photoImageUrls: string[];
+    schemeImageUrl: ImageSourcePropType;
+    photoImageUrls: ImageSourcePropType[];
     summaryText: string;
   };
 

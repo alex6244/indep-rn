@@ -33,10 +33,7 @@ export function DefectsCard({ report }: Props) {
 
       <View style={styles.body}>
         {mode === "scheme" ? (
-          <Image
-            source={{ uri: defects.schemeImageUrl }}
-            style={styles.schemeImage}
-          />
+          <Image source={defects.schemeImageUrl} style={styles.schemeImage} />
         ) : (
           <ScrollView
             horizontal
@@ -44,11 +41,7 @@ export function DefectsCard({ report }: Props) {
             style={styles.photosScroll}
           >
             {defects.photoImageUrls.map((src, idx) => (
-              <Image
-                key={`${src}-${idx}`}
-                source={{ uri: src }}
-                style={styles.photoThumb}
-              />
+              <Image key={idx} source={src} style={styles.photoThumb} />
             ))}
           </ScrollView>
         )}

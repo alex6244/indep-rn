@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Logo from "../../assets/logo.svg";
 
 type Props = {
@@ -19,8 +20,10 @@ export function ClientProfileHeader({
   onOpenBurger,
   onOpenEdit,
 }: Props) {
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
       <View style={styles.headerLeft}>
         <Logo width={82} height={22} />
         {showTitle && <Text style={styles.title}>{title}</Text>}
@@ -61,7 +64,6 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: "#FFFFFF",
     paddingHorizontal: 16,
-    paddingTop: 12,
     paddingBottom: 12,
     flexDirection: "row",
     alignItems: "center",

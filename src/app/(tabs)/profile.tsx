@@ -4,6 +4,7 @@ import React, { useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  type ImageSourcePropType,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -11,6 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Image } from "expo-image";
 import AboutIcon from "../../assets/icons/burger/about.svg";
 import CooperationIcon from "../../assets/icons/burger/ads.svg";
 import FavIcon from "../../assets/icons/burger/favourites.svg";
@@ -18,6 +20,8 @@ import LogoutIcon from "../../assets/icons/burger/logout.svg";
 import SelectionIcon from "../../assets/icons/burger/selection.svg";
 import { useAuth } from "../../contexts/AuthContext";
 import { PickerProfileHeader } from "../../widgets/profile/PickerProfileHeader";
+import { PickerUserCard } from "../../widgets/profile/PickerUserCard";
+import { BalanceModal } from "../../widgets/profile/BalanceModal";
 import { ProfileStats } from "../../widgets/profile/ProfileStats";
 import { ReportsBanner } from "../../widgets/profile/ReportsBanner";
 import { ClientEmptyState } from "../../widgets/profile/ClientEmptyState";
@@ -115,6 +119,7 @@ function PickerProfile({
 }) {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [balanceModalOpen, setBalanceModalOpen] = useState(false);
   const editFlow = useProfileEditFlow(onLogout, router);
 
   const stats = useMemo(
@@ -132,17 +137,21 @@ function PickerProfile({
   return (
     <SafeAreaView style={styles.pickerScreen}>
       <PickerProfileHeader
-        initials={initials}
-        name={name}
-        phone={phone}
-        onOpenEdit={() => editFlow.setEditMenuOpen(true)}
         onOpenBurger={() => setMenuOpen(true)}
       />
 
       <ScrollView contentContainerStyle={styles.pickerContent}>
+        <PickerUserCard
+          initials={initials}
+          name={name}
+          phone={phone}
+          onOpenEdit={() => editFlow.setEditMenuOpen(true)}
+        />
+
         <ProfileStats
           published={stats.published}
           balanceLabel={formatRub(stats.balance)}
+          onPressBalance={() => setBalanceModalOpen(true)}
         />
 
         <ReportsBanner
@@ -161,7 +170,16 @@ function PickerProfile({
 
         <Text style={styles.sectionTitle}>Мои отчёты</Text>
         <View style={styles.reportCard}>
-          <View style={styles.reportImagePlaceholder} />
+          <View style={styles.reportImageWrap}>
+            <Image
+              source={require("../../assets/cars1.jpg")}
+              style={styles.reportImagePlaceholder}
+              contentFit="cover"
+            />
+            <View style={styles.mileageBadge}>
+              <Text style={styles.mileageBadgeText}>200 000 км</Text>
+            </View>
+          </View>
           <View style={styles.reportBody}>
             <Text style={styles.reportPrice}>67 000 000 ₽</Text>
             <Text style={styles.reportSub} numberOfLines={2}>
@@ -243,6 +261,17 @@ function PickerProfile({
         onConfirmDelete={editFlow.handleDeleteConfirm}
         onCloseDeleted={editFlow.handleCloseDeleted}
       />
+
+      <BalanceModal
+        visible={balanceModalOpen}
+        balanceText={formatRub(stats.balance)}
+        onClose={() => setBalanceModalOpen(false)}
+        onKeepInWallet={() => setBalanceModalOpen(false)}
+        onWithdraw={() => {
+          setBalanceModalOpen(false);
+          Alert.alert("Вывод", "Функция вывода будет доступна позже.");
+        }}
+      />
     </SafeAreaView>
   );
 }
@@ -265,7 +294,7 @@ function ClientProfile({ name, phone, onLogout }: ClientProfileProps) {
       title: string;
       subtitle: string;
       city: string;
-      imageUrl: string;
+      imageUrl: ImageSourcePropType;
     }[]
   >(() => [], []);
   const hasReports = reports.length > 0;
@@ -526,6 +555,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F7F7F7",
   },
   pickerContent: {
+    paddingTop: 10,
     paddingBottom: 120,
   },
   quickRow: {
@@ -568,9 +598,27 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     overflow: "hidden",
   },
+  reportImageWrap: {
+    position: "relative",
+    backgroundColor: "#EEE",
+  },
   reportImagePlaceholder: {
     height: 160,
-    backgroundColor: "#EEE",
+    width: "100%",
+  },
+  mileageBadge: {
+    position: "absolute",
+    right: 10,
+    bottom: 10,
+    backgroundColor: "#DB4431",
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  mileageBadgeText: {
+    color: "#FFFFFF",
+    fontSize: 10,
+    fontWeight: "600",
   },
   reportBody: {
     padding: 14,

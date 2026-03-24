@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import FavouriteBanner from "../../assets/profile/favouritebanner.svg";
 import BestIcon from "../../assets/profile/best.svg";
+import FavouriteBanner from "../../assets/profile/favouritebanner.svg";
 
 type Props = {
   onOpenFavorites: () => void;
@@ -17,7 +17,11 @@ export function ProfileQuickActions({
   return (
     <View style={styles.quickRow}>
       <TouchableOpacity style={styles.card} onPress={onOpenFavorites}>
-        <FavouriteBanner style={StyleSheet.absoluteFillObject} width="100%" height="100%" />
+        <FavouriteBanner
+          style={StyleSheet.absoluteFillObject}
+          width="100%"
+          height="100%"
+        />
         <View style={styles.content}>
           <Text style={styles.text}>Избранное</Text>
         </View>
@@ -26,7 +30,9 @@ export function ProfileQuickActions({
       <TouchableOpacity style={styles.card} onPress={onOpenBest}>
         <View style={styles.content}>
           <Text style={styles.text}>Лучшие предложения на авто</Text>
-          {variant === "client" ? <BestIcon width={58} height={24} /> : null}
+          <View style={styles.bestWrap}>
+            <BestIcon width={67} height={55} />
+          </View>
         </View>
       </TouchableOpacity>
     </View>
@@ -39,6 +45,11 @@ const styles = StyleSheet.create({
     gap: 12,
     marginTop: 12,
     marginHorizontal: 16,
+  },
+  bestWrap: {
+    position: "absolute",
+    top: 1,
+    left: 2,
   },
   card: {
     flex: 1,
@@ -64,4 +75,3 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
-

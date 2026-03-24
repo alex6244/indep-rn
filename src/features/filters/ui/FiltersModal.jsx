@@ -13,15 +13,6 @@ export const FiltersModal = ({ children }) => {
   const [open, setOpen] = useState(false);
   const translateX = useRef(new Animated.Value(-SCREEN_WIDTH)).current;
 
-  const openFilters = () => {
-    setOpen(true);
-    Animated.timing(translateX, {
-      toValue: 0,
-      duration: 250,
-      useNativeDriver: true,
-    }).start();
-  };
-
   const closeFilters = () => {
     Animated.timing(translateX, {
       toValue: -SCREEN_WIDTH,
@@ -30,18 +21,8 @@ export const FiltersModal = ({ children }) => {
     }).start(() => setOpen(false));
   };
 
-  const bgColor = open ? "#F3E4E2" : "#DB4431";
-  const textColor = open ? "#DB4431" : "#FFFFFF";
-
   return (
     <>
-      {/* <TouchableOpacity
-        style={[styles.button, { backgroundColor: bgColor }]}
-        onPress={open ? closeFilters : openFilters}
-      >
-        <Text style={[styles.buttonText, { color: textColor }]}>Фильтры</Text>
-      </TouchableOpacity> */}
-
       {open && (
         <View style={styles.overlay} pointerEvents="box-none">
           <TouchableOpacity
@@ -61,15 +42,6 @@ export const FiltersModal = ({ children }) => {
 };
 
 const styles = StyleSheet.create({
-  button: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 8,
-    marginLeft: 8,
-  },
-  buttonText: {
-    fontSize: 14,
-  },
   overlay: {
     ...StyleSheet.absoluteFillObject,
     flexDirection: "row",

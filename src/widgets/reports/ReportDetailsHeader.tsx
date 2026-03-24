@@ -5,7 +5,7 @@ import type { Report } from "../../data/reports";
 export function ReportDetailsHeader({ report }: { report: Report }) {
   return (
     <View style={styles.wrap}>
-      <Image source={{ uri: report.imageUrl }} style={styles.image} />
+      <Image source={report.imageUrl} style={styles.image} />
       <View style={styles.body}>
         <Text style={styles.price}>{report.price}</Text>
         <Text style={styles.title}>{report.title}</Text>

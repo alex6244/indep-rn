@@ -13,13 +13,13 @@ export function ReportCarousel({ report }: Props) {
 
   return (
     <View style={styles.card}>
-      <Image source={{ uri: mainImage }} style={styles.mainImage} />
+      <Image source={mainImage} style={styles.mainImage} />
 
       <View style={styles.thumbsRow}>
         {thumbImages.map((src, idx) => (
           <Image
-            key={`${src}-${idx}`}
-            source={{ uri: src }}
+            key={idx}
+            source={src}
             style={styles.thumb}
           />
         ))}
