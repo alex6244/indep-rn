@@ -1,7 +1,7 @@
 import { BurgerMenu } from "@/src/shared/ui/BurgerMenu";
 import { useRouter, type Href } from "expo-router";
 import React, { useState } from "react";
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import AboutIcon from "../../assets/icons/burger/about.svg";
 import CooperationIcon from "../../assets/icons/burger/ads.svg";
 import FavIcon from "../../assets/icons/burger/favourites.svg";
@@ -25,7 +25,7 @@ export default function HomeTab() {
   const [roleView, setRoleView] = useState<"picker" | "client">("client");
 
   return (
-    <SafeAreaView style={styles.screen}>
+    <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.content}>
         <WelcomeHero
           onOpenBurger={() => setMenuOpen(true)}
@@ -102,7 +102,7 @@ export default function HomeTab() {
           </TouchableOpacity>
         }
       />
-    </SafeAreaView>
+    </View>
   );
 }
 

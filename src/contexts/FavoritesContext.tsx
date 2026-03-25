@@ -38,7 +38,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
           }
         }
       } catch (e) {
-        console.log("Favorites load error", e);
+        if (__DEV__) console.log("Favorites load error", e);
       } finally {
         setLoading(false);
       }

@@ -57,7 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         await AsyncStorage.setItem(USERS_KEY, JSON.stringify(initial));
       }
     } catch (error) {
-      console.log("Auth check error:", error);
+      if (__DEV__) console.log("Auth check error:", error);
     } finally {
       setLoading(false);
     }
@@ -69,9 +69,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setTimeout(() => {
           const normalizedPhone = normalizePhone(phone);
           if (!normalizedPhone) {
-            console.log("[auth] login: invalid phone after normalize", {
-              raw: phone,
-            });
+            if (__DEV__) {
+              console.log("[auth] login: invalid phone after normalize", {
+                raw: phone,
+              });
+            }
             resolve(false);
             return;
           }
@@ -83,17 +85,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           if (found) {
             AsyncStorage.setItem(USER_KEY, JSON.stringify(found));
             setUser(found);
-            console.log("[auth] login success", {
-              phone: normalizedPhone,
-              email,
-            });
+            if (__DEV__) {
+              console.log("[auth] login success", {
+                phone: normalizedPhone,
+                email,
+              });
+            }
             resolve(true);
           } else {
-            console.log("[auth] login fail: not found", {
-              phone: normalizedPhone,
-              email,
-              usersCount: users.length,
-            });
+            if (__DEV__) {
+              console.log("[auth] login fail: not found", {
+                phone: normalizedPhone,
+                email,
+                usersCount: users.length,
+              });
+            }
             resolve(false);
           }
         }, 500);
@@ -113,9 +119,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setTimeout(() => {
           const normalizedPhone = normalizePhone(phone);
           if (!normalizedPhone) {
-            console.log("[auth] register: invalid phone after normalize", {
-              raw: phone,
-            });
+            if (__DEV__) {
+              console.log("[auth] register: invalid phone after normalize", {
+                raw: phone,
+              });
+            }
             resolve(false);
             return;
           }
@@ -126,10 +134,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           );
 
           if (exists) {
-            console.log("[auth] register: user already exists", {
-              phone: normalizedPhone,
-              email,
-            });
+            if (__DEV__) {
+              console.log("[auth] register: user already exists", {
+                phone: normalizedPhone,
+                email,
+              });
+            }
             resolve(false);
             return;
           }
@@ -149,11 +159,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           AsyncStorage.setItem(USERS_KEY, JSON.stringify(updated));
           AsyncStorage.setItem(USER_KEY, JSON.stringify(newUser));
           setUser(newUser);
-          console.log("[auth] register success", {
-            phone: normalizedPhone,
-            email,
-            usersCount: updated.length,
-          });
+          if (__DEV__) {
+            console.log("[auth] register success", {
+              phone: normalizedPhone,
+              email,
+              usersCount: updated.length,
+            });
+          }
           resolve(true);
         }, 1000);
       });

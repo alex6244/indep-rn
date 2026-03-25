@@ -5,7 +5,6 @@ import {
   ActivityIndicator,
   Alert,
   type ImageSourcePropType,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -135,7 +134,7 @@ function PickerProfile({
   );
 
   return (
-    <SafeAreaView style={styles.pickerScreen}>
+    <View style={styles.pickerScreen}>
       <PickerProfileHeader
         onOpenBurger={() => setMenuOpen(true)}
       />
@@ -272,7 +271,7 @@ function PickerProfile({
           Alert.alert("Вывод", "Функция вывода будет доступна позже.");
         }}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -300,7 +299,7 @@ function ClientProfile({ name, phone, onLogout }: ClientProfileProps) {
   const hasReports = reports.length > 0;
 
   return (
-    <SafeAreaView style={styles.pickerScreen}>
+    <View style={styles.pickerScreen}>
       <ClientProfileHeader
         name={name}
         phone={phone}
@@ -396,7 +395,7 @@ function ClientProfile({ name, phone, onLogout }: ClientProfileProps) {
         onConfirmDelete={editFlow.handleDeleteConfirm}
         onCloseDeleted={editFlow.handleCloseDeleted}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 

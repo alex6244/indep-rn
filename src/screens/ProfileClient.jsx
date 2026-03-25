@@ -10,7 +10,7 @@ import {
 import { Header } from "../widgets/header/Header";
 const ProfileScreen = () => {
   const navigateTo = (screen) => {
-    console.log(`Navigate to ${screen}`);
+    if (__DEV__) console.log(`Navigate to ${screen}`);
     // navigation.navigate(screen);
   };
 

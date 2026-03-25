@@ -1,7 +1,8 @@
 import React from "react";
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useLocalSearchParams, useRouter, type Href } from "expo-router";
 import { getReportById } from "../../data/reports";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ReportsBreadcrumb } from "../../widgets/reports/ReportsBreadcrumb";
 import { ReportDetailsActions } from "../../widgets/reports/ReportDetailsActions";
 import { ReportCarousel } from "../../widgets/reports/ReportCarousel";
@@ -17,6 +18,7 @@ import { CostEstimationCard } from "../../widgets/reports/CostEstimationCard";
 export default function ReportDetailsRoute() {
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
+  const insets = useSafeAreaInsets();
   const rawId = params.id;
   const id = Array.isArray(rawId) ? rawId[0] : rawId;
 
@@ -24,8 +26,8 @@ export default function ReportDetailsRoute() {
 
   if (!id || !report) {
     return (
-      <SafeAreaView style={styles.screen}>
-        <ScrollView contentContainerStyle={styles.content}>
+      <View style={styles.screen}>
+        <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 16 }]}>
           <ReportsBreadcrumb active="Купленные отчёты" />
           <Text style={styles.notFoundTitle}>Отчёт не найден</Text>
           <Text style={styles.notFoundText}>
@@ -49,13 +51,13 @@ export default function ReportDetailsRoute() {
             </Text>
           </View>
         </ScrollView>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.content}>
+    <View style={styles.screen}>
+      <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 16 }]}>
         <ReportsBreadcrumb active="Детали отчёта" />
 
         <ReportCarousel report={report} />
@@ -70,7 +72,7 @@ export default function ReportDetailsRoute() {
 
         <ReportDetailsActions reportId={report.id} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
