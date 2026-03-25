@@ -196,7 +196,7 @@ function PickerProfile({
 
       <TouchableOpacity
         style={styles.fab}
-        onPress={() => {}}
+        onPress={() => router.push("/selection" as Href)}
         accessibilityRole="button"
       >
         <Text style={styles.fabPlus}>＋</Text>
