@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -27,6 +27,11 @@ const Catalog = ({ navigation }) => {
   const [cars] = useState(catalogCars);
   const [filteredCars, setFilteredCars] = useState(catalogCars);
 
+  const [sortOpen, setSortOpen] = useState(false);
+  const [sortOption, setSortOption] = useState(null);
+  const [sortAnchor, setSortAnchor] = useState(null);
+  const sortButtonRef = useRef(null);
+
   // Filter criteria (controlled inputs).
   const [brandQuery, setBrandQuery] = useState("");
   const [modelQuery, setModelQuery] = useState("");
@@ -50,6 +55,7 @@ const Catalog = ({ navigation }) => {
 
   const openFilters = () => {
     setFiltersOpen(true);
+    setSortOpen(false);
     Animated.timing(filtersX, {
       toValue: 0,
       duration: 300,
@@ -63,6 +69,27 @@ const Catalog = ({ navigation }) => {
       duration: 300,
       useNativeDriver: true,
     }).start(() => setFiltersOpen(false));
+  };
+
+  const toggleSort = () => {
+    if (filtersOpen) return;
+
+    if (sortOpen) {
+      setSortOpen(false);
+      return;
+    }
+
+    const node = sortButtonRef.current;
+    if (node && typeof node.measureInWindow === "function") {
+      node.measureInWindow((x, y, width, height) => {
+        setSortAnchor({ x, y, width, height });
+        setSortOpen(true);
+      });
+      return;
+    }
+
+    setSortAnchor(null);
+    setSortOpen(true);
   };
 
   const parseNumberOrNull = (text) => {
@@ -242,6 +269,38 @@ const Catalog = ({ navigation }) => {
     setFilteredCars(cars);
   };
 
+  const displayedCars = useMemo(() => {
+    const next = [...filteredCars];
+    if (!sortOption) return next;
+
+    next.sort((a, b) => {
+      switch (sortOption) {
+        case "priceAsc":
+          return a.price - b.price;
+        case "priceDesc":
+          return b.price - a.price;
+        case "mileageAsc":
+          return a.mileage - b.mileage;
+        case "mileageDesc":
+          return b.mileage - a.mileage;
+        default:
+          return 0;
+      }
+    });
+
+    return next;
+  }, [filteredCars, sortOption]);
+
+  const SORT_DROPDOWN_MIN_WIDTH = 260;
+  const dropdownWidth = Math.max(
+    sortAnchor?.width || 0,
+    SORT_DROPDOWN_MIN_WIDTH
+  );
+  const dropdownLeft = sortAnchor
+    ? Math.max(16, Math.min(sortAnchor.x, SCREEN_WIDTH - dropdownWidth - 16))
+    : 0;
+  const dropdownTop = sortAnchor ? sortAnchor.y + sortAnchor.height + 8 : 0;
+
   return (
     <View style={styles.root}>
       <Header title="Каталог" />
@@ -256,9 +315,14 @@ const Catalog = ({ navigation }) => {
         <View style={styles.filtersBar}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {/* сортировка */}
-            <View style={styles.sortButton}>
+            <TouchableOpacity
+              ref={sortButtonRef}
+              style={styles.sortButton}
+              activeOpacity={0.9}
+              onPress={toggleSort}
+            >
               <Text style={styles.sortIcon}>⇅</Text>
-            </View>
+            </TouchableOpacity>
 
             {/* кнопка "Все фильтры" */}
             <TouchableOpacity
@@ -282,10 +346,10 @@ const Catalog = ({ navigation }) => {
 
         {/* Список машин */}
         <View style={styles.carsGrid}>
-          {filteredCars.length === 0 ? (
+          {displayedCars.length === 0 ? (
             <Text style={styles.emptyStateText}>Ничего не найдено</Text>
           ) : (
-            filteredCars.map((car) => (
+            displayedCars.map((car) => (
               <View key={car.id} style={styles.carCard}>
                 {/* Карусель фоток (простая прокрутка) */}
                 <ScrollView
@@ -356,6 +420,101 @@ const Catalog = ({ navigation }) => {
         </View>
       </ScrollView>
 
+      {/* Сортировка: dropdown */}
+      {sortOpen && !filtersOpen && (
+        <>
+          <TouchableOpacity
+            style={styles.sortOverlay}
+            activeOpacity={1}
+            onPress={() => setSortOpen(false)}
+          />
+          <View
+            style={[
+              styles.sortDropdown,
+              {
+                top: dropdownTop,
+                left: dropdownLeft,
+                width: dropdownWidth,
+              },
+            ]}
+          >
+            <TouchableOpacity
+              style={styles.sortItem}
+              onPress={() => {
+                setSortOption("priceAsc");
+                setSortOpen(false);
+              }}
+            >
+              <Text
+                style={[
+                  styles.sortItemText,
+                  sortOption === "priceAsc" && styles.sortItemTextActive,
+                ]}
+              >
+                По возрастанию цены
+              </Text>
+            </TouchableOpacity>
+
+            <View style={styles.sortDivider} />
+
+            <TouchableOpacity
+              style={styles.sortItem}
+              onPress={() => {
+                setSortOption("priceDesc");
+                setSortOpen(false);
+              }}
+            >
+              <Text
+                style={[
+                  styles.sortItemText,
+                  sortOption === "priceDesc" && styles.sortItemTextActive,
+                ]}
+              >
+                По убыванию цены
+              </Text>
+            </TouchableOpacity>
+
+            <View style={styles.sortDivider} />
+
+            <TouchableOpacity
+              style={styles.sortItem}
+              onPress={() => {
+                setSortOption("mileageDesc");
+                setSortOpen(false);
+              }}
+            >
+              <Text
+                style={[
+                  styles.sortItemText,
+                  sortOption === "mileageDesc" && styles.sortItemTextActive,
+                ]}
+              >
+                С большим пробегом
+              </Text>
+            </TouchableOpacity>
+
+            <View style={styles.sortDivider} />
+
+            <TouchableOpacity
+              style={styles.sortItem}
+              onPress={() => {
+                setSortOption("mileageAsc");
+                setSortOpen(false);
+              }}
+            >
+              <Text
+                style={[
+                  styles.sortItemText,
+                  sortOption === "mileageAsc" && styles.sortItemTextActive,
+                ]}
+              >
+                С меньшим пробегом
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
+
       {/* Панель фильтров поверх всего */}
       {filtersOpen && (
         <View style={styles.filtersOverlay} pointerEvents="box-none">
@@ -416,6 +575,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: "#FFFFFF",
+    position: "relative",
   },
   content: {
     padding: 16,
@@ -443,6 +603,45 @@ const styles = StyleSheet.create({
   sortIcon: {
     fontSize: 18,
     color: "#080717",
+  },
+  sortOverlay: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: "transparent",
+    zIndex: 30,
+  },
+  sortDropdown: {
+    position: "absolute",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    shadowColor: "#000000",
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 10,
+    zIndex: 40,
+  },
+  sortItem: {
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+  },
+  sortItemText: {
+    fontSize: 14,
+    color: "#1A1A1A",
+    fontWeight: "500",
+  },
+  sortItemTextActive: {
+    color: "#DB4431",
+    fontWeight: "700",
+  },
+  sortDivider: {
+    height: 1,
+    backgroundColor: "#EDEDED",
   },
   allFiltersButton: {
     paddingHorizontal: 16,
