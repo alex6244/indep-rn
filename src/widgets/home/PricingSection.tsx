@@ -12,11 +12,7 @@ import ServiceBg1 from "../../assets/mainpage/services/1.svg";
 import ServiceBg2 from "../../assets/mainpage/services/2.svg";
 import ServiceBg3 from "../../assets/mainpage/services/3.svg";
 
-type BgComponent = React.ComponentType<{
-  width: number | string;
-  height: number | string;
-  style?: any;
-}>;
+type BgComponent = typeof ServiceBg1;
 
 type Plan = {
   id: string;
@@ -87,7 +83,9 @@ export function PricingSection() {
               <View style={{ marginRight }}>
                 <View style={[styles.card, { width: cardWidth }]}>
                   {/* Decorative background */}
-                  <item.Bg width="100%" height="100%" style={styles.cardBg} />
+                  <View pointerEvents="none" style={styles.cardBg}>
+                    <item.Bg width="100%" height="100%" />
+                  </View>
 
                   {/* Content above bg */}
                   <View style={styles.cardContent}>
@@ -128,6 +126,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     minHeight: 280,
     backgroundColor: "#F1F1F1", // fallback под подложку
+    position: "relative",
   },
 
   cardBg: {
@@ -136,11 +135,13 @@ const styles = StyleSheet.create({
     top: 0,
     right: 0,
     bottom: 0,
+    zIndex: 0,
   },
 
   cardContent: {
     flex: 1,
     padding: 12,
+    position: "relative",
     zIndex: 1,
     justifyContent: "space-between",
   },
