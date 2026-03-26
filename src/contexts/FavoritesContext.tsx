@@ -38,8 +38,9 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
             setFavoriteIds(parsed.map(String));
           }
         }
-      } catch (e) {
-        if (__DEV__) console.log("Favorites load error", e);
+      } catch {
+        // Повреждённые данные — сбрасываем, избранное начнётся с чистого листа
+        await AsyncStorage.removeItem(STORAGE_KEY);
       } finally {
         setLoading(false);
       }

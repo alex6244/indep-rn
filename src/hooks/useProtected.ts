@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Alert } from "react-native";
 import { useRouter, type Href } from "expo-router";
 import { useAuth } from "../contexts/AuthContext";
@@ -7,6 +8,7 @@ type CheckAuthOptions = {
   redirectTo?: Href;
 };
 
+/** Защита действий (кнопок). Показывает алерт если не залогинен. */
 export function useProtected() {
   const { user } = useAuth();
   const router = useRouter();
@@ -33,5 +35,19 @@ export function useProtected() {
   };
 
   return { user, checkAuth };
+}
+
+/** Защита экранов. Редиректит на авторизацию до рендера контента. */
+export function useRequireAuth(redirectTo: Href = "/(auth)" as Href) {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace(redirectTo);
+    }
+  }, [loading, user, router, redirectTo]);
+
+  return { user, loading };
 }
 

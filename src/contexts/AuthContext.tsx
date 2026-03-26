@@ -38,14 +38,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const USER_KEY = "user";
 
   const checkAuth = useCallback(async () => {
+    // Восстанавливаем текущего пользователя
     try {
-      // Восстанавливаем текущего пользователя
       const userData = await AsyncStorage.getItem(USER_KEY);
       if (userData) {
         setUser(JSON.parse(userData));
       }
+    } catch {
+      // Повреждённые данные — сбрасываем, пользователь останется разлогинен
+      await AsyncStorage.removeItem(USER_KEY);
+    }
 
-      // Восстанавливаем список пользователей
+    // Восстанавливаем список пользователей
+    try {
       const storedUsers = await AsyncStorage.getItem(USERS_KEY);
       if (storedUsers) {
         const parsed: User[] = JSON.parse(storedUsers);
@@ -56,11 +61,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setUsers(initial);
         await AsyncStorage.setItem(USERS_KEY, JSON.stringify(initial));
       }
-    } catch (error) {
-      if (__DEV__) console.log("Auth check error:", error);
-    } finally {
-      setLoading(false);
+    } catch {
+      // Повреждённые данные — сбрасываем и инициализируем заново
+      const initial = [mockUsers.client, mockUsers.picker];
+      setUsers(initial);
+      await AsyncStorage.setItem(USERS_KEY, JSON.stringify(initial));
     }
+
+    setLoading(false);
   }, []);
 
   const login = useCallback(

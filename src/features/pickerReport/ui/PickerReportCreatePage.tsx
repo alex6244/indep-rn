@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Alert,
   StyleSheet,
@@ -12,7 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter, type Href } from "expo-router";
 
 import Logo from "../../../assets/logo.svg";
-import { useAuth } from "../../../contexts/AuthContext";
+import { useRequireAuth } from "../../../hooks/useProtected";
 
 import {
   MediaUploadCard,
@@ -36,7 +36,7 @@ import { PICKER_REPORT_DRAFT_STORAGE_KEY } from "./pickerReportTypes";
 export function PickerReportCreatePage() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { user, loading } = useAuth();
+  const { user, loading } = useRequireAuth();
 
   const [draftReport, setDraftReport] = useState<DraftReport>(() => ({
     media: {
@@ -91,11 +91,6 @@ export function PickerReportCreatePage() {
     },
   }));
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push("/(auth)" as Href);
-    }
-  }, [loading, user, router]);
 
   const isPicker = user?.role === "picker";
 
