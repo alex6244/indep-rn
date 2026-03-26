@@ -1,0 +1,132 @@
+import React from "react";
+import {
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+import CloseIcon from "../../assets/icons/close.svg";
+import SuccessIllustration from "../../assets/mainpage/result/2.svg";
+
+const pickReportWord = (count: number) => {
+  // Упрощенная склонялка для RU:
+  // 1 -> "отчет", 2-4 -> "отчета", остальные -> "отчетов"
+  const n = Math.abs(count);
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+
+  if (mod10 === 1 && mod100 !== 11) return "отчет";
+  if (mod10 >= 2 && mod10 <= 4 && !(mod100 >= 12 && mod100 <= 14)) return "отчета";
+  return "отчетов";
+};
+
+type Props = {
+  visible: boolean;
+  spentCount: number;
+  remainingCount: number;
+  onClose: () => void;
+};
+
+export function ReportPurchasedSuccessModal({
+  visible,
+  spentCount,
+  remainingCount,
+  onClose,
+}: Props) {
+  const spentWord = pickReportWord(spentCount);
+
+  const remainingText =
+    remainingCount >= 0
+      ? `В пакете осталось ${remainingCount} ${pickReportWord(remainingCount)}.`
+      : "";
+
+  return (
+    <Modal
+      transparent
+      visible={visible}
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      <TouchableOpacity
+        style={styles.backdrop}
+        activeOpacity={1}
+        onPress={onClose}
+      >
+        <View style={styles.card} onStartShouldSetResponder={() => true}>
+          <TouchableOpacity style={styles.closeBtn} onPress={onClose} activeOpacity={0.9}>
+            <CloseIcon width={10} height={10} />
+          </TouchableOpacity>
+
+          <Text style={styles.title}>Готово!</Text>
+
+          <Text style={styles.text}>
+            С вашего пакета был успешно списан {spentCount} {spentWord}.
+          </Text>
+          <Text style={styles.text}>
+            Отчет уже доступен для просмотра и скачивания в личном кабинете.
+          </Text>
+
+          {remainingText ? <Text style={styles.text}>{remainingText}</Text> : null}
+
+          <View style={styles.illustrationWrap}>
+            <SuccessIllustration width="100%" height="100%" />
+          </View>
+        </View>
+      </TouchableOpacity>
+    </Modal>
+  );
+}
+
+const styles = StyleSheet.create({
+  backdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.35)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
+  },
+  card: {
+    width: "100%",
+    maxWidth: 420,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: "#000000",
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 8,
+  },
+  closeBtn: {
+    position: "absolute",
+    top: 14,
+    right: 14,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "900",
+    color: "#1E1E1E",
+    marginBottom: 10,
+  },
+  text: {
+    color: "#6B757C",
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "600",
+    marginBottom: 8,
+  },
+  illustrationWrap: {
+    marginTop: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    height: 220,
+  },
+});
+

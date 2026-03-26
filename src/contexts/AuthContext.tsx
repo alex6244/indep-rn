@@ -74,7 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const login = useCallback(
     async (name: string, phone: string, email: string): Promise<boolean> => {
       return new Promise((resolve) => {
-        setTimeout(() => {
+        setTimeout(async () => {
           const normalizedPhone = normalizePhone(phone);
           if (!normalizedPhone) {
             if (__DEV__) {
@@ -91,7 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           );
 
           if (found) {
-            AsyncStorage.setItem(USER_KEY, JSON.stringify(found));
+            await AsyncStorage.setItem(USER_KEY, JSON.stringify(found));
             setUser(found);
             if (__DEV__) {
               console.log("[auth] login success", {
@@ -124,7 +124,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       role: User["role"],
     ): Promise<boolean> => {
       return new Promise((resolve) => {
-        setTimeout(() => {
+        setTimeout(async () => {
           const normalizedPhone = normalizePhone(phone);
           if (!normalizedPhone) {
             if (__DEV__) {
@@ -164,8 +164,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
           const updated = [...users, newUser];
           setUsers(updated);
-          AsyncStorage.setItem(USERS_KEY, JSON.stringify(updated));
-          AsyncStorage.setItem(USER_KEY, JSON.stringify(newUser));
+          await AsyncStorage.setItem(USERS_KEY, JSON.stringify(updated));
+          await AsyncStorage.setItem(USER_KEY, JSON.stringify(newUser));
           setUser(newUser);
           if (__DEV__) {
             console.log("[auth] register success", {
@@ -182,7 +182,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const logout = useCallback(async () => {
-    await AsyncStorage.removeItem("user");
+    await AsyncStorage.removeItem(USER_KEY);
     setUser(null);
   }, []);
 
