@@ -7,6 +7,7 @@ import {
   View,
   ScrollView,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter, type Href } from "expo-router";
 
@@ -15,34 +16,22 @@ import { useAuth } from "../../../contexts/AuthContext";
 
 import {
   MediaUploadCard,
-  type MediaUploadState,
 } from "./MediaUploadCard";
 import {
   GeneralInfoCheckboxes,
 } from "./GeneralInfoCheckboxes";
-import type { PtsFormState } from "./PtsForm";
 import { PtsForm } from "./PtsForm";
 import { MileageSection } from "./MileageSection";
-import type { OwnerDraft } from "./OwnersForm";
 import { OwnersForm } from "./OwnersForm";
-import type { LegalCleanlinessState } from "./LegalCleanlinessForm";
 import { LegalCleanlinessForm } from "./LegalCleanlinessForm";
-import type { CommercialUsageState } from "./CommercialUsageForm";
 import { CommercialUsageForm } from "./CommercialUsageForm";
-import type { DefectsState } from "./DefectsForm";
 import { DefectsForm } from "./DefectsForm";
 import { BottomNextButton } from "./BottomNextButton";
 
-type DraftReport = {
-  media: MediaUploadState;
-  generalInfo: Record<string, boolean>;
-  pts: PtsFormState;
-  mileage: string;
-  owners: OwnerDraft[];
-  legalCleanliness: LegalCleanlinessState;
-  commercialUsage: CommercialUsageState;
-  defects: DefectsState;
-};
+import type {
+  DraftReport,
+} from "./pickerReportTypes";
+import { PICKER_REPORT_DRAFT_STORAGE_KEY } from "./pickerReportTypes";
 
 export function PickerReportCreatePage() {
   const router = useRouter();
@@ -197,7 +186,24 @@ export function PickerReportCreatePage() {
 
       <BottomNextButton
         bottomPadding={insets.bottom + 12}
-        onPress={() => Alert.alert("Черновик сохранен", "Переход на следующий шаг (пока заглушка)")}
+        onPress={() => {
+          void (async () => {
+            try {
+              await AsyncStorage.setItem(
+                PICKER_REPORT_DRAFT_STORAGE_KEY,
+                JSON.stringify(draftReport),
+              );
+            } catch {
+              Alert.alert(
+                "Ошибка",
+                "Не удалось сохранить черновик. Попробуйте ещё раз.",
+              );
+              return;
+            }
+
+            router.push("/selection-confirm" as Href);
+          })();
+        }}
       />
     </View>
   );

@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { Alert } from "react-native";
 
 interface FavoritesContextValue {
   favoriteIds: string[];
@@ -49,7 +50,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(favoriteIds)).catch(
       () => {
-        /* ignore */
+        Alert.alert("Ошибка", "Не удалось сохранить избранное");
       },
     );
   }, [favoriteIds]);
