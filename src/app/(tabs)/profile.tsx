@@ -236,7 +236,7 @@ function PickerProfile({
             style={{ padding: 16 }}
             onPress={async () => {
               await onLogout();
-              router.replace("/(tabs)" as Href);
+              router.replace("/(auth)" as Href);
             }}
           >
             <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
@@ -371,7 +371,7 @@ function ClientProfile({ name, phone, onLogout }: ClientProfileProps) {
             style={{ padding: 16 }}
             onPress={async () => {
               await onLogout();
-              router.replace("/(tabs)" as Href);
+              router.replace("/(auth)" as Href);
             }}
           >
             <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>

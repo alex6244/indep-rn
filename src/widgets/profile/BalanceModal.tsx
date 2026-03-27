@@ -153,12 +153,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   keepBtn: {
-    width: 191,
+    flex: 2,
     height: 43,
     backgroundColor: "#777777",
   },
   withdrawBtn: {
-    width: 114,
+    flex: 1,
     height: 43,
     backgroundColor: "#E14332",
   },

@@ -27,6 +27,47 @@ export const Colors = {
   },
 };
 
+/** Figma design tokens — Indep/Лизинг */
+export const Theme = {
+  colors: {
+    primary: '#DB4431',
+    primaryBadgeBg: '#FBDAD6',
+    text: '#1E1E1E',
+    textSecondary: '#777777',
+    background: '#FFFFFF',
+    cardBg: '#FFFFFF',
+    cardBgMuted: '#F1F1F1',
+    border: '#E8E8E8',
+    btnGray: '#777777',
+    white: '#FFFFFF',
+    closeIcon: '#CFCFCF',
+    overlay: 'rgba(0,0,0,0.35)',
+  },
+  radius: {
+    card: 16,
+    modal: 20,
+    btn: 12,
+    badge: 11,
+  },
+  spacing: {
+    xs: 8,
+    sm: 12,
+    md: 16,
+    lg: 22,
+    xl: 28,
+  },
+  typography: {
+    h1: { fontSize: 30, fontWeight: '700' as const },
+    h2: { fontSize: 20, fontWeight: '700' as const },
+    h3: { fontSize: 18, fontWeight: '500' as const },
+    body: { fontSize: 14, fontWeight: '400' as const },
+    bodySmall: { fontSize: 12, fontWeight: '400' as const },
+    btn: { fontSize: 16, fontWeight: '500' as const },
+    amount: { fontSize: 44, fontWeight: '700' as const },
+    caption: { fontSize: 18, fontWeight: '500' as const },
+  },
+};
+
 export const Fonts = Platform.select({
   ios: {
     /** iOS `UIFontDescriptorSystemDesignDefault` */
