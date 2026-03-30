@@ -21,6 +21,7 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<"client" | "picker">("picker");
   const [loading, setLoading] = useState(false);
+  const [agreed, setAgreed] = useState(false);
   const { register } = useAuth();
 
   const handleRegister = async () => {
@@ -168,9 +169,13 @@ export default function RegisterScreen() {
             </View>
 
             {/* Чекбокс согласия */}
-            <TouchableOpacity style={styles.checkboxContainer}>
-              <View style={styles.checkbox}>
-                <Text style={styles.checkmark}>✓</Text>
+            <TouchableOpacity
+              style={styles.checkboxContainer}
+              onPress={() => setAgreed((v) => !v)}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.checkbox, agreed && styles.checkboxChecked]}>
+                {agreed && <Text style={styles.checkmark}>✓</Text>}
               </View>
               <Text style={styles.checkboxText}>
                 Я согласен с <Text style={styles.link}>политикой</Text> и{" "}
@@ -179,9 +184,9 @@ export default function RegisterScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.submitButton, loading && styles.buttonDisabled]}
+              style={[styles.submitButton, (!agreed || loading) && styles.buttonDisabled]}
               onPress={handleRegister}
-              disabled={loading}
+              disabled={!agreed || loading}
             >
               {loading ? (
                 <Text style={styles.loadingText}>Регистрация...</Text>
@@ -263,9 +268,14 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 6,
-    backgroundColor: "#F3E4E2",
+    borderWidth: 2,
+    borderColor: "#DB4431",
+    backgroundColor: "transparent",
     justifyContent: "center",
     alignItems: "center",
+  },
+  checkboxChecked: {
+    backgroundColor: "#DB4431",
   },
   checkmark: {
     color: "#DB4431",

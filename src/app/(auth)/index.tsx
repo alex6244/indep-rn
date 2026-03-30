@@ -20,6 +20,7 @@ export default function LoginScreen() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [agreed, setAgreed] = useState(false);
   const { login, loading: authLoading } = useAuth();
 
   const handleSubmit = async () => {
@@ -118,9 +119,13 @@ export default function LoginScreen() {
               />
             </View>
 
-            <TouchableOpacity style={styles.checkboxContainer}>
-              <View style={styles.checkbox}>
-                <Text style={styles.checkmark}>✓</Text>
+            <TouchableOpacity
+              style={styles.checkboxContainer}
+              onPress={() => setAgreed((v) => !v)}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.checkbox, agreed && styles.checkboxChecked]}>
+                {agreed && <Text style={styles.checkmark}>✓</Text>}
               </View>
               <Text style={styles.checkboxText}>
                 Даю согласие на{" "}
@@ -129,9 +134,9 @@ export default function LoginScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.submitButton, loading && styles.buttonDisabled]}
+              style={[styles.submitButton, (!agreed || loading) && styles.buttonDisabled]}
               onPress={handleSubmit}
-              disabled={loading}
+              disabled={!agreed || loading}
             >
               {loading ? (
                 <Text style={styles.loadingText}>Загрузка...</Text>
@@ -205,9 +210,14 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 4,
-    backgroundColor: "#DB4431",
+    borderWidth: 2,
+    borderColor: "#DB4431",
+    backgroundColor: "transparent",
     justifyContent: "center",
     alignItems: "center",
+  },
+  checkboxChecked: {
+    backgroundColor: "#DB4431",
   },
   checkmark: {
     color: "white",

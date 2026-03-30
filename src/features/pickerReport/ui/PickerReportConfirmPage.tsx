@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Modal,
   ScrollView,
@@ -170,8 +171,9 @@ export function PickerReportConfirmPage() {
 
   if (loading) {
     return (
-      <View style={styles.screen}>
-        <View style={[styles.topBar, { paddingTop: insets.top + 6 }]} />
+      <View style={[styles.screen, styles.loadingScreen]}>
+        <ActivityIndicator size="large" color="#DB4431" />
+        <Text style={styles.loadingText}>Загружаем отчёт...</Text>
       </View>
     );
   }
@@ -724,6 +726,15 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "800",
     fontSize: 14,
+  },
+  loadingScreen: {
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 12,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: "#6B757C",
   },
   centerText: {
     padding: 16,

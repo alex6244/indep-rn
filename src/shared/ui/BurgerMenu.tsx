@@ -1,4 +1,5 @@
 import { router, type Href } from "expo-router";
+import { BlurView } from "expo-blur";
 import React from "react";
 import {
   Modal,
@@ -45,6 +46,12 @@ export function BurgerMenu({
         activeOpacity={1}
         onPress={onClose}
       >
+        <BlurView
+          intensity={30}
+          tint="dark"
+          style={StyleSheet.absoluteFillObject}
+          pointerEvents="none"
+        />
         <View
           style={[styles.panel, panelStyle]}
           onStartShouldSetResponder={() => true}
@@ -79,7 +86,6 @@ export function BurgerMenu({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.35)",
     flexDirection: "row",
     justifyContent: "flex-end",
   },

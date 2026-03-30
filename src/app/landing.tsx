@@ -133,7 +133,7 @@ export default function LandingPage() {
         <View style={styles.section}>
           <View style={styles.toggleContainer}>
             <View style={[styles.toggleButton, styles.toggleButtonActive]}>
-              <Text style={styles.toggleButtonText}>Хочу продать авто</Text>
+              <Text style={[styles.toggleButtonText, styles.toggleButtonTextActive]}>Хочу продать авто</Text>
             </View>
             <View style={styles.toggleButton}>
               <Text style={styles.toggleButtonText}>Хочу купить авто</Text>
@@ -397,6 +397,9 @@ const styles = StyleSheet.create({
   },
   toggleButtonText: {
     fontSize: 14,
+    color: "#080717",
+  },
+  toggleButtonTextActive: {
     color: "#FFFFFF",
   },
 
