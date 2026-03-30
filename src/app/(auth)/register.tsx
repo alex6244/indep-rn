@@ -12,12 +12,10 @@ import {
   View,
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
-import { normalizePhone } from "../../shared/utils/phone";
 import { AuthHeader } from "../../widgets/header/AuthHeader";
 
 export default function RegisterScreen() {
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<"client" | "picker">("picker");
   const [loading, setLoading] = useState(false);
@@ -26,7 +24,6 @@ export default function RegisterScreen() {
 
   const handleRegister = async () => {
     const trimmedName = name.trim();
-    const trimmedPhone = phone.trim();
     const trimmedEmail = email.trim();
 
     if (!trimmedName) {
@@ -39,19 +36,6 @@ export default function RegisterScreen() {
       return;
     }
 
-    const phoneRegex =
-      /^(\+7|7|8)?[\s-]?\(?[0-9]{3}\)?[\s-]?[0-9]{3}[\s-]?[0-9]{2}[\s-]?[0-9]{2}$/;
-    if (!trimmedPhone || !phoneRegex.test(trimmedPhone)) {
-      alert("Введите корректный номер телефона в формате +7 XXX XXX-XX-XX");
-      return;
-    }
-
-    const normalizedPhone = normalizePhone(trimmedPhone);
-    if (!normalizedPhone) {
-      alert("Введите корректный номер телефона в формате +7 XXX XXX-XX-XX");
-      return;
-    }
-
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
       alert("Введите корректный e-mail");
@@ -60,13 +44,13 @@ export default function RegisterScreen() {
 
     setLoading(true);
     try {
-      const success = await register(trimmedName, trimmedPhone, trimmedEmail, role);
+      const success = await register(trimmedName, trimmedEmail, role);
       if (success) {
-        alert(`✅ Зарегистрирован!\n${trimmedName}\nТелефон: ${trimmedPhone}`);
+        alert(`✅ Зарегистрирован!\n${trimmedName}\nEmail: ${trimmedEmail}`);
         // После успешной регистрации отправляем на главную
         router.replace("/(tabs)/profile");
       } else {
-        alert("Пользователь с таким телефоном или почтой уже существует");
+        alert("Пользователь с таким email уже существует");
       }
     } catch {
       alert("Ошибка регистрации");
@@ -93,18 +77,6 @@ export default function RegisterScreen() {
                 value={name}
                 onChangeText={setName}
                 placeholder="Укажите ваше имя"
-                editable={!loading}
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Телефон</Text>
-              <TextInput
-                style={styles.input}
-                value={phone}
-                onChangeText={setPhone}
-                placeholder="+7 (_) _--"
-                keyboardType="phone-pad"
                 editable={!loading}
               />
             </View>

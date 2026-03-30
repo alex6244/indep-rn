@@ -16,7 +16,6 @@ interface AuthContextType {
   login: (name: string, phone: string, email: string) => Promise<boolean>;
   register: (
     name: string,
-    phone: string,
     email: string,
     role: User["role"],
   ) => Promise<boolean>;
@@ -119,33 +118,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const register = useCallback(
     async (
       name: string,
-      phone: string,
       email: string,
       role: User["role"],
     ): Promise<boolean> => {
       return new Promise((resolve) => {
         setTimeout(async () => {
-          const normalizedPhone = normalizePhone(phone);
-          if (!normalizedPhone) {
-            if (__DEV__) {
-              console.log("[auth] register: invalid phone after normalize", {
-                raw: phone,
-              });
-            }
+          const trimmedEmail = email.trim();
+          if (!trimmedEmail) {
             resolve(false);
             return;
           }
 
-          // Проверяем, что такого телефона или почты ещё нет
-          const exists = users.some(
-            (u) => u.phone === normalizedPhone || u.email === email,
-          );
+          // Проверяем, что такой email ещё не зарегистрирован
+          const exists = users.some((u) => (u.email ?? "") === trimmedEmail);
 
           if (exists) {
             if (__DEV__) {
               console.log("[auth] register: user already exists", {
-                phone: normalizedPhone,
-                email,
+                email: trimmedEmail,
               });
             }
             resolve(false);
@@ -154,11 +144,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
           const newUser: User = {
             id: Date.now().toString(),
-            login: email || phone, // login для совместимости
+            login: trimmedEmail, // login для совместимости
             password: "123", // фикс для мок-логики, сейчас не используется формой
             name,
-            phone: normalizedPhone,
-            email,
+            phone: "", // phone больше не запрашивается регистрацией
+            email: trimmedEmail,
             role,
           };
 
@@ -169,8 +159,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           setUser(newUser);
           if (__DEV__) {
             console.log("[auth] register success", {
-              phone: normalizedPhone,
-              email,
+              email: trimmedEmail,
               usersCount: updated.length,
             });
           }
