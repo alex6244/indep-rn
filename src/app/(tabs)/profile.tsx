@@ -555,7 +555,7 @@ const styles = StyleSheet.create({
   },
   pickerContent: {
     paddingTop: 10,
-    paddingBottom: 120,
+    paddingBottom: 178,
   },
   quickRow: {
     flexDirection: "row",
@@ -647,7 +647,7 @@ const styles = StyleSheet.create({
   fab: {
     position: "absolute",
     right: 18,
-    bottom: 26,
+    bottom: 96,
     width: 56,
     height: 56,
     borderRadius: 28,

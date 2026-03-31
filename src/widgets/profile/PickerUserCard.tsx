@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import EditIcon from "../../assets/icons/edit.svg";
 
 type Props = {
   initials: string;
@@ -25,7 +26,7 @@ export function PickerUserCard({ initials, name, phone, onOpenEdit }: Props) {
             style={styles.editIconButton}
             accessibilityRole="button"
           >
-            <Text style={styles.editIconText}>✎</Text>
+            <EditIcon width={16} height={16} />
           </TouchableOpacity>
         </View>
         {!!phone && <Text style={styles.profilePhone}>{phone}</Text>}
@@ -80,11 +81,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center",
-  },
-  editIconText: {
-    color: "#B5B5B5",
-    fontSize: 16,
-    fontWeight: "700",
+    borderWidth: 1,
+    borderColor: "#EDEDED",
   },
   profilePhone: {
     marginTop: 4,

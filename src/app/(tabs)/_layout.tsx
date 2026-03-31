@@ -12,8 +12,8 @@ const INACTIVE = "#A0A0A0";
 
 // Nav bar design tokens (Figma: Навигационная панель)
 const NAV_BG = "#F7F7F7";
-const NAV_HEIGHT = 92;
-const ICON_SIZE = 62;
+const NAV_HEIGHT = 100;
+const ICON_SIZE = 66;
 
 type SvgTabIconProps = {
   Icon: React.ComponentType<{ width: number; height: number; color?: string }>;
@@ -29,6 +29,8 @@ function SvgTabIcon({ Icon, color, focused }: SvgTabIconProps) {
         height: ICON_SIZE,
         alignItems: "center",
         justifyContent: "center",
+        opacity: focused ? 1 : 0.72,
+        transform: [{ scale: focused ? 1 : 0.96 }],
       }}
     >
       <Icon width={ICON_SIZE} height={ICON_SIZE} color={color} />
@@ -54,13 +56,13 @@ export default function TabLayout() {
           shadowOpacity: 0,
           height: NAV_HEIGHT + bottomInset,
           paddingBottom: bottomInset,
-          paddingTop: 6,
+          paddingTop: 4,
           paddingHorizontal: 20,
         },
         tabBarItemStyle: {
           flex: 1,
           minWidth: 0,
-          height: 70,
+          height: 76,
           alignItems: "center",
           justifyContent: "center",
           gap: 0,
