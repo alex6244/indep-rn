@@ -2,10 +2,10 @@ import { Tabs } from "expo-router";
 import React from "react";
 import { Platform, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Callpin from "../../assets/icons/mobilemenu/callpin.svg";
-import Catalogpin from "../../assets/icons/mobilemenu/catalogpin.svg";
-import Homepin from "../../assets/icons/mobilemenu/homepin.svg";
-import Profilepin from "../../assets/icons/mobilemenu/profilepin.svg";
+import Callpin from "../../assets/icons/mobilemenu/callpin2.svg";
+import Catalogpin from "../../assets/icons/mobilemenu/catalogpin2.svg";
+import Homepin from "../../assets/icons/mobilemenu/homepin2.svg";
+import Profilepin from "../../assets/icons/mobilemenu/profilepin2.svg";
 
 const ACTIVE = "#DB4431";
 const INACTIVE = "#A0A0A0";
