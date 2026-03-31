@@ -1,7 +1,13 @@
 import { BurgerMenu } from "@/src/shared/ui/BurgerMenu";
 import { useRouter, type Href } from "expo-router";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import AboutIcon from "../../assets/icons/burger/about.svg";
 import CooperationIcon from "../../assets/icons/burger/ads.svg";
 import FavIcon from "../../assets/icons/burger/favourites.svg";
@@ -33,6 +39,7 @@ export default function HomeTab() {
         />
         {roleView === "picker" ? (
           <>
+            <BenefitsRow />
             <RoleToggle value={roleView} onChange={setRoleView} />
             <PickerOnboardingSection
               onPressRegister={() => router.push("/(auth)/register" as Href)}
