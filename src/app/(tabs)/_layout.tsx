@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
 import React from "react";
-import { Platform, Text, View } from "react-native";
+import { Platform, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Callpin from "../../assets/icons/mobilemenu/callpin.svg";
 import Catalogpin from "../../assets/icons/mobilemenu/catalogpin.svg";
@@ -12,8 +12,8 @@ const INACTIVE = "#A0A0A0";
 
 // Nav bar design tokens (Figma: Навигационная панель)
 const NAV_BG = "#F7F7F7";
-const NAV_HEIGHT = 78;
-const ICON_SIZE = 28;
+const NAV_HEIGHT = 92;
+const ICON_SIZE = 62;
 
 type SvgTabIconProps = {
   Icon: React.ComponentType<{ width: number; height: number; color?: string }>;
@@ -25,40 +25,14 @@ function SvgTabIcon({ Icon, color, focused }: SvgTabIconProps) {
   return (
     <View
       style={{
-        width: 40,
-        height: 40,
+        width: ICON_SIZE,
+        height: ICON_SIZE,
         alignItems: "center",
         justifyContent: "center",
       }}
     >
       <Icon width={ICON_SIZE} height={ICON_SIZE} color={color} />
     </View>
-  );
-}
-
-function TabLabel({
-  label,
-  focused,
-  color,
-}: {
-  label: string;
-  focused: boolean;
-  color: string;
-}) {
-  return (
-    <Text
-      style={{
-        fontSize: 10,
-        lineHeight: 12,
-        fontWeight: focused ? "500" : "400",
-        color,
-        textAlign: "center",
-        marginTop: 2,
-      }}
-      numberOfLines={1}
-    >
-      {label}
-    </Text>
   );
 }
 
@@ -80,13 +54,13 @@ export default function TabLayout() {
           shadowOpacity: 0,
           height: NAV_HEIGHT + bottomInset,
           paddingBottom: bottomInset,
-          paddingTop: 8,
+          paddingTop: 6,
           paddingHorizontal: 20,
         },
         tabBarItemStyle: {
           flex: 1,
           minWidth: 0,
-          height: 62,
+          height: 70,
           alignItems: "center",
           justifyContent: "center",
           gap: 0,
@@ -97,10 +71,7 @@ export default function TabLayout() {
         name="index"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <View style={{ alignItems: "center" }}>
-              <SvgTabIcon Icon={Homepin} color={color} focused={focused} />
-              <TabLabel label="Главная" focused={focused} color={color} />
-            </View>
+            <SvgTabIcon Icon={Homepin} color={color} focused={focused} />
           ),
         }}
       />
@@ -108,10 +79,7 @@ export default function TabLayout() {
         name="catalog"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <View style={{ alignItems: "center" }}>
-              <SvgTabIcon Icon={Catalogpin} color={color} focused={focused} />
-              <TabLabel label="Каталог" focused={focused} color={color} />
-            </View>
+            <SvgTabIcon Icon={Catalogpin} color={color} focused={focused} />
           ),
         }}
       />
@@ -119,10 +87,7 @@ export default function TabLayout() {
         name="calls"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <View style={{ alignItems: "center" }}>
-              <SvgTabIcon Icon={Callpin} color={color} focused={focused} />
-              <TabLabel label="Позвонить" focused={focused} color={color} />
-            </View>
+            <SvgTabIcon Icon={Callpin} color={color} focused={focused} />
           ),
         }}
       />
@@ -130,10 +95,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <View style={{ alignItems: "center" }}>
-              <SvgTabIcon Icon={Profilepin} color={color} focused={focused} />
-              <TabLabel label="Профиль" focused={focused} color={color} />
-            </View>
+            <SvgTabIcon Icon={Profilepin} color={color} focused={focused} />
           ),
         }}
       />

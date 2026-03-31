@@ -13,7 +13,6 @@ import {
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 import { AuthHeader } from "../../widgets/header/AuthHeader";
-import { normalizePhone } from "../../shared/utils/phone";
 
 export default function LoginScreen() {
   const [name, setName] = useState("");
@@ -42,19 +41,6 @@ export default function LoginScreen() {
       return;
     }
 
-    const phoneRegex =
-      /^(\+7|7|8)?[\s-]?\(?[0-9]{3}\)?[\s-]?[0-9]{3}[\s-]?[0-9]{2}[\s-]?[0-9]{2}$/;
-    if (!trimmedPhone || !phoneRegex.test(trimmedPhone)) {
-      alert("Введите корректный номер телефона в формате +7 XXX XXX-XX-XX");
-      return;
-    }
-
-    const normalizedPhone = normalizePhone(trimmedPhone);
-    if (!normalizedPhone) {
-      alert("Введите корректный номер телефона в формате +7 XXX XXX-XX-XX");
-      return;
-    }
-
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
       alert("Введите корректный e-mail");
@@ -68,7 +54,7 @@ export default function LoginScreen() {
     if (success) {
       router.replace("/(tabs)/profile");
     } else {
-      alert("Пользователь с таким телефоном и почтой не найден");
+      alert("Пользователь с таким email не найден");
     }
   };
 

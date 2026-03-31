@@ -8,7 +8,6 @@ import React, {
   useState,
 } from "react";
 import { mockUsers, type User } from "../data/users";
-import { normalizePhone } from "../shared/utils/phone";
 
 interface AuthContextType {
   user: User | null;
@@ -24,6 +23,22 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+type UserLike = Partial<User> & { role?: unknown; id?: unknown; login?: unknown; email?: unknown };
+
+function isValidStoredUser(value: unknown): value is UserLike {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const user = value as UserLike;
+  const hasId = typeof user.id === "string" && user.id.trim().length > 0;
+  const hasRole = user.role === "client" || user.role === "picker";
+  const hasLogin = typeof user.login === "string" && user.login.trim().length > 0;
+  const hasEmail = typeof user.email === "string" && user.email.trim().length > 0;
+
+  return hasId && hasRole && (hasLogin || hasEmail);
+}
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -41,7 +56,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const userData = await AsyncStorage.getItem(USER_KEY);
       if (userData) {
-        setUser(JSON.parse(userData));
+        const parsed = JSON.parse(userData);
+        if (isValidStoredUser(parsed)) {
+          setUser(parsed as User);
+        } else {
+          await AsyncStorage.removeItem(USER_KEY);
+          setUser(null);
+        }
       }
     } catch {
       // Повреждённые данные — сбрасываем, пользователь останется разлогинен
@@ -71,41 +92,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = useCallback(
-    async (name: string, phone: string, email: string): Promise<boolean> => {
+    async (_name: string, _phone: string, email: string): Promise<boolean> => {
       return new Promise((resolve) => {
         setTimeout(async () => {
-          const normalizedPhone = normalizePhone(phone);
-          if (!normalizedPhone) {
+          const trimmedEmail = email.trim();
+          if (!trimmedEmail) {
             if (__DEV__) {
-              console.log("[auth] login: invalid phone after normalize", {
-                raw: phone,
-              });
+              console.log("[auth] login: missing email");
             }
             resolve(false);
             return;
           }
 
-          const found = users.find(
-            (u) => u.phone === normalizedPhone && u.email === email,
-          );
+          const found = users.find((u) => (u.email ?? "").trim() === trimmedEmail);
 
           if (found) {
             await AsyncStorage.setItem(USER_KEY, JSON.stringify(found));
             setUser(found);
             if (__DEV__) {
-              console.log("[auth] login success", {
-                phone: normalizedPhone,
-                email,
-              });
+              console.log("[auth] login success", { usersCount: users.length });
             }
             resolve(true);
           } else {
             if (__DEV__) {
-              console.log("[auth] login fail: not found", {
-                phone: normalizedPhone,
-                email,
-                usersCount: users.length,
-              });
+              console.log("[auth] login fail: not found", { usersCount: users.length });
             }
             resolve(false);
           }
@@ -134,9 +144,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
           if (exists) {
             if (__DEV__) {
-              console.log("[auth] register: user already exists", {
-                email: trimmedEmail,
-              });
+              console.log("[auth] register: user already exists");
             }
             resolve(false);
             return;
@@ -158,10 +166,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           await AsyncStorage.setItem(USER_KEY, JSON.stringify(newUser));
           setUser(newUser);
           if (__DEV__) {
-            console.log("[auth] register success", {
-              email: trimmedEmail,
-              usersCount: updated.length,
-            });
+            console.log("[auth] register success", { usersCount: updated.length });
           }
           resolve(true);
         }, 1000);

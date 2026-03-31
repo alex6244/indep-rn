@@ -32,6 +32,27 @@ async function request<T>(
   options: RequestInit = {},
 ): Promise<T> {
   const token = await tokenStorage.get();
+  // #region agent log
+  fetch(
+    "http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "7a6ed6",
+      },
+      body: JSON.stringify({
+        sessionId: "7a6ed6",
+        runId: "pre",
+        hypothesisId: "H4",
+        location: "api.ts:request:tokenPresent",
+        message: "Token presence at request time (no token value)",
+        data: { hasToken: Boolean(token) },
+        timestamp: Date.now(),
+      }),
+    },
+  ).catch(() => {});
+  // #endregion
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
