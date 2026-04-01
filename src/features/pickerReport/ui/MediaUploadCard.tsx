@@ -1,9 +1,14 @@
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import PhotosBg from "../../../assets/addCar/photosBG.svg";
 import AddPhotoIcon from "../../../assets/addCar/addPhoto.svg";
 import AddVideoIcon from "../../../assets/addCar/addVideo.svg";
+import { UploadMediaModal } from "./media/UploadMediaModal";
+import {
+  getUploadModalConfig,
+  type UploadMediaKind,
+} from "./media/uploadModalsConfig";
 
 type MediaKey = "salonPhoto" | "bodyPhoto" | "salonVideo" | "bodyVideo";
 
@@ -11,6 +16,7 @@ export type MediaUploadState = Record<MediaKey, boolean>;
 
 type Row = {
   key: MediaKey;
+  modalKind: UploadMediaKind;
   label: string;
   icon: React.ReactNode;
   successColor: string;
@@ -23,9 +29,12 @@ type Props = {
 };
 
 export function MediaUploadCard({ value, onChange }: Props) {
+  const [activeModalKind, setActiveModalKind] = useState<UploadMediaKind | null>(null);
+
   const rows: Row[] = [
     {
       key: "salonPhoto",
+      modalKind: "salon_photo",
       label: "Фото салона",
       icon: <AddPhotoIcon width={16} height={16} />,
       successColor: "#43C356",
@@ -33,6 +42,7 @@ export function MediaUploadCard({ value, onChange }: Props) {
     },
     {
       key: "bodyPhoto",
+      modalKind: "body_photo",
       label: "Фото кузова",
       icon: <AddPhotoIcon width={16} height={16} />,
       successColor: "#43C356",
@@ -40,6 +50,7 @@ export function MediaUploadCard({ value, onChange }: Props) {
     },
     {
       key: "salonVideo",
+      modalKind: "salon_video",
       label: "Видео салона",
       icon: <AddVideoIcon width={16} height={16} />,
       successColor: "#43C356",
@@ -47,6 +58,7 @@ export function MediaUploadCard({ value, onChange }: Props) {
     },
     {
       key: "bodyVideo",
+      modalKind: "body_video",
       label: "Видео кузова",
       icon: <AddVideoIcon width={16} height={16} />,
       successColor: "#43C356",
@@ -54,8 +66,18 @@ export function MediaUploadCard({ value, onChange }: Props) {
     },
   ];
 
-  const setAdded = (key: MediaKey) => {
-    onChange({ ...value, [key]: !value[key] });
+  const activeRow = rows.find((row) => row.modalKind === activeModalKind);
+  const isModalVisible = activeModalKind !== null;
+  const modalConfig = activeModalKind ? getUploadModalConfig(activeModalKind) : null;
+
+  const closeModal = () => setActiveModalKind(null);
+
+  const handlePickPress = () => {
+    if (activeRow) {
+      onChange({ ...value, [activeRow.key]: true });
+    }
+    closeModal();
+    Alert.alert("Скоро", "Подключим выбор фото и видео в следующем обновлении.");
   };
 
   return (
@@ -83,7 +105,7 @@ export function MediaUploadCard({ value, onChange }: Props) {
                 <TouchableOpacity
                   activeOpacity={0.9}
                   style={[styles.btn, { backgroundColor: bg }]}
-                  onPress={() => setAdded(r.key)}
+                  onPress={() => setActiveModalKind(r.modalKind)}
                 >
                   <View style={styles.btnInner}>
                     {r.icon}
@@ -95,6 +117,23 @@ export function MediaUploadCard({ value, onChange }: Props) {
           })}
         </View>
       </View>
+
+      <UploadMediaModal
+        visible={isModalVisible && Boolean(modalConfig)}
+        title={modalConfig?.title ?? ""}
+        subtitle={modalConfig?.subtitle}
+        primaryActionLabel={modalConfig?.primaryActionLabel}
+        secondaryActionLabel={modalConfig?.secondaryActionLabel}
+        icon={
+          activeRow ? (
+            <View style={styles.modalIconWrap}>
+              {activeRow.icon}
+            </View>
+          ) : undefined
+        }
+        onPickPress={handlePickPress}
+        onClose={closeModal}
+      />
     </View>
   );
 }
@@ -152,6 +191,14 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 14,
     fontWeight: "600",
+  },
+  modalIconWrap: {
+    width: 52,
+    height: 52,
+    borderRadius: 14,
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

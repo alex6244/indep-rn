@@ -25,6 +25,7 @@ export function ReportsBanner({
         height="100%"
         preserveAspectRatio="xMidYMid slice"
       />
+      <View pointerEvents="none" style={styles.microOverlay} />
       <View style={styles.microContent}>
         <Text style={styles.microText1} numberOfLines={1} ellipsizeMode="tail">
           Вы использовали {reportsUsed} из {reportsTotal} отчётов
@@ -46,36 +47,41 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     borderRadius: 16,
     overflow: "hidden",
-    height: 84,
+    height: 96,
     paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingVertical: 10,
     justifyContent: "center",
     position: "relative",
   },
   microContent: {
-    zIndex: 1,
+    zIndex: 2,
     justifyContent: "center",
-    gap: 1,
+    gap: 3,
+    width: "72%",
+  },
+  microOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(219,68,49,0.38)",
+    zIndex: 1,
   },
   microText1: {
     color: "rgba(255,255,255,0.85)",
-    fontSize: 10,
-    lineHeight: 12,
-    maxWidth: "78%",
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: "600",
   },
   microText2: {
-    marginTop: 0,
-    marginBottom: 0,
+    marginTop: 1,
+    marginBottom: 1,
     color: "#FFFFFF",
-    fontSize: 16,
-    lineHeight: 20,
+    fontSize: 18,
+    lineHeight: 22,
     fontWeight: "800",
-    maxWidth: "78%",
   },
   microText3: {
     color: "rgba(255,255,255,0.85)",
-    fontSize: 10,
-    lineHeight: 12,
-    maxWidth: "78%",
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: "600",
   },
 });
