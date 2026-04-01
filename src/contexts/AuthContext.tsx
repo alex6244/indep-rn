@@ -8,10 +8,11 @@ import React, {
   useState,
 } from "react";
 import { mockUsers, type User } from "../data/users";
+import { tokenStorage } from "../services/api";
 
 interface AuthContextType {
   user: User | null;
-  // Унифицированные поля формы: имя + телефон + почта
+  // Legacy signature is preserved for screen compatibility.
   login: (name: string, phone: string, email: string) => Promise<boolean>;
   register: (
     name: string,
@@ -23,8 +24,10 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const IS_MOCK_AUTH = process.env.EXPO_PUBLIC_USE_MOCK_AUTH === "true" || __DEV__;
 
 type UserLike = Partial<User> & { role?: unknown; id?: unknown; login?: unknown; email?: unknown };
+type SessionUser = Pick<User, "id" | "login" | "name" | "phone" | "email" | "role">;
 
 function isValidStoredUser(value: unknown): value is UserLike {
   if (!value || typeof value !== "object") {
@@ -45,20 +48,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  // Локальное хранилище мок-пользователей
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<User[]>([mockUsers.client, mockUsers.picker]);
 
-  const USERS_KEY = "users";
   const USER_KEY = "user";
 
+  const toSessionUser = (value: User): SessionUser => ({
+    id: value.id,
+    login: value.login,
+    name: value.name,
+    phone: value.phone,
+    email: value.email,
+    role: value.role,
+  });
+
   const checkAuth = useCallback(async () => {
-    // Восстанавливаем текущего пользователя
+    // Temporary mock persistence: keep only minimal user session data in AsyncStorage.
     try {
       const userData = await AsyncStorage.getItem(USER_KEY);
       if (userData) {
-        const parsed = JSON.parse(userData);
+        const parsed = JSON.parse(userData) as UserLike;
         if (isValidStoredUser(parsed)) {
-          setUser(parsed as User);
+          const fallback = users.find((u) => u.id === parsed.id);
+          const restored: User = fallback ?? {
+            id: parsed.id as string,
+            login: (parsed.login as string) ?? (parsed.email as string),
+            password: "",
+            role: parsed.role as User["role"],
+            name: (parsed.name as string) ?? "",
+            phone: (parsed.phone as string) ?? "",
+            email: parsed.email as string | undefined,
+          };
+          setUser(restored);
         } else {
           await AsyncStorage.removeItem(USER_KEY);
           setUser(null);
@@ -69,30 +89,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       await AsyncStorage.removeItem(USER_KEY);
     }
 
-    // Восстанавливаем список пользователей
-    try {
-      const storedUsers = await AsyncStorage.getItem(USERS_KEY);
-      if (storedUsers) {
-        const parsed: User[] = JSON.parse(storedUsers);
-        setUsers(parsed);
-      } else {
-        // Если в хранилище пусто — инициализируем mockUsers и сохраняем
-        const initial = [mockUsers.client, mockUsers.picker];
-        setUsers(initial);
-        await AsyncStorage.setItem(USERS_KEY, JSON.stringify(initial));
-      }
-    } catch {
-      // Повреждённые данные — сбрасываем и инициализируем заново
-      const initial = [mockUsers.client, mockUsers.picker];
-      setUsers(initial);
-      await AsyncStorage.setItem(USERS_KEY, JSON.stringify(initial));
-    }
-
     setLoading(false);
-  }, []);
+  }, [users]);
 
   const login = useCallback(
     async (_name: string, _phone: string, email: string): Promise<boolean> => {
+      if (!IS_MOCK_AUTH) {
+        if (__DEV__) {
+          console.log("[auth] login blocked: backend auth not connected");
+        }
+        return false;
+      }
+
       return new Promise((resolve) => {
         setTimeout(async () => {
           const trimmedEmail = email.trim();
@@ -107,7 +115,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           const found = users.find((u) => (u.email ?? "").trim() === trimmedEmail);
 
           if (found) {
-            await AsyncStorage.setItem(USER_KEY, JSON.stringify(found));
+            await AsyncStorage.setItem(
+              USER_KEY,
+              JSON.stringify(toSessionUser(found)),
+            );
             setUser(found);
             if (__DEV__) {
               console.log("[auth] login success", { usersCount: users.length });
@@ -131,6 +142,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       email: string,
       role: User["role"],
     ): Promise<boolean> => {
+      if (!IS_MOCK_AUTH) {
+        if (__DEV__) {
+          console.log("[auth] register blocked: backend auth not connected");
+        }
+        return false;
+      }
+
       return new Promise((resolve) => {
         setTimeout(async () => {
           const trimmedEmail = email.trim();
@@ -162,8 +180,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
           const updated = [...users, newUser];
           setUsers(updated);
-          await AsyncStorage.setItem(USERS_KEY, JSON.stringify(updated));
-          await AsyncStorage.setItem(USER_KEY, JSON.stringify(newUser));
+          await AsyncStorage.setItem(
+            USER_KEY,
+            JSON.stringify(toSessionUser(newUser)),
+          );
           setUser(newUser);
           if (__DEV__) {
             console.log("[auth] register success", { usersCount: updated.length });
@@ -176,7 +196,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const logout = useCallback(async () => {
-    await AsyncStorage.removeItem(USER_KEY);
+    await Promise.all([AsyncStorage.removeItem(USER_KEY), tokenStorage.clear()]);
     setUser(null);
   }, []);
 

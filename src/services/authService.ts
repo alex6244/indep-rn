@@ -2,14 +2,14 @@ import { api, tokenStorage } from "./api";
 import type { User, UserRole } from "../data/users";
 
 interface LoginRequest {
-  phone: string;
   email: string;
+  password: string;
 }
 
 interface RegisterRequest {
   name: string;
-  phone: string;
   email: string;
+  password: string;
   role: UserRole;
 }
 

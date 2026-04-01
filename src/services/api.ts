@@ -1,9 +1,41 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+let inMemoryToken: string | null = null;
 
-const TOKEN_KEY = "@auth_token";
+function resolveBaseUrl(): string {
+  const envUrl = process.env.EXPO_PUBLIC_API_URL?.trim();
+  const allowHttpDevFallback = process.env.EXPO_PUBLIC_ALLOW_HTTP_DEV === "true";
 
-// Замени на реальный URL перед деплоем
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3000/api";
+  if (!envUrl) {
+    if (__DEV__ && allowHttpDevFallback) {
+      return "http://localhost:3000/api";
+    }
+    throw new Error(
+      "API base URL is not configured. Set EXPO_PUBLIC_API_URL. " +
+        "For local HTTP in dev only, set EXPO_PUBLIC_ALLOW_HTTP_DEV=true.",
+    );
+  }
+
+  let parsed: URL;
+  try {
+    parsed = new URL(envUrl);
+  } catch {
+    throw new Error("Invalid EXPO_PUBLIC_API_URL format.");
+  }
+
+  if (!__DEV__ && parsed.protocol !== "https:") {
+    throw new Error("In non-dev mode EXPO_PUBLIC_API_URL must use HTTPS.");
+  }
+
+  return envUrl;
+}
+
+let cachedBaseUrl: string | null = null;
+
+function getBaseUrl(): string {
+  if (!cachedBaseUrl) {
+    cachedBaseUrl = resolveBaseUrl();
+  }
+  return cachedBaseUrl;
+}
 
 // ─── Типы ────────────────────────────────────────────────────────────────────
 
@@ -20,9 +52,14 @@ export class ApiError extends Error {
 // ─── Токен ───────────────────────────────────────────────────────────────────
 
 export const tokenStorage = {
-  get: () => AsyncStorage.getItem(TOKEN_KEY),
-  set: (token: string) => AsyncStorage.setItem(TOKEN_KEY, token),
-  clear: () => AsyncStorage.removeItem(TOKEN_KEY),
+  // Temporary: keep token in memory only until secure storage is introduced.
+  get: async () => inMemoryToken,
+  set: async (token: string) => {
+    inMemoryToken = token;
+  },
+  clear: async () => {
+    inMemoryToken = null;
+  },
 };
 
 // ─── Базовый клиент ──────────────────────────────────────────────────────────
@@ -32,27 +69,6 @@ async function request<T>(
   options: RequestInit = {},
 ): Promise<T> {
   const token = await tokenStorage.get();
-  // #region agent log
-  fetch(
-    "http://127.0.0.1:7574/ingest/90ad6a03-168e-422b-be89-831782cd6f2b",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Debug-Session-Id": "7a6ed6",
-      },
-      body: JSON.stringify({
-        sessionId: "7a6ed6",
-        runId: "pre",
-        hypothesisId: "H4",
-        location: "api.ts:request:tokenPresent",
-        message: "Token presence at request time (no token value)",
-        data: { hasToken: Boolean(token) },
-        timestamp: Date.now(),
-      }),
-    },
-  ).catch(() => {});
-  // #endregion
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -63,7 +79,8 @@ async function request<T>(
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${BASE_URL}${path}`, {
+  const baseUrl = getBaseUrl();
+  const response = await fetch(`${baseUrl}${path}`, {
     ...options,
     headers,
   });

@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { FONT_FAMILY } from "../theme/fonts";
 
 interface State {
   hasError: boolean;
@@ -71,5 +72,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "600",
     fontSize: 16,
+    fontFamily: FONT_FAMILY.button,
   },
 });

@@ -9,6 +9,7 @@ import {
 } from "react-native";
 
 import CloseIcon from "../../../../assets/icons/close.svg";
+import { FONT_FAMILY } from "../../../../shared/theme/fonts";
 
 export type UploadMediaModalProps = {
   visible: boolean;
@@ -144,6 +145,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 14,
     fontWeight: "700",
+    fontFamily: FONT_FAMILY.button,
   },
   secondaryBtn: {
     width: "100%",
@@ -157,5 +159,6 @@ const styles = StyleSheet.create({
     color: "#1E1E1E",
     fontSize: 14,
     fontWeight: "600",
+    fontFamily: FONT_FAMILY.button,
   },
 });

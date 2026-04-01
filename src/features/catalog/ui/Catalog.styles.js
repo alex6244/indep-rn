@@ -1,0 +1,247 @@
+import { StyleSheet } from "react-native";
+import { typography } from "../../../shared/theme/typography";
+
+export const catalogStyles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+    position: "relative",
+  },
+  content: {
+    padding: 16,
+    paddingBottom: 140,
+  },
+  breadcrumbs: {
+    marginBottom: 12,
+  },
+  breadcrumbText: {
+    ...typography.caption,
+    fontSize: 12,
+    color: "#979797",
+  },
+  filtersBar: {
+    marginBottom: 16,
+  },
+  sortButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: "#F7F7F7",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 8,
+  },
+  sortIcon: {
+    ...typography.textRegular,
+    fontSize: 18,
+    color: "#080717",
+  },
+  sortOverlay: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: "transparent",
+    zIndex: 30,
+  },
+  sortDropdown: {
+    position: "absolute",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    shadowColor: "#000000",
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 10,
+    zIndex: 40,
+  },
+  sortItem: {
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+  },
+  sortItemText: {
+    ...typography.textRegular,
+    fontSize: 14,
+    color: "#1A1A1A",
+    fontWeight: "500",
+  },
+  sortItemTextActive: {
+    color: "#DB4431",
+    fontWeight: "700",
+  },
+  sortDivider: {
+    height: 1,
+    backgroundColor: "#EDEDED",
+  },
+  allFiltersButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 12,
+    backgroundColor: "#DB4431",
+    marginRight: 8,
+  },
+  allFiltersText: {
+    ...typography.buttonText,
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  filterChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 12,
+    backgroundColor: "#F7F7F7",
+    marginRight: 8,
+  },
+  filterChipText: {
+    ...typography.caption,
+    fontSize: 12,
+    color: "#807E7E",
+  },
+  sectionTitle: {
+    ...typography.title,
+    fontSize: 20,
+    fontWeight: "600",
+    marginBottom: 12,
+  },
+  carsGrid: {
+    gap: 12,
+  },
+  carCard: {
+    backgroundColor: "#F7F7F7",
+    borderRadius: 16,
+    padding: 12,
+  },
+  carImagesScroll: {
+    marginBottom: 10,
+  },
+  carImage: {
+    width: 220,
+    height: 140,
+    borderRadius: 16,
+    marginRight: 8,
+  },
+  carInfo: {
+    marginBottom: 8,
+  },
+  carPriceRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 4,
+  },
+  carPrice: {
+    ...typography.title,
+    fontSize: 20,
+    fontWeight: "600",
+  },
+  carMileage: {
+    ...typography.caption,
+    fontSize: 10,
+    color: "#FFFFFF",
+    backgroundColor: "#DB4431",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+  },
+  carTitle: {
+    ...typography.textRegular,
+    fontSize: 12,
+    opacity: 0.8,
+  },
+  carSub: {
+    ...typography.caption,
+    fontSize: 12,
+    color: "#808080",
+  },
+  carButtonsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 8,
+  },
+  carAddress: {
+    ...typography.caption,
+    fontSize: 10,
+    marginTop: 6,
+  },
+  btn: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  btnPrimary: {
+    backgroundColor: "#DB4431",
+  },
+  btnTextPrimary: {
+    ...typography.buttonText,
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  seeAllBtn: {
+    marginTop: 16,
+  },
+  footer: {
+    marginTop: 24,
+    paddingVertical: 16,
+    borderTopWidth: 1,
+    borderTopColor: "#DEDEDE",
+  },
+  footerLogo: {
+    ...typography.title,
+    fontSize: 18,
+    fontWeight: "700",
+    marginBottom: 8,
+  },
+  footerLinks: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+    marginBottom: 8,
+  },
+  footerLink: {
+    ...typography.caption,
+    fontSize: 12,
+    textDecorationLine: "underline",
+  },
+  footerCopyright: {
+    ...typography.caption,
+    fontSize: 10,
+    color: "#888",
+  },
+  filtersOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "flex-start",
+  },
+  filtersBackdrop: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.35)",
+  },
+  filtersPanel: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    backgroundColor: "#FFFFFF",
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 12,
+    overflow: "visible",
+    bottom: 0,
+  },
+  emptyStateText: {
+    ...typography.caption,
+    color: "#979797",
+    fontSize: 14,
+    textAlign: "center",
+    paddingVertical: 24,
+  },
+});

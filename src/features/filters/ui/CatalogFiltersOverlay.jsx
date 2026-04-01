@@ -12,6 +12,7 @@ import { RangeSlider } from "../../../shared/ui/RangeSlider";
 import { EntitiesToggle } from "../../../widgets/entitiesToggle/EntitiesToggle";
 import { MarkButton } from "./MarkButton";
 import { CarSearchFiltersBottomPanel } from "./CarSearchFiltersBottomPanel";
+import { MileageRangePicker } from "./MileageRangePicker";
 
 function BackCaretBlack({ width = 18, height = 18 }) {
   return (
@@ -26,6 +27,22 @@ function BackCaretBlack({ width = 18, height = 18 }) {
 
 function onlyDigits(s) {
   return String(s ?? "").replace(/\D/g, "");
+}
+
+function normalizeMileageText(value) {
+  const raw = onlyDigits(value).slice(0, 7);
+  if (!raw) return "";
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed)) return "";
+  const clamped = Math.max(0, Math.min(1_000_000, parsed));
+  const snapped = Math.round(clamped / 10_000) * 10_000;
+  return String(snapped);
+}
+
+function formatMileageText(value) {
+  const normalized = normalizeMileageText(value);
+  if (!normalized) return "";
+  return new Intl.NumberFormat("ru-RU").format(Number(normalized));
 }
 
 export function CatalogFiltersOverlay({
@@ -163,24 +180,30 @@ export function CatalogFiltersOverlay({
             <TextInput
               placeholder="От 0"
               keyboardType="numeric"
-              value={mileageFromText}
-              onChangeText={(t) =>
-                onChangeMileageFromText(onlyDigits(t).slice(0, 7))
-              }
+              value={formatMileageText(mileageFromText)}
+              editable={false}
               style={[styles.input, styles.inputHalf]}
               placeholderTextColor="#979797"
             />
             <TextInput
-              placeholder="До 400 000"
+              placeholder="До 1 000 000"
               keyboardType="numeric"
-              value={mileageToText}
-              onChangeText={(t) =>
-                onChangeMileageToText(onlyDigits(t).slice(0, 7))
-              }
+              value={formatMileageText(mileageToText)}
+              editable={false}
               style={[styles.input, styles.inputHalf]}
               placeholderTextColor="#979797"
             />
           </View>
+          <MileageRangePicker
+            fromText={mileageFromText}
+            toText={mileageToText}
+            onChangeFromText={(next) =>
+              onChangeMileageFromText(normalizeMileageText(next))
+            }
+            onChangeToText={(next) =>
+              onChangeMileageToText(normalizeMileageText(next))
+            }
+          />
         </View>
 
         <View style={styles.filterBlock}>

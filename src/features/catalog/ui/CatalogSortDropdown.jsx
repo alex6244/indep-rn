@@ -1,0 +1,81 @@
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+
+export function CatalogSortDropdown({
+  visible,
+  sortOption,
+  dropdownTop,
+  dropdownLeft,
+  dropdownWidth,
+  onClose,
+  onSelect,
+  styles,
+}) {
+  if (!visible) return null;
+
+  return (
+    <>
+      <TouchableOpacity style={styles.sortOverlay} activeOpacity={1} onPress={onClose} />
+      <View
+        style={[
+          styles.sortDropdown,
+          {
+            top: dropdownTop,
+            left: dropdownLeft,
+            width: dropdownWidth,
+          },
+        ]}
+      >
+        <TouchableOpacity style={styles.sortItem} onPress={() => onSelect("priceAsc")}>
+          <Text
+            style={[
+              styles.sortItemText,
+              sortOption === "priceAsc" && styles.sortItemTextActive,
+            ]}
+          >
+            По возрастанию цены
+          </Text>
+        </TouchableOpacity>
+
+        <View style={styles.sortDivider} />
+
+        <TouchableOpacity style={styles.sortItem} onPress={() => onSelect("priceDesc")}>
+          <Text
+            style={[
+              styles.sortItemText,
+              sortOption === "priceDesc" && styles.sortItemTextActive,
+            ]}
+          >
+            По убыванию цены
+          </Text>
+        </TouchableOpacity>
+
+        <View style={styles.sortDivider} />
+
+        <TouchableOpacity style={styles.sortItem} onPress={() => onSelect("mileageDesc")}>
+          <Text
+            style={[
+              styles.sortItemText,
+              sortOption === "mileageDesc" && styles.sortItemTextActive,
+            ]}
+          >
+            С большим пробегом
+          </Text>
+        </TouchableOpacity>
+
+        <View style={styles.sortDivider} />
+
+        <TouchableOpacity style={styles.sortItem} onPress={() => onSelect("mileageAsc")}>
+          <Text
+            style={[
+              styles.sortItemText,
+              sortOption === "mileageAsc" && styles.sortItemTextActive,
+            ]}
+          >
+            С меньшим пробегом
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </>
+  );
+}

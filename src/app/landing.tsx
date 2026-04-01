@@ -15,6 +15,7 @@ import TimeIcon from "../assets/mainpage/carousel/time.svg";
 import ReportIcon from "../assets/mainpage/carousel/report.svg";
 import SellerStep1 from "../assets/mainpage/manual/seller/1.svg";
 import { useProtected } from "../hooks/useProtected";
+import { FONT_FAMILY } from "../shared/theme/fonts";
 
 /** Legacy full-page marketing layout (formerly root `/`). Open via `/landing`. */
 export default function LandingPage() {
@@ -294,6 +295,7 @@ const styles = StyleSheet.create({
   headerLink: {
     fontSize: 14,
     color: "#080717",
+    fontFamily: FONT_FAMILY.button,
   },
   iconButton: {
     paddingHorizontal: 4,
@@ -343,6 +345,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "500",
     fontSize: 14,
+    fontFamily: FONT_FAMILY.button,
   },
 
   section: {
@@ -398,6 +401,7 @@ const styles = StyleSheet.create({
   toggleButtonText: {
     fontSize: 14,
     color: "#080717",
+    fontFamily: FONT_FAMILY.button,
   },
   toggleButtonTextActive: {
     color: "#FFFFFF",

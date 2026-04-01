@@ -11,6 +11,7 @@ import {
 import ServiceBg1 from "../../assets/mainpage/services/1.svg";
 import ServiceBg2 from "../../assets/mainpage/services/2.svg";
 import ServiceBg3 from "../../assets/mainpage/services/3.svg";
+import { FONT_FAMILY } from "../../shared/theme/fonts";
 
 type BgComponent = typeof ServiceBg1;
 
@@ -182,5 +183,6 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 14,
     fontWeight: "600",
+    fontFamily: FONT_FAMILY.button,
   },
 });

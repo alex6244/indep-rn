@@ -4,6 +4,7 @@ import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import PhotosBg from "../../../assets/addCar/photosBG.svg";
 import AddPhotoIcon from "../../../assets/addCar/addPhoto.svg";
 import AddVideoIcon from "../../../assets/addCar/addVideo.svg";
+import { FONT_FAMILY } from "../../../shared/theme/fonts";
 import { UploadMediaModal } from "./media/UploadMediaModal";
 import {
   getUploadModalConfig,
@@ -191,6 +192,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 14,
     fontWeight: "600",
+    fontFamily: FONT_FAMILY.button,
   },
   modalIconWrap: {
     width: 52,

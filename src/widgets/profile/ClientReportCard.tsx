@@ -1,6 +1,7 @@
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import type { ImageSourcePropType } from "react-native";
+import { FONT_FAMILY } from "../../shared/theme/fonts";
 
 type ClientReport = {
   id: string;
@@ -89,6 +90,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 14,
     fontWeight: "600",
+    fontFamily: FONT_FAMILY.button,
   },
   footerRow: {
     marginTop: 10,
@@ -104,6 +106,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: "#16A34A",
     textDecorationLine: "underline",
+    fontFamily: FONT_FAMILY.button,
   },
 });
 

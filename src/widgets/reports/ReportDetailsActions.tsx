@@ -1,5 +1,6 @@
 import React from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FONT_FAMILY } from "../../shared/theme/fonts";
 
 export function ReportDetailsActions({ reportId }: { reportId: string }) {
   return (
@@ -47,11 +48,13 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 14,
     fontWeight: "700",
+    fontFamily: FONT_FAMILY.button,
   },
   btnTextSecondary: {
     color: "#1E1E1E",
     fontSize: 14,
     fontWeight: "700",
+    fontFamily: FONT_FAMILY.button,
   },
 });
 

@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import EmptyIllustration from "../../assets/profile/empty.svg";
+import { FONT_FAMILY } from "../../shared/theme/fonts";
 
 type Props = {
   onOpenCatalog: () => void;
@@ -69,5 +70,6 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "600",
+    fontFamily: FONT_FAMILY.button,
   },
 });
