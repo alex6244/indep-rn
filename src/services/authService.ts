@@ -1,6 +1,9 @@
 import { api, tokenStorage } from "./api";
 import type { User, UserRole } from "../data/users";
 
+// Backend-ready auth service.
+// Current UI auth flow still uses AuthContext mock mode until API integration is enabled.
+
 interface LoginRequest {
   email: string;
   password: string;

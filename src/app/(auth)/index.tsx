@@ -15,8 +15,6 @@ import { useAuth } from "../../contexts/AuthContext";
 import { AuthHeader } from "../../widgets/header/AuthHeader";
 
 export default function LoginScreen() {
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [agreed, setAgreed] = useState(false);
@@ -27,19 +25,7 @@ export default function LoginScreen() {
       alert("Подождите, идёт инициализация авторизации");
       return;
     }
-    const trimmedName = name.trim();
-    const trimmedPhone = phone.trim();
     const trimmedEmail = email.trim();
-
-    if (!trimmedName) {
-      alert("Введите имя (минимум 2 символа)");
-      return;
-    }
-
-    if (trimmedName.length < 2) {
-      alert("Имя слишком короткое");
-      return;
-    }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
@@ -48,7 +34,7 @@ export default function LoginScreen() {
     }
 
     setLoading(true);
-    const success = await login(trimmedName, trimmedPhone, trimmedEmail);
+    const success = await login(trimmedEmail);
     setLoading(false);
 
     if (success) {
@@ -68,29 +54,6 @@ export default function LoginScreen() {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.formCard}>
             <Text style={styles.title}>Войти</Text>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Имя</Text>
-              <TextInput
-                style={styles.input}
-                value={name}
-                onChangeText={setName}
-                placeholder="Укажите ваше имя"
-                editable={!loading}
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Телефон</Text>
-              <TextInput
-                style={styles.input}
-                value={phone}
-                onChangeText={setPhone}
-                placeholder="+7 (_) _--"
-                keyboardType="phone-pad"
-                editable={!loading}
-              />
-            </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Почта</Text>

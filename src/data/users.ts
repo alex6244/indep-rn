@@ -6,8 +6,8 @@ export interface User {
   password: string;   // для бэка; сейчас в мок-авторизации не используется из форм
   role: UserRole;
   name: string;
-  phone: string;
-  email?: string;     // новая почта для мок-логики name+phone+email
+  phone?: string;
+  email: string;
 }
 
 export const mockUsers: { client: User; picker: User } = {

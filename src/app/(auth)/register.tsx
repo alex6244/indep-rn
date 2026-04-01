@@ -12,6 +12,7 @@ import {
   View,
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
+import { FONT_FAMILY } from "../../shared/theme/fonts";
 import { AuthHeader } from "../../widgets/header/AuthHeader";
 
 export default function RegisterScreen() {
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   title: {
-    fontFamily: "ModerusticBold",
+    fontFamily: FONT_FAMILY.regular,
     fontSize: 28,
     fontWeight: "600",
     textAlign: "center",
@@ -356,7 +357,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "700",
     color: "#1E1E1E",
-    // fontFamily: "ModerusticBold",
+    // fontFamily: FONT_FAMILY.regular,
   },
   headerBurger: {
     width: 24,

@@ -12,8 +12,8 @@ import { tokenStorage } from "../services/api";
 
 interface AuthContextType {
   user: User | null;
-  // Legacy signature is preserved for screen compatibility.
-  login: (name: string, phone: string, email: string) => Promise<boolean>;
+  // Mock runtime contract (email-only) until backend auth is wired via authService.
+  login: (email: string) => Promise<boolean>;
   register: (
     name: string,
     email: string,
@@ -24,6 +24,7 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// Runtime mock auth switch. Backend login/register should go through authService later.
 const IS_MOCK_AUTH = process.env.EXPO_PUBLIC_USE_MOCK_AUTH === "true" || __DEV__;
 
 type UserLike = Partial<User> & { role?: unknown; id?: unknown; login?: unknown; email?: unknown };
@@ -76,7 +77,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             role: parsed.role as User["role"],
             name: (parsed.name as string) ?? "",
             phone: (parsed.phone as string) ?? "",
-            email: parsed.email as string | undefined,
+            email:
+              (parsed.email as string | undefined) ??
+              ((parsed.login as string | undefined) ?? ""),
           };
           setUser(restored);
         } else {
@@ -93,7 +96,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [users]);
 
   const login = useCallback(
-    async (_name: string, _phone: string, email: string): Promise<boolean> => {
+    async (email: string): Promise<boolean> => {
       if (!IS_MOCK_AUTH) {
         if (__DEV__) {
           console.log("[auth] login blocked: backend auth not connected");
