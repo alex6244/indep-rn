@@ -1,26 +1,58 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { Animated, Dimensions, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFavorites } from "../contexts/FavoritesContext";
+import { useAuth } from "../contexts/AuthContext";
 import { cars as catalogCars } from "../data/cars";
 import { useCatalogFiltersController } from "../features/catalog/hooks/useCatalogFiltersController";
 import { CatalogCarsList } from "../features/catalog/ui/CatalogCarsList";
 import { CatalogFooter } from "../features/catalog/ui/CatalogFooter";
+import { CatalogMileageFloatingPanel } from "../features/catalog/ui/CatalogMileageFloatingPanel";
 import { catalogStyles as styles } from "../features/catalog/ui/Catalog.styles";
 import { CatalogSortDropdown } from "../features/catalog/ui/CatalogSortDropdown";
 import { CatalogFiltersOverlay } from "../features/filters/ui/CatalogFiltersOverlay";
+import {
+  getMainBurgerMenuItems,
+  MainBurgerMenuFooter,
+} from "../shared/config/mainBurgerMenu";
+import { BurgerMenu } from "../shared/ui/BurgerMenu";
 import { Header } from "../widgets/header/Header";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
+const MILEAGE_FLOAT_SCROLL_THRESHOLD = 120;
+const MILEAGE_FLOAT_RESET_SCROLL_Y = 48;
+
 const Catalog = () => {
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const { logout } = useAuth();
   const { isFavorite, setFavorite } = useFavorites();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
   const [sortAnchor, setSortAnchor] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const mileagePanelDismissedRef = useRef(false);
+  const [floatingMileageVisible, setFloatingMileageVisible] = useState(false);
   const sortButtonRef = useRef(null);
   const filtersX = useRef(new Animated.Value(-SCREEN_WIDTH)).current;
 
   const controller = useCatalogFiltersController(catalogCars);
+
+  const tabBarClearance = Math.max(insets.bottom, 8) + 80;
+
+  const syncFloatingMileage = useCallback((y) => {
+    if (y < MILEAGE_FLOAT_RESET_SCROLL_Y) {
+      mileagePanelDismissedRef.current = false;
+    }
+    const should =
+      y > MILEAGE_FLOAT_SCROLL_THRESHOLD &&
+      !mileagePanelDismissedRef.current;
+    setFloatingMileageVisible((prev) =>
+      prev !== should ? should : prev,
+    );
+  }, []);
 
   const openFilters = () => {
     setFiltersOpen(true);
@@ -69,9 +101,24 @@ const Catalog = () => {
 
   return (
     <View style={styles.root}>
-      <Header title="Каталог" />
+      <Header
+        title={null}
+        showLogo
+        onLogoPress={() => router.push("/(tabs)")}
+        onOpenBurger={() => setMenuOpen(true)}
+        rightAction="favorites"
+      />
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: floatingMileageVisible ? 220 : 132 },
+        ]}
+        onScroll={(e) => {
+          syncFloatingMileage(e.nativeEvent.contentOffset.y);
+        }}
+        scrollEventThrottle={16}
+      >
         <View style={styles.breadcrumbs}>
           <Text style={styles.breadcrumbText}>Главная {">"} Каталог</Text>
         </View>
@@ -173,6 +220,26 @@ const Catalog = () => {
           </Animated.View>
         </View>
       )}
+
+      <BurgerMenu
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        items={getMainBurgerMenuItems()}
+        footer={<MainBurgerMenuFooter onLogout={logout} />}
+      />
+
+      <CatalogMileageFloatingPanel
+        visible={floatingMileageVisible}
+        onDismiss={() => {
+          mileagePanelDismissedRef.current = true;
+          setFloatingMileageVisible(false);
+        }}
+        mileageFromText={controller.mileageFromText}
+        mileageToText={controller.mileageToText}
+        onChangeMileageFromText={controller.setMileageFromText}
+        onChangeMileageToText={controller.setMileageToText}
+        bottomInset={tabBarClearance}
+      />
     </View>
   );
 };

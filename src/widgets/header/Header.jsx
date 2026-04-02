@@ -1,55 +1,107 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
-  Modal,
   StyleSheet,
-} from 'react-native';
+} from "react-native";
+import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { FavoriteButton } from '../../features/favorites/ui/FavoriteButton';
+import Logo from "../../assets/logo.svg";
+import FavNavIcon from "../../assets/icons/burger/favourites.svg";
+import { useAuth } from "../../contexts/AuthContext";
+import { FavoriteButton } from "../../features/favorites/ui/FavoriteButton";
+import {
+  getMainBurgerMenuItems,
+  MainBurgerMenuFooter,
+} from "../../shared/config/mainBurgerMenu";
+import { BurgerMenu } from "../../shared/ui/BurgerMenu";
 
-export const Header = ({ title = 'Каталог' }) => {
+/**
+ * @param {object} props
+ * @param {string | null} [props.title]
+ * @param {boolean} [props.showLogo]
+ * @param {() => void} [props.onLogoPress]
+ * @param {() => void} [props.onOpenBurger] — если задан, BurgerMenu рендерится снаружи, здесь только кнопка
+ * @param {'favoriteToggle' | 'favorites' | 'none'} [props.rightAction] — справа: избранное-toggle, переход в избранное, пусто
+ */
+export const Header = ({
+  title = "Каталог",
+  showLogo = false,
+  onLogoPress,
+  onOpenBurger,
+  rightAction = "favoriteToggle",
+}) => {
   const [burgerOpen, setBurgerOpen] = useState(false);
   const insets = useSafeAreaInsets();
+  const { logout } = useAuth();
+  const router = useRouter();
+
+  const useExternalBurger = typeof onOpenBurger === "function";
+
+  const openBurger = () => {
+    if (useExternalBurger) {
+      onOpenBurger();
+      return;
+    }
+    setBurgerOpen(true);
+  };
 
   const closeBurger = () => setBurgerOpen(false);
+
+  const showTitle =
+    !showLogo && title != null && String(title).length > 0;
 
   return (
     <>
       <View style={[styles.container, { paddingTop: insets.top + 6 }]}>
-        <TouchableOpacity onPress={() => setBurgerOpen(true)}>
+        <TouchableOpacity onPress={openBurger} hitSlop={12}>
           <Text style={styles.burger}>≡</Text>
         </TouchableOpacity>
 
-        <Text style={styles.title}>{title}</Text>
+        <View style={styles.center}>
+          {showLogo ? (
+            <TouchableOpacity
+              onPress={onLogoPress}
+              disabled={!onLogoPress}
+              hitSlop={12}
+              accessibilityRole="button"
+              accessibilityLabel="На главную"
+            >
+              <Logo width={82} height={22} />
+            </TouchableOpacity>
+          ) : showTitle ? (
+            <Text style={styles.title}>{title}</Text>
+          ) : null}
+        </View>
 
         <View style={styles.right}>
-          <FavoriteButton />
+          {rightAction === "favoriteToggle" ? (
+            <FavoriteButton />
+          ) : rightAction === "favorites" ? (
+            <TouchableOpacity
+              onPress={() => router.push("/(tabs)/favorites")}
+              hitSlop={12}
+              accessibilityRole="button"
+              accessibilityLabel="Открыть избранное"
+              style={styles.favNavBtn}
+            >
+              <FavNavIcon width={22} height={22} />
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.rightSpacer} />
+          )}
         </View>
       </View>
 
-      <Modal
-        transparent
-        visible={burgerOpen}
-        animationType="fade"
-        onRequestClose={closeBurger}
-      >
-        <TouchableOpacity
-          style={styles.overlay}
-          activeOpacity={1}
-          onPress={closeBurger}
-        >
-          <View
-            style={styles.menu}
-            onStartShouldSetResponder={() => true}
-          >
-            <Text style={styles.menuItem} onPress={closeBurger}>
-              Обратная связь
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+      {!useExternalBurger ? (
+        <BurgerMenu
+          open={burgerOpen}
+          onClose={closeBurger}
+          items={getMainBurgerMenuItems()}
+          footer={<MainBurgerMenuFooter onLogout={logout} />}
+        />
+      ) : null}
     </>
   );
 };
@@ -58,40 +110,36 @@ const styles = StyleSheet.create({
   container: {
     minHeight: 56,
     paddingHorizontal: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  center: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 8,
   },
   burger: {
     fontSize: 24,
   },
   title: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   right: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    minWidth: 44,
+    justifyContent: "flex-end",
   },
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-    justifyContent: 'flex-start',
+  favNavBtn: {
+    padding: 8,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  menu: {
-    backgroundColor: '#fff',
-    padding: 16,
-    width: '80%',
-  },
-  menuItem: {
-    fontSize: 16,
-    paddingVertical: 8,
-  },
-  marksRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 12,
-    marginTop: 12,
+  rightSpacer: {
+    width: 44,
+    height: 44,
   },
 });
-

@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { TouchableOpacity, StyleSheet, View } from "react-native";
+import FavOutline from "../../../assets/icons/burger/favourites.svg";
+import FavFilled from "../../../assets/icons/favourite.svg";
 
 export const FavoriteButton = ({ initialActive = false, onChange }) => {
   const [active, setActive] = useState(initialActive);
@@ -15,10 +17,20 @@ export const FavoriteButton = ({ initialActive = false, onChange }) => {
   };
 
   return (
-    <TouchableOpacity style={styles.button} onPress={toggle} hitSlop={8}>
-      <Text style={[styles.icon, active && styles.iconActive]}>
-        {active ? '<3' : '</3'}
-      </Text>
+    <TouchableOpacity
+      style={styles.button}
+      onPress={toggle}
+      hitSlop={8}
+      accessibilityRole="button"
+      accessibilityLabel={active ? "Убрать из избранного" : "В избранное"}
+    >
+      <View style={styles.iconWrap}>
+        {active ? (
+          <FavFilled width={22} height={22} />
+        ) : (
+          <FavOutline width={22} height={22} />
+        )}
+      </View>
     </TouchableOpacity>
   );
 };
@@ -28,12 +40,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
   },
-  icon: {
-    fontSize: 18,
-    color: '#BFBFBF',
-  },
-  iconActive: {
-    color: '#DB4431',
+  iconWrap: {
+    width: 28,
+    height: 28,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

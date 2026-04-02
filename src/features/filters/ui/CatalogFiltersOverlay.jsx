@@ -34,9 +34,8 @@ function normalizeMileageText(value) {
   if (!raw) return "";
   const parsed = Number(raw);
   if (!Number.isFinite(parsed)) return "";
-  const clamped = Math.max(0, Math.min(1_000_000, parsed));
-  const snapped = Math.round(clamped / 10_000) * 10_000;
-  return String(snapped);
+  const clamped = Math.max(0, Math.min(1_000_000, Math.round(parsed)));
+  return String(clamped);
 }
 
 function formatMileageText(value) {

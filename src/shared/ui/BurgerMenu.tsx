@@ -46,12 +46,19 @@ export function BurgerMenu({
         activeOpacity={1}
         onPress={onClose}
       >
-        <BlurView
-          intensity={30}
-          tint="dark"
+        <View
           style={StyleSheet.absoluteFillObject}
           pointerEvents="none"
-        />
+        >
+          <View
+            style={[StyleSheet.absoluteFillObject, styles.dim]}
+          />
+          <BlurView
+            intensity={30}
+            tint="dark"
+            style={StyleSheet.absoluteFillObject}
+          />
+        </View>
         <View
           style={[styles.panel, panelStyle]}
           onStartShouldSetResponder={() => true}
@@ -84,6 +91,9 @@ export function BurgerMenu({
 }
 
 const styles = StyleSheet.create({
+  dim: {
+    backgroundColor: "rgba(0,0,0,0.45)",
+  },
   overlay: {
     flex: 1,
     flexDirection: "row",
