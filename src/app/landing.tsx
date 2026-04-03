@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Alert,
   View,
   Text,
   StyleSheet,
@@ -213,7 +214,12 @@ export default function LandingPage() {
                     ) {
                       return;
                     }
-                    // TODO: сюда добавить реальную логику покупки
+                    // UX stub: real payment/checkout + report unlock stays on backend.
+                    Alert.alert(
+                      "Функция в разработке",
+                      "Оплата и выдача отчёта появятся позже. Сейчас списание средств не выполняется.",
+                      [{ text: "Понятно" }],
+                    );
                   }}
                 >
                   <Text style={styles.primaryButtonText}>Купить отчёт</Text>

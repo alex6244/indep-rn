@@ -18,7 +18,7 @@ const RadioChip = ({ label }) => (
 const NewCar = () => {
   return (
     <View style={styles.root}>
-      <Header title="Создать объявление" />
+      <Header title="Создать объявление" rightAction="none" />
 
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.breadcrumbs}>Профиль {">"} Создать объявление</Text>

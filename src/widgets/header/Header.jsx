@@ -10,11 +10,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Logo from "../../assets/logo.svg";
 import FavNavIcon from "../../assets/icons/burger/favourites.svg";
 import { useAuth } from "../../contexts/AuthContext";
-import { FavoriteButton } from "../../features/favorites/ui/FavoriteButton";
 import {
   getMainBurgerMenuItems,
   MainBurgerMenuFooter,
 } from "../../shared/config/mainBurgerMenu";
+import { BurgerButton } from "../../shared/ui/BurgerButton";
 import { BurgerMenu } from "../../shared/ui/BurgerMenu";
 
 /**
@@ -23,14 +23,14 @@ import { BurgerMenu } from "../../shared/ui/BurgerMenu";
  * @param {boolean} [props.showLogo]
  * @param {() => void} [props.onLogoPress]
  * @param {() => void} [props.onOpenBurger] — если задан, BurgerMenu рендерится снаружи, здесь только кнопка
- * @param {'favoriteToggle' | 'favorites' | 'none'} [props.rightAction] — справа: избранное-toggle, переход в избранное, пусто
+ * @param {'favorites' | 'none'} [props.rightAction] — переход в избранное или пусто (без toggle без контекста карточки)
  */
 export const Header = ({
   title = "Каталог",
   showLogo = false,
   onLogoPress,
   onOpenBurger,
-  rightAction = "favoriteToggle",
+  rightAction = "none",
 }) => {
   const [burgerOpen, setBurgerOpen] = useState(false);
   const insets = useSafeAreaInsets();
@@ -55,9 +55,11 @@ export const Header = ({
   return (
     <>
       <View style={[styles.container, { paddingTop: insets.top + 6 }]}>
-        <TouchableOpacity onPress={openBurger} hitSlop={12}>
-          <Text style={styles.burger}>≡</Text>
-        </TouchableOpacity>
+        <BurgerButton
+          onPress={openBurger}
+          hitSlop={12}
+          accessibilityLabel="Открыть меню"
+        />
 
         <View style={styles.center}>
           {showLogo ? (
@@ -76,9 +78,7 @@ export const Header = ({
         </View>
 
         <View style={styles.right}>
-          {rightAction === "favoriteToggle" ? (
-            <FavoriteButton />
-          ) : rightAction === "favorites" ? (
+          {rightAction === "favorites" ? (
             <TouchableOpacity
               onPress={() => router.push("/(tabs)/favorites")}
               hitSlop={12}
@@ -119,9 +119,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 8,
-  },
-  burger: {
-    fontSize: 24,
   },
   title: {
     fontSize: 18,

@@ -23,7 +23,7 @@ const Auto = () => {
 
   return (
     <View style={styles.root}>
-      <Header title="NISSAN Qashqai" />
+      <Header title="NISSAN Qashqai" rightAction="none" />
 
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.breadcrumbs}>

@@ -11,7 +11,7 @@ const mockCars = [
 const Home = () => {
   return (
     <View style={styles.root}>
-      <Header title="Каталог" />
+      <Header title="Каталог" rightAction="none" />
 
       <ScrollView contentContainerStyle={styles.content}>
         <CarouselSlider cars={mockCars} />

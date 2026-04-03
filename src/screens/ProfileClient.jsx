@@ -16,7 +16,7 @@ const ProfileScreen = () => {
 
   return (
     <View style={styles.root}>
-      <Header title="Профиль" />
+      <Header title="Профиль" rightAction="none" />
 
       <ScrollView
         contentContainerStyle={styles.content}
