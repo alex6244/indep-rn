@@ -1,6 +1,7 @@
 import { type Href, useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import AboutIcon from "../../assets/icons/burger/about.svg";
 import CooperationIcon from "../../assets/icons/burger/ads.svg";
@@ -16,6 +17,7 @@ import { ProfileQuickActions } from "./ProfileQuickActions";
 import { ProfileStats } from "./ProfileStats";
 import { ReportsBanner } from "./ReportsBanner";
 import { useProfileEditFlow } from "./useProfileEditFlow";
+import { scrollBottomPaddingBelowTabBar } from "../../app/(tabs)/tabBarMetrics";
 import { styles } from "../../app/(tabs)/profile.styles";
 
 type Props = {
@@ -27,6 +29,7 @@ type Props = {
 
 export function PickerProfileSection({ initials, name, phone, onLogout }: Props) {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [menuOpen, setMenuOpen] = useState(false);
   const [balanceModalOpen, setBalanceModalOpen] = useState(false);
   const editFlow = useProfileEditFlow(onLogout, router);
@@ -48,7 +51,14 @@ export function PickerProfileSection({ initials, name, phone, onLogout }: Props)
     <View style={styles.pickerScreen}>
       <PickerProfileHeader onOpenBurger={() => setMenuOpen(true)} />
 
-      <ScrollView contentContainerStyle={styles.pickerContent}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.pickerContent,
+          {
+            paddingBottom: scrollBottomPaddingBelowTabBar(insets.bottom),
+          },
+        ]}
+      >
         <PickerUserCard
           initials={initials}
           name={name}

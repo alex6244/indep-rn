@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../../contexts/AuthContext";
 import {
   getMainBurgerMenuItems,
@@ -11,11 +12,12 @@ import { BurgerMenu } from "../../shared/ui/BurgerMenu";
 /** Шапка auth-экранов: бургер открывает то же меню, что в приложении; «Выйти» только для залогиненного пользователя. */
 export function AuthHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const insets = useSafeAreaInsets();
   const { user, logout } = useAuth();
 
   return (
     <>
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 6 }]}>
         <View style={styles.logoRow}>
           <Image
             source={require("../../assets/logo.png")}
@@ -42,7 +44,7 @@ export function AuthHeader() {
 
 const styles = StyleSheet.create({
   header: {
-    height: 56,
+    minHeight: 56,
     paddingHorizontal: 20,
     flexDirection: "row",
     alignItems: "center",

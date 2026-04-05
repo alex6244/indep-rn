@@ -9,7 +9,6 @@ export const catalogStyles = StyleSheet.create({
   },
   content: {
     padding: 16,
-    paddingBottom: 140,
   },
   breadcrumbs: {
     marginBottom: 12,

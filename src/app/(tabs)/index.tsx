@@ -12,7 +12,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../../contexts/AuthContext";
+import { scrollBottomPaddingBelowTabBar } from "./tabBarMetrics";
 import { BenefitsRow } from "../../widgets/home/BenefitsRow";
 import { BestOffersSection } from "../../widgets/home/BestOffersSection";
 import { ChecksGridSection } from "../../widgets/home/ChecksGridSection";
@@ -25,13 +27,18 @@ import { WelcomeHero } from "../../widgets/home/WelcomeHero";
 
 export default function HomeTab() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [roleView, setRoleView] = useState<"picker" | "client">("client");
 
+  const contentPadBottom = scrollBottomPaddingBelowTabBar(insets.bottom);
+
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={[styles.content, { paddingBottom: contentPadBottom }]}
+      >
         <WelcomeHero
           onOpenBurger={() => setMenuOpen(true)}
           onOpenCatalog={() => router.push("/(tabs)/catalog" as Href)}
@@ -82,7 +89,6 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 16,
     paddingTop: 10,
-    paddingBottom: 30,
   },
   catalogCtaButton: {
     marginTop: 16,

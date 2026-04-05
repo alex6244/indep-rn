@@ -89,7 +89,6 @@ export const styles = StyleSheet.create({
   },
   pickerContent: {
     paddingTop: 10,
-    paddingBottom: 178,
   },
   sectionTitle: {
     ...typography.title,

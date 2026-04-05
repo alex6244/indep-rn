@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Logo from "../../assets/logo.svg";
+import { BurgerButton } from "../../shared/ui/BurgerButton";
 
 type Props = {
   name: string;
@@ -28,15 +29,7 @@ export function ClientProfileHeader({
         <Logo width={82} height={22} />
         {showTitle && <Text style={styles.title}>{title}</Text>}
       </View>
-      <TouchableOpacity
-        style={styles.burgerButton}
-        onPress={onOpenBurger}
-        accessibilityRole="button"
-      >
-        <View style={styles.burgerLine} />
-        <View style={styles.burgerLine} />
-        <View style={styles.burgerLine} />
-      </TouchableOpacity>
+      <BurgerButton onPress={onOpenBurger} hitSlop={8} />
       {!showTitle && (
         <View style={styles.meta}>
           <View style={styles.nameRow}>
@@ -78,20 +71,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     color: "#1E1E1E",
-  },
-  burgerButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  burgerLine: {
-    width: 22,
-    height: 2,
-    borderRadius: 2,
-    backgroundColor: "#DB4431",
-    marginVertical: 2,
   },
   meta: {
     position: "absolute",

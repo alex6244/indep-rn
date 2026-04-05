@@ -9,6 +9,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import HeroIllustration from "../../assets/banners/1.svg";
 import Logo from "../../assets/logo.svg";
+import { BurgerButton } from "../../shared/ui/BurgerButton";
 type Props = {
   onOpenBurger: () => void;
   onOpenCatalog: () => void;
@@ -29,15 +30,7 @@ export function WelcomeHero({ onOpenBurger, onOpenCatalog }: Props) {
     <View>
       <View style={[styles.topBar, { paddingTop: insets.top + 6 }]}>
         <Logo width={82} height={22} />
-        <TouchableOpacity
-          style={styles.burgerButton}
-          onPress={onOpenBurger}
-          accessibilityRole="button"
-        >
-          <View style={styles.burgerLine} />
-          <View style={styles.burgerLine} />
-          <View style={styles.burgerLine} />
-        </TouchableOpacity>
+        <BurgerButton onPress={onOpenBurger} hitSlop={8} />
       </View>
 
       <View style={styles.heroCard}>
@@ -68,20 +61,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 12,
-  },
-  burgerButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  burgerLine: {
-    width: 22,
-    height: 2,
-    borderRadius: 2,
-    backgroundColor: "#DB4431",
-    marginVertical: 2,
   },
   heroCard: {
     backgroundColor: "#F1F1F1",

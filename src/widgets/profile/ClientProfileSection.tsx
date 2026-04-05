@@ -1,11 +1,13 @@
 import { type Href, useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import { Alert, type ImageSourcePropType, ScrollView, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AboutIcon from "../../assets/icons/burger/about.svg";
 import CooperationIcon from "../../assets/icons/burger/ads.svg";
 import FavIcon from "../../assets/icons/burger/favourites.svg";
 import SelectionIcon from "../../assets/icons/burger/selection.svg";
 import { BurgerMenu } from "../../shared/ui/BurgerMenu";
+import { scrollBottomPaddingBelowTabBar } from "../../app/(tabs)/tabBarMetrics";
 import { styles } from "../../app/(tabs)/profile.styles";
 import { ClientEmptyState } from "./ClientEmptyState";
 import { ClientProfileHeader } from "./ClientProfileHeader";
@@ -23,6 +25,7 @@ type Props = {
 
 export function ClientProfileSection({ name, phone, onLogout }: Props) {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [menuOpen, setMenuOpen] = useState(false);
   const editFlow = useProfileEditFlow(onLogout, router);
 
@@ -48,7 +51,14 @@ export function ClientProfileSection({ name, phone, onLogout }: Props) {
         onOpenBurger={() => setMenuOpen(true)}
       />
 
-      <ScrollView contentContainerStyle={styles.pickerContent}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.pickerContent,
+          {
+            paddingBottom: scrollBottomPaddingBelowTabBar(insets.bottom),
+          },
+        ]}
+      >
         {hasReports ? (
           <>
             {reports.map((r) => (

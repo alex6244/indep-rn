@@ -1,15 +1,23 @@
-import React, { useCallback, useRef, useState } from "react";
-import { Animated, Dimensions, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
+import React, { useRef, useState } from "react";
+import {
+  Animated,
+  Dimensions,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useFavorites } from "../contexts/FavoritesContext";
+import SortIcon from "../assets/icons/sort.svg";
+import { scrollBottomPaddingBelowTabBar } from "../app/(tabs)/tabBarMetrics";
 import { useAuth } from "../contexts/AuthContext";
+import { useFavorites } from "../contexts/FavoritesContext";
 import { cars as catalogCars } from "../data/cars";
 import { useCatalogFiltersController } from "../features/catalog/hooks/useCatalogFiltersController";
+import { catalogStyles as styles } from "../features/catalog/ui/Catalog.styles";
 import { CatalogCarsList } from "../features/catalog/ui/CatalogCarsList";
 import { CatalogFooter } from "../features/catalog/ui/CatalogFooter";
-import { CatalogMileageFloatingPanel } from "../features/catalog/ui/CatalogMileageFloatingPanel";
-import { catalogStyles as styles } from "../features/catalog/ui/Catalog.styles";
 import { CatalogSortDropdown } from "../features/catalog/ui/CatalogSortDropdown";
 import { CatalogFiltersOverlay } from "../features/filters/ui/CatalogFiltersOverlay";
 import {
@@ -18,11 +26,7 @@ import {
 } from "../shared/config/mainBurgerMenu";
 import { BurgerMenu } from "../shared/ui/BurgerMenu";
 import { Header } from "../widgets/header/Header";
-
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-
-const MILEAGE_FLOAT_SCROLL_THRESHOLD = 120;
-const MILEAGE_FLOAT_RESET_SCROLL_Y = 48;
 
 const Catalog = () => {
   const router = useRouter();
@@ -33,26 +37,10 @@ const Catalog = () => {
   const [sortOpen, setSortOpen] = useState(false);
   const [sortAnchor, setSortAnchor] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const mileagePanelDismissedRef = useRef(false);
-  const [floatingMileageVisible, setFloatingMileageVisible] = useState(false);
   const sortButtonRef = useRef(null);
   const filtersX = useRef(new Animated.Value(-SCREEN_WIDTH)).current;
 
   const controller = useCatalogFiltersController(catalogCars);
-
-  const tabBarClearance = Math.max(insets.bottom, 8) + 80;
-
-  const syncFloatingMileage = useCallback((y) => {
-    if (y < MILEAGE_FLOAT_RESET_SCROLL_Y) {
-      mileagePanelDismissedRef.current = false;
-    }
-    const should =
-      y > MILEAGE_FLOAT_SCROLL_THRESHOLD &&
-      !mileagePanelDismissedRef.current;
-    setFloatingMileageVisible((prev) =>
-      prev !== should ? should : prev,
-    );
-  }, []);
 
   const openFilters = () => {
     setFiltersOpen(true);
@@ -93,11 +81,16 @@ const Catalog = () => {
   };
 
   const SORT_DROPDOWN_MIN_WIDTH = 260;
-  const dropdownWidth = Math.max(sortAnchor?.width || 0, SORT_DROPDOWN_MIN_WIDTH);
+  const dropdownWidth = Math.max(
+    sortAnchor?.width || 0,
+    SORT_DROPDOWN_MIN_WIDTH,
+  );
   const dropdownLeft = sortAnchor
     ? Math.max(16, Math.min(sortAnchor.x, SCREEN_WIDTH - dropdownWidth - 16))
     : 0;
   const dropdownTop = sortAnchor ? sortAnchor.y + sortAnchor.height + 8 : 0;
+
+  const catalogScrollBottom = scrollBottomPaddingBelowTabBar(insets.bottom);
 
   return (
     <View style={styles.root}>
@@ -112,12 +105,8 @@ const Catalog = () => {
       <ScrollView
         contentContainerStyle={[
           styles.content,
-          { paddingBottom: floatingMileageVisible ? 220 : 132 },
+          { paddingBottom: catalogScrollBottom },
         ]}
-        onScroll={(e) => {
-          syncFloatingMileage(e.nativeEvent.contentOffset.y);
-        }}
-        scrollEventThrottle={16}
       >
         <View style={styles.breadcrumbs}>
           <Text style={styles.breadcrumbText}>Главная {">"} Каталог</Text>
@@ -131,10 +120,13 @@ const Catalog = () => {
               activeOpacity={0.9}
               onPress={toggleSort}
             >
-              <Text style={styles.sortIcon}>⇅</Text>
+              <SortIcon width={18} height={18} />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.allFiltersButton} onPress={openFilters}>
+            <TouchableOpacity
+              style={styles.allFiltersButton}
+              onPress={openFilters}
+            >
               <Text style={styles.allFiltersText}>Все фильтры</Text>
             </TouchableOpacity>
 
@@ -157,7 +149,9 @@ const Catalog = () => {
           />
         </View>
 
-        <TouchableOpacity style={[styles.btn, styles.btnPrimary, styles.seeAllBtn]}>
+        <TouchableOpacity
+          style={[styles.btn, styles.btnPrimary, styles.seeAllBtn]}
+        >
           <Text style={styles.btnTextPrimary}>Смотреть все</Text>
         </TouchableOpacity>
 
@@ -180,8 +174,17 @@ const Catalog = () => {
 
       {filtersOpen && (
         <View style={styles.filtersOverlay} pointerEvents="box-none">
-          <TouchableOpacity style={styles.filtersBackdrop} activeOpacity={1} onPress={closeFilters} />
-          <Animated.View style={[styles.filtersPanel, { transform: [{ translateX: filtersX }] }]}>
+          <TouchableOpacity
+            style={styles.filtersBackdrop}
+            activeOpacity={1}
+            onPress={closeFilters}
+          />
+          <Animated.View
+            style={[
+              styles.filtersPanel,
+              { transform: [{ translateX: filtersX }] },
+            ]}
+          >
             <CatalogFiltersOverlay
               brandQuery={controller.brandQuery}
               onChangeBrandQuery={controller.setBrandQuery}
@@ -226,19 +229,6 @@ const Catalog = () => {
         onClose={() => setMenuOpen(false)}
         items={getMainBurgerMenuItems()}
         footer={<MainBurgerMenuFooter onLogout={logout} />}
-      />
-
-      <CatalogMileageFloatingPanel
-        visible={floatingMileageVisible}
-        onDismiss={() => {
-          mileagePanelDismissedRef.current = true;
-          setFloatingMileageVisible(false);
-        }}
-        mileageFromText={controller.mileageFromText}
-        mileageToText={controller.mileageToText}
-        onChangeMileageFromText={controller.setMileageFromText}
-        onChangeMileageToText={controller.setMileageToText}
-        bottomInset={tabBarClearance}
       />
     </View>
   );
