@@ -1,10 +1,10 @@
 import { Platform } from "react-native";
 
 /**
- * Высота зоны таббара над safe-area (иконка + подпись + отступы).
+ * Высота зоны таббара над safe-area (SVG-иконки 62×62 с встроенным текстом + отступы).
  * Должна соответствовать фактической вёрстке в `_layout.tsx`.
  */
-export const TAB_BAR_INNER_HEIGHT = 54;
+export const TAB_BAR_INNER_HEIGHT = 72;
 
 export function tabBarSafeAreaBottom(insetsBottom: number) {
   return Math.max(insetsBottom, Platform.OS === "ios" ? 10 : 8);

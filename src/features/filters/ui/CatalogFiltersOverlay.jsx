@@ -29,21 +29,6 @@ function onlyDigits(s) {
   return String(s ?? "").replace(/\D/g, "");
 }
 
-function normalizeMileageText(value) {
-  const raw = onlyDigits(value).slice(0, 7);
-  if (!raw) return "";
-  const parsed = Number(raw);
-  if (!Number.isFinite(parsed)) return "";
-  const clamped = Math.max(0, Math.min(1_000_000, Math.round(parsed)));
-  return String(clamped);
-}
-
-function formatMileageText(value) {
-  const normalized = normalizeMileageText(value);
-  if (!normalized) return "";
-  return new Intl.NumberFormat("ru-RU").format(Number(normalized));
-}
-
 export function CatalogFiltersOverlay({
   brandQuery,
   onChangeBrandQuery,
@@ -175,33 +160,11 @@ export function CatalogFiltersOverlay({
 
         <View style={styles.filterBlock}>
           <Text style={styles.filterLabel}>Пробег, км</Text>
-          <View style={styles.inputsRow}>
-            <TextInput
-              placeholder="От 0"
-              keyboardType="numeric"
-              value={formatMileageText(mileageFromText)}
-              editable={false}
-              style={[styles.input, styles.inputHalf]}
-              placeholderTextColor="#979797"
-            />
-            <TextInput
-              placeholder="До 1 000 000"
-              keyboardType="numeric"
-              value={formatMileageText(mileageToText)}
-              editable={false}
-              style={[styles.input, styles.inputHalf]}
-              placeholderTextColor="#979797"
-            />
-          </View>
           <MileageRangePicker
             fromText={mileageFromText}
             toText={mileageToText}
-            onChangeFromText={(next) =>
-              onChangeMileageFromText(normalizeMileageText(next))
-            }
-            onChangeToText={(next) =>
-              onChangeMileageToText(normalizeMileageText(next))
-            }
+            onChangeFromText={onChangeMileageFromText}
+            onChangeToText={onChangeMileageToText}
           />
         </View>
 

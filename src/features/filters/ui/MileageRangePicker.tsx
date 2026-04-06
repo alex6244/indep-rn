@@ -1,21 +1,20 @@
-import React, { useState } from "react";
+import React from "react";
 import {
-  Pressable,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
-import { MileagePicker } from "./MileagePicker";
+import { MileageVerticalSlider } from "./MileageVerticalSlider";
 import {
   clampMileage,
-  formatMileageRu,
+  formatMileageText,
   mileageFromDigitString,
   mileageToFilterString,
   MILEAGE_MAX,
   MILEAGE_MIN,
+  normalizeMileageText,
 } from "./mileagePickerUtils";
-
-type Edge = "from" | "to";
 
 type Props = {
   fromText: string;
@@ -30,8 +29,6 @@ export function MileageRangePicker({
   onChangeFromText,
   onChangeToText,
 }: Props) {
-  const [edge, setEdge] = useState<Edge>("from");
-
   const fromNum = mileageFromDigitString(fromText, MILEAGE_MIN);
   const toNum = mileageFromDigitString(toText, MILEAGE_MAX);
   const safeFrom = Math.min(fromNum, toNum);
@@ -55,65 +52,43 @@ export function MileageRangePicker({
     }
   };
 
-  const activeValue = edge === "from" ? safeFrom : safeTo;
-  const onActiveChange = edge === "from" ? handleFrom : handleTo;
-
   return (
     <View style={styles.wrap}>
-      <View style={styles.summaryRow}>
-        <Pressable
-          style={[styles.summaryPill, edge === "from" && styles.summaryPillActive]}
-          onPress={() => setEdge("from")}
-          accessibilityRole="tab"
-          accessibilityState={{ selected: edge === "from" }}
-        >
-          <Text
-            style={[
-              styles.summaryLabel,
-              edge === "from" && styles.summaryLabelActive,
-            ]}
-          >
-            от
-          </Text>
-          <Text
-            style={[
-              styles.summaryValue,
-              edge === "from" && styles.summaryValueActive,
-            ]}
-          >
-            {formatMileageRu(safeFrom)}
-          </Text>
-        </Pressable>
-        <Pressable
-          style={[styles.summaryPill, edge === "to" && styles.summaryPillActive]}
-          onPress={() => setEdge("to")}
-          accessibilityRole="tab"
-          accessibilityState={{ selected: edge === "to" }}
-        >
-          <Text
-            style={[
-              styles.summaryLabel,
-              edge === "to" && styles.summaryLabelActive,
-            ]}
-          >
-            до
-          </Text>
-          <Text
-            style={[
-              styles.summaryValue,
-              edge === "to" && styles.summaryValueActive,
-            ]}
-          >
-            {formatMileageRu(safeTo)}
-          </Text>
-        </Pressable>
+      <View style={styles.inputsRow}>
+        <View style={styles.inputCol}>
+          <Text style={styles.fieldLabel}>от</Text>
+          <TextInput
+            placeholder="0"
+            keyboardType="numeric"
+            value={formatMileageText(fromText)}
+            onChangeText={(t) => onChangeFromText(normalizeMileageText(t))}
+            style={styles.input}
+            placeholderTextColor="#979797"
+          />
+        </View>
+        <View style={styles.inputCol}>
+          <Text style={styles.fieldLabel}>до</Text>
+          <TextInput
+            placeholder="1 000 000"
+            keyboardType="numeric"
+            value={formatMileageText(toText)}
+            onChangeText={(t) => onChangeToText(normalizeMileageText(t))}
+            style={styles.input}
+            placeholderTextColor="#979797"
+          />
+        </View>
       </View>
 
-      <MileagePicker
-        key={edge}
-        value={activeValue}
-        onMileageChange={onActiveChange}
-      />
+      <View style={styles.slidersRow}>
+        <View style={styles.sliderCol}>
+          <Text style={styles.sliderCaption}>от</Text>
+          <MileageVerticalSlider value={safeFrom} onChange={handleFrom} />
+        </View>
+        <View style={styles.sliderCol}>
+          <Text style={styles.sliderCaption}>до</Text>
+          <MileageVerticalSlider value={safeTo} onChange={handleTo} />
+        </View>
+      </View>
     </View>
   );
 }
@@ -125,42 +100,43 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: "#F8F8F8",
   },
-  summaryRow: {
+  inputsRow: {
     flexDirection: "row",
-    gap: 8,
-    marginBottom: 10,
+    gap: 10,
+    marginBottom: 12,
   },
-  summaryPill: {
+  inputCol: {
     flex: 1,
-    minHeight: 40,
-    borderRadius: 10,
-    backgroundColor: "#EDEEF0",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    borderWidth: 2,
-    borderColor: "transparent",
   },
-  summaryPillActive: {
-    borderColor: "#DB4431",
-    backgroundColor: "#FFFFFF",
-  },
-  summaryLabel: {
-    fontSize: 14,
+  fieldLabel: {
+    fontSize: 12,
     color: "#6B757C",
+    marginBottom: 4,
   },
-  summaryLabelActive: {
-    color: "#DB4431",
-    fontWeight: "700",
-  },
-  summaryValue: {
-    fontSize: 18,
+  input: {
+    minHeight: 44,
+    borderRadius: 10,
+    backgroundColor: "#FFFFFF",
+    paddingHorizontal: 12,
+    fontSize: 16,
     color: "#1E1E1E",
-    fontWeight: "600",
+    borderWidth: 1,
+    borderColor: "#E5E5E5",
     fontVariant: ["tabular-nums"],
   },
-  summaryValueActive: {
-    color: "#1E1E1E",
+  slidersRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "flex-end",
+    paddingHorizontal: 8,
+  },
+  sliderCol: {
+    alignItems: "center",
+    gap: 6,
+  },
+  sliderCaption: {
+    fontSize: 12,
+    color: "#6B757C",
+    fontWeight: "600",
   },
 });

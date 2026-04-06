@@ -10,6 +10,12 @@ export interface Car {
   engine: string;
   power: number;
   driveType: string;
+  /** Подпись привода для карточки (например «Полный»). Иначе маппинг из driveType. */
+  driveLabel?: string;
+  /** КПП для строки ТС, напр. «AT», «MT». */
+  transmission?: string;
+  /** Топливо для строки ТС, напр. «Бензин». */
+  fuelType?: string;
   address: string;
   images: string[];
 
@@ -30,12 +36,15 @@ export const cars: Car[] = [
     brand: "Mercedes",
     title: "Mercedes-Benz GLC AMG 43 AMG II (X254)",
     price: 67000000,
-    mileage: 200000,
-    year: 2025,
-    engine: "1.2",
-    power: 115,
-    driveType: "2WD",
-    address: "г. Москва, ул. Волкова",
+    mileage: 2200,
+    year: 2024,
+    engine: "2.0",
+    power: 421,
+    driveType: "4WD",
+    driveLabel: "Полный",
+    transmission: "AT",
+    fuelType: "Бензин",
+    address: "г. Сочи, ул. Волкова",
     bodyType: "Кроссовер",
     features: ["Без ДТП", "На гарантии"],
     paymentType: "credit",
@@ -58,6 +67,9 @@ export const cars: Car[] = [
     engine: "3.0",
     power: 249,
     driveType: "4WD",
+    driveLabel: "Полный",
+    transmission: "AT",
+    fuelType: "Бензин",
     address: "г. Москва, ул. Волкова",
     bodyType: "Седан",
     features: ["Отличное состояние", "Маленький пробег"],

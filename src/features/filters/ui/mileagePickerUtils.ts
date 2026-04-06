@@ -38,3 +38,19 @@ export function snapScrollToStep(value: number): number {
 export function formatMileageRu(value: number): string {
   return new Intl.NumberFormat("ru-RU").format(clampMileage(value));
 }
+
+/** Нормализация строки пробега для состояния фильтра (только цифры, clamp). */
+export function normalizeMileageText(value: string): string {
+  const raw = String(value ?? "").replace(/\D/g, "").slice(0, 7);
+  if (!raw) return "";
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed)) return "";
+  return String(clampMileage(Math.round(parsed)));
+}
+
+/** Отображение в поле ввода с разделителями тысяч. */
+export function formatMileageText(value: string): string {
+  const normalized = normalizeMileageText(value);
+  if (!normalized) return "";
+  return new Intl.NumberFormat("ru-RU").format(Number(normalized));
+}

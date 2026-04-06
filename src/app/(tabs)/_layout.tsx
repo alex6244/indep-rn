@@ -11,7 +11,8 @@ import { tabBarSafeAreaBottom, tabBarTotalHeight } from "./tabBarMetrics";
 const ACTIVE = "#DB4431";
 const INACTIVE = "#A0A0A0";
 const NAV_BG = "#FFFFFF";
-const ICON_SIZE = 24;
+/** Натуральный размер ассетов с подписью внутри SVG. */
+const TAB_ICON_SIZE = 62;
 
 type SvgTabIconProps = {
   Icon: React.ComponentType<{ width: number; height: number; color?: string }>;
@@ -23,14 +24,14 @@ function SvgTabIcon({ Icon, color, focused }: SvgTabIconProps) {
   return (
     <View
       style={{
-        width: ICON_SIZE + 8,
-        height: ICON_SIZE + 4,
+        width: TAB_ICON_SIZE,
+        height: TAB_ICON_SIZE,
         alignItems: "center",
         justifyContent: "center",
-        opacity: focused ? 1 : 0.85,
+        opacity: focused ? 1 : 0.88,
       }}
     >
-      <Icon width={ICON_SIZE} height={ICON_SIZE} color={color} />
+      <Icon width={TAB_ICON_SIZE} height={TAB_ICON_SIZE} color={color} />
     </View>
   );
 }
@@ -46,16 +47,7 @@ export default function TabLayout() {
         headerShown: false,
         tabBarActiveTintColor: ACTIVE,
         tabBarInactiveTintColor: INACTIVE,
-        tabBarShowLabel: true,
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: "500",
-          marginTop: 2,
-          marginBottom: 0,
-        },
-        tabBarIconStyle: {
-          marginTop: 0,
-        },
+        tabBarShowLabel: false,
         tabBarStyle: {
           backgroundColor: NAV_BG,
           borderTopWidth: 1,
@@ -64,15 +56,15 @@ export default function TabLayout() {
           shadowOpacity: 0,
           height: barHeight,
           paddingBottom: bottomInset,
-          paddingTop: 6,
-          paddingHorizontal: 4,
+          paddingTop: 4,
+          paddingHorizontal: 2,
         },
         tabBarItemStyle: {
           flex: 1,
           minWidth: 0,
-          paddingVertical: 2,
+          paddingVertical: 0,
           alignItems: "center",
-          justifyContent: "flex-start",
+          justifyContent: "center",
         },
       }}
     >
