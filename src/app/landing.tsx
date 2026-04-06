@@ -1,20 +1,20 @@
+import { Image } from "expo-image";
+import { type Href, useRouter } from "expo-router";
 import React from "react";
 import {
   Alert,
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
   ImageBackground,
+  ScrollView,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from "react-native";
-import { type Href, useRouter } from "expo-router";
-import { Image } from "expo-image";
 import Logo from "../assets/logo.svg";
 import ParameterIcon from "../assets/mainpage/carousel/parameter.svg";
-import TimeIcon from "../assets/mainpage/carousel/time.svg";
 import ReportIcon from "../assets/mainpage/carousel/report.svg";
-import SellerStep1 from "../assets/mainpage/manual/seller/1.svg";
+import TimeIcon from "../assets/mainpage/carousel/time.svg";
+import { PickerOnboardingIllustration1 } from "../widgets/home/pickerOnboardingIllustrations";
 import { useProtected } from "../hooks/useProtected";
 import { FONT_FAMILY } from "../shared/theme/fonts";
 
@@ -57,9 +57,7 @@ export default function LandingPage() {
               router.push("/(tabs)/profile" as Href);
             }}
           >
-            <Text style={styles.headerLink}>
-              {user ? "Профиль" : "Войти"}
-            </Text>
+            <Text style={styles.headerLink}>{user ? "Профиль" : "Войти"}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -78,9 +76,9 @@ export default function LandingPage() {
                 подбор — спокойная покупка
               </Text>
               <Text style={styles.heroSubtitle}>
-                Подберём автомобиль без скрытых проблем и переплат.
-                Проверяем технику, историю и документы. Вы получаете честный
-                результат и спокойствие при покупке.
+                Подберём автомобиль без скрытых проблем и переплат. Проверяем
+                технику, историю и документы. Вы получаете честный результат и
+                спокойствие при покупке.
               </Text>
               <TouchableOpacity
                 style={styles.primaryButton}
@@ -107,17 +105,16 @@ export default function LandingPage() {
                 Проверка по 100+ параметрам
               </Text>
               <Text style={styles.benefitText}>
-                Тщательно проверяем состояние, документы и прошлую эксплуатацию.
+                Тщательно проверяем состояние, документы и прошлую эксплуатацию
               </Text>
             </View>
 
             <View style={styles.benefitCard}>
               <TimeIcon width={32} height={32} />
-              <Text style={styles.benefitTitle}>
-                Экономия времени и денег
-              </Text>
+              <Text style={styles.benefitTitle}>Экономия времени и денег</Text>
               <Text style={styles.benefitText}>
-                Берём на себя поиск, переговоры и торг, снижая цену авто.
+                Берём на себя поиск, переговоры и торг, часто снижая цену
+                автомобиля.
               </Text>
             </View>
 
@@ -125,7 +122,8 @@ export default function LandingPage() {
               <ReportIcon width={32} height={32} />
               <Text style={styles.benefitTitle}>Прозрачные отчёты</Text>
               <Text style={styles.benefitText}>
-                Подробный фото‑ и видеоотчёт по каждому варианту.
+                Подробный фото и видеоотчёт по каждому варианту с понятными
+                комментариями и рекомендациями.
               </Text>
             </View>
           </ScrollView>
@@ -135,7 +133,11 @@ export default function LandingPage() {
         <View style={styles.section}>
           <View style={styles.toggleContainer}>
             <View style={[styles.toggleButton, styles.toggleButtonActive]}>
-              <Text style={[styles.toggleButtonText, styles.toggleButtonTextActive]}>Хочу продать авто</Text>
+              <Text
+                style={[styles.toggleButtonText, styles.toggleButtonTextActive]}
+              >
+                Хочу продать авто
+              </Text>
             </View>
             <View style={styles.toggleButton}>
               <Text style={styles.toggleButtonText}>Хочу купить авто</Text>
@@ -146,7 +148,7 @@ export default function LandingPage() {
           <View style={styles.stepsGrid}>
             <View style={styles.stepCard}>
               <View style={styles.stepImage}>
-                <SellerStep1 width="100%" height="100%" />
+                <PickerOnboardingIllustration1 />
               </View>
               <Text style={styles.stepNumber}>1</Text>
               <Text style={styles.stepTitle}>
@@ -169,9 +171,7 @@ export default function LandingPage() {
           <View style={styles.carsGrid}>
             <TouchableOpacity
               style={styles.carCard}
-              onPress={() =>
-                router.push("/auto/1" as Href)
-              }
+              onPress={() => router.push("/auto/1" as Href)}
             >
               <ScrollView
                 horizontal
@@ -230,9 +230,7 @@ export default function LandingPage() {
               </View>
 
               <View style={styles.carAddressRow}>
-                <Text style={styles.carAddress}>
-                  г. Москва, ул. Волкова
-                </Text>
+                <Text style={styles.carAddress}>г. Москва, ул. Волкова</Text>
               </View>
             </TouchableOpacity>
 

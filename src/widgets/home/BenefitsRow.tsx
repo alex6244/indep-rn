@@ -1,8 +1,8 @@
 import React from "react";
 import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 import ParameterIcon from "../../assets/mainpage/carousel/parameter.svg";
-import TimeIcon from "../../assets/mainpage/carousel/time.svg";
 import ReportIcon from "../../assets/mainpage/carousel/report.svg";
+import TimeIcon from "../../assets/mainpage/carousel/time.svg";
 
 export function BenefitsRow() {
   const screenWidth = Dimensions.get("window").width;
@@ -20,13 +20,13 @@ export function BenefitsRow() {
       key: "params",
       icon: <ParameterIcon width={18} height={18} />,
       title: "Проверка по 100+ параметрам",
-      text: "Проверяем состояние, документы и прошлую эксплуатацию.",
+      text: "Тщательно проверяем состояние, документы и прошлую эксплуатацию",
     },
     {
       key: "time",
       icon: <TimeIcon width={18} height={18} />,
       title: "Экономия времени и денег",
-      text: "Берем на себя поиск, переговоры и торг.",
+      text: "Берём на себя поиск, переговоры и торг, часто снижая цену автомобиля.",
     },
     {
       key: "reports",
@@ -104,4 +104,3 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
 });
-

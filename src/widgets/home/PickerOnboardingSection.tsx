@@ -1,15 +1,11 @@
 import React, { useMemo } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  type ImageSourcePropType,
-} from "react-native";
-import { Image } from "expo-image";
-import SellerStep1 from "../../assets/mainpage/manual/seller/1.svg";
-import BuyerStep1 from "../../assets/mainpage/manual/buyer/1.svg";
-import SellerStep4 from "../../assets/mainpage/manual/seller/4.svg";
+  PickerOnboardingIllustration1,
+  PickerOnboardingIllustration2,
+  PickerOnboardingIllustration3,
+  PickerOnboardingIllustration4,
+} from "./pickerOnboardingIllustrations";
 import { PickerOnboardingStepCard } from "./PickerOnboardingStepCard";
 
 type Props = {
@@ -31,34 +27,28 @@ export function PickerOnboardingSection({ onPressRegister }: Props) {
         title: "Зарегистрируйтесь",
         description:
           "Регистрация позволит вам получать заказы от клиентов и размещать объявления для дальнейшей работы.",
-        illustration: <SellerStep1 width="100%" height="100%" />,
+        illustration: <PickerOnboardingIllustration1 />,
       },
       {
         id: "2",
         title: "Получите заказ",
         description:
           "Мы направим вам данные по заказу и контакты клиента, чтобы вы могли приступить к подбору автомобиля.",
-        illustration: <BuyerStep1 width="100%" height="100%" />,
+        illustration: <PickerOnboardingIllustration2 />,
       },
       {
         id: "3",
         title: "Подберите авто клиенту",
         description:
           "Подберите автомобиль с учётом всех пожеланий клиента: бюджета, марки, модели, комплектации и состояния.",
-        illustration: (
-          <Image
-            source={require("../../assets/cars1.jpg") as ImageSourcePropType}
-            style={styles.photoPreview}
-            contentFit="cover"
-          />
-        ),
+        illustration: <PickerOnboardingIllustration3 />,
       },
       {
         id: "4",
         title: "Разместите объявление",
         description:
           "За каждое опубликованное объявление вы получаете вознаграждение в виде 1000 рублей.",
-        illustration: <SellerStep4 width="100%" height="100%" />,
+        illustration: <PickerOnboardingIllustration4 />,
       },
     ],
     []
@@ -96,11 +86,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-between",
     rowGap: 18,
-  },
-  photoPreview: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 10,
   },
   registerButton: {
     marginTop: 24,
