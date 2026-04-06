@@ -40,7 +40,7 @@ export function PickerOnboardingSection({ onPressRegister }: Props) {
         id: "3",
         title: "Подберите авто клиенту",
         description:
-          "Подберите автомобиль с учётом всех пожеланий клиента: бюджета, марки, модели, комплектации и состояния.",
+          "Подберите автомобиль с учётом всех пожеланий клиента: бюджета, марки, модели, комплектации и состояния. Для удобства выбора клиента заполните чек-лист по авто.",
         illustration: <PickerOnboardingIllustration3 />,
       },
       {
@@ -51,7 +51,7 @@ export function PickerOnboardingSection({ onPressRegister }: Props) {
         illustration: <PickerOnboardingIllustration4 />,
       },
     ],
-    []
+    [],
   );
 
   return (

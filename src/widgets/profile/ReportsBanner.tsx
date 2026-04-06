@@ -25,15 +25,14 @@ export function ReportsBanner({
         height="100%"
         preserveAspectRatio="xMidYMid slice"
       />
-      <View pointerEvents="none" style={styles.microOverlay} />
       <View style={styles.microContent}>
-        <Text style={styles.microText1} numberOfLines={1} ellipsizeMode="tail">
-          Вы использовали {reportsUsed} из {reportsTotal} отчётов
+        <Text style={styles.microText1} numberOfLines={2}>
+          Вы использовали {reportsUsed} из {reportsTotal} отчётов.
         </Text>
-        <Text style={styles.microText2} numberOfLines={1} ellipsizeMode="tail">
+        <Text style={styles.microText2} numberOfLines={2}>
           Доступно: {reportsAvailable} отчёта
         </Text>
-        <Text style={styles.microText3} numberOfLines={1} ellipsizeMode="tail">
+        <Text style={styles.microText3} numberOfLines={2}>
           Пакет истекает {expiresAt}
         </Text>
       </View>
@@ -48,38 +47,33 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: "hidden",
     height: 96,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     justifyContent: "center",
     position: "relative",
+    backgroundColor: "#DB4431",
   },
   microContent: {
     zIndex: 2,
     justifyContent: "center",
-    gap: 3,
-    width: "72%",
-  },
-  microOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(219,68,49,0.38)",
-    zIndex: 1,
+    gap: 4,
+    maxWidth: "68%",
+    paddingRight: 8,
   },
   microText1: {
-    color: "rgba(255,255,255,0.85)",
+    color: "rgba(255,255,255,0.9)",
     fontSize: 11,
     lineHeight: 14,
     fontWeight: "600",
   },
   microText2: {
-    marginTop: 1,
-    marginBottom: 1,
     color: "#FFFFFF",
     fontSize: 18,
     lineHeight: 22,
     fontWeight: "800",
   },
   microText3: {
-    color: "rgba(255,255,255,0.85)",
+    color: "rgba(255,255,255,0.9)",
     fontSize: 11,
     lineHeight: 14,
     fontWeight: "600",

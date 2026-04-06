@@ -12,26 +12,35 @@ type Props = {
 export function ProfileQuickActions({
   onOpenFavorites,
   onOpenBest,
-  variant = "client",
+  variant: _variant = "client",
 }: Props) {
   return (
     <View style={styles.quickRow}>
-      <TouchableOpacity style={styles.card} onPress={onOpenFavorites}>
+      <TouchableOpacity
+        style={styles.card}
+        onPress={onOpenFavorites}
+        accessibilityRole="button"
+        accessibilityLabel="Избранное"
+      >
         <FavouriteBanner
           style={StyleSheet.absoluteFillObject}
           width="100%"
           height="100%"
         />
-        <View style={styles.content}>
-          <Text style={styles.text}>Избранное</Text>
-        </View>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.card} onPress={onOpenBest}>
-        <View style={styles.content}>
-          <Text style={styles.text}>Лучшие предложения на авто</Text>
-          <View style={styles.bestWrap}>
-            <BestIcon width={67} height={55} />
+      <TouchableOpacity
+        style={styles.card}
+        onPress={onOpenBest}
+        accessibilityRole="button"
+        accessibilityLabel="Лучшие предложения на авто"
+      >
+        <View style={styles.bestCardInner}>
+          <Text style={styles.bestText} numberOfLines={3}>
+            Лучшие предложения на авто
+          </Text>
+          <View style={styles.bestIconCorner} pointerEvents="none">
+            <BestIcon width={58} height={48} />
           </View>
         </View>
       </TouchableOpacity>
@@ -46,32 +55,33 @@ const styles = StyleSheet.create({
     marginTop: 12,
     marginHorizontal: 16,
   },
-  bestWrap: {
-    position: "absolute",
-    top: 1,
-    left: 2,
-  },
   card: {
     flex: 1,
-    height: 62,
+    minHeight: 72,
     borderRadius: 12,
     overflow: "hidden",
-    justifyContent: "center",
     backgroundColor: "#FFFFFF",
   },
-  content: {
+  bestCardInner: {
     flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 10,
+    minHeight: 72,
     paddingHorizontal: 12,
-    zIndex: 1,
+    paddingTop: 10,
+    paddingBottom: 14,
+    paddingRight: 8,
+    position: "relative",
+    justifyContent: "flex-start",
   },
-  text: {
-    flex: 1,
+  bestText: {
     fontSize: 12,
     color: "#989898",
     fontWeight: "600",
+    lineHeight: 16,
+    maxWidth: "78%",
+  },
+  bestIconCorner: {
+    position: "absolute",
+    right: 4,
+    bottom: 6,
   },
 });
