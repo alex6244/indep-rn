@@ -1,7 +1,7 @@
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useLocalSearchParams, useRouter, type Href } from "expo-router";
-import { getReportById } from "../../data/reports";
+import type { Report } from "../../entities/report/types";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ReportsBreadcrumb } from "../../widgets/reports/ReportsBreadcrumb";
 import { ReportDetailsActions } from "../../widgets/reports/ReportDetailsActions";
@@ -14,6 +14,9 @@ import { LegalCleanlinessCard } from "../../widgets/reports/LegalCleanlinessCard
 import { CommercialUsageCard } from "../../widgets/reports/CommercialUsageCard";
 import { PenaltiesCard } from "../../widgets/reports/PenaltiesCard";
 import { CostEstimationCard } from "../../widgets/reports/CostEstimationCard";
+import { ScreenStateError } from "../../shared/ui/ScreenStateError";
+import { ScreenStateLoading } from "../../shared/ui/ScreenStateLoading";
+import { reportsService } from "../../services/reportsService";
 
 export default function ReportDetailsRoute() {
   const router = useRouter();
@@ -21,10 +24,65 @@ export default function ReportDetailsRoute() {
   const insets = useSafeAreaInsets();
   const rawId = params.id;
   const id = Array.isArray(rawId) ? rawId[0] : rawId;
+  const [report, setReport] = React.useState<Report | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
 
-  const report = id ? getReportById(id) : undefined;
+  const loadReport = React.useCallback(async (): Promise<void> => {
+    if (!id) {
+      setReport(null);
+      setError("Отчёт не найден.");
+      setLoading(false);
+      return;
+    }
 
-  if (!id || !report) {
+    setLoading(true);
+    setError(null);
+    try {
+      const nextReport = await reportsService.getReportById(id);
+      setReport(nextReport);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Не удалось загрузить отчёт. Попробуйте ещё раз.";
+      setError(message);
+      setReport(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
+  React.useEffect(() => {
+    void loadReport();
+  }, [loadReport]);
+
+  if (loading) {
+    return (
+      <View style={styles.screen}>
+        <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 16 }]}>
+          <ReportsBreadcrumb active="Детали отчёта" />
+          <ScreenStateLoading message="Загружаем отчёт..." />
+        </ScrollView>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.screen}>
+        <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 16 }]}>
+          <ReportsBreadcrumb active="Детали отчёта" />
+          <ScreenStateError
+            title="Не удалось загрузить отчёт"
+            message={error}
+            onRetry={() => {
+              void loadReport();
+            }}
+          />
+        </ScrollView>
+      </View>
+    );
+  }
+
+  if (!report) {
     return (
       <View style={styles.screen}>
         <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 16 }]}>

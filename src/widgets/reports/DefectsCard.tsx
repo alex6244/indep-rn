@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { EntitiesToggle } from "../entitiesToggle/EntitiesToggle";
-import type { Report } from "../../data/reports";
+import type { Report } from "../../entities/report/types";
 import { shadowStyle } from "../../shared/theme/shadow";
 
 type DefectsMode = "scheme" | "photos";

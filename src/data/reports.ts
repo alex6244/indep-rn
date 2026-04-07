@@ -1,62 +1,9 @@
-import type { ImageSourcePropType } from "react-native";
+import type { Report } from "../entities/report/types";
 
 /** Local bundled images (no network) for mocks */
 const PLACEHOLDER_MAIN = require("../assets/logo.png");
 const PLACEHOLDER_CAR_1 = require("../assets/cars1.jpg");
 const PLACEHOLDER_CAR_2 = require("../assets/cars2.jpg");
-
-export type Report = {
-  id: string;
-  price: string;
-  title: string;
-  subtitle: string;
-  city: string;
-  imageUrl: ImageSourcePropType;
-
-  // Detailed report fields (for /reports/[id]).
-  carouselImages: ImageSourcePropType[];
-  photosCountText?: string;
-
-  defects: {
-    schemeImageUrl: ImageSourcePropType;
-    photoImageUrls: ImageSourcePropType[];
-    summaryText: string;
-  };
-
-  ptsData: { label: string; value: string }[];
-  mileageText: string;
-
-  owners: {
-    jur: { title: string; value: string };
-    phys: { title: string; value: string };
-  };
-
-  legalCleanliness: {
-    badgeText: string;
-    items: { text: string; tone: "ok" | "bad" }[];
-  };
-
-  commercialUsage: {
-    badgeText: string;
-    items: { text: string; tone: "ok" | "bad" }[];
-  };
-
-  penalties: {
-    amountText: string;
-    dateText: string;
-    descriptionText: string;
-    paid: boolean;
-  }[];
-
-  costEstimation: {
-    text: string;
-    rangeText: string;
-  };
-
-  // Optional fields to enrich the top section.
-  yearText?: string;
-  bodyTypeText?: string;
-};
 
 export const reports: Report[] = [
   {

@@ -1,5 +1,5 @@
 import { ApiError, api } from "./api";
-import type { Report } from "../data/reports";
+import type { Report } from "../entities/report/types";
 
 function mapReportsError(error: unknown): string {
   if (error instanceof ApiError) {
@@ -15,6 +15,13 @@ export const reportsService = {
   getPurchasedReports: async (): Promise<Report[]> => {
     try {
       return await api.get<Report[]>("/reports/purchased");
+    } catch (error) {
+      throw new Error(mapReportsError(error));
+    }
+  },
+  getReportById: async (id: string): Promise<Report> => {
+    try {
+      return await api.get<Report>(`/reports/${id}`);
     } catch (error) {
       throw new Error(mapReportsError(error));
     }

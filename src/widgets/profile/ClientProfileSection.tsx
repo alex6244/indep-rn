@@ -17,7 +17,7 @@ import { ProfileLogoutRow } from "./ProfileLogoutRow";
 import { ProfileQuickActions } from "./ProfileQuickActions";
 import { useProfileEditFlow } from "./useProfileEditFlow";
 import { InlineMessage } from "../../shared/ui/InlineMessage";
-import type { Report } from "../../data/reports";
+import type { Report } from "../../entities/report/types";
 import { ScreenStateError } from "../../shared/ui/ScreenStateError";
 import { ScreenStateLoading } from "../../shared/ui/ScreenStateLoading";
 

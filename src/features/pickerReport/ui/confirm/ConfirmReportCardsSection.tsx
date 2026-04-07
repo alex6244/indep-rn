@@ -1,5 +1,5 @@
 import React from "react";
-import type { Report } from "../../../../data/reports";
+import type { Report } from "../../../../entities/report/types";
 import { CostEstimationCard } from "../../../../widgets/reports/CostEstimationCard";
 import { PenaltiesCard } from "../../../../widgets/reports/PenaltiesCard";
 
