@@ -24,7 +24,7 @@ export const FiltersModal = ({ children }) => {
   return (
     <>
       {open && (
-        <View style={styles.overlay} pointerEvents="box-none">
+        <View style={[styles.overlay, { pointerEvents: "box-none" }]}>
           <TouchableOpacity
             style={styles.backdrop}
             activeOpacity={1}

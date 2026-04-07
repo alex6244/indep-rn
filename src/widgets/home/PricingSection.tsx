@@ -84,7 +84,7 @@ export function PricingSection() {
               <View style={{ marginRight }}>
                 <View style={[styles.card, { width: cardWidth }]}>
                   {/* Decorative background */}
-                  <View pointerEvents="none" style={styles.cardBg}>
+                  <View style={[styles.cardBg, { pointerEvents: "none" }]}>
                     <item.Bg width="100%" height="100%" />
                   </View>
 

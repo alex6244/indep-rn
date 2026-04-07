@@ -47,8 +47,7 @@ export function BurgerMenu({
         onPress={onClose}
       >
         <View
-          style={StyleSheet.absoluteFillObject}
-          pointerEvents="none"
+          style={[StyleSheet.absoluteFillObject, { pointerEvents: "none" }]}
         >
           <View
             style={[StyleSheet.absoluteFillObject, styles.dim]}

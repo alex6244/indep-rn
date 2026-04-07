@@ -2,6 +2,7 @@
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -13,48 +14,68 @@ import {
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 import { FONT_FAMILY } from "../../shared/theme/fonts";
+import { shadowStyle } from "../../shared/theme/shadow";
 import { AuthHeader } from "../../widgets/header/AuthHeader";
 
 export default function RegisterScreen() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState<"client" | "picker">("picker");
   const [loading, setLoading] = useState(false);
   const [agreed, setAgreed] = useState(false);
-  const { register } = useAuth();
+  const { register, authError } = useAuth();
 
   const handleRegister = async () => {
     const trimmedName = name.trim();
     const trimmedEmail = email.trim();
 
     if (!trimmedName) {
-      alert("Введите имя (минимум 2 символа)");
+      Alert.alert("Ошибка", "Введите имя (минимум 2 символа).");
       return;
     }
 
     if (trimmedName.length < 2) {
-      alert("Имя слишком короткое");
+      Alert.alert("Ошибка", "Имя слишком короткое.");
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
-      alert("Введите корректный e-mail");
+      Alert.alert("Ошибка", "Введите корректный e-mail.");
+      return;
+    }
+
+    if (password.trim().length < 6) {
+      Alert.alert("Ошибка", "Пароль должен быть не короче 6 символов.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert("Ошибка", "Пароли не совпадают.");
       return;
     }
 
     setLoading(true);
     try {
-      const success = await register(trimmedName, trimmedEmail, role);
+      const success = await register({
+        name: trimmedName,
+        email: trimmedEmail,
+        password: password.trim(),
+        role,
+      });
       if (success) {
-        alert(`✅ Зарегистрирован!\n${trimmedName}\nEmail: ${trimmedEmail}`);
-        // После успешной регистрации отправляем на главную
         router.replace("/(tabs)/profile");
       } else {
-        alert("Пользователь с таким email уже существует");
+        const message =
+          authError === "user_exists"
+            ? "Пользователь с таким e-mail уже существует."
+            : authError === "network_error"
+              ? "Проблема с сетью. Проверьте подключение."
+              : "Не удалось завершить регистрацию.";
+        Alert.alert("Ошибка регистрации", message);
       }
-    } catch {
-      alert("Ошибка регистрации");
     } finally {
       setLoading(false);
     }
@@ -91,6 +112,30 @@ export default function RegisterScreen() {
                 placeholder="name@example.com"
                 autoCapitalize="none"
                 keyboardType="email-address"
+                editable={!loading}
+              />
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Пароль</Text>
+              <TextInput
+                style={styles.input}
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Минимум 6 символов"
+                secureTextEntry
+                autoCapitalize="none"
+                editable={!loading}
+              />
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Подтверждение пароля</Text>
+              <TextInput
+                style={styles.input}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                placeholder="Повторите пароль"
+                secureTextEntry
+                autoCapitalize="none"
                 editable={!loading}
               />
             </View>
@@ -201,10 +246,14 @@ const styles = StyleSheet.create({
   },
   formCard: {
     backgroundColor: "#FFFFFF",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
+    ...(shadowStyle({
+      boxShadow: "0px 4px 12px rgba(0,0,0,0.10)",
+      shadowColor: "#000",
+      shadowOpacity: 0.1,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 8,
+    }) as object),
     elevation: 8,
     padding: 32,
     borderRadius: 20,

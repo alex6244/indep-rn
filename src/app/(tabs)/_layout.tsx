@@ -6,7 +6,7 @@ import Callpin from "../../assets/icons/mobilemenu/callpin2.svg";
 import Catalogpin from "../../assets/icons/mobilemenu/catalogpin2.svg";
 import Homepin from "../../assets/icons/mobilemenu/homepin2.svg";
 import Profilepin from "../../assets/icons/mobilemenu/profilepin2.svg";
-import { tabBarSafeAreaBottom, tabBarTotalHeight } from "./tabBarMetrics";
+import { tabBarSafeAreaBottom, tabBarTotalHeight } from "../../shared/navigation/tabBarMetrics";
 
 const ACTIVE = "#DB4431";
 const INACTIVE = "#A0A0A0";
@@ -53,7 +53,7 @@ export default function TabLayout() {
           borderTopWidth: 1,
           borderTopColor: "#E8E8E8",
           elevation: 0,
-          shadowOpacity: 0,
+          boxShadow: "none",
           height: barHeight,
           paddingBottom: bottomInset,
           paddingTop: 4,

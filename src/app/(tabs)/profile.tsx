@@ -9,7 +9,7 @@ import {
 import { useAuth } from "../../contexts/AuthContext";
 import { ClientProfileSection } from "../../widgets/profile/ClientProfileSection";
 import { PickerProfileSection } from "../../widgets/profile/PickerProfileSection";
-import { styles } from "./profile.styles";
+import { styles } from "../../shared/styles/profile.styles";
 
 export default function ProfileTab() {
   const router = useRouter();

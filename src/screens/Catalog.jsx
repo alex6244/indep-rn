@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SortIcon from "../assets/icons/sort.svg";
-import { scrollBottomPaddingBelowTabBar } from "../app/(tabs)/tabBarMetrics";
+import { scrollBottomPaddingBelowTabBar } from "../shared/navigation/tabBarMetrics";
 import { useAuth } from "../contexts/AuthContext";
 import { useFavorites } from "../contexts/FavoritesContext";
 import { cars as catalogCars } from "../data/cars";
@@ -173,7 +173,7 @@ const Catalog = () => {
       />
 
       {filtersOpen && (
-        <View style={styles.filtersOverlay} pointerEvents="box-none">
+        <View style={[styles.filtersOverlay, { pointerEvents: "box-none" }]}>
           <TouchableOpacity
             style={styles.filtersBackdrop}
             activeOpacity={1}

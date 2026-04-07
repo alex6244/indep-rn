@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../../contexts/AuthContext";
-import { scrollBottomPaddingBelowTabBar } from "./tabBarMetrics";
+import { scrollBottomPaddingBelowTabBar } from "../../shared/navigation/tabBarMetrics";
 import { BenefitsRow } from "../../widgets/home/BenefitsRow";
 import { BestOffersSection } from "../../widgets/home/BestOffersSection";
 import { ChecksGridSection } from "../../widgets/home/ChecksGridSection";

@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import type { ImageSourcePropType } from "react-native";
 import { Image } from "expo-image";
+import { shadowStyle } from "../../shared/theme/shadow";
 
 type PickedCar = {
   id: string;
@@ -81,10 +82,14 @@ const styles = StyleSheet.create({
     gap: 12,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: "#E8E8E8",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
+    ...(shadowStyle({
+      boxShadow: "0px 2px 8px rgba(0,0,0,0.06)",
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.06,
+      shadowRadius: 8,
+      elevation: 2,
+    }) as object),
     elevation: 2,
   },
   imageWrap: {

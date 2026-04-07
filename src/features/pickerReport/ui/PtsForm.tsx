@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import DropdownIcon from "../../../assets/icons/dropdown.svg";
+import { shadowStyle } from "../../../shared/theme/shadow";
 
 export type PtsType = "original" | "nonOriginal";
 
@@ -178,10 +179,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginBottom: 16,
     padding: 16,
-    shadowColor: "#000000",
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
+    ...(shadowStyle({
+      boxShadow: "0px 4px 10px rgba(0,0,0,0.04)",
+      shadowColor: "#000000",
+      shadowOpacity: 0.04,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 3,
+    }) as object),
     elevation: 3,
   },
   title: {

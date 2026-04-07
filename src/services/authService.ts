@@ -1,37 +1,54 @@
-import { api, tokenStorage } from "./api";
-import type { User, UserRole } from "../data/users";
+import { ApiError, api, tokenStorage } from "./api";
+import type { User } from "../data/users";
+import {
+  type AuthCredentials,
+  AuthFlowError,
+  type RegisterPayload,
+} from "./authTypes";
 
 // Backend-ready auth service.
 // Current UI auth flow still uses AuthContext mock mode until API integration is enabled.
-
-interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-interface RegisterRequest {
-  name: string;
-  email: string;
-  password: string;
-  role: UserRole;
-}
 
 interface AuthResponse {
   token: string;
   user: User;
 }
 
+function mapAuthError(error: unknown): never {
+  if (error instanceof ApiError) {
+    if (error.status === 401) {
+      throw new AuthFlowError("invalid_credentials", error.message);
+    }
+    if (error.status === 409) {
+      throw new AuthFlowError("user_exists", error.message);
+    }
+    throw new AuthFlowError("unknown", error.message);
+  }
+  if (error instanceof TypeError) {
+    throw new AuthFlowError("network_error", error.message);
+  }
+  throw new AuthFlowError("unknown");
+}
+
 export const authService = {
-  login: async (data: LoginRequest): Promise<User> => {
-    const res = await api.post<AuthResponse>("/auth/login", data);
-    await tokenStorage.set(res.token);
-    return res.user;
+  login: async (data: AuthCredentials): Promise<User> => {
+    try {
+      const res = await api.post<AuthResponse>("/auth/login", data);
+      await tokenStorage.set(res.token);
+      return res.user;
+    } catch (error) {
+      mapAuthError(error);
+    }
   },
 
-  register: async (data: RegisterRequest): Promise<User> => {
-    const res = await api.post<AuthResponse>("/auth/register", data);
-    await tokenStorage.set(res.token);
-    return res.user;
+  register: async (data: RegisterPayload): Promise<User> => {
+    try {
+      const res = await api.post<AuthResponse>("/auth/register", data);
+      await tokenStorage.set(res.token);
+      return res.user;
+    } catch (error) {
+      mapAuthError(error);
+    }
   },
 
   logout: async (): Promise<void> => {
@@ -42,5 +59,11 @@ export const authService = {
     }
   },
 
-  me: (): Promise<User> => api.get<User>("/auth/me"),
+  me: async (): Promise<User> => {
+    try {
+      return await api.get<User>("/auth/me");
+    } catch (error) {
+      mapAuthError(error);
+    }
+  },
 };

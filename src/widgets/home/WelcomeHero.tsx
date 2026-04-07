@@ -40,7 +40,8 @@ export function WelcomeHero({ onOpenBurger, onOpenCatalog }: Props) {
             { fontSize: heroTitleFontSize, lineHeight: heroTitleLineHeight },
           ]}
         >
-          Честный подбор — спокойная покупка
+          <Text style={styles.heroTitleAccent}>Честный </Text>
+          подбор — спокойная покупка
         </Text>
 
         <View style={[styles.heroArt, { height: heroArtHeight }]}>
@@ -94,5 +95,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
     color: "#FFFFFF",
+  },
+  heroTitleAccent: {
+    color: "#DB4431",
   },
 });

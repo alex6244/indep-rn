@@ -19,6 +19,7 @@ import {
   MILEAGE_MAX,
   MILEAGE_SCROLL_SNAP_STEP,
 } from "./mileagePickerUtils";
+import { shadowStyle } from "../../../shared/theme/shadow";
 
 const ITEM_WIDTH = 56;
 const TICK_COUNT = MILEAGE_MAX / MILEAGE_SCROLL_SNAP_STEP + 1;
@@ -176,14 +177,18 @@ export function MileagePicker({
 
         <View style={styles.listShell} onLayout={onListShellLayout}>
           <View
-            pointerEvents="none"
-            style={[styles.fadeLeft, { width: sidePad * 0.45 + 12 }]}
+            style={[
+              styles.fadeLeft,
+              { width: sidePad * 0.45 + 12, pointerEvents: "none" },
+            ]}
           />
           <View
-            pointerEvents="none"
-            style={[styles.fadeRight, { width: sidePad * 0.45 + 12 }]}
+            style={[
+              styles.fadeRight,
+              { width: sidePad * 0.45 + 12, pointerEvents: "none" },
+            ]}
           />
-          <View pointerEvents="none" style={styles.centerHighlight} />
+          <View style={[styles.centerHighlight, { pointerEvents: "none" }]} />
 
           <FlatList
             ref={listRef}
@@ -249,10 +254,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#EDEEF0",
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 2,
+    ...(shadowStyle({
+      boxShadow: "0px 1px 2px rgba(0,0,0,0.08)",
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.08,
+      shadowRadius: 2,
+      elevation: 2,
+    }) as object),
     elevation: 2,
   },
   stepBtnPressed: {

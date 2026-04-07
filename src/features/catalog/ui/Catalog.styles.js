@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { typography } from "../../../shared/theme/typography";
+import { shadowStyle } from "../../../shared/theme/shadow";
 
 export const catalogStyles = StyleSheet.create({
   root: {
@@ -50,10 +51,14 @@ export const catalogStyles = StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 8,
     paddingHorizontal: 8,
-    shadowColor: "#000000",
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
+    ...(shadowStyle({
+      boxShadow: "0px 4px 10px rgba(0,0,0,0.12)",
+      shadowColor: "#000000",
+      shadowOpacity: 0.12,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 10,
+    }) || {}),
     elevation: 10,
     zIndex: 40,
   },
@@ -113,10 +118,14 @@ export const catalogStyles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 20,
     padding: 14,
-    shadowColor: "#000000",
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
+    ...(shadowStyle({
+      boxShadow: "0px 4px 12px rgba(0,0,0,0.08)",
+      shadowColor: "#000000",
+      shadowOpacity: 0.08,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 4,
+    }) || {}),
     elevation: 4,
   },
   carImagesScroll: {

@@ -84,8 +84,7 @@ export function MileageVerticalSlider({ value, onChange }: Props) {
         <View style={[styles.trackBg]} />
         <View style={[styles.trackFill, { height: Math.max(0, fillHeight) }]} />
         <View
-          style={[styles.thumb, { top: thumbTop }]}
-          pointerEvents="none"
+          style={[styles.thumb, { top: thumbTop, pointerEvents: "none" }]}
         />
       </View>
     </View>

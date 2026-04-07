@@ -17,8 +17,8 @@ import { ProfileQuickActions } from "./ProfileQuickActions";
 import { ProfileStats } from "./ProfileStats";
 import { ReportsBanner } from "./ReportsBanner";
 import { useProfileEditFlow } from "./useProfileEditFlow";
-import { scrollBottomPaddingBelowTabBar } from "../../app/(tabs)/tabBarMetrics";
-import { styles } from "../../app/(tabs)/profile.styles";
+import { scrollBottomPaddingBelowTabBar } from "../../shared/navigation/tabBarMetrics";
+import { styles } from "../../shared/styles/profile.styles";
 
 type Props = {
   initials: string;

@@ -9,6 +9,7 @@ import {
 } from "react-native";
 
 import CloseIcon from "../../assets/icons/close.svg";
+import { shadowStyle } from "../../shared/theme/shadow";
 
 type PackageOption = {
   count: number;
@@ -45,7 +46,7 @@ export function ReportsPackageSelectModal({
       <Pressable style={styles.backdrop} onPress={onClose} />
 
       <View style={styles.center}>
-        <View style={styles.card} pointerEvents="box-none">
+        <View style={[styles.card, { pointerEvents: "box-none" }]}>
           <TouchableOpacity
             accessibilityRole="button"
             accessibilityLabel="Закрыть"
@@ -107,10 +108,14 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingHorizontal: 18,
     overflow: "hidden",
-    shadowColor: "#000",
-    shadowOpacity: 0.12,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 10 },
+    ...(shadowStyle({
+      boxShadow: "0px 10px 18px rgba(0,0,0,0.12)",
+      shadowColor: "#000",
+      shadowOpacity: 0.12,
+      shadowRadius: 18,
+      shadowOffset: { width: 0, height: 10 },
+      elevation: 10,
+    }) as object),
     elevation: 10,
   },
   closeBtn: {

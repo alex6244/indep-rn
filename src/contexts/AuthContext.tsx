@@ -1,214 +1,194 @@
-// src/contexts/AuthContext.tsx
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { mockUsers, type User } from "../data/users";
 import { tokenStorage } from "../services/api";
+import { authService } from "../services/authService";
+import {
+  type AuthCredentials,
+  AuthFlowError,
+  type AuthErrorCode,
+  type RegisterPayload,
+} from "../services/authTypes";
 
-interface AuthContextType {
+type AuthSource = "mock" | "api";
+
+type AuthContextType = {
   user: User | null;
-  // Mock runtime contract (email-only) until backend auth is wired via authService.
-  login: (email: string) => Promise<boolean>;
-  register: (
-    name: string,
-    email: string,
-    role: User["role"],
-  ) => Promise<boolean>;
+  login: (credentials: AuthCredentials) => Promise<boolean>;
+  register: (payload: RegisterPayload) => Promise<boolean>;
   logout: () => Promise<void>;
   loading: boolean;
-}
+  authError: AuthErrorCode | null;
+};
 
+type AuthGateway = {
+  checkAuth: () => Promise<User | null>;
+  login: (credentials: AuthCredentials) => Promise<User>;
+  register: (payload: RegisterPayload) => Promise<User>;
+  logout: () => Promise<void>;
+};
+
+const USER_KEY = "@auth/user";
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-// Runtime mock auth switch. Backend login/register should go through authService later.
-const IS_MOCK_AUTH = process.env.EXPO_PUBLIC_USE_MOCK_AUTH === "true" || __DEV__;
 
-type UserLike = Partial<User> & { role?: unknown; id?: unknown; login?: unknown; email?: unknown };
-type SessionUser = Pick<User, "id" | "login" | "name" | "phone" | "email" | "role">;
-
-function isValidStoredUser(value: unknown): value is UserLike {
-  if (!value || typeof value !== "object") {
-    return false;
-  }
-
-  const user = value as UserLike;
-  const hasId = typeof user.id === "string" && user.id.trim().length > 0;
-  const hasRole = user.role === "client" || user.role === "picker";
-  const hasLogin = typeof user.login === "string" && user.login.trim().length > 0;
-  const hasEmail = typeof user.email === "string" && user.email.trim().length > 0;
-
-  return hasId && hasRole && (hasLogin || hasEmail);
+function resolveAuthSource(): AuthSource {
+  const fromEnv = process.env.EXPO_PUBLIC_AUTH_SOURCE?.trim().toLowerCase();
+  return fromEnv === "mock" ? "mock" : "api";
 }
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+function normalizeAuthErrorCode(error: unknown): AuthErrorCode {
+  if (error instanceof AuthFlowError) {
+    return error.code;
+  }
+  return "unknown";
+}
+
+async function persistSessionUser(user: User): Promise<void> {
+  await AsyncStorage.setItem(USER_KEY, JSON.stringify(user));
+}
+
+async function readSessionUser(): Promise<User | null> {
+  try {
+    const raw = await AsyncStorage.getItem(USER_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as User;
+  } catch {
+    return null;
+  }
+}
+
+function createMockAuthGateway(): AuthGateway {
+  return {
+    checkAuth: async () => readSessionUser(),
+    login: async (credentials) => {
+      const trimmedEmail = credentials.email.trim();
+      const found = [mockUsers.client, mockUsers.picker].find(
+        (u) =>
+          (u.email ?? "").trim().toLowerCase() === trimmedEmail.toLowerCase() &&
+          u.password === credentials.password,
+      );
+      if (!found) {
+        throw new AuthFlowError("invalid_credentials");
+      }
+      await persistSessionUser(found);
+      return found;
+    },
+    register: async (payload) => {
+      const trimmedEmail = payload.email.trim();
+      const exists = [mockUsers.client, mockUsers.picker].some(
+        (u) => (u.email ?? "").trim().toLowerCase() === trimmedEmail.toLowerCase(),
+      );
+      if (exists) {
+        throw new AuthFlowError("user_exists");
+      }
+      const newUser: User = {
+        id: Date.now().toString(),
+        login: trimmedEmail,
+        password: payload.password,
+        role: payload.role,
+        name: payload.name,
+        phone: "",
+        email: trimmedEmail,
+      };
+      await persistSessionUser(newUser);
+      return newUser;
+    },
+    logout: async () => {
+      await AsyncStorage.removeItem(USER_KEY);
+      await tokenStorage.clear();
+    },
+  };
+}
+
+function createApiAuthGateway(): AuthGateway {
+  return {
+    checkAuth: async () => {
+      const token = await tokenStorage.get();
+      if (!token) return null;
+      try {
+        const me = await authService.me();
+        await persistSessionUser(me);
+        return me;
+      } catch (error) {
+        const code = normalizeAuthErrorCode(error);
+        if (code === "invalid_credentials" || code === "unknown") {
+          await Promise.all([tokenStorage.clear(), AsyncStorage.removeItem(USER_KEY)]);
+        }
+        return null;
+      }
+    },
+    login: async (credentials) => {
+      const user = await authService.login(credentials);
+      await persistSessionUser(user);
+      return user;
+    },
+    register: async (payload) => {
+      const user = await authService.register(payload);
+      await persistSessionUser(user);
+      return user;
+    },
+    logout: async () => {
+      await authService.logout();
+      await AsyncStorage.removeItem(USER_KEY);
+    },
+  };
+}
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [users, setUsers] = useState<User[]>([mockUsers.client, mockUsers.picker]);
+  const [authError, setAuthError] = useState<AuthErrorCode | null>(null);
 
-  const USER_KEY = "user";
-
-  const toSessionUser = (value: User): SessionUser => ({
-    id: value.id,
-    login: value.login,
-    name: value.name,
-    phone: value.phone,
-    email: value.email,
-    role: value.role,
-  });
-
-  const checkAuth = useCallback(async () => {
-    // Temporary mock persistence: keep only minimal user session data in AsyncStorage.
-    try {
-      const userData = await AsyncStorage.getItem(USER_KEY);
-      if (userData) {
-        const parsed = JSON.parse(userData) as UserLike;
-        if (isValidStoredUser(parsed)) {
-          const fallback = users.find((u) => u.id === parsed.id);
-          const restored: User = fallback ?? {
-            id: parsed.id as string,
-            login: (parsed.login as string) ?? (parsed.email as string),
-            password: "",
-            role: parsed.role as User["role"],
-            name: (parsed.name as string) ?? "",
-            phone: (parsed.phone as string) ?? "",
-            email:
-              (parsed.email as string | undefined) ??
-              ((parsed.login as string | undefined) ?? ""),
-          };
-          setUser(restored);
-        } else {
-          await AsyncStorage.removeItem(USER_KEY);
-          setUser(null);
-        }
-      }
-    } catch {
-      // Повреждённые данные — сбрасываем, пользователь останется разлогинен
-      await AsyncStorage.removeItem(USER_KEY);
-    }
-
-    setLoading(false);
-  }, [users]);
-
-  const login = useCallback(
-    async (email: string): Promise<boolean> => {
-      if (!IS_MOCK_AUTH) {
-        if (__DEV__) {
-          console.log("[auth] login blocked: backend auth not connected");
-        }
-        return false;
-      }
-
-      return new Promise((resolve) => {
-        setTimeout(async () => {
-          const trimmedEmail = email.trim();
-          if (!trimmedEmail) {
-            if (__DEV__) {
-              console.log("[auth] login: missing email");
-            }
-            resolve(false);
-            return;
-          }
-
-          const found = users.find((u) => (u.email ?? "").trim() === trimmedEmail);
-
-          if (found) {
-            await AsyncStorage.setItem(
-              USER_KEY,
-              JSON.stringify(toSessionUser(found)),
-            );
-            setUser(found);
-            if (__DEV__) {
-              console.log("[auth] login success", { usersCount: users.length });
-            }
-            resolve(true);
-          } else {
-            if (__DEV__) {
-              console.log("[auth] login fail: not found", { usersCount: users.length });
-            }
-            resolve(false);
-          }
-        }, 500);
-      });
-    },
-    [users],
-  );
-
-  const register = useCallback(
-    async (
-      name: string,
-      email: string,
-      role: User["role"],
-    ): Promise<boolean> => {
-      if (!IS_MOCK_AUTH) {
-        if (__DEV__) {
-          console.log("[auth] register blocked: backend auth not connected");
-        }
-        return false;
-      }
-
-      return new Promise((resolve) => {
-        setTimeout(async () => {
-          const trimmedEmail = email.trim();
-          if (!trimmedEmail) {
-            resolve(false);
-            return;
-          }
-
-          // Проверяем, что такой email ещё не зарегистрирован
-          const exists = users.some((u) => (u.email ?? "") === trimmedEmail);
-
-          if (exists) {
-            if (__DEV__) {
-              console.log("[auth] register: user already exists");
-            }
-            resolve(false);
-            return;
-          }
-
-          const newUser: User = {
-            id: Date.now().toString(),
-            login: trimmedEmail, // login для совместимости
-            password: "123", // фикс для мок-логики, сейчас не используется формой
-            name,
-            phone: "", // phone больше не запрашивается регистрацией
-            email: trimmedEmail,
-            role,
-          };
-
-          const updated = [...users, newUser];
-          setUsers(updated);
-          await AsyncStorage.setItem(
-            USER_KEY,
-            JSON.stringify(toSessionUser(newUser)),
-          );
-          setUser(newUser);
-          if (__DEV__) {
-            console.log("[auth] register success", { usersCount: updated.length });
-          }
-          resolve(true);
-        }, 1000);
-      });
-    },
-    [users],
-  );
-
-  const logout = useCallback(async () => {
-    await Promise.all([AsyncStorage.removeItem(USER_KEY), tokenStorage.clear()]);
-    setUser(null);
+  const gateway = useMemo<AuthGateway>(() => {
+    const source = resolveAuthSource();
+    return source === "mock" ? createMockAuthGateway() : createApiAuthGateway();
   }, []);
 
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+    let active = true;
+    void (async () => {
+      const restored = await gateway.checkAuth();
+      if (!active) return;
+      setUser(restored);
+      setLoading(false);
+    })();
+    return () => {
+      active = false;
+    };
+  }, [gateway]);
+
+  const login: AuthContextType["login"] = async (credentials) => {
+    setAuthError(null);
+    try {
+      const sessionUser = await gateway.login(credentials);
+      setUser(sessionUser);
+      return true;
+    } catch (error) {
+      setAuthError(normalizeAuthErrorCode(error));
+      return false;
+    }
+  };
+
+  const register: AuthContextType["register"] = async (payload) => {
+    setAuthError(null);
+    try {
+      const sessionUser = await gateway.register(payload);
+      setUser(sessionUser);
+      return true;
+    } catch (error) {
+      setAuthError(normalizeAuthErrorCode(error));
+      return false;
+    }
+  };
+
+  const logout: AuthContextType["logout"] = async () => {
+    setAuthError(null);
+    await gateway.logout();
+    setUser(null);
+  };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, register, logout, loading, authError }}>
       {children}
     </AuthContext.Provider>
   );

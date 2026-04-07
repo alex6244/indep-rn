@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { EntitiesToggle } from "../entitiesToggle/EntitiesToggle";
 import type { Report } from "../../data/reports";
+import { shadowStyle } from "../../shared/theme/shadow";
 
 type DefectsMode = "scheme" | "photos";
 
@@ -59,10 +60,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginBottom: 16,
     padding: 16,
-    shadowColor: "#000000",
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
+    ...(shadowStyle({
+      boxShadow: "0px 4px 10px rgba(0,0,0,0.06)",
+      shadowColor: "#000000",
+      shadowOpacity: 0.06,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 4,
+    }) as object),
     elevation: 4,
   },
   title: {

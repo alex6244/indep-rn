@@ -1,8 +1,8 @@
 import { Platform } from "react-native";
 
 /**
- * Высота зоны таббара над safe-area (SVG-иконки 62×62 с встроенным текстом + отступы).
- * Должна соответствовать фактической вёрстке в `_layout.tsx`.
+ * Tab bar sizing utilities.
+ * Must match actual tab bar layout in `app/(tabs)/_layout.tsx`.
  */
 export const TAB_BAR_INNER_HEIGHT = 72;
 
@@ -14,10 +14,11 @@ export function tabBarTotalHeight(insetsBottom: number) {
   return TAB_BAR_INNER_HEIGHT + tabBarSafeAreaBottom(insetsBottom);
 }
 
-/** Нижний отступ для ScrollView над таббаром + запас. */
+/** Bottom padding for scroll content above tab bar + extra space. */
 export function scrollBottomPaddingBelowTabBar(
   insetsBottom: number,
   extra = 12,
 ) {
   return tabBarTotalHeight(insetsBottom) + extra;
 }
+

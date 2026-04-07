@@ -9,6 +9,7 @@ import {
 
 import CloseIcon from "../../assets/icons/close.svg";
 import SuccessIllustration from "../../assets/mainpage/result/2.svg";
+import { shadowStyle } from "../../shared/theme/shadow";
 
 const pickReportWord = (count: number) => {
   // Упрощенная склонялка для RU:
@@ -93,10 +94,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 20,
     padding: 20,
-    shadowColor: "#000000",
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 10 },
+    ...(shadowStyle({
+      boxShadow: "0px 10px 16px rgba(0,0,0,0.12)",
+      shadowColor: "#000000",
+      shadowOpacity: 0.12,
+      shadowRadius: 16,
+      shadowOffset: { width: 0, height: 10 },
+      elevation: 8,
+    }) as object),
     elevation: 8,
   },
   closeBtn: {

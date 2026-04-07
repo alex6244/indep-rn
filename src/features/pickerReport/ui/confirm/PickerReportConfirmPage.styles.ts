@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { shadowStyle } from "../../../../shared/theme/shadow";
 
 export const styles = StyleSheet.create({
   screen: {
@@ -39,10 +40,14 @@ export const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginBottom: 16,
     padding: 16,
-    shadowColor: "#000000",
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
+    ...(shadowStyle({
+      boxShadow: "0px 4px 10px rgba(0,0,0,0.06)",
+      shadowColor: "#000000",
+      shadowOpacity: 0.06,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 2,
+    }) as object),
     elevation: 2,
   },
   cardTitle: {
@@ -245,10 +250,14 @@ export const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 18,
     padding: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 10 },
+    ...(shadowStyle({
+      boxShadow: "0px 10px 16px rgba(0,0,0,0.12)",
+      shadowColor: "#000",
+      shadowOpacity: 0.12,
+      shadowRadius: 16,
+      shadowOffset: { width: 0, height: 10 },
+      elevation: 6,
+    }) as object),
     elevation: 6,
   },
   vinModalTitle: {

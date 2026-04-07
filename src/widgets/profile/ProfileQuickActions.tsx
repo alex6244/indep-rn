@@ -35,11 +35,11 @@ export function ProfileQuickActions({
         accessibilityRole="button"
         accessibilityLabel="Лучшие предложения на авто"
       >
-        <View style={styles.bestCardInner}>
+        <View style={[styles.bestCardInner, { pointerEvents: "none" }]}>
           <Text style={styles.bestText} numberOfLines={3}>
             Лучшие предложения на авто
           </Text>
-          <View style={styles.bestIconCorner} pointerEvents="none">
+          <View style={styles.bestIconCorner}>
             <BestIcon width={58} height={48} />
           </View>
         </View>

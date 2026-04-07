@@ -1,6 +1,7 @@
 import { StyleSheet } from "react-native";
-import { FONT_FAMILY } from "../../shared/theme/fonts";
-import { typography } from "../../shared/theme/typography";
+import { FONT_FAMILY } from "../theme/fonts";
+import { typography } from "../theme/typography";
+import { shadowStyle } from "../theme/shadow";
 
 export const styles = StyleSheet.create({
   screen: {
@@ -25,11 +26,14 @@ export const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 20,
     padding: 20,
-    shadowColor: "#000000",
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 4,
+    ...(shadowStyle({
+      boxShadow: "0px 6px 12px rgba(0,0,0,0.06)",
+      shadowColor: "#000000",
+      shadowOpacity: 0.06,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: 4,
+    }) as object),
     marginBottom: 16,
     alignItems: "center",
   },
@@ -166,11 +170,14 @@ export const styles = StyleSheet.create({
     backgroundColor: "#DB4431",
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 6,
+    ...(shadowStyle({
+      boxShadow: "0px 8px 12px rgba(0,0,0,0.15)",
+      shadowColor: "#000",
+      shadowOpacity: 0.15,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 8 },
+      elevation: 6,
+    }) as object),
   },
   fabPlus: {
     color: "#FFFFFF",
@@ -180,3 +187,4 @@ export const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY.button,
   },
 });
+

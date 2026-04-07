@@ -1,6 +1,7 @@
 import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import type { Report } from "../../data/reports";
+import { shadowStyle } from "../../shared/theme/shadow";
 
 export function ReportDetailsHeader({ report }: { report: Report }) {
   return (
@@ -23,10 +24,14 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginHorizontal: 16,
     marginBottom: 16,
-    shadowColor: "#000000",
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
+    ...(shadowStyle({
+      boxShadow: "0px 4px 10px rgba(0,0,0,0.06)",
+      shadowColor: "#000000",
+      shadowOpacity: 0.06,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 4,
+    }) as object),
     elevation: 4,
   },
   image: {

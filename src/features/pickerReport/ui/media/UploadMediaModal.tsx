@@ -10,6 +10,7 @@ import {
 
 import CloseIcon from "../../../../assets/icons/close.svg";
 import { FONT_FAMILY } from "../../../../shared/theme/fonts";
+import { shadowStyle } from "../../../../shared/theme/shadow";
 
 export type UploadMediaModalProps = {
   visible: boolean;
@@ -36,7 +37,7 @@ export function UploadMediaModal({
     <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose} />
 
-      <View style={styles.center} pointerEvents="box-none">
+      <View style={[styles.center, { pointerEvents: "box-none" }]}>
         <View style={styles.card}>
           <TouchableOpacity
             accessibilityRole="button"
@@ -82,10 +83,14 @@ const styles = StyleSheet.create({
     paddingTop: 18,
     paddingBottom: 14,
     paddingHorizontal: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.12,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 10 },
+    ...(shadowStyle({
+      boxShadow: "0px 10px 18px rgba(0,0,0,0.12)",
+      shadowColor: "#000",
+      shadowOpacity: 0.12,
+      shadowRadius: 18,
+      shadowOffset: { width: 0, height: 10 },
+      elevation: 10,
+    }) as object),
     elevation: 10,
     alignItems: "center",
   },

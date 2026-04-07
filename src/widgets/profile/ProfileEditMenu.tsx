@@ -2,6 +2,7 @@ import React from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { DeleteProfileConfirmModal } from "./DeleteProfileConfirmModal";
 import { ProfileDeletedModal } from "./ProfileDeletedModal";
+import { shadowStyle } from "../../shared/theme/shadow";
 
 type Props = {
   editMenuOpen: boolean;
@@ -88,10 +89,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 14,
     paddingVertical: 6,
-    shadowColor: "#000",
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 10 },
+    ...(shadowStyle({
+      boxShadow: "0px 10px 16px rgba(0,0,0,0.12)",
+      shadowColor: "#000",
+      shadowOpacity: 0.12,
+      shadowRadius: 16,
+      shadowOffset: { width: 0, height: 10 },
+      elevation: 6,
+    }) as object),
     elevation: 6,
   },
   item: {

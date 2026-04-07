@@ -83,7 +83,7 @@ export function MediaUploadCard({ value, onChange }: Props) {
 
   return (
     <View style={styles.section}>
-      <View style={styles.bgWrap} pointerEvents="none">
+      <View style={[styles.bgWrap, { pointerEvents: "none" }]}>
         <PhotosBg
           style={StyleSheet.absoluteFillObject}
           width="100%"

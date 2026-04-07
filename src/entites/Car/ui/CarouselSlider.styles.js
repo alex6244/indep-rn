@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions } from 'react-native';
+import { shadowStyle } from '../../../shared/theme/shadow';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -13,10 +14,14 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: '#fff',
     elevation: 3,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
+    ...(shadowStyle({
+      boxShadow: '0px 4px 8px rgba(0,0,0,0.10)',
+      shadowColor: '#000',
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 3,
+    }) || {}),
     paddingBottom: 16,
   },
   image: {

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { shadowStyle } from "../../shared/theme/shadow";
 
 type Props = {
   visible: boolean;
@@ -40,7 +41,7 @@ export function BalanceModal({
         />
         <Pressable style={styles.backdrop} onPress={onClose} />
 
-        <View style={styles.sheetWrap} pointerEvents="box-none">
+        <View style={[styles.sheetWrap, { pointerEvents: "box-none" }]}>
           <View style={styles.card}>
             <TouchableOpacity
               accessibilityRole="button"
@@ -104,10 +105,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 22,
     paddingTop: 26,
     paddingBottom: 18,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.12,
-    shadowRadius: 24,
+    ...(shadowStyle({
+      boxShadow: "0px 12px 24px rgba(0,0,0,0.12)",
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 12 },
+      shadowOpacity: 0.12,
+      shadowRadius: 24,
+      elevation: 10,
+    }) as object),
     elevation: 10,
   },
   closeBtn: {
