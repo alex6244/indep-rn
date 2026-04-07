@@ -7,10 +7,35 @@ import { PickerProfileSection } from "../../widgets/profile/PickerProfileSection
 import { styles } from "../../shared/styles/profile.styles";
 import { ScreenStateEmpty } from "../../shared/ui/ScreenStateEmpty";
 import { ScreenStateLoading } from "../../shared/ui/ScreenStateLoading";
+import { reportsService } from "../../services/reportsService";
+import type { Report } from "../../data/reports";
 
 export default function ProfileTab() {
   const router = useRouter();
   const { user, loading, logout } = useAuth();
+  const [clientReports, setClientReports] = React.useState<Report[]>([]);
+  const [reportsLoading, setReportsLoading] = React.useState(false);
+  const [reportsError, setReportsError] = React.useState<string | null>(null);
+
+  const loadClientReports = React.useCallback(async () => {
+    setReportsLoading(true);
+    setReportsError(null);
+    try {
+      const next = await reportsService.getPurchasedReports();
+      setClientReports(next);
+    } catch (e) {
+      setClientReports([]);
+      setReportsError(e instanceof Error ? e.message : "Не удалось загрузить отчёты.");
+    } finally {
+      setReportsLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (!loading && user?.role === "client") {
+      void loadClientReports();
+    }
+  }, [loading, user?.role, loadClientReports]);
 
   if (loading) {
     return (
@@ -67,6 +92,12 @@ export default function ProfileTab() {
       name={user.name || user.login}
       phone={user.phone}
       onLogout={logout}
+      reports={clientReports}
+      loading={reportsLoading}
+      error={reportsError}
+      onRetry={() => {
+        void loadClientReports();
+      }}
     />
   );
 }

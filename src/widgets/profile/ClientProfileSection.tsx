@@ -1,6 +1,6 @@
 import { type Href, useRouter } from "expo-router";
-import React, { useMemo, useState } from "react";
-import { type ImageSourcePropType, ScrollView, View } from "react-native";
+import React, { useState } from "react";
+import { ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AboutIcon from "../../assets/icons/burger/about.svg";
 import CooperationIcon from "../../assets/icons/burger/ads.svg";
@@ -17,30 +17,35 @@ import { ProfileLogoutRow } from "./ProfileLogoutRow";
 import { ProfileQuickActions } from "./ProfileQuickActions";
 import { useProfileEditFlow } from "./useProfileEditFlow";
 import { InlineMessage } from "../../shared/ui/InlineMessage";
+import type { Report } from "../../data/reports";
+import { ScreenStateError } from "../../shared/ui/ScreenStateError";
+import { ScreenStateLoading } from "../../shared/ui/ScreenStateLoading";
 
 type Props = {
   name: string;
   phone?: string;
   onLogout: () => Promise<void>;
+  reports: Report[];
+  loading?: boolean;
+  error?: string | null;
+  onRetry?: () => void;
 };
 
-export function ClientProfileSection({ name, phone, onLogout }: Props) {
+export function ClientProfileSection({
+  name,
+  phone,
+  onLogout,
+  reports,
+  loading = false,
+  error = null,
+  onRetry,
+}: Props) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [menuOpen, setMenuOpen] = useState(false);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
   const editFlow = useProfileEditFlow(onLogout, router);
 
-  const reports = useMemo<
-    {
-      id: string;
-      price: string;
-      title: string;
-      subtitle: string;
-      city: string;
-      imageUrl: ImageSourcePropType;
-    }[]
-  >(() => [], []);
   const hasReports = reports.length > 0;
 
   return (
@@ -62,7 +67,15 @@ export function ClientProfileSection({ name, phone, onLogout }: Props) {
         ]}
       >
         {infoMessage ? <InlineMessage tone="info" message={infoMessage} /> : null}
-        {hasReports ? (
+        {loading ? (
+          <ScreenStateLoading message="Загружаем отчёты..." />
+        ) : error ? (
+          <ScreenStateError
+            title="Не удалось загрузить отчёты"
+            message={error}
+            onRetry={onRetry}
+          />
+        ) : hasReports ? (
           <>
             {reports.map((r) => (
               <ClientReportCard
