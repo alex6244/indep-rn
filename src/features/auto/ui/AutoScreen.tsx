@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type ReactNode } from "react";
 import {
   View,
   Text,
@@ -7,10 +7,10 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import { Header } from "../widgets/header/Header";
-import { FavoriteButton } from "../features/favorites/ui/FavoriteButton";
-import { RangeSlider } from "../shared/ui/RangeSlider";
-import { EntitiesToggle } from "../widgets/entitiesToggle/EntitiesToggle";
+import { Header } from "../../../widgets/header/Header";
+import { FavoriteButton } from "../../favorites/ui/FavoriteButton";
+import { RangeSlider } from "../../../shared/ui/RangeSlider";
+import { EntitiesToggle } from "../../../widgets/entitiesToggle/EntitiesToggle";
 
 const MAIN_IMG = "https://via.placeholder.com/600x300";
 const THUMBS = [
@@ -19,8 +19,7 @@ const THUMBS = [
   "https://via.placeholder.com/200x120?3",
 ];
 
-const Auto = () => {
-
+export default function AutoScreen() {
   return (
     <View style={styles.root}>
       <Header title="NISSAN Qashqai" rightAction="none" />
@@ -28,8 +27,7 @@ const Auto = () => {
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.breadcrumbs}>
           <Text style={styles.breadcrumbText}>
-            Каталог {">"} NISSAN {">"} Qashqai {">"} Кроссовер {">"} 1,2 л (115
-            л.с.) 6MT 2WD
+            Каталог {">"} NISSAN {">"} Qashqai {">"} Кроссовер {">"} 1,2 л (115 л.с.) 6MT 2WD
           </Text>
         </View>
 
@@ -37,11 +35,7 @@ const Auto = () => {
           <View style={styles.imagesCol}>
             <Image source={{ uri: MAIN_IMG }} style={styles.mainImage} />
 
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.thumbScroll}
-            >
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.thumbScroll}>
               {THUMBS.map((uri, idx) => (
                 <Image key={idx} source={{ uri }} style={styles.thumb} />
               ))}
@@ -57,32 +51,14 @@ const Auto = () => {
             <View style={styles.titleRow}>
               <Text style={styles.title}>NISSAN Qashqai</Text>
             </View>
-            <Text style={styles.subTitle}>
-              200 000 км - Active - 1,2 л (115 л.с.) 6MT 2WD - 2025 г.
-            </Text>
+            <Text style={styles.subTitle}>200 000 км - Active - 1,2 л (115 л.с.) 6MT 2WD - 2025 г.</Text>
             <Text style={styles.bodyType}>Кроссовер</Text>
 
             <View style={styles.badges}>
-              <Badge
-                text="Проверено 128 параметров"
-                color="#6B757C"
-                bg="#F6F8FE"
-              />
-              <Badge
-                text="Повреждений не обнаружено"
-                color="#4DB95C"
-                bg="#E6F6EA"
-              />
-              <Badge
-                text="4 элемента требуют замены"
-                color="#F63F26"
-                bg="#FFF1F3"
-              />
-              <Badge
-                text="Имеются юридические проблемы"
-                color="#E98800"
-                bg="#FFF1C7"
-              />
+              <Badge text="Проверено 128 параметров" color="#6B757C" bg="#F6F8FE" />
+              <Badge text="Повреждений не обнаружено" color="#4DB95C" bg="#E6F6EA" />
+              <Badge text="4 элемента требуют замены" color="#F63F26" bg="#FFF1F3" />
+              <Badge text="Имеются юридические проблемы" color="#E98800" bg="#FFF1C7" />
             </View>
 
             <View style={styles.priceBlock}>
@@ -119,15 +95,16 @@ const Auto = () => {
         </Card>
 
         <Card title="Повреждения">
-          <EntitiesToggle leftLabel="Схема" rightLabel="Фото" />
+          <EntitiesToggle
+            leftLabel="Схема"
+            rightLabel="Фото"
+            value="credit"
+            onChange={() => {}}
+          />
           <View style={styles.damageSlider}>
-            <Image
-              source={{ uri: "https://via.placeholder.com/400x200" }}
-              style={styles.damageImage}
-            />
+            <Image source={{ uri: "https://via.placeholder.com/400x200" }} style={styles.damageImage} />
             <Text style={styles.damageText}>
-              Косметические царапины на переднем бампере, без влияния на
-              безопасность.
+              Косметические царапины на переднем бампере, без влияния на безопасность.
             </Text>
           </View>
         </Card>
@@ -151,16 +128,15 @@ const Auto = () => {
 
         <Card title="Кредит на авто на специальных условиях">
           <Text style={styles.creditDescr}>
-            Заполните одну заявку — сравните предложения банков и узнайте
-            решение онлайн.
+            Заполните одну заявку — сравните предложения банков и узнайте решение онлайн.
           </Text>
 
           <Text style={styles.sectionLabel}>Первоначальный взнос</Text>
-          <RangeSlider min={10} max={70} initial={70} />
+          <RangeSlider min={10} max={70} initial={70} label="" onChange={() => {}} />
           <Text style={styles.sectionValue}>5 000 000 ₽ (70%)</Text>
 
           <Text style={styles.sectionLabel}>Срок кредита</Text>
-          <RangeSlider min={1} max={7} initial={7} />
+          <RangeSlider min={1} max={7} initial={7} label="" onChange={() => {}} />
           <Text style={styles.sectionValue}>7 лет</Text>
 
           <View style={styles.row}>
@@ -177,51 +153,45 @@ const Auto = () => {
 
         <Card title="Лучшие предложения">
           <View style={styles.bestOffer}>
-            <Image
-              source={{ uri: "https://via.placeholder.com/400x180" }}
-              style={styles.bestImage}
-            />
+            <Image source={{ uri: "https://via.placeholder.com/400x180" }} style={styles.bestImage} />
             <View style={styles.bestInfo}>
               <View style={styles.bestPriceRow}>
                 <Text style={styles.bestPrice}>67 000 000 ₽</Text>
                 <Text style={styles.bestBadge}>200 000 км</Text>
               </View>
-              <Text style={styles.bestTitle}>
-                Mercedes-Benz GLC AMG 43 AMG II (X254)
-              </Text>
-              <Text style={styles.bestSub}>
-                Active - 1,2 л (115 л.с.) 6MT 2WD - 2025 г.
-              </Text>
+              <Text style={styles.bestTitle}>Mercedes-Benz GLC AMG 43 AMG II (X254)</Text>
+              <Text style={styles.bestSub}>Active - 1,2 л (115 л.с.) 6MT 2WD - 2025 г.</Text>
             </View>
             <View style={styles.bestBtnsRow}>
-              <TouchableOpacity
-                style={[styles.btn, styles.btnPrimary, { flex: 1 }]}
-              >
+              <TouchableOpacity style={[styles.btn, styles.btnPrimary, { flex: 1 }]}>
                 <Text style={styles.btnTextPrimary}>Купить отчет</Text>
               </TouchableOpacity>
-              <FavoriteButton />
+              <FavoriteButton onChange={() => {}} />
             </View>
             <Text style={styles.bestAddress}>г. Москва, ул. Волкова</Text>
           </View>
         </Card>
       </ScrollView>
-
     </View>
   );
-};
+}
 
-const Badge = ({ text, color, bg }) => (
-  <View style={[styles.badge, { backgroundColor: bg }]}>
-    <Text style={{ fontSize: 12, color }}>{text}</Text>
-  </View>
-);
+function Badge({ text, color, bg }: { text: string; color: string; bg: string }) {
+  return (
+    <View style={[styles.badge, { backgroundColor: bg }]}>
+      <Text style={{ fontSize: 12, color }}>{text}</Text>
+    </View>
+  );
+}
 
-const Card = ({ title, children }) => (
-  <View style={styles.card}>
-    <Text style={styles.cardTitle}>{title}</Text>
-    <View style={styles.cardBody}>{children}</View>
-  </View>
-);
+function Card({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <View style={styles.card}>
+      <Text style={styles.cardTitle}>{title}</Text>
+      <View style={styles.cardBody}>{children}</View>
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -455,4 +425,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Auto;
