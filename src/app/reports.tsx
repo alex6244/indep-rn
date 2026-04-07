@@ -1,18 +1,41 @@
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { useRouter, type Href } from "expo-router";
-import { reports } from "../data/reports";
+import type { Report } from "../data/reports";
 import { ReportsBreadcrumb } from "../widgets/reports/ReportsBreadcrumb";
 import { ReportsHeader } from "../widgets/reports/ReportsHeader";
 import { ReportsList } from "../widgets/reports/ReportsList";
 import { InlineMessage } from "../shared/ui/InlineMessage";
 import { ScreenStateEmpty } from "../shared/ui/ScreenStateEmpty";
+import { ScreenStateError } from "../shared/ui/ScreenStateError";
 import { ScreenStateLoading } from "../shared/ui/ScreenStateLoading";
+import { reportsService } from "../services/reportsService";
 
 export default function ReportsScreen() {
   const router = useRouter();
+  const [reports, setReports] = React.useState<Report[]>([]);
   const [infoMessage, setInfoMessage] = React.useState<string | null>(null);
-  const [loading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  const loadReports = React.useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const next = await reportsService.getPurchasedReports();
+      setReports(next);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Не удалось загрузить отчёты. Попробуйте ещё раз.";
+      setError(message);
+      setReports([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    void loadReports();
+  }, [loadReports]);
 
   const openReportDetails = (id: string) => {
     router.push(`/reports/${id}` as Href);
@@ -26,6 +49,14 @@ export default function ReportsScreen() {
         {infoMessage ? <InlineMessage tone="info" message={infoMessage} /> : null}
         {loading ? (
           <ScreenStateLoading message="Загружаем отчёты..." />
+        ) : error ? (
+          <ScreenStateError
+            title="Не удалось загрузить отчёты"
+            message={error}
+            onRetry={() => {
+              void loadReports();
+            }}
+          />
         ) : reports.length === 0 ? (
           <ScreenStateEmpty
             title="Отчётов пока нет"
