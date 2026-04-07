@@ -1,5 +1,4 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Alert } from "react-native";
 import { useCallback, useMemo, useState } from "react";
 import { useRouter, type Href } from "expo-router";
 import { useRequireAuth } from "../../../../hooks/useProtected";
@@ -76,6 +75,9 @@ export function usePickerReportCreateController() {
   );
 
   const [draftReport, setDraftReport] = useState<DraftReport>(initialDraftReport);
+  const [notice, setNotice] = useState<{ tone: "error" | "info" | "success"; message: string } | null>(
+    null,
+  );
 
   const goToProfile = useCallback(() => {
     router.push("/(tabs)/profile" as Href);
@@ -121,7 +123,10 @@ export function usePickerReportCreateController() {
           JSON.stringify(draftReport),
         );
       } catch {
-        Alert.alert("Ошибка", "Не удалось сохранить черновик. Попробуйте ещё раз.");
+        setNotice({
+          tone: "error",
+          message: "Не удалось сохранить черновик. Попробуйте ещё раз.",
+        });
         return;
       }
 
@@ -144,6 +149,8 @@ export function usePickerReportCreateController() {
     onChangeDefects,
     saveDraftAndContinue,
     goToProfile,
+    notice,
+    clearNotice: () => setNotice(null),
   };
 }
 

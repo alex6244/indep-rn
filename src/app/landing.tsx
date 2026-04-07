@@ -1,9 +1,6 @@
-import { Image } from "expo-image";
 import { type Href, useRouter } from "expo-router";
 import React from "react";
 import {
-  Alert,
-  ImageBackground,
   ScrollView,
   StyleSheet,
   Text,
@@ -11,17 +8,19 @@ import {
   View,
 } from "react-native";
 import Logo from "../assets/logo.svg";
-import ParameterIcon from "../assets/mainpage/carousel/parameter.svg";
-import ReportIcon from "../assets/mainpage/carousel/report.svg";
-import TimeIcon from "../assets/mainpage/carousel/time.svg";
-import { PickerOnboardingIllustration1 } from "../widgets/home/pickerOnboardingIllustrations";
 import { useProtected } from "../hooks/useProtected";
+import { InlineMessage } from "../shared/ui/InlineMessage";
 import { FONT_FAMILY } from "../shared/theme/fonts";
+import { LandingBenefitsSection } from "../widgets/home/landing/LandingBenefitsSection";
+import { LandingHeroSection } from "../widgets/home/landing/LandingHeroSection";
+import { LandingPricingSection } from "../widgets/home/landing/LandingPricingSection";
+import { LandingStepsSection } from "../widgets/home/landing/LandingStepsSection";
 
 /** Legacy full-page marketing layout (formerly root `/`). Open via `/landing`. */
 export default function LandingPage() {
   const router = useRouter();
   const { user, checkAuth } = useProtected();
+  const [infoMessage, setInfoMessage] = React.useState<string | null>(null);
 
   return (
     <View style={styles.screen}>
@@ -63,187 +62,23 @@ export default function LandingPage() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* HERO / MAIN BANNER */}
-        <View style={styles.heroContainer}>
-          <ImageBackground
-            source={require("../assets/chat/bg.jpg")}
-            style={styles.heroBackground}
-            imageStyle={styles.heroBackgroundImage}
-          >
-            <View style={styles.heroOverlay}>
-              <Text style={styles.heroTitle}>
-                <Text style={styles.heroTitleAccent}>Честный </Text>
-                подбор — спокойная покупка
-              </Text>
-              <Text style={styles.heroSubtitle}>
-                Подберём автомобиль без скрытых проблем и переплат. Проверяем
-                технику, историю и документы. Вы получаете честный результат и
-                спокойствие при покупке.
-              </Text>
-              <TouchableOpacity
-                style={styles.primaryButton}
-                onPress={() => router.push("/(tabs)/catalog" as Href)}
-              >
-                <Text style={styles.primaryButtonText}>
-                  Перейти в каталог авто
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </ImageBackground>
-        </View>
-
-        {/* 3 ПРЕИМУЩЕСТВА (КАРУСЕЛЬ В HTML, СТАТИЧНЫЕ КАРТЫ ЗДЕСЬ) */}
-        <View style={styles.section}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.horizontalCards}
-          >
-            <View style={styles.benefitCard}>
-              <ParameterIcon width={32} height={32} />
-              <Text style={styles.benefitTitle}>
-                Проверка по 100+ параметрам
-              </Text>
-              <Text style={styles.benefitText}>
-                Тщательно проверяем состояние, документы и прошлую эксплуатацию
-              </Text>
-            </View>
-
-            <View style={styles.benefitCard}>
-              <TimeIcon width={32} height={32} />
-              <Text style={styles.benefitTitle}>Экономия времени и денег</Text>
-              <Text style={styles.benefitText}>
-                Берём на себя поиск, переговоры и торг, часто снижая цену
-                автомобиля.
-              </Text>
-            </View>
-
-            <View style={styles.benefitCard}>
-              <ReportIcon width={32} height={32} />
-              <Text style={styles.benefitTitle}>Прозрачные отчёты</Text>
-              <Text style={styles.benefitText}>
-                Подробный фото и видеоотчёт по каждому варианту с понятными
-                комментариями и рекомендациями.
-              </Text>
-            </View>
-          </ScrollView>
-        </View>
-
-        {/* ПЕРЕКЛЮЧАТЕЛЬ "ПРОДАТЬ / КУПИТЬ" (СТАТИЧЕСКИЙ ВАРИАНТ) */}
-        <View style={styles.section}>
-          <View style={styles.toggleContainer}>
-            <View style={[styles.toggleButton, styles.toggleButtonActive]}>
-              <Text
-                style={[styles.toggleButtonText, styles.toggleButtonTextActive]}
-              >
-                Хочу продать авто
-              </Text>
-            </View>
-            <View style={styles.toggleButton}>
-              <Text style={styles.toggleButtonText}>Хочу купить авто</Text>
-            </View>
+        {infoMessage ? (
+          <View style={{ paddingHorizontal: 16, marginTop: 12 }}>
+            <InlineMessage tone="info" message={infoMessage} />
           </View>
-
-          {/* Список шагов (продать авто) — можно сделать двумя массивами и переключать по стейту */}
-          <View style={styles.stepsGrid}>
-            <View style={styles.stepCard}>
-              <View style={styles.stepImage}>
-                <PickerOnboardingIllustration1 />
-              </View>
-              <Text style={styles.stepNumber}>1</Text>
-              <Text style={styles.stepTitle}>
-                Оставьте заявку на оценку автомобиля
-              </Text>
-              <Text style={styles.stepText}>
-                Специалист свяжется с вами, чтобы согласовать время и формат
-                оценки.
-              </Text>
-            </View>
-
-            {/* Добавь остальные шаги по аналогии */}
-          </View>
-        </View>
-
-        {/* БЛОК "ЛУЧШИЕ ПРЕДЛОЖЕНИЯ" */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Лучшие предложения</Text>
-
-          <View style={styles.carsGrid}>
-            <TouchableOpacity
-              style={styles.carCard}
-              onPress={() => router.push("/auto/1" as Href)}
-            >
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.carImagesRow}
-              >
-                <Image
-                  source={require("../assets/cars1.jpg")}
-                  style={styles.carImage}
-                  contentFit="cover"
-                />
-                <Image
-                  source={require("../assets/cars2.jpg")}
-                  style={styles.carImage}
-                  contentFit="cover"
-                />
-              </ScrollView>
-
-              <View style={styles.carInfo}>
-                <View style={styles.carPriceRow}>
-                  <Text style={styles.carPrice}>6 700 000 ₽</Text>
-                  <Text style={styles.carMileage}>200 000 км</Text>
-                </View>
-                <Text style={styles.carName}>
-                  Mercedes‑Benz GLC AMG 43 AMG II (X254)
-                </Text>
-                <Text style={styles.carDetails}>
-                  Active · 1,2 л (115 л.с.) · 6MT · 2WD · 2025 г.
-                </Text>
-              </View>
-
-              <View style={styles.carButtonsRow}>
-                <TouchableOpacity
-                  style={styles.primaryButton}
-                  onPress={() => {
-                    if (
-                      !checkAuth({
-                        message: "Авторизуйтесь, чтобы купить отчёт по авто",
-                      })
-                    ) {
-                      return;
-                    }
-                    // UX stub: real payment/checkout + report unlock stays on backend.
-                    Alert.alert(
-                      "Функция в разработке",
-                      "Оплата и выдача отчёта появятся позже. Сейчас списание средств не выполняется.",
-                      [{ text: "Понятно" }],
-                    );
-                  }}
-                >
-                  <Text style={styles.primaryButtonText}>Купить отчёт</Text>
-                </TouchableOpacity>
-                <View style={styles.favButton}>
-                  <Text>★</Text>
-                </View>
-              </View>
-
-              <View style={styles.carAddressRow}>
-                <Text style={styles.carAddress}>г. Москва, ул. Волкова</Text>
-              </View>
-            </TouchableOpacity>
-
-            {/* Остальные карточки авто по аналогии */}
-          </View>
-
-          <TouchableOpacity
-            style={[styles.primaryButton, { marginTop: 16 }]}
-            onPress={() => router.push("/(tabs)/catalog" as Href)}
-          >
-            <Text style={styles.primaryButtonText}>Смотреть все</Text>
-          </TouchableOpacity>
-        </View>
+        ) : null}
+        <LandingHeroSection styles={styles} onOpenCatalog={() => router.push("/(tabs)/catalog" as Href)} />
+        <LandingBenefitsSection styles={styles} />
+        <LandingStepsSection styles={styles} />
+        <LandingPricingSection
+          styles={styles}
+          onOpenAuto={() => router.push("/auto/1" as Href)}
+          onOpenCatalog={() => router.push("/(tabs)/catalog" as Href)}
+          onBuyReport={() => {
+            if (!checkAuth({ message: "Авторизуйтесь, чтобы купить отчёт по авто" })) return;
+            setInfoMessage("Оплата и выдача отчёта появятся позже.");
+          }}
+        />
 
         {/* Дальше можно адаптировать блоки "Что проверяют подборщики",
             "Как выглядит результат подбора", "Стоимость услуг" и т.д.

@@ -1,14 +1,18 @@
 import React from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { FONT_FAMILY } from "../../shared/theme/fonts";
+import { InlineMessage } from "../../shared/ui/InlineMessage";
 
 export function ReportDetailsActions({ reportId }: { reportId: string }) {
+  const [notice, setNotice] = React.useState<string | null>(null);
+
   return (
     <View style={styles.wrap}>
+      {notice ? <InlineMessage tone="info" message={notice} /> : null}
       <TouchableOpacity
         style={[styles.btn, styles.btnPrimary]}
         onPress={() => {
-          Alert.alert("PDF пока недоступен", `Отчёт: ${reportId}`);
+          setNotice(`PDF пока недоступен. Отчёт: ${reportId}`);
         }}
       >
         <Text style={styles.btnText}>Открыть отчёт</Text>
@@ -17,7 +21,7 @@ export function ReportDetailsActions({ reportId }: { reportId: string }) {
       <TouchableOpacity
         style={[styles.btn, styles.btnSecondary]}
         onPress={() => {
-          Alert.alert("PDF пока недоступен", `Отчёт: ${reportId}`);
+          setNotice(`PDF пока недоступен. Отчёт: ${reportId}`);
         }}
       >
         <Text style={styles.btnTextSecondary}>Скачать отчёт PDF</Text>

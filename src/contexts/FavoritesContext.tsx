@@ -6,7 +6,6 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { Alert } from "react-native";
 
 interface FavoritesContextValue {
   favoriteIds: string[];
@@ -14,6 +13,8 @@ interface FavoritesContextValue {
   toggleFavorite: (id: string) => void;
   setFavorite: (id: string, value: boolean) => void;
   loading: boolean;
+  favoritesError: string | null;
+  clearFavoritesError: () => void;
 }
 
 const FavoritesContext = createContext<FavoritesContextValue | undefined>(
@@ -27,6 +28,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [favoritesError, setFavoritesError] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -51,7 +53,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(favoriteIds)).catch(
       () => {
-        Alert.alert("Ошибка", "Не удалось сохранить избранное");
+        setFavoritesError("Не удалось сохранить избранное");
       },
     );
   }, [favoriteIds]);
@@ -84,7 +86,15 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <FavoritesContext.Provider
-      value={{ favoriteIds, isFavorite, toggleFavorite, setFavorite, loading }}
+      value={{
+        favoriteIds,
+        isFavorite,
+        toggleFavorite,
+        setFavorite,
+        loading,
+        favoritesError,
+        clearFavoritesError: () => setFavoritesError(null),
+      }}
     >
       {children}
     </FavoritesContext.Provider>

@@ -1,6 +1,6 @@
 import { type Href, useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
-import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import AboutIcon from "../../assets/icons/burger/about.svg";
@@ -19,6 +19,7 @@ import { ReportsBanner } from "./ReportsBanner";
 import { useProfileEditFlow } from "./useProfileEditFlow";
 import { scrollBottomPaddingBelowTabBar } from "../../shared/navigation/tabBarMetrics";
 import { styles } from "../../shared/styles/profile.styles";
+import { InlineMessage } from "../../shared/ui/InlineMessage";
 
 type Props = {
   initials: string;
@@ -32,6 +33,7 @@ export function PickerProfileSection({ initials, name, phone, onLogout }: Props)
   const insets = useSafeAreaInsets();
   const [menuOpen, setMenuOpen] = useState(false);
   const [balanceModalOpen, setBalanceModalOpen] = useState(false);
+  const [infoMessage, setInfoMessage] = useState<string | null>(null);
   const editFlow = useProfileEditFlow(onLogout, router);
   const pickerReportId = "1";
 
@@ -59,6 +61,7 @@ export function PickerProfileSection({ initials, name, phone, onLogout }: Props)
           },
         ]}
       >
+        {infoMessage ? <InlineMessage tone="info" message={infoMessage} /> : null}
         <PickerUserCard
           initials={initials}
           name={name}
@@ -181,7 +184,7 @@ export function PickerProfileSection({ initials, name, phone, onLogout }: Props)
         onKeepInWallet={() => setBalanceModalOpen(false)}
         onWithdraw={() => {
           setBalanceModalOpen(false);
-          Alert.alert("Вывод", "Функция вывода будет доступна позже.");
+          setInfoMessage("Функция вывода будет доступна позже.");
         }}
       />
     </View>

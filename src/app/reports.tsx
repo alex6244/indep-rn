@@ -5,9 +5,14 @@ import { reports } from "../data/reports";
 import { ReportsBreadcrumb } from "../widgets/reports/ReportsBreadcrumb";
 import { ReportsHeader } from "../widgets/reports/ReportsHeader";
 import { ReportsList } from "../widgets/reports/ReportsList";
+import { InlineMessage } from "../shared/ui/InlineMessage";
+import { ScreenStateEmpty } from "../shared/ui/ScreenStateEmpty";
+import { ScreenStateLoading } from "../shared/ui/ScreenStateLoading";
 
 export default function ReportsScreen() {
   const router = useRouter();
+  const [infoMessage, setInfoMessage] = React.useState<string | null>(null);
+  const [loading] = React.useState(false);
 
   const openReportDetails = (id: string) => {
     router.push(`/reports/${id}` as Href);
@@ -18,7 +23,21 @@ export default function ReportsScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <ReportsBreadcrumb active="Купленные отчёты" />
         <ReportsHeader title="Купленные отчёты" />
-        <ReportsList reports={reports} onOpenReport={openReportDetails} />
+        {infoMessage ? <InlineMessage tone="info" message={infoMessage} /> : null}
+        {loading ? (
+          <ScreenStateLoading message="Загружаем отчёты..." />
+        ) : reports.length === 0 ? (
+          <ScreenStateEmpty
+            title="Отчётов пока нет"
+            subtitle="После покупки отчёты появятся в этом разделе."
+          />
+        ) : (
+          <ReportsList
+            reports={reports}
+            onOpenReport={openReportDetails}
+            onPdfUnavailable={() => setInfoMessage("PDF пока недоступен")}
+          />
+        )}
       </ScrollView>
     </View>
   );

@@ -1,3 +1,4 @@
+/** @deprecated Legacy screen. Do not use for new routes. */
 import {
   Image,
   ScrollView,

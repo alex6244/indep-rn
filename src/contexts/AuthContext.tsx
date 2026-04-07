@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { mockUsers, type User } from "../data/users";
-import { tokenStorage } from "../services/api";
+import { setUnauthorizedHandler, tokenStorage } from "../services/api";
 import { authService } from "../services/authService";
 import {
   type AuthCredentials,
@@ -156,6 +156,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       active = false;
     };
   }, [gateway]);
+
+  useEffect(() => {
+    setUnauthorizedHandler(async () => {
+      await AsyncStorage.removeItem(USER_KEY);
+      setUser(null);
+    });
+    return () => {
+      setUnauthorizedHandler(null);
+    };
+  }, []);
 
   const login: AuthContextType["login"] = async (credentials) => {
     setAuthError(null);

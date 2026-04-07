@@ -9,6 +9,7 @@ import { ConfirmReportCardsSection } from "./confirm/ConfirmReportCardsSection";
 import { styles } from "./confirm/PickerReportConfirmPage.styles";
 import { ConfirmStatusSection } from "./confirm/ConfirmStatusSection";
 import { usePickerReportConfirmController } from "./confirm/usePickerReportConfirmController";
+import { InlineMessage } from "../../../shared/ui/InlineMessage";
 
 export function PickerReportConfirmPage() {
   const router = useRouter();
@@ -27,6 +28,11 @@ export function PickerReportConfirmPage() {
   if (!controller.draftReport) {
     return (
       <View style={styles.screen}>
+        {controller.notice ? (
+          <View style={{ marginHorizontal: 16, marginTop: 16 }}>
+            <InlineMessage tone={controller.notice.tone} message={controller.notice.message} />
+          </View>
+        ) : null}
         <Text style={styles.centerText}>Черновик не загружен</Text>
       </View>
     );
@@ -43,6 +49,11 @@ export function PickerReportConfirmPage() {
         ]}
         showsVerticalScrollIndicator={false}
       >
+        {controller.notice ? (
+          <View style={{ marginHorizontal: 16, marginBottom: 12 }}>
+            <InlineMessage tone={controller.notice.tone} message={controller.notice.message} />
+          </View>
+        ) : null}
         <ConfirmStatusSection
           draftReport={controller.draftReport}
           defectsMode={controller.defectsMode}

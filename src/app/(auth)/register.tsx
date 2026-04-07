@@ -2,7 +2,6 @@
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -14,6 +13,7 @@ import {
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 import { FONT_FAMILY } from "../../shared/theme/fonts";
+import { InlineMessage } from "../../shared/ui/InlineMessage";
 import { shadowStyle } from "../../shared/theme/shadow";
 import { AuthHeader } from "../../widgets/header/AuthHeader";
 
@@ -25,6 +25,7 @@ export default function RegisterScreen() {
   const [role, setRole] = useState<"client" | "picker">("picker");
   const [loading, setLoading] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  const [message, setMessage] = useState<{ tone: "error"; text: string } | null>(null);
   const { register, authError } = useAuth();
 
   const handleRegister = async () => {
@@ -32,28 +33,28 @@ export default function RegisterScreen() {
     const trimmedEmail = email.trim();
 
     if (!trimmedName) {
-      Alert.alert("Ошибка", "Введите имя (минимум 2 символа).");
+      setMessage({ tone: "error", text: "Введите имя (минимум 2 символа)." });
       return;
     }
 
     if (trimmedName.length < 2) {
-      Alert.alert("Ошибка", "Имя слишком короткое.");
+      setMessage({ tone: "error", text: "Имя слишком короткое." });
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
-      Alert.alert("Ошибка", "Введите корректный e-mail.");
+      setMessage({ tone: "error", text: "Введите корректный e-mail." });
       return;
     }
 
     if (password.trim().length < 6) {
-      Alert.alert("Ошибка", "Пароль должен быть не короче 6 символов.");
+      setMessage({ tone: "error", text: "Пароль должен быть не короче 6 символов." });
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert("Ошибка", "Пароли не совпадают.");
+      setMessage({ tone: "error", text: "Пароли не совпадают." });
       return;
     }
 
@@ -74,7 +75,7 @@ export default function RegisterScreen() {
             : authError === "network_error"
               ? "Проблема с сетью. Проверьте подключение."
               : "Не удалось завершить регистрацию.";
-        Alert.alert("Ошибка регистрации", message);
+        setMessage({ tone: "error", text: message });
       }
     } finally {
       setLoading(false);
@@ -91,6 +92,7 @@ export default function RegisterScreen() {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.formCard}>
             <Text style={styles.title}>Зарегистрируйтесь</Text>
+            {message ? <InlineMessage tone={message.tone} message={message.text} /> : null}
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Имя</Text>

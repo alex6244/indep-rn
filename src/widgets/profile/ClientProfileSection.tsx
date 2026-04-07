@@ -1,6 +1,6 @@
 import { type Href, useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
-import { Alert, type ImageSourcePropType, ScrollView, View } from "react-native";
+import { type ImageSourcePropType, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AboutIcon from "../../assets/icons/burger/about.svg";
 import CooperationIcon from "../../assets/icons/burger/ads.svg";
@@ -16,6 +16,7 @@ import { ProfileEditMenu } from "./ProfileEditMenu";
 import { ProfileLogoutRow } from "./ProfileLogoutRow";
 import { ProfileQuickActions } from "./ProfileQuickActions";
 import { useProfileEditFlow } from "./useProfileEditFlow";
+import { InlineMessage } from "../../shared/ui/InlineMessage";
 
 type Props = {
   name: string;
@@ -27,6 +28,7 @@ export function ClientProfileSection({ name, phone, onLogout }: Props) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [infoMessage, setInfoMessage] = useState<string | null>(null);
   const editFlow = useProfileEditFlow(onLogout, router);
 
   const reports = useMemo<
@@ -59,6 +61,7 @@ export function ClientProfileSection({ name, phone, onLogout }: Props) {
           },
         ]}
       >
+        {infoMessage ? <InlineMessage tone="info" message={infoMessage} /> : null}
         {hasReports ? (
           <>
             {reports.map((r) => (
@@ -67,7 +70,7 @@ export function ClientProfileSection({ name, phone, onLogout }: Props) {
                 report={r}
                 onOpen={() => router.push(`/reports/${r.id}` as Href)}
                 onDownloadPdf={() => {
-                  Alert.alert("PDF пока недоступен");
+                  setInfoMessage("PDF пока недоступен");
                 }}
               />
             ))}

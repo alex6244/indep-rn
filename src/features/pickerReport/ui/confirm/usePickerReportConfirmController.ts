@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { Href, Router } from "expo-router";
-import { Alert } from "react-native";
 import { useEffect, useMemo, useState } from "react";
 import { reports } from "../../../../data/reports";
 import {
@@ -17,6 +16,9 @@ export function usePickerReportConfirmController(router: Router) {
   const [loading, setLoading] = useState(true);
   const [defectsMode, setDefectsMode] = useState<DefectsMode>("scheme");
   const [vinModalOpen, setVinModalOpen] = useState(false);
+  const [notice, setNotice] = useState<{ tone: "error" | "success" | "info"; message: string } | null>(
+    null,
+  );
 
   const baseReport = useMemo(() => reports[0], []);
 
@@ -28,12 +30,10 @@ export function usePickerReportConfirmController(router: Router) {
         const raw = await AsyncStorage.getItem(PICKER_REPORT_DRAFT_STORAGE_KEY);
 
         if (!raw) {
-          Alert.alert("Черновик не найден", "Попробуйте создать отчёт заново", [
-            {
-              text: "Ок",
-              onPress: () => router.push("/selection" as Href),
-            },
-          ]);
+          setNotice({
+            tone: "error",
+            message: "Черновик не найден. Попробуйте создать отчёт заново.",
+          });
           return;
         }
 
@@ -43,12 +43,10 @@ export function usePickerReportConfirmController(router: Router) {
           setDefectsMode(parsed?.defects?.mode ?? "scheme");
         }
       } catch {
-        Alert.alert("Ошибка", "Не удалось прочитать черновик", [
-          {
-            text: "Ок",
-            onPress: () => router.push("/selection" as Href),
-          },
-        ]);
+        setNotice({
+          tone: "error",
+          message: "Не удалось прочитать черновик.",
+        });
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -90,12 +88,11 @@ export function usePickerReportConfirmController(router: Router) {
       return;
     }
 
-    Alert.alert("Подтверждено", "Заявка отправлена", [
-      {
-        text: "Ок",
-        onPress: () => router.push("/reports" as Href),
-      },
-    ]);
+    setNotice({
+      tone: "success",
+      message: "Заявка отправлена.",
+    });
+    router.push("/reports" as Href);
   };
 
   const handleEdit = () => {
@@ -112,5 +109,7 @@ export function usePickerReportConfirmController(router: Router) {
     setVinModalOpen,
     handleConfirm,
     handleEdit,
+    notice,
+    clearNotice: () => setNotice(null),
   };
 }

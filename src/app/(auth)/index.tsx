@@ -2,7 +2,6 @@
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -14,6 +13,7 @@ import {
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 import { AuthHeader } from "../../widgets/header/AuthHeader";
+import { InlineMessage } from "../../shared/ui/InlineMessage";
 import { shadowStyle } from "../../shared/theme/shadow";
 
 export default function LoginScreen() {
@@ -21,11 +21,12 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  const [message, setMessage] = useState<{ tone: "error" | "info"; text: string } | null>(null);
   const { login, loading: authLoading, authError } = useAuth();
 
   const handleSubmit = async () => {
     if (authLoading) {
-      Alert.alert("Подождите", "Идёт инициализация авторизации.");
+      setMessage({ tone: "info", text: "Идёт инициализация авторизации." });
       return;
     }
     const trimmedEmail = email.trim();
@@ -33,11 +34,11 @@ export default function LoginScreen() {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
-      Alert.alert("Ошибка", "Введите корректный e-mail.");
+      setMessage({ tone: "error", text: "Введите корректный e-mail." });
       return;
     }
     if (trimmedPassword.length < 6) {
-      Alert.alert("Ошибка", "Пароль должен быть не короче 6 символов.");
+      setMessage({ tone: "error", text: "Пароль должен быть не короче 6 символов." });
       return;
     }
 
@@ -54,7 +55,7 @@ export default function LoginScreen() {
           : authError === "network_error"
             ? "Проблема с сетью. Проверьте подключение."
             : "Не удалось выполнить вход. Попробуйте ещё раз.";
-      Alert.alert("Ошибка входа", message);
+      setMessage({ tone: "error", text: message });
     }
   };
 
@@ -68,6 +69,7 @@ export default function LoginScreen() {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.formCard}>
             <Text style={styles.title}>Войти</Text>
+            {message ? <InlineMessage tone={message.tone} message={message.text} /> : null}
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Почта</Text>

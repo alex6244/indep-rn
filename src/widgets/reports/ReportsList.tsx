@@ -1,14 +1,15 @@
 import React from "react";
-import { Alert, View } from "react-native";
+import { View } from "react-native";
 import { ClientReportCard } from "../profile/ClientReportCard";
 import type { Report } from "../../data/reports";
 
 type Props = {
   reports: Report[];
   onOpenReport: (id: string) => void;
+  onPdfUnavailable?: () => void;
 };
 
-export function ReportsList({ reports, onOpenReport }: Props) {
+export function ReportsList({ reports, onOpenReport, onPdfUnavailable }: Props) {
   return (
     <View>
       {reports.map((r) => (
@@ -17,7 +18,7 @@ export function ReportsList({ reports, onOpenReport }: Props) {
           report={r}
           onOpen={() => onOpenReport(r.id)}
           onDownloadPdf={() => {
-            Alert.alert("PDF пока недоступен");
+            onPdfUnavailable?.();
           }}
         />
       ))}

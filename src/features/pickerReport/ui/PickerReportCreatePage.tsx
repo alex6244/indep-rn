@@ -15,6 +15,7 @@ import { CreateOwnersSection } from "./create/CreateOwnersSection";
 import { CreatePtsSection } from "./create/CreatePtsSection";
 import { CreateRoleGate } from "./create/CreateRoleGate";
 import { styles } from "./create/PickerReportCreatePage.styles";
+import { InlineMessage } from "../../../shared/ui/InlineMessage";
 
 export function PickerReportCreatePage() {
   const insets = useSafeAreaInsets();
@@ -39,6 +40,11 @@ export function PickerReportCreatePage() {
         ]}
         showsVerticalScrollIndicator={false}
       >
+        {controller.notice ? (
+          <View style={{ marginHorizontal: 16, marginBottom: 12 }}>
+            <InlineMessage tone={controller.notice.tone} message={controller.notice.message} />
+          </View>
+        ) : null}
         <CreateMediaSection
           value={controller.draftReport.media}
           onChange={controller.onChangeMedia}

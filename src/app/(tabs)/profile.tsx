@@ -1,15 +1,12 @@
 import { useRouter, type Href } from "expo-router";
 import React from "react";
-import {
-  ActivityIndicator,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 import { ClientProfileSection } from "../../widgets/profile/ClientProfileSection";
 import { PickerProfileSection } from "../../widgets/profile/PickerProfileSection";
 import { styles } from "../../shared/styles/profile.styles";
+import { ScreenStateEmpty } from "../../shared/ui/ScreenStateEmpty";
+import { ScreenStateLoading } from "../../shared/ui/ScreenStateLoading";
 
 export default function ProfileTab() {
   const router = useRouter();
@@ -18,8 +15,7 @@ export default function ProfileTab() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#DB4431" />
-        <Text style={styles.centerText}>Загрузка профиля...</Text>
+        <ScreenStateLoading message="Загрузка профиля..." />
       </View>
     );
   }
@@ -29,11 +25,10 @@ export default function ProfileTab() {
       <View style={styles.screen}>
         <View style={styles.card}>
           <Text style={styles.lockEmoji}>🚫</Text>
-          <Text style={styles.cardTitle}>Вы не авторизованы</Text>
-          <Text style={styles.cardSubtitle}>
-            Войдите или зарегистрируйтесь, чтобы получать доступ к профилю,
-            избранному и историям отчётов.
-          </Text>
+          <ScreenStateEmpty
+            title="Вы не авторизованы"
+            subtitle="Войдите или зарегистрируйтесь, чтобы получать доступ к профилю, избранному и историям отчётов."
+          />
 
           <TouchableOpacity
             style={styles.primaryButton}

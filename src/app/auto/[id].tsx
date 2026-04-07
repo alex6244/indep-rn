@@ -1,13 +1,13 @@
 import { Link, useLocalSearchParams } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
-import Auto from "../../screens/Auto";
+import AutoScreen from "../../features/auto/ui/AutoScreen";
 
 export default function AutoRoute() {
   const { id } = useLocalSearchParams<{ id?: string }>();
 
   return (
     <View style={styles.container}>
-      <Auto />
+      <AutoScreen />
       {id ? (
         <Text style={styles.debug}>ID: {id}</Text>
       ) : (

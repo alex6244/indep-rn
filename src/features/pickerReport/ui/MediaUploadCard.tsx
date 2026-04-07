@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import PhotosBg from "../../../assets/addCar/photosBG.svg";
 import AddPhotoIcon from "../../../assets/addCar/addPhoto.svg";
 import AddVideoIcon from "../../../assets/addCar/addVideo.svg";
 import { FONT_FAMILY } from "../../../shared/theme/fonts";
+import { InlineMessage } from "../../../shared/ui/InlineMessage";
 import { UploadMediaModal } from "./media/UploadMediaModal";
 import {
   getUploadModalConfig,
@@ -31,6 +32,7 @@ type Props = {
 
 export function MediaUploadCard({ value, onChange }: Props) {
   const [activeModalKind, setActiveModalKind] = useState<UploadMediaKind | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   const rows: Row[] = [
     {
@@ -78,7 +80,7 @@ export function MediaUploadCard({ value, onChange }: Props) {
       onChange({ ...value, [activeRow.key]: true });
     }
     closeModal();
-    Alert.alert("Скоро", "Подключим выбор фото и видео в следующем обновлении.");
+    setNotice("Подключим выбор фото и видео в следующем обновлении.");
   };
 
   return (
@@ -93,6 +95,7 @@ export function MediaUploadCard({ value, onChange }: Props) {
 
       <View style={styles.content}>
         <Text style={styles.title}>Добавьте фото авто</Text>
+        {notice ? <InlineMessage tone="info" message={notice} /> : null}
 
         <View style={styles.rows}>
           {rows.map((r) => {

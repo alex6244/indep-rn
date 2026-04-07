@@ -1,6 +1,6 @@
-import Catalog from "../../screens/Catalog";
+import CatalogScreen from "../../features/catalog/ui/CatalogScreen";
 import React from "react";
 
 export default function CatalogTab() {
-  return <Catalog />;
+  return <CatalogScreen />;
 }

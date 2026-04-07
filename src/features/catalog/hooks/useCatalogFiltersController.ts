@@ -1,35 +1,86 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from "react";
+import type { Car } from "../../../data/cars";
 
 const YEAR_MIN = 1880;
 const YEAR_MAX = new Date().getFullYear();
 
-const parseNumberOrNull = (text) => {
+export type SortOption = "priceAsc" | "priceDesc" | "mileageAsc" | "mileageDesc" | null;
+export type PaymentType = "cash" | "credit" | null;
+
+export type CatalogFilterCriteria = {
+  brandQuery: string;
+  modelQuery: string;
+  paymentType: PaymentType;
+  priceFrom: number | null;
+  priceTo: number | null;
+  yearFrom: number | null;
+  yearTo: number | null;
+  mileageFrom: number | null;
+  mileageTo: number | null;
+  bodyTypes: string[];
+  features: string[];
+  hasDiscount: boolean;
+  vatReturn: boolean;
+  weeklyOffer: boolean;
+};
+
+export type CatalogFiltersController = {
+  displayedCars: Car[];
+  filteredCars: Car[];
+  sortOption: SortOption;
+  setSortOption: Dispatch<SetStateAction<SortOption>>;
+  brandQuery: string;
+  setBrandQuery: Dispatch<SetStateAction<string>>;
+  modelQuery: string;
+  setModelQuery: Dispatch<SetStateAction<string>>;
+  paymentType: PaymentType;
+  setPaymentType: Dispatch<SetStateAction<PaymentType>>;
+  priceFromText: string;
+  setPriceFromText: Dispatch<SetStateAction<string>>;
+  priceToText: string;
+  setPriceToText: Dispatch<SetStateAction<string>>;
+  yearFromText: string;
+  setYearFromText: Dispatch<SetStateAction<string>>;
+  yearToText: string;
+  setYearToText: Dispatch<SetStateAction<string>>;
+  mileageFromText: string;
+  setMileageFromText: Dispatch<SetStateAction<string>>;
+  mileageToText: string;
+  setMileageToText: Dispatch<SetStateAction<string>>;
+  bodyTypes: string[];
+  features: string[];
+  hasDiscount: boolean;
+  setHasDiscount: Dispatch<SetStateAction<boolean>>;
+  vatReturn: boolean;
+  setVatReturn: Dispatch<SetStateAction<boolean>>;
+  weeklyOffer: boolean;
+  setWeeklyOffer: Dispatch<SetStateAction<boolean>>;
+  error: string | null;
+  applyFilters: () => boolean;
+  resetFilters: () => void;
+  toggleBodyType: (label: string) => void;
+  toggleFeature: (label: string) => void;
+};
+
+function parseNumberOrNull(text: string): number | null {
   const raw = text ?? "";
   const trimmed = String(raw).trim();
   if (!trimmed) return null;
 
-  const cleaned = trimmed
-    .replace(/\s+/g, "")
-    .replace(/[^\d.,-]/g, "")
-    .replace(",", ".");
-
+  const cleaned = trimmed.replace(/\s+/g, "").replace(/[^\d.,-]/g, "").replace(",", ".");
   if (!cleaned) return null;
 
   const n = Number(cleaned);
   return Number.isFinite(n) ? n : null;
-};
+}
 
-const matchesCriteria = (car, criteria) => {
-  const norm = (s) => (s ?? "").toString().trim().toLowerCase();
+function matchesCriteria(car: Car, criteria: CatalogFilterCriteria): boolean {
+  const norm = (s: unknown) => (s ?? "").toString().trim().toLowerCase();
 
   const brandNeed = norm(criteria.brandQuery);
   const modelNeed = norm(criteria.modelQuery);
 
-  const brandOk =
-    !brandNeed ||
-    norm(car.brand).includes(brandNeed) ||
-    norm(car.title).includes(brandNeed);
-
+  const brandOk = !brandNeed || norm(car.brand).includes(brandNeed) || norm(car.title).includes(brandNeed);
   const modelOk = !modelNeed || norm(car.title).includes(modelNeed);
 
   const priceOk =
@@ -46,15 +97,14 @@ const matchesCriteria = (car, criteria) => {
 
   const bodyOk =
     criteria.bodyTypes.length === 0 ||
-    (car.bodyType && criteria.bodyTypes.includes(car.bodyType));
-
+    (car.bodyType != null && criteria.bodyTypes.includes(car.bodyType));
   const featuresOk =
     criteria.features.length === 0 ||
-    (car.features && car.features.some((f) => criteria.features.includes(f)));
+    (Array.isArray(car.features) && car.features.some((f) => criteria.features.includes(f)));
 
   const paymentOk =
     criteria.paymentType == null ||
-    (car.paymentType && car.paymentType === criteria.paymentType);
+    (car.paymentType != null && car.paymentType === criteria.paymentType);
 
   const discountOk = criteria.hasDiscount ? car.hasDiscount === true : true;
   const vatOk = criteria.vatReturn ? car.vatReturn === true : true;
@@ -73,29 +123,33 @@ const matchesCriteria = (car, criteria) => {
     vatOk &&
     weeklyOk
   );
-};
+}
 
-export function useCatalogFiltersController(cars) {
-  const [filteredCars, setFilteredCars] = useState(cars);
-  const [sortOption, setSortOption] = useState(null);
+export function useCatalogFiltersController(cars: Car[]): CatalogFiltersController {
+  const [filteredCars, setFilteredCars] = useState<Car[]>(cars);
+  const [sortOption, setSortOption] = useState<SortOption>(null);
 
   const [brandQuery, setBrandQuery] = useState("");
   const [modelQuery, setModelQuery] = useState("");
-  const [paymentType, setPaymentType] = useState(null);
+  const [paymentType, setPaymentType] = useState<PaymentType>(null);
   const [priceFromText, setPriceFromText] = useState("");
   const [priceToText, setPriceToText] = useState("");
   const [yearFromText, setYearFromText] = useState("");
   const [yearToText, setYearToText] = useState("");
   const [mileageFromText, setMileageFromText] = useState("");
   const [mileageToText, setMileageToText] = useState("");
-  const [bodyTypes, setBodyTypes] = useState([]);
-  const [features, setFeatures] = useState([]);
+  const [bodyTypes, setBodyTypes] = useState<string[]>([]);
+  const [features, setFeatures] = useState<string[]>([]);
   const [hasDiscount, setHasDiscount] = useState(false);
   const [vatReturn, setVatReturn] = useState(false);
   const [weeklyOffer, setWeeklyOffer] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const toggleInArray = (value, setArr) => {
+  useEffect(() => {
+    setFilteredCars(cars);
+  }, [cars]);
+
+  const toggleInArray = (value: string, setArr: Dispatch<SetStateAction<string[]>>) => {
     setArr((prev) => {
       const exists = prev.includes(value);
       return exists ? prev.filter((x) => x !== value) : [...prev, value];
@@ -155,7 +209,7 @@ export function useCatalogFiltersController(cars) {
       return false;
     }
 
-    const criteria = {
+    const criteria: CatalogFilterCriteria = {
       brandQuery,
       modelQuery,
       paymentType,
@@ -252,7 +306,8 @@ export function useCatalogFiltersController(cars) {
     error,
     applyFilters,
     resetFilters,
-    toggleBodyType: (label) => toggleInArray(label, setBodyTypes),
-    toggleFeature: (label) => toggleInArray(label, setFeatures),
+    toggleBodyType: (label: string) => toggleInArray(label, setBodyTypes),
+    toggleFeature: (label: string) => toggleInArray(label, setFeatures),
   };
 }
+

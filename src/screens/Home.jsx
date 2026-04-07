@@ -1,3 +1,4 @@
+/** @deprecated Legacy screen. Do not use for new routes. */
 import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { Header } from '../widgets/header/Header';

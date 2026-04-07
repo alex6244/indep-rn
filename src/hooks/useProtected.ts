@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { Alert } from "react-native";
 import { useRouter, type Href } from "expo-router";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -8,26 +7,18 @@ type CheckAuthOptions = {
   redirectTo?: Href;
 };
 
-/** Защита действий (кнопок). Показывает алерт если не залогинен. */
+/** Защита действий (кнопок). Возвращает false и редиректит на auth если нет сессии. */
 export function useProtected() {
   const { user } = useAuth();
   const router = useRouter();
 
   const checkAuth = (options: CheckAuthOptions = {}) => {
     const {
-      message = "Для этого действия требуется авторизация",
       redirectTo = "/(auth)" as Href,
     } = options;
 
     if (!user) {
-      Alert.alert("Доступ ограничен", message, [
-        { text: "Отмена", style: "cancel" },
-        {
-          text: "Войти",
-          style: "default",
-          onPress: () => router.push(redirectTo),
-        },
-      ]);
+      router.push(redirectTo);
       return false;
     }
 
