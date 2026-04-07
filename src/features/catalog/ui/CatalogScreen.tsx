@@ -1,10 +1,12 @@
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Animated, Dimensions, ScrollView, TouchableOpacity, View } from "react-native";
+import type { View as RNView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useFavorites } from "../../../contexts/FavoritesContext";
-import { useCatalogFiltersController } from "../hooks/useCatalogFiltersController";
+import type { Car } from "../../../data/cars";
+import { useCatalogFiltersController, type SortOption } from "../hooks/useCatalogFiltersController";
 import { scrollBottomPaddingBelowTabBar } from "../../../shared/navigation/tabBarMetrics";
 import { getMainBurgerMenuItems, MainBurgerMenuFooter } from "../../../shared/config/mainBurgerMenu";
 import { BurgerMenu } from "../../../shared/ui/BurgerMenu";
@@ -15,6 +17,18 @@ import { CatalogHeaderSection } from "./CatalogHeaderSection";
 import { CatalogFiltersBar } from "./CatalogFiltersBar";
 import { CatalogContentSection } from "./CatalogContentSection";
 import { carService } from "../../../services/carService";
+import { InlineMessage } from "../../../shared/ui/InlineMessage";
+
+type SortAnchor = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+type MeasureInWindowRef = RNView & {
+  measureInWindow: (callback: (x: number, y: number, width: number, height: number) => void) => void;
+};
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -22,19 +36,19 @@ export default function CatalogScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { logout } = useAuth();
-  const { isFavorite, setFavorite } = useFavorites();
+  const { isFavorite, setFavorite, favoritesError, clearFavoritesError } = useFavorites();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
-  const [sortAnchor, setSortAnchor] = useState(null);
+  const [sortAnchor, setSortAnchor] = useState<SortAnchor | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [cars, setCars] = useState([]);
+  const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
-  const [dataError, setDataError] = useState(null);
-  const sortButtonRef = useRef(null);
-  const filtersX = useRef(new Animated.Value(-SCREEN_WIDTH)).current;
+  const [dataError, setDataError] = useState<string | null>(null);
+  const sortButtonRef = useRef<MeasureInWindowRef | null>(null);
+  const filtersX = useRef<Animated.Value>(new Animated.Value(-SCREEN_WIDTH)).current;
   const controller = useCatalogFiltersController(cars);
 
-  const loadCars = useCallback(async () => {
+  const loadCars = useCallback(async (): Promise<void> => {
     setLoading(true);
     setDataError(null);
     try {
@@ -51,21 +65,30 @@ export default function CatalogScreen() {
     void loadCars();
   }, [loadCars]);
 
-  const openFilters = () => {
+  useEffect(() => {
+    return () => {
+      clearFavoritesError();
+    };
+  }, [clearFavoritesError]);
+
+  const openFilters = (): void => {
     setFiltersOpen(true);
     setSortOpen(false);
     Animated.timing(filtersX, { toValue: 0, duration: 300, useNativeDriver: true }).start();
   };
 
-  const closeFilters = () => {
+  const closeFilters = (): void => {
     Animated.timing(filtersX, { toValue: -SCREEN_WIDTH, duration: 300, useNativeDriver: true }).start(
       () => setFiltersOpen(false),
     );
   };
 
-  const toggleSort = () => {
+  const toggleSort = (): void => {
     if (filtersOpen) return;
-    if (sortOpen) return setSortOpen(false);
+    if (sortOpen) {
+      setSortOpen(false);
+      return;
+    }
     const node = sortButtonRef.current;
     if (node && typeof node.measureInWindow === "function") {
       node.measureInWindow((x, y, width, height) => {
@@ -85,7 +108,8 @@ export default function CatalogScreen() {
     : 0;
   const dropdownTop = sortAnchor ? sortAnchor.y + sortAnchor.height + 8 : 0;
   const contentError = dataError ?? controller.error;
-  const handleRetry = () => {
+
+  const handleRetry = (): void => {
     if (dataError) {
       void loadCars();
       return;
@@ -106,6 +130,7 @@ export default function CatalogScreen() {
           { paddingBottom: scrollBottomPaddingBelowTabBar(insets.bottom) },
         ]}
       >
+        {favoritesError ? <InlineMessage tone="error" message={favoritesError} /> : null}
         <CatalogFiltersBar
           styles={styles}
           sortButtonRef={sortButtonRef}
@@ -130,7 +155,7 @@ export default function CatalogScreen() {
         dropdownLeft={dropdownLeft}
         dropdownWidth={dropdownWidth}
         onClose={() => setSortOpen(false)}
-        onSelect={(next) => {
+        onSelect={(next: SortOption) => {
           controller.setSortOption(next);
           setSortOpen(false);
         }}
