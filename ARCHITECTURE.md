@@ -15,11 +15,12 @@
   - `(auth)` — модальный стек авторизации.
   - Доп. стек-экраны (например, `auto/[id]`).
 - **Авторизация**: `src/contexts/AuthContext.tsx`
-  - Состояние пользователя (`user`), методы `login`, `register`, `logout`, флаг `loading`.
-  - Хранение пользователя в `AsyncStorage`.
-  - Mock-пользователи для теста логина.
+  - Состояние пользователя (`user`), методы `login`, `register`, `logout`, флаги `loading` и `authError`.
+  - Контракт: `login({ email, password })`, `register({ name, email, password, role })`.
+  - Переключаемый source: `mock | api` через `EXPO_PUBLIC_AUTH_SOURCE`.
+  - Сессия пользователя хранится в `AsyncStorage`, токен — через `tokenStorage` (SecureStore + fallback).
 - **Защищённые действия**: `src/hooks/useProtected.ts`
-  - `checkAuth({ message, redirectTo })` + `Alert` + редирект на `/(auth)`.
+  - `checkAuth({ redirectTo })`: при `!user` делает `router.push(redirectTo)` и возвращает `false`.
 - **Инфраструктура**:
   - `metro.config.js` — SVG-трансформер.
   - `tsconfig.json` — базовый TS-конфиг (extends от Expo).
@@ -70,13 +71,15 @@
 ### Авторизация (src/app/(auth)/**)
 
 - `src/app/(auth)/index.tsx` — **логин**:
-  - Поля: `name`, `phone`, `email`.
-  - Вызывает `useAuth().login(name, phone, email)` с mock-пользователями.
+  - Поля: `email`, `password`.
+  - Валидация на клиенте + inline message для ошибок/информации.
+  - Вызывает `useAuth().login({ email, password })`.
   - При успехе — `router.replace("/(tabs)/profile")`.
   - Ссылка на `/(auth)/register`.
 - `src/app/(auth)/register.tsx` — **регистрация**:
-  - Поля: имя, телефон, email, тип пользователя (`client` / `picker`), чекбокс согласия.
-  - Вызывает `useAuth().register(name, phone, email, role)` и редиректит на `/(tabs)/profile`.
+  - Поля: `name`, `email`, `password`, `confirmPassword`, `role` (`client` / `picker`) + чекбокс согласия.
+  - Валидация на клиенте + inline message для ошибок.
+  - Вызывает `useAuth().register({ name, email, password, role })` и редиректит на `/(tabs)/profile`.
 
 ## Ключевые экраны
 
@@ -129,17 +132,18 @@ export default function CatalogTab() {
 - Интерфейс `User`:
   - `id`, `login`, `role`, `name`, `phone`, `email?`.
 - Методы:
-  - `login(name, phone, email)`:
-    - нормализует телефон (`normalizePhone`),
-    - сверяет `phone + email` с `mockUsers.client` / `mockUsers.picker`,
-    - сохраняет юзера в AsyncStorage,
-    - устанавливает `user`.
-  - `register(name, phone, email, role)`:
-    - создаёт нового пользователя (пароль для демо фиксируется),
-    - сохраняет пользователя в AsyncStorage,
-    - устанавливает `user`.
-  - `logout()` — очищает AsyncStorage и сбрасывает `user`.
-- `loading` — флаг инициализации (чтения пользователя из AsyncStorage при старте).
+  - `login({ email, password })`:
+    - работает через выбранный gateway (`mock` или `api`),
+    - при успехе сохраняет/обновляет user-сессию.
+  - `register({ name, email, password, role })`:
+    - работает через выбранный gateway (`mock` или `api`),
+    - при успехе сохраняет/обновляет user-сессию.
+  - `logout()` — очищает сессию и сбрасывает `user`.
+- Состояния:
+  - `loading` — инициализация/восстановление сессии;
+  - `authError` — нормализованный код auth-ошибки (`invalid_credentials`, `user_exists`, `network_error`, `unknown`).
+- Source selection:
+  - `EXPO_PUBLIC_AUTH_SOURCE=mock|api`.
 
 ### useProtected (src/hooks/useProtected.ts)
 
@@ -149,15 +153,34 @@ export default function CatalogTab() {
 ```ts
 const { user, checkAuth } = useProtected();
 
-if (!checkAuth({ message: "Авторизуйтесь, чтобы купить отчёт" })) {
+if (!checkAuth({ redirectTo: "/(auth)" })) {
   return;
 }
 // здесь уже точно есть user
 ```
 
 - Поведение:
-  - Если `user` отсутствует → `Alert("Доступ ограничен")` + редирект на `/(auth)` (или другой `redirectTo`).
+  - Если `user` отсутствует → редирект на `redirectTo` и `checkAuth` возвращает `false`.
   - Если `user` есть → `checkAuth` возвращает `true`.
+- Для защиты экранов есть `useRequireAuth(redirectTo)` — редирект до рендера контента.
+
+## API client policy
+
+- Базовый клиент: `src/services/api.ts`.
+- Timeout:
+  - default `10000ms`,
+  - можно переопределить через `EXPO_PUBLIC_API_TIMEOUT_MS` или `timeoutMs` в опциях запроса.
+- Retry (селективный):
+  - только для idempotent-методов (`GET/HEAD`),
+  - по умолчанию до 2 ретраев с backoff,
+  - только на `Request timeout`, `Network request failed`, `HTTP 502/503/504`.
+- Manual abort:
+  - `Request aborted` **не ретраится**.
+- 401 flow (централизованный):
+  - на `401` токен очищается (`tokenStorage.clear()`),
+  - вызывается зарегистрированный unauthorized handler (`setUnauthorizedHandler`),
+  - дальше пробрасывается `ApiError(401, ...)`.
+- Ошибки нормализуются в `ApiError(status, message)` с fallback-сообщениями для non-JSON ответов.
 
 ## Наследие / что считать legacy
 
