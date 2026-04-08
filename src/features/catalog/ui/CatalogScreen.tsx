@@ -54,8 +54,12 @@ export default function CatalogScreen() {
     try {
       const fetchedCars = await carService.getAll();
       setCars(Array.isArray(fetchedCars) ? fetchedCars : []);
-    } catch {
-      setDataError("Не удалось загрузить каталог. Проверьте подключение и попробуйте снова.");
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Не удалось загрузить каталог. Проверьте подключение и попробуйте снова.";
+      setDataError(message);
     } finally {
       setLoading(false);
     }
@@ -108,6 +112,7 @@ export default function CatalogScreen() {
     : 0;
   const dropdownTop = sortAnchor ? sortAnchor.y + sortAnchor.height + 8 : 0;
   const contentError = dataError ?? controller.error;
+  const contentErrorTitle = dataError ? "Не удалось загрузить каталог" : "Не удалось применить фильтры";
 
   const handleRetry = (): void => {
     if (dataError) {
@@ -140,6 +145,7 @@ export default function CatalogScreen() {
         <CatalogContentSection
           styles={styles}
           loading={loading}
+          errorTitle={contentErrorTitle}
           error={contentError}
           cars={controller.displayedCars}
           isFavorite={isFavorite}

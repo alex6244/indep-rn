@@ -9,6 +9,7 @@ import { CatalogFooter } from "./CatalogFooter";
 export function CatalogContentSection({
   styles,
   loading,
+  errorTitle,
   error,
   cars,
   isFavorite,
@@ -22,7 +23,7 @@ export function CatalogContentSection({
         <ScreenStateLoading message="Загружаем каталог..." />
       ) : error ? (
         <ScreenStateError
-          title="Не удалось применить фильтры"
+          title={errorTitle || "Не удалось загрузить каталог"}
           message={error}
           onRetry={onRetry}
         />

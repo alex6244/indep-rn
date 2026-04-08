@@ -4,6 +4,10 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
+    "start:mock": "cross-env EXPO_PUBLIC_CATALOG_SOURCE=mock expo start",
+    "start:api": "cross-env EXPO_PUBLIC_CATALOG_SOURCE=api expo start",
+    "start:tunnel:mock": "cross-env EXPO_PUBLIC_CATALOG_SOURCE=mock expo start --tunnel",
+    "start:tunnel:api": "cross-env EXPO_PUBLIC_CATALOG_SOURCE=api expo start --tunnel",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -46,6 +50,7 @@
   },
   "devDependencies": {
     "@types/react": "~19.1.0",
+    "cross-env": "^10.1.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
     "typescript": "~5.9.2"
