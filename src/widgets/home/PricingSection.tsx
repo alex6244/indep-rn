@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import {
   FlatList,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -18,7 +19,9 @@ type BgComponent = typeof ServiceBg1;
 type Plan = {
   id: string;
   title: string;
-  text: string;
+  intro: string;
+  listTitle: string;
+  bullets: string[];
   price: string;
   Bg: BgComponent;
 };
@@ -32,21 +35,40 @@ export function PricingSection() {
       {
         id: "day",
         title: "Автоподборщик на день",
-        text: "Это услуга для тех, кто хочет доверить поиск авто профессионалу.",
+        intro: "Это услуга для тех, кто хочет доверить поиск и проверку автомобиля профессионалу.",
+        listTitle: "В течение дня наш специалист:",
+        bullets: [
+          "Подбирает автомобили по вашим критериям: бюджет, марка, модель, комплектация",
+          "Проверяет юридическую чистоту: отсутствие обременений, кредитов, ограничений",
+          "Консультирует по каждой сделке и помогает принять окончательное решение",
+        ],
         price: "12 000 ₽",
         Bg: ServiceBg1,
       },
       {
         id: "one",
         title: "Разовая диагностика",
-        text: "Это услуга для тех, кто хочет точечную проверку перед покупкой.",
+        intro:
+          "Это услуга для тех, кто хочет быстро и точно проверить состояние автомобиля перед покупкой.",
+        listTitle: "В услугу включено:",
+        bullets: [
+          "Подборщик осматривает автомобиль и проверяет ключевые узлы",
+          "Проверяет двигатель, подвеску и электронику, оценивая их работу и выявляя возможные проблемы.",
+          "Проверяет скрытые поломки и проблемы, которые могут проявиться в будущем.",
+        ],
         price: "12 000 ₽",
         Bg: ServiceBg2,
       },
       {
         id: "mileage",
         title: "Подбор авто с пробегом под ключ",
-        text: "Для тех, кто хочет купить поддержанный автомобиль без забот.",
+        intro: "Для тех, кто хочет купить подержанный автомобиль без забот.",
+        listTitle: "В услуге:",
+        bullets: [
+          "Подбор автомобиля с пробегом по вашим критериям: марка, модель, комплектация, цена",
+          "Проверка юридической чистоты и сопровождение сделки",
+          "Передача автомобиля с полным пакетом документов и рекомендациями по эксплуатации",
+        ],
         price: "12 000 ₽",
         Bg: ServiceBg3,
       },
@@ -56,7 +78,8 @@ export function PricingSection() {
 
   const GAP = 12;
   const w = containerWidth || screenWidth;
-  const cardWidth = Math.round(w * 0.9);
+  // Card should be narrower, while keeping enough vertical space for longer copy.
+  const cardWidth = Math.round(w * 0.72);
   const snapInterval = cardWidth + GAP;
 
   return (
@@ -85,13 +108,39 @@ export function PricingSection() {
                 <View style={[styles.card, { width: cardWidth }]}>
                   {/* Decorative background */}
                   <View style={[styles.cardBg, { pointerEvents: "none" }]}>
-                    <item.Bg width="100%" height="100%" />
+                    <item.Bg
+                      width="100%"
+                      height="100%"
+                      // Ensure the SVG fully fills the card container without leaving “empty” margins.
+                      preserveAspectRatio="none"
+                    />
                   </View>
 
                   {/* Content above bg */}
                   <View style={styles.cardContent}>
-                    <Text style={styles.cardTitle}>{item.title}</Text>
-                    <Text style={styles.cardText}>{item.text}</Text>
+                    <ScrollView
+                      style={styles.textScroll}
+                      contentContainerStyle={styles.textScrollContent}
+                      showsVerticalScrollIndicator={false}
+                    >
+                      <View style={styles.titleWrap}>
+                        <Text style={styles.cardTitle}>{item.title}</Text>
+                      </View>
+                      <View style={styles.introWrap}>
+                        <Text style={styles.cardText}>{item.intro}</Text>
+                      </View>
+                      <View style={styles.listTitleWrap}>
+                        <Text style={styles.listTitle}>{item.listTitle}</Text>
+                      </View>
+                      <View style={styles.bullets}>
+                        {item.bullets.map((t, i) => (
+                          <View key={`${item.id}-b-${i}`} style={styles.bulletRow}>
+                            <Text style={styles.bulletMark}>•</Text>
+                            <Text style={styles.bulletText}>{t}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    </ScrollView>
 
                     <View style={styles.bottom}>
                       <Text style={styles.price}>{item.price}</Text>
@@ -125,17 +174,13 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 12,
     overflow: "hidden",
-    minHeight: 280,
+    minHeight: 420,
     backgroundColor: "#F1F1F1", // fallback под подложку
     position: "relative",
   },
 
   cardBg: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-    right: 0,
-    bottom: 0,
+    ...StyleSheet.absoluteFillObject,
     zIndex: 0,
   },
 
@@ -147,17 +192,61 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
 
+  textScroll: {
+    flex: 1,
+  },
+  textScrollContent: {
+    paddingBottom: 8,
+  },
+
   cardTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "700",
     color: "#1E1E1E",
+    lineHeight: 20,
+  },
+  titleWrap: {
+    minHeight: 40,
     marginBottom: 6,
   },
 
   cardText: {
-    fontSize: 12,
+    fontSize: 15,
     color: "#666",
-    lineHeight: 16,
+    lineHeight: 20,
+  },
+  introWrap: {
+    minHeight: 64,
+    marginBottom: 10,
+  },
+
+  listTitle: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#1E1E1E",
+    lineHeight: 20,
+  },
+  listTitleWrap: {
+    minHeight: 24,
+    marginBottom: 8,
+  },
+  bullets: {
+    gap: 10,
+  },
+  bulletRow: {
+    flexDirection: "row",
+  },
+  bulletMark: {
+    width: 16,
+    fontSize: 15,
+    lineHeight: 20,
+    color: "#1E1E1E",
+  },
+  bulletText: {
+    flex: 1,
+    fontSize: 15,
+    lineHeight: 20,
+    color: "#1E1E1E",
   },
 
   bottom: {
