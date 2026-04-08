@@ -34,7 +34,14 @@ export function HowItWorksSection() {
             <View style={styles.badge}>
               <Text style={styles.badgeText}>{step.id}</Text>
             </View>
-            <Text style={styles.cardTitle}>{step.title}</Text>
+            <Text
+              style={styles.cardTitle}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.8}
+            >
+              {step.title}
+            </Text>
             <Text style={styles.cardText}>{step.text}</Text>
           </View>
         ))}
@@ -80,13 +87,13 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   cardTitle: {
-    fontSize: 20,
+    fontSize: 14,
     fontWeight: "700",
     color: "#1E1E1E",
     marginBottom: 8,
   },
   cardText: {
-    fontSize: 12,
+    fontSize: 11,
     color: "#777",
     lineHeight: 16,
   },

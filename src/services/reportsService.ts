@@ -26,5 +26,12 @@ export const reportsService = {
       throw new Error(mapReportsError(error));
     }
   },
+  getReportsForDuplicateCheck: async (): Promise<Report[]> => {
+    try {
+      return await api.get<Report[]>("/reports/purchased");
+    } catch (error) {
+      throw new Error(mapReportsError(error));
+    }
+  },
 };
 

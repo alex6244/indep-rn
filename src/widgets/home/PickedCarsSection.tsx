@@ -38,8 +38,11 @@ export function PickedCarsSection() {
     <View style={styles.section}>
       <Text style={styles.title}>Автомобили подобранные INDEP</Text>
       <View style={styles.stack}>
-        {cars.map((car) => (
-          <View key={car.id} style={styles.card}>
+        {cars.map((car, index) => (
+          <View
+            key={car.id}
+            style={[styles.card, index % 2 === 1 ? styles.cardReverse : null]}
+          >
             <View style={styles.imageWrap}>
               <Image
                 source={car.image}
@@ -92,6 +95,9 @@ const styles = StyleSheet.create({
     }) as object),
     elevation: 2,
   },
+  cardReverse: {
+    flexDirection: "row-reverse",
+  },
   imageWrap: {
     width: 120,
     height: 100,
@@ -108,14 +114,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   name: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "700",
     color: "#1E1E1E",
     marginBottom: 6,
   },
   text: {
-    fontSize: 13,
+    fontSize: 10,
     color: "#666",
-    lineHeight: 18,
+    lineHeight: 14,
   },
 });

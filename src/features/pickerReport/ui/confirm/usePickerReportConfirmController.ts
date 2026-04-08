@@ -1,7 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { Href, Router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { reports } from "../../../../data/reports";
+import type { Report } from "../../../../entities/report/types";
+import { reportsService } from "../../../../services/reportsService";
 import {
   type DraftReport,
   PICKER_REPORT_DRAFT_STORAGE_KEY,
@@ -13,6 +14,7 @@ export type DefectsMode = "scheme" | "photos";
 
 export function usePickerReportConfirmController(router: Router) {
   const [draftReport, setDraftReport] = useState<DraftReport | null>(null);
+  const [reportsForDuplicateCheck, setReportsForDuplicateCheck] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
   const [defectsMode, setDefectsMode] = useState<DefectsMode>("scheme");
   const [vinModalOpen, setVinModalOpen] = useState(false);
@@ -20,7 +22,7 @@ export function usePickerReportConfirmController(router: Router) {
     null,
   );
 
-  const baseReport = useMemo(() => reports[0], []);
+  const baseReport = useMemo(() => reportsForDuplicateCheck[0], [reportsForDuplicateCheck]);
 
   useEffect(() => {
     let cancelled = false;
@@ -59,12 +61,35 @@ export function usePickerReportConfirmController(router: Router) {
     };
   }, [router]);
 
+  useEffect(() => {
+    let active = true;
+    void (async () => {
+      try {
+        const reportList = await reportsService.getReportsForDuplicateCheck();
+        if (!active) return;
+        setReportsForDuplicateCheck(Array.isArray(reportList) ? reportList : []);
+      } catch {
+        if (!active) return;
+        setReportsForDuplicateCheck([]);
+        setNotice((prev) =>
+          prev ?? {
+            tone: "info",
+            message: "Проверка дубликатов VIN временно недоступна. Можно продолжить без этой проверки.",
+          },
+        );
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const isVinDuplicate = useMemo(() => {
     if (!draftReport) return false;
     const inputVin = normalizeVin(draftReport.pts?.vin ?? "");
     if (!inputVin) return false;
 
-    for (const report of reports) {
+    for (const report of reportsForDuplicateCheck) {
       const vinRow = report.ptsData.find((x) => x.label === "VIN");
       const mockVin = vinRow?.value;
       if (!mockVin) continue;
@@ -78,7 +103,7 @@ export function usePickerReportConfirmController(router: Router) {
     }
 
     return false;
-  }, [draftReport]);
+  }, [draftReport, reportsForDuplicateCheck]);
 
   const handleConfirm = () => {
     if (!draftReport) return;

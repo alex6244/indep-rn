@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F1F1F1",
     padding: 12,
     marginRight: 10,
+    minHeight: 124,
   },
   cardLast: {
     marginRight: 0,
@@ -99,8 +100,8 @@ const styles = StyleSheet.create({
     color: "#1E1E1E",
   },
   text: {
-    fontSize: 12,
+    fontSize: 11,
     color: "#777",
-    lineHeight: 16,
+    lineHeight: 15,
   },
 });
