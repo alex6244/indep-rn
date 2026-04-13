@@ -2,7 +2,25 @@ import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import SortIcon from "../../../assets/icons/sort.svg";
 
-export function CatalogFiltersBar({ sortButtonRef, toggleSort, openFilters, styles }) {
+type CatalogStyles = typeof import("./Catalog.styles").catalogStyles;
+
+type SortButtonRef = View & {
+  measureInWindow: (callback: (x: number, y: number, width: number, height: number) => void) => void;
+};
+
+type CatalogFiltersBarProps = {
+  sortButtonRef: React.RefObject<SortButtonRef | null>;
+  toggleSort: () => void;
+  openFilters: () => void;
+  styles: CatalogStyles;
+};
+
+export function CatalogFiltersBar({
+  sortButtonRef,
+  toggleSort,
+  openFilters,
+  styles,
+}: CatalogFiltersBarProps) {
   return (
     <View style={styles.filtersBar}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -28,4 +46,3 @@ export function CatalogFiltersBar({ sortButtonRef, toggleSort, openFilters, styl
     </View>
   );
 }
-

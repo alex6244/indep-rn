@@ -2,16 +2,24 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Slider from '@react-native-community/slider';
 
+type RangeSliderProps = {
+  min?: number;
+  max?: number;
+  initial?: number;
+  onChange?: (value: number) => void;
+  label?: string;
+};
+
 export const RangeSlider = ({
   min = 0,
   max = 100,
   initial = 50,
   onChange,
   label,
-}) => {
+}: RangeSliderProps) => {
   const [value, setValue] = useState(initial);
 
-  const handleChange = (v) => {
+  const handleChange = (v: number) => {
     setValue(v);
     onChange?.(v);
   };
@@ -75,4 +83,3 @@ const styles = StyleSheet.create({
     color: '#555',
   },
 });
-

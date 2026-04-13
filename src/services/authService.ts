@@ -1,4 +1,4 @@
-import { ApiError, api, tokenStorage } from "./api";
+import { ApiError, api, tokenStorage, refreshTokenStorage } from "./api";
 import type { User } from "../data/users";
 import {
   type AuthCredentials,
@@ -6,16 +6,20 @@ import {
   type RegisterPayload,
 } from "./authTypes";
 
-// Backend-ready auth service.
-// Current UI auth flow still uses AuthContext mock mode until API integration is enabled.
+// API transport/provider for auth endpoints: login/register/me/logout.
+// Source selection (mock|api via EXPO_PUBLIC_AUTH_SOURCE) is owned by AuthContext; UI works through useAuth().
 
 interface AuthResponse {
   token: string;
+  refresh_token?: string;
   user: User;
 }
 
 function mapAuthError(error: unknown): never {
   if (error instanceof ApiError) {
+    if (error.status === 0) {
+      throw new AuthFlowError("network_error", error.message);
+    }
     if (error.status === 401) {
       throw new AuthFlowError("invalid_credentials", error.message);
     }
@@ -35,6 +39,7 @@ export const authService = {
     try {
       const res = await api.post<AuthResponse>("/auth/login", data);
       await tokenStorage.set(res.token);
+      if (res.refresh_token) await refreshTokenStorage.set(res.refresh_token);
       return res.user;
     } catch (error) {
       mapAuthError(error);
@@ -45,6 +50,7 @@ export const authService = {
     try {
       const res = await api.post<AuthResponse>("/auth/register", data);
       await tokenStorage.set(res.token);
+      if (res.refresh_token) await refreshTokenStorage.set(res.refresh_token);
       return res.user;
     } catch (error) {
       mapAuthError(error);
@@ -55,7 +61,28 @@ export const authService = {
     try {
       await api.post("/auth/logout", {});
     } finally {
-      await tokenStorage.clear();
+      await Promise.all([tokenStorage.clear(), refreshTokenStorage.clear()]);
+    }
+  },
+
+  /**
+   * Exchange refresh token for a new access token.
+   * Uses _skipRefresh to prevent infinite 401 loops.
+   * Returns new access token or null if refresh is not possible.
+   */
+  refresh: async (): Promise<string | null> => {
+    try {
+      const storedRefreshToken = await refreshTokenStorage.get();
+      if (!storedRefreshToken) return null;
+      const res = await api.post<{ token: string; refresh_token?: string }>(
+        "/auth/refresh",
+        { refresh_token: storedRefreshToken },
+        { _skipRefresh: true },
+      );
+      if (res.refresh_token) await refreshTokenStorage.set(res.refresh_token);
+      return res.token;
+    } catch {
+      return null;
     }
   },
 

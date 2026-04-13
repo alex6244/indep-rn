@@ -31,11 +31,11 @@ export function ReportsBanner({
 }: Props) {
   const { width: windowWidth } = useWindowDimensions();
 
+  const bannerWidth = Math.max(0, windowWidth - MARGIN_H * 2);
   const bannerHeight = useMemo(() => {
-    const innerW = Math.max(0, windowWidth - MARGIN_H * 2);
-    const h = Math.round(innerW * (BANNER_ASPECT_H / BANNER_ASPECT_W));
+    const h = Math.round(bannerWidth * (BANNER_ASPECT_H / BANNER_ASPECT_W));
     return Math.max(MIN_BANNER_HEIGHT, h);
-  }, [windowWidth]);
+  }, [bannerWidth]);
 
   return (
     <TouchableOpacity
@@ -45,8 +45,8 @@ export function ReportsBanner({
     >
       <MicroBanner
         style={StyleSheet.absoluteFillObject}
-        width="100%"
-        height="100%"
+        width={bannerWidth}
+        height={bannerHeight}
         preserveAspectRatio="xMidYMid slice"
       />
       <View style={styles.microContent}>

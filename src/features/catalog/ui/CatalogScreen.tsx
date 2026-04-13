@@ -48,25 +48,29 @@ export default function CatalogScreen() {
   const filtersX = useRef<Animated.Value>(new Animated.Value(-SCREEN_WIDTH)).current;
   const controller = useCatalogFiltersController(cars);
 
-  const loadCars = useCallback(async (): Promise<void> => {
+  const loadCars = useCallback(async (signal?: AbortSignal): Promise<void> => {
     setLoading(true);
     setDataError(null);
     try {
       const fetchedCars = await carService.getAll();
+      if (signal?.aborted) return;
       setCars(Array.isArray(fetchedCars) ? fetchedCars : []);
     } catch (error) {
+      if (signal?.aborted) return;
       const message =
         error instanceof Error
           ? error.message
           : "Не удалось загрузить каталог. Проверьте подключение и попробуйте снова.";
       setDataError(message);
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    void loadCars();
+    const controller = new AbortController();
+    void loadCars(controller.signal);
+    return () => controller.abort();
   }, [loadCars]);
 
   useEffect(() => {

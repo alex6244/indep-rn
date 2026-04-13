@@ -1,9 +1,9 @@
 import type { Report } from "../entities/report/types";
 
 /** Local bundled images (no network) for mocks */
-const PLACEHOLDER_MAIN = require("../assets/logo.png");
-const PLACEHOLDER_CAR_1 = require("../assets/cars1.jpg");
-const PLACEHOLDER_CAR_2 = require("../assets/cars2.jpg");
+import PLACEHOLDER_MAIN from "../assets/logo.png";
+import PLACEHOLDER_CAR_1 from "../assets/cars1.jpg";
+import PLACEHOLDER_CAR_2 from "../assets/cars2.jpg";
 
 export const reports: Report[] = [
   {

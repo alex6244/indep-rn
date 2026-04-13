@@ -2,7 +2,15 @@ import React from "react";
 import { Text, View } from "react-native";
 import { Header } from "../../../widgets/header/Header";
 
-export function CatalogHeaderSection({ onLogoPress, onOpenBurger, styles }) {
+type CatalogStyles = typeof import("./Catalog.styles").catalogStyles;
+
+type CatalogHeaderSectionProps = {
+  onLogoPress: () => void;
+  onOpenBurger: () => void;
+  styles: CatalogStyles;
+};
+
+export function CatalogHeaderSection({ onLogoPress, onOpenBurger, styles }: CatalogHeaderSectionProps) {
   return (
     <>
       <Header
@@ -18,4 +26,3 @@ export function CatalogHeaderSection({ onLogoPress, onOpenBurger, styles }) {
     </>
   );
 }
-

@@ -3,7 +3,6 @@ import { useRouter, type Href } from "expo-router";
 import { useAuth } from "../contexts/AuthContext";
 
 type CheckAuthOptions = {
-  message?: string;
   redirectTo?: Href;
 };
 

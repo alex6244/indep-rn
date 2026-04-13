@@ -4,7 +4,13 @@ import ParameterIcon from "../../../assets/mainpage/carousel/parameter.svg";
 import ReportIcon from "../../../assets/mainpage/carousel/report.svg";
 import TimeIcon from "../../../assets/mainpage/carousel/time.svg";
 
-export function LandingBenefitsSection({ styles }: { styles: any }) {
+import type { landingStyles } from "../../../shared/styles/landing.styles";
+
+type Props = {
+  styles: typeof landingStyles;
+};
+
+export function LandingBenefitsSection({ styles }: Props) {
   return (
     <View style={styles.section}>
       <ScrollView

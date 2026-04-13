@@ -8,17 +8,31 @@ import {
   View,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import type { Car } from "../../../data/cars";
 import { FavoriteButton } from "../../favorites/ui/FavoriteButton";
-import {
-  buildCarModelLine,
-  buildCarSpecsLine,
-} from "../utils/buildCarSpecsLine";
+import { buildCarModelLine, buildCarSpecsLine } from "../utils/buildCarSpecsLine";
+
+type CatalogStyles = typeof import("./Catalog.styles").catalogStyles;
+
+type CatalogCarCardProps = {
+  car: Car;
+  isFavorite: (carId: string) => boolean;
+  setFavorite: (carId: string, next: boolean) => void;
+  styles: CatalogStyles;
+};
+
+type CatalogCarsListProps = {
+  displayedCars: Car[];
+  isFavorite: (carId: string) => boolean;
+  setFavorite: (carId: string, next: boolean) => void;
+  styles: CatalogStyles;
+};
 
 const SCREEN_W = Dimensions.get("window").width;
 /** Экран минус отступы экрана (16×2) и карточки (14×2) — ширина галереи ≈ ширине скролла для paging. */
 const CARD_IMAGE_WIDTH = SCREEN_W - 60;
 
-function CatalogCarCard({ car, isFavorite, setFavorite, styles }) {
+function CatalogCarCard({ car, isFavorite, setFavorite, styles }: CatalogCarCardProps) {
   const specsLine = buildCarSpecsLine(car);
   const modelLine = buildCarModelLine(car);
 
@@ -46,9 +60,7 @@ function CatalogCarCard({ car, isFavorite, setFavorite, styles }) {
       </ScrollView>
 
       <View style={styles.carInfo}>
-        <Text style={styles.carPrice}>
-          {new Intl.NumberFormat("ru-RU").format(car.price)} ₽
-        </Text>
+        <Text style={styles.carPrice}>{new Intl.NumberFormat("ru-RU").format(car.price)} ₽</Text>
         <Text style={styles.carSpecsLine} numberOfLines={2}>
           {specsLine}
         </Text>
@@ -64,7 +76,7 @@ function CatalogCarCard({ car, isFavorite, setFavorite, styles }) {
         <View style={styles.carFavWrap}>
           <FavoriteButton
             initialActive={isFavorite(String(car.id))}
-            onChange={(next) => setFavorite(String(car.id), next)}
+            onChange={(next: boolean) => setFavorite(String(car.id), next)}
           />
         </View>
       </View>
@@ -77,7 +89,7 @@ function CatalogCarCard({ car, isFavorite, setFavorite, styles }) {
   );
 }
 
-export function CatalogCarsList({ displayedCars, isFavorite, setFavorite, styles }) {
+export function CatalogCarsList({ displayedCars, isFavorite, setFavorite, styles }: CatalogCarsListProps) {
   if (displayedCars.length === 0) {
     return <Text style={styles.emptyStateText}>Ничего не найдено</Text>;
   }

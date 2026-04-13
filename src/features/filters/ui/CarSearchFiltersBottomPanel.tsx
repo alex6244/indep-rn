@@ -1,13 +1,21 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
+type CarSearchFiltersBottomPanelProps = {
+  filteredCount?: number;
+  error?: string | null;
+  onReset?: () => void;
+  onApply?: () => boolean;
+  onClose?: () => void;
+};
+
 export function CarSearchFiltersBottomPanel({
   filteredCount,
   error,
   onReset,
   onApply,
   onClose,
-}) {
+}: CarSearchFiltersBottomPanelProps) {
   const safeCount = typeof filteredCount === "number" ? filteredCount : 0;
 
   return (
@@ -69,7 +77,6 @@ const styles = StyleSheet.create({
   filtersBtnHalf: {
     flex: 1,
   },
-
   btn: {
     paddingVertical: 10,
     paddingHorizontal: 16,

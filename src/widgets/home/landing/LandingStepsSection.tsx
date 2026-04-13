@@ -2,7 +2,13 @@ import React from "react";
 import { Text, View } from "react-native";
 import { PickerOnboardingIllustration1 } from "../pickerOnboardingIllustrations";
 
-export function LandingStepsSection({ styles }: { styles: any }) {
+import type { landingStyles } from "../../../shared/styles/landing.styles";
+
+type Props = {
+  styles: typeof landingStyles;
+};
+
+export function LandingStepsSection({ styles }: Props) {
   return (
     <View style={styles.section}>
       <View style={styles.toggleContainer}>

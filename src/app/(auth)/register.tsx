@@ -73,8 +73,8 @@ export default function RegisterScreen() {
           authError === "user_exists"
             ? "Пользователь с таким e-mail уже существует."
             : authError === "network_error"
-              ? "Проблема с сетью. Проверьте подключение."
-              : "Не удалось завершить регистрацию.";
+              ? "Сервис авторизации недоступен или нет сети. Проверьте backend/подключение и попробуйте снова."
+              : "Сервис авторизации недоступен. Проверьте режим запуска (mock/api) и попробуйте снова.";
         setMessage({ tone: "error", text: message });
       }
     } finally {
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#DB4431",
   },
   checkmark: {
-    color: "#DB4431",
+    color: "white",
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -392,39 +392,4 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textDecorationLine: "underline",
   },
-  header: {
-    height: 56,
-    paddingHorizontal: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "#FFFFFF",
-  },
-  headerLogoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  headerLogoText: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#1E1E1E",
-    // fontFamily: FONT_FAMILY.regular,
-  },
-  headerBurger: {
-    width: 24,
-    height: 24,
-    justifyContent: "space-between",
-    paddingVertical: 2,
-  },
-  headerBurgerLine: {
-    height: 3,
-    borderRadius: 2,
-    backgroundColor: "#1E1E1E",
-  },
-  headerLogoImage: {
-    width: 120,          // подгони под размер из Фигмы
-    height: 24,          // подгони под размер из Фигмы
-    resizeMode: "contain",
-  },
-  
 });

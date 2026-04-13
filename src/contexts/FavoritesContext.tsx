@@ -50,37 +50,37 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
     load();
   }, []);
 
-  useEffect(() => {
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(favoriteIds)).catch(
-      () => {
-        setFavoritesError("Не удалось сохранить избранное");
-      },
-    );
-  }, [favoriteIds]);
-
   const isFavorite = useCallback(
     (id: string) => favoriteIds.includes(String(id)),
     [favoriteIds],
   );
 
   const setFavorite = useCallback((id: string, value: boolean) => {
+    const sId = String(id);
     setFavoriteIds((prev) => {
-      const sId = String(id);
-      if (value) {
-        if (prev.includes(sId)) return prev;
-        return [...prev, sId];
-      }
-      return prev.filter((x) => x !== sId);
+      const next = value
+        ? prev.includes(sId) ? prev : [...prev, sId]
+        : prev.filter((x) => x !== sId);
+      if (next === prev) return prev;
+      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next)).catch(() => {
+        setFavoriteIds(prev);
+        setFavoritesError("Не удалось сохранить избранное");
+      });
+      return next;
     });
   }, []);
 
   const toggleFavorite = useCallback((id: string) => {
+    const sId = String(id);
     setFavoriteIds((prev) => {
-      const sId = String(id);
-      if (prev.includes(sId)) {
-        return prev.filter((x) => x !== sId);
-      }
-      return [...prev, sId];
+      const next = prev.includes(sId)
+        ? prev.filter((x) => x !== sId)
+        : [...prev, sId];
+      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next)).catch(() => {
+        setFavoriteIds(prev);
+        setFavoritesError("Не удалось сохранить избранное");
+      });
+      return next;
     });
   }, []);
 

@@ -34,9 +34,7 @@ export function AuthHeader() {
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
         items={getMainBurgerMenuItems()}
-        footer={
-          user ? <MainBurgerMenuFooter onLogout={logout} /> : undefined
-        }
+        footer={user ? <MainBurgerMenuFooter onLogout={logout} /> : undefined}
       />
     </>
   );

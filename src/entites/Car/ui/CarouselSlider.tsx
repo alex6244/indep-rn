@@ -3,11 +3,21 @@ import { View, Image, Text, Dimensions } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import { styles } from './CarouselSlider.styles';
 
-export const CarouselSlider = ({ cars }) => {
-  const carouselRef = useRef();
+type CarItem = {
+  image: string;
+  brand: string;
+  model: string;
+};
+
+type CarouselSliderProps = {
+  cars: CarItem[];
+};
+
+export const CarouselSlider = ({ cars }: CarouselSliderProps) => {
+  const carouselRef = useRef<Carousel<CarItem>>(null);
   const { width: screenWidth } = Dimensions.get('window');
 
-  const renderCar = ({ item }) => (
+  const renderCar = ({ item }: { item: CarItem }) => (
     <View style={styles.slide}>
       <Image source={{ uri: item.image }} style={styles.image} />
       <Text style={styles.title}>{item.brand} {item.model}</Text>

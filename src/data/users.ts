@@ -2,15 +2,16 @@ export type UserRole = "client" | "picker";
 
 export interface User {
   id: string;
-  login: string;      // для бэка / логина по email, если понадобится
-  password: string;   // для бэка; сейчас в мок-авторизации не используется из форм
+  login: string;
   role: UserRole;
   name: string;
   phone?: string;
   email: string;
 }
 
-export const mockUsers: { client: User; picker: User } = {
+type MockUserRecord = User & { password: string };
+
+export const mockUsers: { client: MockUserRecord; picker: MockUserRecord } = {
   client: {
     id: "client_1",
     login: "client@test.com",

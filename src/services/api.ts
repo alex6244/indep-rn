@@ -69,18 +69,127 @@ type RetryConfig = {
 type RequestOptions = RequestInit & {
   retry?: RetryConfig;
   timeoutMs?: number;
+  /** Prevents refresh-token retry to avoid infinite loops on /auth/refresh itself */
+  _skipRefresh?: boolean;
 };
 
 type UnauthorizedHandler = () => Promise<void> | void;
+type RefreshHandler = () => Promise<string | null>;
 
 let unauthorizedHandler: UnauthorizedHandler | null = null;
 let unauthorizedHandlerTask: Promise<void> | null = null;
+let refreshHandler: RefreshHandler | null = null;
+let refreshTask: Promise<string | null> | null = null;
+
+type StorageTelemetryOperation = "get" | "set" | "clear";
+type StorageTelemetryStorage = "secure_store" | "async_storage" | "fallback";
+
+type StorageTelemetryEvent = {
+  operation: StorageTelemetryOperation;
+  storage: StorageTelemetryStorage;
+  error: string;
+  scope: "token_storage";
+  timestamp: number;
+};
+
+function toErrorMessage(error: unknown): string {
+  if (error instanceof Error && error.message) return error.message;
+  try {
+    return String(error);
+  } catch {
+    return "unknown_error";
+  }
+}
+
+// Non-blocking reporter: observability only, never control-flow.
+function reportStorageTelemetry(event: StorageTelemetryEvent): void {
+  try {
+    if (__DEV__) {
+      console.warn("[telemetry][token_storage]", event);
+    }
+  } catch {
+    // Never throw from telemetry path.
+  }
+}
+
+function trackStorageFailure(
+  operation: StorageTelemetryOperation,
+  storage: StorageTelemetryStorage,
+  error: unknown,
+): void {
+  reportStorageTelemetry({
+    operation,
+    storage,
+    error: toErrorMessage(error),
+    scope: "token_storage",
+    timestamp: Date.now(),
+  });
+}
 
 export function setUnauthorizedHandler(handler: UnauthorizedHandler | null) {
   unauthorizedHandler = handler;
 }
 
-// ─── Токен ───────────────────────────────────────────────────────────────────
+export function setRefreshHandler(handler: RefreshHandler | null) {
+  refreshHandler = handler;
+}
+
+// ─── Токены ──────────────────────────────────────────────────────────────────
+
+const REFRESH_TOKEN_KEY = "@auth/refresh_token";
+let inMemoryRefreshToken: string | null = null;
+
+export const refreshTokenStorage = {
+  get: async () => {
+    if (inMemoryRefreshToken) return inMemoryRefreshToken;
+    try {
+      const secure = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
+      if (secure) {
+        inMemoryRefreshToken = secure;
+        return secure;
+      }
+    } catch (error) {
+      trackStorageFailure("get", "secure_store", error);
+    }
+    try {
+      const fallback = await AsyncStorage.getItem(REFRESH_TOKEN_KEY);
+      if (fallback) {
+        inMemoryRefreshToken = fallback;
+        return fallback;
+      }
+    } catch (error) {
+      trackStorageFailure("get", "async_storage", error);
+    }
+    return null;
+  },
+  set: async (token: string) => {
+    inMemoryRefreshToken = token;
+    try {
+      await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, token);
+      return;
+    } catch (error) {
+      trackStorageFailure("set", "secure_store", error);
+    }
+    try {
+      await AsyncStorage.setItem(REFRESH_TOKEN_KEY, token);
+    } catch (error) {
+      trackStorageFailure("set", "async_storage", error);
+    }
+  },
+  clear: async () => {
+    inMemoryRefreshToken = null;
+    try {
+      await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
+    } catch (error) {
+      trackStorageFailure("clear", "secure_store", error);
+    }
+    try {
+      await AsyncStorage.removeItem(REFRESH_TOKEN_KEY);
+    } catch (error) {
+      trackStorageFailure("clear", "async_storage", error);
+    }
+  },
+};
 
 export const tokenStorage = {
   get: async () => {
@@ -92,8 +201,8 @@ export const tokenStorage = {
         inMemoryToken = secure;
         return secure;
       }
-    } catch {
-      // TODO(auth): report secure store read errors to telemetry.
+    } catch (error) {
+      trackStorageFailure("get", "secure_store", error);
     }
 
     try {
@@ -102,8 +211,8 @@ export const tokenStorage = {
         inMemoryToken = fallback;
         return fallback;
       }
-    } catch {
-      // TODO(auth): report AsyncStorage read errors to telemetry.
+    } catch (error) {
+      trackStorageFailure("get", "async_storage", error);
     }
 
     return null;
@@ -113,26 +222,28 @@ export const tokenStorage = {
     try {
       await SecureStore.setItemAsync(TOKEN_KEY, token);
       return;
-    } catch {
-      // TODO(auth): report secure store write errors to telemetry.
+    } catch (error) {
+      trackStorageFailure("set", "secure_store", error);
     }
     try {
       await AsyncStorage.setItem(TOKEN_KEY, token);
-    } catch {
-      // TODO(auth): report AsyncStorage write errors to telemetry.
+    } catch (error) {
+      trackStorageFailure("set", "async_storage", error);
+      trackStorageFailure("set", "fallback", error);
     }
   },
   clear: async () => {
     inMemoryToken = null;
     try {
       await SecureStore.deleteItemAsync(TOKEN_KEY);
-    } catch {
-      // TODO(auth): report secure store delete errors to telemetry.
+    } catch (error) {
+      trackStorageFailure("clear", "secure_store", error);
     }
     try {
       await AsyncStorage.removeItem(TOKEN_KEY);
-    } catch {
-      // TODO(auth): report AsyncStorage delete errors to telemetry.
+    } catch (error) {
+      trackStorageFailure("clear", "async_storage", error);
+      trackStorageFailure("clear", "fallback", error);
     }
   },
 };
@@ -199,6 +310,21 @@ async function triggerUnauthorizedHandler() {
   await unauthorizedHandlerTask;
 }
 
+/**
+ * Deduplicated refresh: concurrent 401s all await the same single refresh call.
+ * Uses _skipRefresh on the inner api call to prevent infinite loops.
+ */
+async function tryRefreshToken(): Promise<string | null> {
+  if (!refreshHandler) return null;
+  if (refreshTask) return refreshTask;
+  refreshTask = Promise.resolve()
+    .then(() => refreshHandler!())
+    .finally(() => {
+      refreshTask = null;
+    });
+  return refreshTask;
+}
+
 async function requestOnce<T>(path: string, options: RequestOptions): Promise<T> {
   const token = await tokenStorage.get();
   const timeoutMs = options.timeoutMs ?? getRequestTimeoutMs();
@@ -246,10 +372,6 @@ async function requestOnce<T>(path: string, options: RequestOptions): Promise<T>
 
   if (!response.ok) {
     const message = await parseErrorMessage(response);
-    if (response.status === 401) {
-      await tokenStorage.clear();
-      await triggerUnauthorizedHandler();
-    }
     throw new ApiError(response.status, message);
   }
 
@@ -266,10 +388,30 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   const maxRetries = Math.max(0, options.retry?.maxRetries ?? 2);
 
   let attempt = 0;
+  let tokenRefreshed = false;
+
   for (;;) {
     try {
       return await requestOnce<T>(path, options);
     } catch (error) {
+      // On 401: attempt token refresh once, then retry. Skip for refresh requests themselves.
+      if (
+        error instanceof ApiError &&
+        error.status === 401 &&
+        !tokenRefreshed &&
+        !options._skipRefresh
+      ) {
+        tokenRefreshed = true;
+        const newToken = await tryRefreshToken();
+        if (newToken) {
+          await tokenStorage.set(newToken);
+          continue;
+        }
+        // Refresh failed or unavailable — clear session and notify
+        await Promise.all([tokenStorage.clear(), refreshTokenStorage.clear()]);
+        await triggerUnauthorizedHandler();
+        throw error;
+      }
       if (!shouldRetry(error, method, attempt, maxRetries)) {
         throw error;
       }

@@ -1,10 +1,24 @@
 import React from "react";
+import type { Car } from "../../../data/cars";
 import { Text, TouchableOpacity, View } from "react-native";
 import { ScreenStateEmpty } from "../../../shared/ui/ScreenStateEmpty";
 import { ScreenStateError } from "../../../shared/ui/ScreenStateError";
 import { ScreenStateLoading } from "../../../shared/ui/ScreenStateLoading";
 import { CatalogCarsList } from "./CatalogCarsList";
 import { CatalogFooter } from "./CatalogFooter";
+
+type CatalogStyles = typeof import("./Catalog.styles").catalogStyles;
+
+type CatalogContentSectionProps = {
+  styles: CatalogStyles;
+  loading: boolean;
+  errorTitle?: string;
+  error: string | null;
+  cars: Car[];
+  isFavorite: (carId: string) => boolean;
+  setFavorite: (carId: string, next: boolean) => void;
+  onRetry: () => void;
+};
 
 export function CatalogContentSection({
   styles,
@@ -15,7 +29,7 @@ export function CatalogContentSection({
   isFavorite,
   setFavorite,
   onRetry,
-}) {
+}: CatalogContentSectionProps) {
   return (
     <>
       <Text style={styles.sectionTitle}>Лучшие предложения</Text>
@@ -53,4 +67,3 @@ export function CatalogContentSection({
     </>
   );
 }
-

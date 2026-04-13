@@ -1,7 +1,13 @@
 import React from "react";
 import { Text, View } from "react-native";
 
-export function CatalogFooter({ styles }) {
+type CatalogStyles = typeof import("./Catalog.styles").catalogStyles;
+
+type CatalogFooterProps = {
+  styles: CatalogStyles;
+};
+
+export function CatalogFooter({ styles }: CatalogFooterProps) {
   return (
     <View style={styles.footer}>
       <Text style={styles.footerLogo}>INDEP</Text>

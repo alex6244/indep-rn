@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-export const MarkButton = ({ label, selected, onToggle }) => {
+type MarkButtonProps = {
+  label: string;
+  selected?: boolean;
+  onToggle?: () => void;
+};
+
+export const MarkButton = ({ label, selected, onToggle }: MarkButtonProps) => {
   const [active, setActive] = useState(false);
 
   const isControlled = selected !== undefined;
@@ -32,4 +38,3 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
 });
-

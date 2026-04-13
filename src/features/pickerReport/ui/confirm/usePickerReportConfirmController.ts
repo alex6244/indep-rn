@@ -10,6 +10,21 @@ import {
 
 const normalizeVin = (vin: string) => (vin ?? "").toUpperCase().replace(/\s+/g, "");
 
+function isValidDraftReport(obj: unknown): obj is DraftReport {
+  if (!obj || typeof obj !== "object") return false;
+  const d = obj as Record<string, unknown>;
+  return (
+    typeof d.media === "object" && d.media !== null &&
+    typeof d.generalInfo === "object" && d.generalInfo !== null &&
+    typeof d.pts === "object" && d.pts !== null &&
+    typeof d.mileage === "string" &&
+    Array.isArray(d.owners) &&
+    typeof d.legalCleanliness === "object" && d.legalCleanliness !== null &&
+    typeof d.commercialUsage === "object" && d.commercialUsage !== null &&
+    typeof d.defects === "object" && d.defects !== null
+  );
+}
+
 export type DefectsMode = "scheme" | "photos";
 
 export function usePickerReportConfirmController(router: Router) {
@@ -39,7 +54,14 @@ export function usePickerReportConfirmController(router: Router) {
           return;
         }
 
-        const parsed = JSON.parse(raw) as DraftReport;
+        const parsed: unknown = JSON.parse(raw);
+        if (!isValidDraftReport(parsed)) {
+          setNotice({
+            tone: "error",
+            message: "Черновик повреждён или устарел. Попробуйте создать отчёт заново.",
+          });
+          return;
+        }
         if (!cancelled) {
           setDraftReport(parsed);
           setDefectsMode(parsed?.defects?.mode ?? "scheme");
@@ -59,7 +81,7 @@ export function usePickerReportConfirmController(router: Router) {
     return () => {
       cancelled = true;
     };
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     let active = true;

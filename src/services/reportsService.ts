@@ -1,5 +1,13 @@
 import { ApiError, api } from "./api";
 import type { Report } from "../entities/report/types";
+import { reports as mockReports, getReportById as getMockReportById } from "../data/reports";
+
+type ReportsSource = "mock" | "api";
+
+function getReportsSource(): ReportsSource {
+  const raw = process.env.EXPO_PUBLIC_REPORTS_SOURCE?.trim().toLowerCase();
+  return raw === "api" ? "api" : "mock";
+}
 
 function mapReportsError(error: unknown): string {
   if (error instanceof ApiError) {
@@ -13,6 +21,10 @@ function mapReportsError(error: unknown): string {
 
 export const reportsService = {
   getPurchasedReports: async (): Promise<Report[]> => {
+    if (getReportsSource() === "mock") {
+      return mockReports;
+    }
+
     try {
       return await api.get<Report[]>("/reports/purchased");
     } catch (error) {
@@ -20,6 +32,14 @@ export const reportsService = {
     }
   },
   getReportById: async (id: string): Promise<Report> => {
+    if (getReportsSource() === "mock") {
+      const report = getMockReportById(id);
+      if (!report) {
+        throw new Error("Отчёт не найден.");
+      }
+      return report;
+    }
+
     try {
       return await api.get<Report>(`/reports/${id}`);
     } catch (error) {
@@ -27,6 +47,10 @@ export const reportsService = {
     }
   },
   getReportsForDuplicateCheck: async (): Promise<Report[]> => {
+    if (getReportsSource() === "mock") {
+      return mockReports;
+    }
+
     try {
       return await api.get<Report[]>("/reports/purchased");
     } catch (error) {

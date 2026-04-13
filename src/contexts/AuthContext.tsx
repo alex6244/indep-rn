@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { mockUsers, type User } from "../data/users";
-import { setUnauthorizedHandler, tokenStorage } from "../services/api";
+import { setRefreshHandler, setUnauthorizedHandler, tokenStorage, refreshTokenStorage } from "../services/api";
 import { authService } from "../services/authService";
 import {
   type AuthCredentials,
@@ -47,11 +47,28 @@ async function persistSessionUser(user: User): Promise<void> {
   await AsyncStorage.setItem(USER_KEY, JSON.stringify(user));
 }
 
+function isValidUser(obj: unknown): obj is User {
+  if (!obj || typeof obj !== "object") return false;
+  const u = obj as Record<string, unknown>;
+  return (
+    typeof u.id === "string" &&
+    typeof u.login === "string" &&
+    typeof u.name === "string" &&
+    typeof u.email === "string" &&
+    (u.role === "client" || u.role === "picker")
+  );
+}
+
 async function readSessionUser(): Promise<User | null> {
   try {
     const raw = await AsyncStorage.getItem(USER_KEY);
     if (!raw) return null;
-    return JSON.parse(raw) as User;
+    const parsed: unknown = JSON.parse(raw);
+    if (!isValidUser(parsed)) {
+      await AsyncStorage.removeItem(USER_KEY);
+      return null;
+    }
+    return parsed;
   } catch {
     return null;
   }
@@ -70,8 +87,10 @@ function createMockAuthGateway(): AuthGateway {
       if (!found) {
         throw new AuthFlowError("invalid_credentials");
       }
-      await persistSessionUser(found);
-      return found;
+      await tokenStorage.set(`mock_${found.id}_${Date.now()}`);
+      const { password: _pw, ...sessionUser } = found;
+      await persistSessionUser(sessionUser);
+      return sessionUser;
     },
     register: async (payload) => {
       const trimmedEmail = payload.email.trim();
@@ -84,18 +103,19 @@ function createMockAuthGateway(): AuthGateway {
       const newUser: User = {
         id: Date.now().toString(),
         login: trimmedEmail,
-        password: payload.password,
         role: payload.role,
         name: payload.name,
         phone: "",
         email: trimmedEmail,
       };
+      await tokenStorage.set(`mock_${newUser.id}_${Date.now()}`);
       await persistSessionUser(newUser);
       return newUser;
     },
     logout: async () => {
       await AsyncStorage.removeItem(USER_KEY);
       await tokenStorage.clear();
+      await refreshTokenStorage.clear();
     },
   };
 }
@@ -164,6 +184,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
     return () => {
       setUnauthorizedHandler(null);
+    };
+  }, []);
+
+  useEffect(() => {
+    const source = resolveAuthSource();
+    if (source === "api") {
+      setRefreshHandler(authService.refresh);
+    }
+    return () => {
+      setRefreshHandler(null);
     };
   }, []);
 

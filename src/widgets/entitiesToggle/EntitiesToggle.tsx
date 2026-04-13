@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import type { PaymentType } from '../../features/catalog/hooks/useCatalogFiltersController';
+
+type EntitiesToggleProps = {
+  leftLabel?: string;
+  rightLabel?: string;
+  activeColor?: string;
+  value?: PaymentType;
+  onChange?: (value: PaymentType) => void;
+};
 
 export const EntitiesToggle = ({
   leftLabel = 'Хочу продать авто',
@@ -7,8 +16,8 @@ export const EntitiesToggle = ({
   activeColor = '#080717',
   value,
   onChange,
-}) => {
-  const [tab, setTab] = useState('right');
+}: EntitiesToggleProps) => {
+  const [tab, setTab] = useState<'left' | 'right'>('right');
 
   const isControlled = value !== undefined;
   const activeTab = isControlled
@@ -19,7 +28,6 @@ export const EntitiesToggle = ({
         : null
     : tab;
 
-  const activeBg = activeColor;
   const activeText = '#FFFFFF';
   const inactiveText = '#080717';
 
@@ -29,7 +37,7 @@ export const EntitiesToggle = ({
         <TouchableOpacity
           style={[
             styles.button,
-            activeTab === 'left' && { backgroundColor: activeBg },
+            activeTab === 'left' && { backgroundColor: activeColor },
           ]}
           onPress={() => {
             if (isControlled) {
@@ -42,9 +50,7 @@ export const EntitiesToggle = ({
           <Text
             style={[
               styles.text,
-              {
-                color: activeTab === 'left' ? activeText : inactiveText,
-              },
+              { color: activeTab === 'left' ? activeText : inactiveText },
             ]}
           >
             {leftLabel}
@@ -54,7 +60,7 @@ export const EntitiesToggle = ({
         <TouchableOpacity
           style={[
             styles.button,
-            activeTab === 'right' && { backgroundColor: activeBg },
+            activeTab === 'right' && { backgroundColor: activeColor },
           ]}
           onPress={() => {
             if (isControlled) {
@@ -67,9 +73,7 @@ export const EntitiesToggle = ({
           <Text
             style={[
               styles.text,
-              {
-                color: activeTab === 'right' ? activeText : inactiveText,
-              },
+              { color: activeTab === 'right' ? activeText : inactiveText },
             ]}
           >
             {rightLabel}
@@ -112,4 +116,3 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
 });
-

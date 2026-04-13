@@ -2,8 +2,10 @@ import { Image } from "expo-image";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
+import type { landingStyles } from "../../../shared/styles/landing.styles";
+
 type Props = {
-  styles: any;
+  styles: typeof landingStyles;
   onOpenAuto: () => void;
   onBuyReport: () => void;
   onOpenCatalog: () => void;

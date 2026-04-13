@@ -17,21 +17,23 @@ import {
 import { BurgerButton } from "../../shared/ui/BurgerButton";
 import { BurgerMenu } from "../../shared/ui/BurgerMenu";
 
-/**
- * @param {object} props
- * @param {string | null} [props.title]
- * @param {boolean} [props.showLogo]
- * @param {() => void} [props.onLogoPress]
- * @param {() => void} [props.onOpenBurger] — если задан, BurgerMenu рендерится снаружи, здесь только кнопка
- * @param {'favorites' | 'none'} [props.rightAction] — переход в избранное или пусто (без toggle без контекста карточки)
- */
+type HeaderProps = {
+  title?: string | null;
+  showLogo?: boolean;
+  onLogoPress?: () => void;
+  /** Если задан, BurgerMenu рендерится снаружи — здесь только кнопка. */
+  onOpenBurger?: () => void;
+  /** Переход в избранное или пусто. */
+  rightAction?: 'favorites' | 'none';
+};
+
 export const Header = ({
   title = "Каталог",
   showLogo = false,
   onLogoPress,
   onOpenBurger,
   rightAction = "none",
-}) => {
+}: HeaderProps) => {
   const [burgerOpen, setBurgerOpen] = useState(false);
   const insets = useSafeAreaInsets();
   const { logout } = useAuth();

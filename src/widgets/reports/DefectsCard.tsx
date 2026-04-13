@@ -27,7 +27,7 @@ export function DefectsCard({ report }: Props) {
         leftLabel="Схема повреждений"
         rightLabel="Фото повреждений"
         value={toggleValue as "cash" | "credit"}
-        onChange={(v: "cash" | "credit") => {
+        onChange={(v) => {
           setMode(v === "cash" ? "scheme" : "photos");
         }}
       />

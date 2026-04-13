@@ -1,8 +1,10 @@
 import React from "react";
 import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
 
+import type { landingStyles } from "../../../shared/styles/landing.styles";
+
 type Props = {
-  styles: any;
+  styles: typeof landingStyles;
   onOpenCatalog: () => void;
 };
 

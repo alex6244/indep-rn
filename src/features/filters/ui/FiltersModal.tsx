@@ -9,7 +9,11 @@ import {
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-export const FiltersModal = ({ children }) => {
+type FiltersModalProps = {
+  children: React.ReactNode | ((close: () => void) => React.ReactNode);
+};
+
+export const FiltersModal = ({ children }: FiltersModalProps) => {
   const [open, setOpen] = useState(false);
   const translateX = useRef(new Animated.Value(-SCREEN_WIDTH)).current;
 

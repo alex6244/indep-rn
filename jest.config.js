@@ -1,0 +1,8 @@
+/** @type {import('jest').Config} */
+module.exports = {
+  preset: "jest-expo",
+  roots: ["<rootDir>/src"],
+  testMatch: ["**/__tests__/**/*.test.ts", "**/__tests__/**/*.test.tsx"],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+  clearMocks: true,
+};

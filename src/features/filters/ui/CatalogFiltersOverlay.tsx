@@ -13,8 +13,9 @@ import { EntitiesToggle } from "../../../widgets/entitiesToggle/EntitiesToggle";
 import { MarkButton } from "./MarkButton";
 import { CarSearchFiltersBottomPanel } from "./CarSearchFiltersBottomPanel";
 import { MileageRangePicker } from "./MileageRangePicker";
+import type { PaymentType } from "../../catalog/hooks/useCatalogFiltersController";
 
-function BackCaretBlack({ width = 18, height = 18 }) {
+function BackCaretBlack({ width = 18, height = 18 }: { width?: number; height?: number }) {
   return (
     <Svg width={width} height={height} viewBox="0 0 18 18">
       <Path
@@ -25,9 +26,45 @@ function BackCaretBlack({ width = 18, height = 18 }) {
   );
 }
 
-function onlyDigits(s) {
+function onlyDigits(s: string): string {
   return String(s ?? "").replace(/\D/g, "");
 }
+
+type CatalogFiltersOverlayProps = {
+  brandQuery: string;
+  onChangeBrandQuery: (v: string) => void;
+  modelQuery: string;
+  onChangeModelQuery: (v: string) => void;
+  paymentType: PaymentType;
+  onChangePaymentType: (v: PaymentType) => void;
+  priceFromText: string;
+  onChangePriceFromText: (v: string) => void;
+  priceToText: string;
+  onChangePriceToText: (v: string) => void;
+  yearFromText: string;
+  onChangeYearFromText: (v: string) => void;
+  yearToText: string;
+  onChangeYearToText: (v: string) => void;
+  mileageFromText: string;
+  onChangeMileageFromText: (v: string) => void;
+  mileageToText: string;
+  onChangeMileageToText: (v: string) => void;
+  hasDiscount: boolean;
+  onToggleHasDiscount: () => void;
+  vatReturn: boolean;
+  onToggleVatReturn: () => void;
+  weeklyOffer: boolean;
+  onToggleWeeklyOffer: () => void;
+  bodyTypes: string[];
+  onToggleBodyType: (label: string) => void;
+  features: string[];
+  onToggleFeature: (label: string) => void;
+  filteredCount?: number;
+  error: string | null;
+  onReset: () => void;
+  onApply: () => boolean;
+  onClose: () => void;
+};
 
 export function CatalogFiltersOverlay({
   brandQuery,
@@ -48,25 +85,22 @@ export function CatalogFiltersOverlay({
   onChangeMileageFromText,
   mileageToText,
   onChangeMileageToText,
-
   hasDiscount,
   onToggleHasDiscount,
   vatReturn,
   onToggleVatReturn,
   weeklyOffer,
   onToggleWeeklyOffer,
-
   bodyTypes,
   onToggleBodyType,
   features,
   onToggleFeature,
-
   filteredCount,
   error,
   onReset,
   onApply,
   onClose,
-}) {
+}: CatalogFiltersOverlayProps) {
   return (
     <View style={styles.root}>
       <ScrollView
@@ -139,9 +173,7 @@ export function CatalogFiltersOverlay({
               placeholder="От 2000"
               keyboardType="numeric"
               value={yearFromText}
-              onChangeText={(t) =>
-                onChangeYearFromText(onlyDigits(t).slice(0, 4))
-              }
+              onChangeText={(t) => onChangeYearFromText(onlyDigits(t).slice(0, 4))}
               style={[styles.input, styles.inputHalf]}
               placeholderTextColor="#979797"
             />
@@ -149,9 +181,7 @@ export function CatalogFiltersOverlay({
               placeholder="До 2026"
               keyboardType="numeric"
               value={yearToText}
-              onChangeText={(t) =>
-                onChangeYearToText(onlyDigits(t).slice(0, 4))
-              }
+              onChangeText={(t) => onChangeYearToText(onlyDigits(t).slice(0, 4))}
               style={[styles.input, styles.inputHalf]}
               placeholderTextColor="#979797"
             />
@@ -171,21 +201,9 @@ export function CatalogFiltersOverlay({
         <View style={styles.filterBlock}>
           <Text style={styles.filterLabel}></Text>
           <View style={styles.marksRow}>
-            <MarkButton
-              label="Со скидками"
-              selected={hasDiscount}
-              onToggle={onToggleHasDiscount}
-            />
-            <MarkButton
-              label="Возврат НДС"
-              selected={vatReturn}
-              onToggle={onToggleVatReturn}
-            />
-            <MarkButton
-              label="Предложение недели"
-              selected={weeklyOffer}
-              onToggle={onToggleWeeklyOffer}
-            />
+            <MarkButton label="Со скидками" selected={hasDiscount} onToggle={onToggleHasDiscount} />
+            <MarkButton label="Возврат НДС" selected={vatReturn} onToggle={onToggleVatReturn} />
+            <MarkButton label="Предложение недели" selected={weeklyOffer} onToggle={onToggleWeeklyOffer} />
           </View>
         </View>
 
@@ -206,12 +224,7 @@ export function CatalogFiltersOverlay({
         <View style={styles.filterBlock}>
           <Text style={styles.filterLabel}>Особенности</Text>
           <View style={styles.marksRow}>
-            {[
-              "Без ДТП",
-              "Отличное состояние",
-              "Маленький пробег",
-              "На гарантии",
-            ].map((m) => (
+            {["Без ДТП", "Отличное состояние", "Маленький пробег", "На гарантии"].map((m) => (
               <MarkButton
                 key={m}
                 label={m}
@@ -290,4 +303,3 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
 });
-

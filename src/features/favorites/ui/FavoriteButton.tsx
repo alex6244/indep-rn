@@ -3,7 +3,12 @@ import { TouchableOpacity, StyleSheet, View } from "react-native";
 import FavOutline from "../../../assets/icons/burger/favourites.svg";
 import FavFilled from "../../../assets/icons/favourite.svg";
 
-export const FavoriteButton = ({ initialActive = false, onChange }) => {
+type FavoriteButtonProps = {
+  initialActive?: boolean;
+  onChange?: (active: boolean) => void;
+};
+
+export const FavoriteButton = ({ initialActive = false, onChange }: FavoriteButtonProps) => {
   const [active, setActive] = useState(initialActive);
 
   useEffect(() => {
@@ -47,4 +52,3 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
-
