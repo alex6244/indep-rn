@@ -26,7 +26,7 @@ export default function RegisterScreen() {
   const [loading, setLoading] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [message, setMessage] = useState<{ tone: "error"; text: string } | null>(null);
-  const { register } = useAuth();
+  const { register, authError } = useAuth();
 
   const handleRegister = async () => {
     const trimmedName = name.trim();
@@ -69,12 +69,15 @@ export default function RegisterScreen() {
       if (result.success) {
         router.replace("/(tabs)/profile");
       } else {
+        const error = result.error ?? authError;
         const text =
-          result.code === "user_exists"
+          error?.code === "user_exists"
             ? "Пользователь с таким e-mail уже существует."
-            : result.code === "network_error"
+            : error?.code === "network_error"
               ? "Сервис авторизации недоступен или нет сети. Проверьте backend/подключение и попробуйте снова."
-              : "Сервис авторизации недоступен. Проверьте режим запуска (mock/api) и попробуйте снова.";
+              : error?.code === "invalid_credentials"
+                ? "Неверный e-mail или пароль."
+                : error?.message || "Сервис авторизации недоступен. Проверьте режим запуска (mock/api) и попробуйте снова.";
         setMessage({ tone: "error", text });
       }
     } finally {

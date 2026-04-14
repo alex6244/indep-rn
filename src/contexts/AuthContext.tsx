@@ -5,8 +5,10 @@ import { setRefreshHandler, setUnauthorizedHandler, tokenStorage, refreshTokenSt
 import { authService } from "../services/authService";
 import {
   type AuthCredentials,
+  type AuthError,
   AuthFlowError,
   type AuthErrorCode,
+  getDefaultAuthErrorMessage,
   type RegisterPayload,
 } from "../services/authTypes";
 
@@ -14,13 +16,14 @@ type AuthSource = "mock" | "api";
 
 export type AuthResult =
   | { success: true }
-  | { success: false; code: AuthErrorCode };
+  | { success: false; error: AuthError };
 
 type AuthContextType = {
   user: User | null;
   login: (credentials: AuthCredentials) => Promise<AuthResult>;
   register: (payload: RegisterPayload) => Promise<AuthResult>;
   logout: () => Promise<void>;
+  authError: AuthError | null;
   loading: boolean;
 };
 
@@ -39,11 +42,35 @@ function resolveAuthSource(): AuthSource {
   return fromEnv === "mock" ? "mock" : "api";
 }
 
-function normalizeAuthErrorCode(error: unknown): AuthErrorCode {
-  if (error instanceof AuthFlowError) {
-    return error.code;
+function normalizeAuthError(error: unknown): AuthError {
+  const fallback = (code: AuthErrorCode): AuthError => ({
+    code,
+    message: getDefaultAuthErrorMessage(code),
+  });
+
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    typeof (error as { code?: unknown }).code === "string"
+  ) {
+    const code = (error as { code: AuthErrorCode }).code;
+    const message = (error as { message?: unknown }).message;
+    return {
+      code,
+      message:
+        typeof message === "string" && message.trim().length > 0
+          ? message
+          : getDefaultAuthErrorMessage(code),
+    };
   }
-  return "unknown";
+  if (error instanceof AuthFlowError) {
+    return {
+      code: error.code,
+      message: error.message || getDefaultAuthErrorMessage(error.code),
+    };
+  }
+  return fallback("unknown");
 }
 
 async function persistSessionUser(user: User): Promise<void> {
@@ -133,7 +160,7 @@ function createApiAuthGateway(): AuthGateway {
         await persistSessionUser(me);
         return me;
       } catch (error) {
-        const code = normalizeAuthErrorCode(error);
+        const code = normalizeAuthError(error).code;
         if (code === "invalid_credentials" || code === "unknown") {
           await Promise.all([tokenStorage.clear(), AsyncStorage.removeItem(USER_KEY)]);
         }
@@ -160,6 +187,7 @@ function createApiAuthGateway(): AuthGateway {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState<AuthError | null>(null);
 
   const gateway = useMemo<AuthGateway>(() => {
     const source = resolveAuthSource();
@@ -203,9 +231,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const sessionUser = await gateway.login(credentials);
       setUser(sessionUser);
+      setAuthError(null);
       return { success: true };
     } catch (error) {
-      return { success: false, code: normalizeAuthErrorCode(error) };
+      const normalized = normalizeAuthError(error);
+      setAuthError(normalized);
+      return { success: false, error: normalized };
     }
   };
 
@@ -213,19 +244,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const sessionUser = await gateway.register(payload);
       setUser(sessionUser);
+      setAuthError(null);
       return { success: true };
     } catch (error) {
-      return { success: false, code: normalizeAuthErrorCode(error) };
+      const normalized = normalizeAuthError(error);
+      setAuthError(normalized);
+      return { success: false, error: normalized };
     }
   };
 
   const logout: AuthContextType["logout"] = async () => {
     await gateway.logout();
     setUser(null);
+    setAuthError(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, register, logout, authError, loading }}>
       {children}
     </AuthContext.Provider>
   );

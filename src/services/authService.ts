@@ -2,7 +2,9 @@ import { ApiError, api, tokenStorage, refreshTokenStorage } from "./api";
 import type { User } from "../data/users";
 import {
   type AuthCredentials,
-  AuthFlowError,
+  type AuthError,
+  type AuthErrorCode,
+  getDefaultAuthErrorMessage,
   type RegisterPayload,
 } from "./authTypes";
 
@@ -15,23 +17,26 @@ interface AuthResponse {
   user: User;
 }
 
-function mapAuthError(error: unknown): never {
+function mapAuthErrorCode(error: unknown): AuthErrorCode {
   if (error instanceof ApiError) {
-    if (error.status === 0) {
-      throw new AuthFlowError("network_error", error.message);
-    }
-    if (error.status === 401) {
-      throw new AuthFlowError("invalid_credentials", error.message);
-    }
-    if (error.status === 409) {
-      throw new AuthFlowError("user_exists", error.message);
-    }
-    throw new AuthFlowError("unknown", error.message);
+    if (error.status === 0) return "network_error";
+    if (error.status === 401) return "invalid_credentials";
+    if (error.status === 409) return "user_exists";
+    return "unknown";
   }
   if (error instanceof TypeError) {
-    throw new AuthFlowError("network_error", error.message);
+    return "network_error";
   }
-  throw new AuthFlowError("unknown");
+  return "unknown";
+}
+
+function mapAuthError(error: unknown): AuthError {
+  const code = mapAuthErrorCode(error);
+  const message =
+    error instanceof ApiError || error instanceof TypeError
+      ? (error.message?.trim() || getDefaultAuthErrorMessage(code))
+      : getDefaultAuthErrorMessage(code);
+  return { code, message };
 }
 
 export const authService = {
@@ -42,7 +47,7 @@ export const authService = {
       if (res.refresh_token) await refreshTokenStorage.set(res.refresh_token);
       return res.user;
     } catch (error) {
-      mapAuthError(error);
+      throw mapAuthError(error);
     }
   },
 
@@ -53,7 +58,7 @@ export const authService = {
       if (res.refresh_token) await refreshTokenStorage.set(res.refresh_token);
       return res.user;
     } catch (error) {
-      mapAuthError(error);
+      throw mapAuthError(error);
     }
   },
 
@@ -90,7 +95,7 @@ export const authService = {
     try {
       return await api.get<User>("/auth/me");
     } catch (error) {
-      mapAuthError(error);
+      throw mapAuthError(error);
     }
   },
 };

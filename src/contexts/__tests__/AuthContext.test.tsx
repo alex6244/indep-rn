@@ -18,7 +18,14 @@ jest.mock("../../services/api", () => ({
   tokenStorage: {
     get: jest.fn(),
     clear: jest.fn(),
+    set: jest.fn(),
   },
+  refreshTokenStorage: {
+    get: jest.fn(),
+    clear: jest.fn(),
+    set: jest.fn(),
+  },
+  setRefreshHandler: jest.fn(),
   setUnauthorizedHandler: jest.fn(),
 }));
 
@@ -35,6 +42,7 @@ const { tokenStorage } = jest.requireMock("../../services/api") as {
   tokenStorage: {
     get: jest.Mock;
     clear: jest.Mock;
+    set: jest.Mock;
   };
 };
 
@@ -153,8 +161,9 @@ describe("AuthContext restore/logout flow", () => {
 
     await flushAsync();
     await act(async () => {
-      const ok = await latestSnapshot?.login({ email: user.email, password: "123456" });
-      expect(ok).toBe(true);
+      const result = await latestSnapshot?.login({ email: user.email, password: "123456" });
+      expect(result).toEqual({ success: true });
+      expect(latestSnapshot?.authError).toBeNull();
     });
 
     await act(async () => {
@@ -183,14 +192,61 @@ describe("AuthContext restore/logout flow", () => {
 
     await flushAsync();
     await act(async () => {
-      const ok = await latestSnapshot?.login({
+      const result = await latestSnapshot?.login({
         email: "client@test.com",
         password: "client123",
       });
-      expect(ok).toBe(true);
+      expect(result).toEqual({ success: true });
+      expect(latestSnapshot?.authError).toBeNull();
     });
 
     expect(authService.login).not.toHaveBeenCalled();
     expect(latestSnapshot?.user?.email).toBe("client@test.com");
+  });
+
+  it("stores structured authError on login failure and clears it after success", async () => {
+    process.env.EXPO_PUBLIC_AUTH_SOURCE = "api";
+    const user = sampleUser();
+    authService.login
+      .mockRejectedValueOnce(new AuthFlowError("invalid_credentials", "Wrong credentials"))
+      .mockResolvedValueOnce(user);
+
+    const SnapshotProbe = createSnapshotProbe((snapshot) => {
+      latestSnapshot = snapshot;
+    });
+
+    await act(async () => {
+      TestRenderer.create(
+        <AuthProvider>
+          <SnapshotProbe />
+        </AuthProvider>,
+      );
+    });
+
+    await flushAsync();
+
+    await act(async () => {
+      const failed = await latestSnapshot?.login({
+        email: "client@test.com",
+        password: "bad-password",
+      });
+      expect(failed).toEqual({
+        success: false,
+        error: { code: "invalid_credentials", message: "Wrong credentials" },
+      });
+    });
+    expect(latestSnapshot?.authError).toEqual({
+      code: "invalid_credentials",
+      message: "Wrong credentials",
+    });
+
+    await act(async () => {
+      const success = await latestSnapshot?.login({
+        email: "client@test.com",
+        password: "good-password",
+      });
+      expect(success).toEqual({ success: true });
+    });
+    expect(latestSnapshot?.authError).toBeNull();
   });
 });
