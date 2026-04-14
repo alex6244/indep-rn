@@ -22,7 +22,7 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [message, setMessage] = useState<{ tone: "error" | "info"; text: string } | null>(null);
-  const { login, loading: authLoading, authError } = useAuth();
+  const { login, loading: authLoading } = useAuth();
 
   const handleSubmit = async () => {
     if (authLoading) {
@@ -43,19 +43,19 @@ export default function LoginScreen() {
     }
 
     setLoading(true);
-    const success = await login({ email: trimmedEmail, password: trimmedPassword });
+    const result = await login({ email: trimmedEmail, password: trimmedPassword });
     setLoading(false);
 
-    if (success) {
+    if (result.success) {
       router.replace("/(tabs)/profile");
     } else {
-      const message =
-        authError === "invalid_credentials"
+      const text =
+        result.code === "invalid_credentials"
           ? "Неверный e-mail или пароль."
-          : authError === "network_error"
+          : result.code === "network_error"
             ? "Сервис авторизации недоступен или нет сети. Проверьте backend/подключение и попробуйте снова."
             : "Сервис авторизации недоступен. Проверьте режим запуска (mock/api) и попробуйте снова.";
-      setMessage({ tone: "error", text: message });
+      setMessage({ tone: "error", text });
     }
   };
 

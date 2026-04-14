@@ -12,13 +12,16 @@ import {
 
 type AuthSource = "mock" | "api";
 
+export type AuthResult =
+  | { success: true }
+  | { success: false; code: AuthErrorCode };
+
 type AuthContextType = {
   user: User | null;
-  login: (credentials: AuthCredentials) => Promise<boolean>;
-  register: (payload: RegisterPayload) => Promise<boolean>;
+  login: (credentials: AuthCredentials) => Promise<AuthResult>;
+  register: (payload: RegisterPayload) => Promise<AuthResult>;
   logout: () => Promise<void>;
   loading: boolean;
-  authError: AuthErrorCode | null;
 };
 
 type AuthGateway = {
@@ -157,7 +160,6 @@ function createApiAuthGateway(): AuthGateway {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [authError, setAuthError] = useState<AuthErrorCode | null>(null);
 
   const gateway = useMemo<AuthGateway>(() => {
     const source = resolveAuthSource();
@@ -198,37 +200,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login: AuthContextType["login"] = async (credentials) => {
-    setAuthError(null);
     try {
       const sessionUser = await gateway.login(credentials);
       setUser(sessionUser);
-      return true;
+      return { success: true };
     } catch (error) {
-      setAuthError(normalizeAuthErrorCode(error));
-      return false;
+      return { success: false, code: normalizeAuthErrorCode(error) };
     }
   };
 
   const register: AuthContextType["register"] = async (payload) => {
-    setAuthError(null);
     try {
       const sessionUser = await gateway.register(payload);
       setUser(sessionUser);
-      return true;
+      return { success: true };
     } catch (error) {
-      setAuthError(normalizeAuthErrorCode(error));
-      return false;
+      return { success: false, code: normalizeAuthErrorCode(error) };
     }
   };
 
   const logout: AuthContextType["logout"] = async () => {
-    setAuthError(null);
     await gateway.logout();
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading, authError }}>
+    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

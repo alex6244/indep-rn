@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { Href, Router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import type { Report } from "../../../../entities/report/types";
+import { reportService } from "../../../../services/reportService";
 import { reportsService } from "../../../../services/reportsService";
 import {
   type DraftReport,
@@ -67,10 +68,12 @@ export function usePickerReportConfirmController(router: Router) {
           setDefectsMode(parsed?.defects?.mode ?? "scheme");
         }
       } catch {
-        setNotice({
-          tone: "error",
-          message: "Не удалось прочитать черновик.",
-        });
+        if (!cancelled) {
+          setNotice({
+            tone: "error",
+            message: "Не удалось прочитать черновик.",
+          });
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -127,7 +130,7 @@ export function usePickerReportConfirmController(router: Router) {
     return false;
   }, [draftReport, reportsForDuplicateCheck]);
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!draftReport) return;
 
     if (isVinDuplicate) {
@@ -135,11 +138,16 @@ export function usePickerReportConfirmController(router: Router) {
       return;
     }
 
-    setNotice({
-      tone: "success",
-      message: "Заявка отправлена.",
-    });
-    router.push("/reports" as Href);
+    try {
+      await reportService.submit(draftReport);
+      await AsyncStorage.removeItem(PICKER_REPORT_DRAFT_STORAGE_KEY);
+      router.push("/reports" as Href);
+    } catch {
+      setNotice({
+        tone: "error",
+        message: "Не удалось отправить отчёт. Попробуйте ещё раз.",
+      });
+    }
   };
 
   const handleEdit = () => {
