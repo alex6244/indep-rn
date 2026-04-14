@@ -1,6 +1,6 @@
 import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
-import type { Report } from "../../entities/report/types";
+import type { Report } from "../../types/report";
 import { shadowStyle } from "../../shared/theme/shadow";
 
 type Props = {

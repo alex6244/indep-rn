@@ -1,4 +1,4 @@
-import { ApiError, api, setUnauthorizedHandler, tokenStorage } from "../api";
+import { ApiError, api, setRefreshHandler, setUnauthorizedHandler, tokenStorage } from "../api";
 
 type MockResponseOptions = {
   status: number;
@@ -22,6 +22,35 @@ function createResponse({ status, body, text }: MockResponseOptions): Response {
   } as unknown as Response;
 }
 
+function encodeBase64Url(input: string): string {
+  const maybeBtoa = (globalThis as { btoa?: (value: string) => string }).btoa;
+  if (maybeBtoa) {
+    return maybeBtoa(input).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+  }
+  const maybeBuffer = (
+    globalThis as {
+      Buffer?: {
+        from: (value: string, encoding: string) => { toString: (encoding: string) => string };
+      };
+    }
+  ).Buffer;
+  if (maybeBuffer) {
+    return maybeBuffer
+      .from(input, "utf8")
+      .toString("base64")
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/g, "");
+  }
+  throw new Error("No base64 encoder available in test runtime");
+}
+
+function createJwtWithExp(exp: number): string {
+  const header = encodeBase64Url(JSON.stringify({ alg: "HS256", typ: "JWT" }));
+  const payload = encodeBase64Url(JSON.stringify({ exp }));
+  return `${header}.${payload}.signature`;
+}
+
 describe("api retry/abort/401 policy", () => {
   const fetchMock = jest.fn();
 
@@ -31,10 +60,12 @@ describe("api retry/abort/401 policy", () => {
     fetchMock.mockReset();
     (globalThis as { fetch?: typeof fetch }).fetch = fetchMock as unknown as typeof fetch;
     setUnauthorizedHandler(null);
+    setRefreshHandler(null);
   });
 
   afterEach(() => {
     setUnauthorizedHandler(null);
+    setRefreshHandler(null);
     jest.restoreAllMocks();
   });
 
@@ -116,5 +147,50 @@ describe("api retry/abort/401 policy", () => {
     expect(e2).toBeInstanceOf(ApiError);
     expect(e1.status).toBe(401);
     expect(e2.status).toBe(401);
+  });
+
+  it("refreshes expired access token before request", async () => {
+    const expiredToken = createJwtWithExp(Math.floor(Date.now() / 1000) - 120);
+    const refreshedToken = "fresh-access-token";
+    jest.spyOn(tokenStorage, "get").mockResolvedValue(expiredToken);
+    const tokenSetSpy = jest.spyOn(tokenStorage, "set").mockResolvedValue();
+    const refreshHandler = jest.fn(async () => refreshedToken);
+    setRefreshHandler(refreshHandler);
+    fetchMock.mockResolvedValue(createResponse({ status: 200, body: { ok: true } }));
+
+    await expect(api.get<{ ok: boolean }>("/secure")).resolves.toEqual({ ok: true });
+
+    expect(refreshHandler).toHaveBeenCalledTimes(1);
+    expect(tokenSetSpy).toHaveBeenCalledWith(refreshedToken);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const requestInit = fetchMock.mock.calls[0][1] as RequestInit;
+    expect((requestInit.headers as Record<string, string>)["Authorization"]).toBe(
+      `Bearer ${refreshedToken}`,
+    );
+  });
+
+  it("does not pre-refresh when token exp is still valid", async () => {
+    const validToken = createJwtWithExp(Math.floor(Date.now() / 1000) + 600);
+    jest.spyOn(tokenStorage, "get").mockResolvedValue(validToken);
+    const refreshHandler = jest.fn(async () => "unused-token");
+    setRefreshHandler(refreshHandler);
+    fetchMock.mockResolvedValue(createResponse({ status: 200, body: { ok: true } }));
+
+    await expect(api.get<{ ok: boolean }>("/secure")).resolves.toEqual({ ok: true });
+
+    expect(refreshHandler).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not crash preflight on invalid JWT payload", async () => {
+    jest.spyOn(tokenStorage, "get").mockResolvedValue("broken.payload.token");
+    const refreshHandler = jest.fn(async () => "unused-token");
+    setRefreshHandler(refreshHandler);
+    fetchMock.mockResolvedValue(createResponse({ status: 200, body: { ok: true } }));
+
+    await expect(api.get<{ ok: boolean }>("/secure")).resolves.toEqual({ ok: true });
+
+    expect(refreshHandler).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });

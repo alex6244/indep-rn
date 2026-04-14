@@ -1,8 +1,13 @@
 import { ApiError, api } from "./api";
-import type { Report } from "../entities/report/types";
+import type { Report } from "../types/report";
 import { reports as mockReports, getReportById as getMockReportById } from "../data/reports";
 
 type ReportsSource = "mock" | "api";
+type ApiReport = Report;
+
+export function mapApiReportToReport(apiReport: ApiReport): Report {
+  return { ...apiReport };
+}
 
 function getReportsSource(): ReportsSource {
   const raw = process.env.EXPO_PUBLIC_REPORTS_SOURCE?.trim().toLowerCase();
@@ -26,7 +31,8 @@ export const reportsService = {
     }
 
     try {
-      return await api.get<Report[]>("/reports/purchased");
+      const response = await api.get<ApiReport[]>("/reports/purchased");
+      return response.map(mapApiReportToReport);
     } catch (error) {
       throw new Error(mapReportsError(error));
     }
@@ -41,7 +47,8 @@ export const reportsService = {
     }
 
     try {
-      return await api.get<Report>(`/reports/${id}`);
+      const response = await api.get<ApiReport>(`/reports/${id}`);
+      return mapApiReportToReport(response);
     } catch (error) {
       throw new Error(mapReportsError(error));
     }
@@ -52,7 +59,8 @@ export const reportsService = {
     }
 
     try {
-      return await api.get<Report[]>("/reports/purchased");
+      const response = await api.get<ApiReport[]>("/reports/purchased");
+      return response.map(mapApiReportToReport);
     } catch (error) {
       throw new Error(mapReportsError(error));
     }

@@ -8,7 +8,7 @@ import { styles } from "../../shared/styles/profile.styles";
 import { ScreenStateEmpty } from "../../shared/ui/ScreenStateEmpty";
 import { ScreenStateLoading } from "../../shared/ui/ScreenStateLoading";
 import { reportsService } from "../../services/reportsService";
-import type { Report } from "../../entities/report/types";
+import type { Report } from "../../types/report";
 
 export default function ProfileTab() {
   const router = useRouter();

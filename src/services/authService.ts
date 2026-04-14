@@ -17,6 +17,10 @@ interface AuthResponse {
   user: User;
 }
 
+function requiresRefreshRotation(): boolean {
+  return process.env.EXPO_PUBLIC_REQUIRE_REFRESH_ROTATION === "true";
+}
+
 function mapAuthErrorCode(error: unknown): AuthErrorCode {
   if (error instanceof ApiError) {
     if (error.status === 0) return "network_error";
@@ -84,7 +88,14 @@ export const authService = {
         { refresh_token: storedRefreshToken },
         { _skipRefresh: true },
       );
-      if (res.refresh_token) await refreshTokenStorage.set(res.refresh_token);
+      // When rotation is required, backend must always return a fresh refresh_token.
+      const nextRefreshToken = res.refresh_token?.trim();
+      if (nextRefreshToken) {
+        await refreshTokenStorage.set(nextRefreshToken);
+      } else if (requiresRefreshRotation()) {
+        await Promise.all([refreshTokenStorage.clear(), tokenStorage.clear()]);
+        return null;
+      }
       return res.token;
     } catch {
       return null;

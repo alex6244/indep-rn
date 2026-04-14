@@ -1,7 +1,7 @@
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { useRouter, type Href } from "expo-router";
-import type { Report } from "../entities/report/types";
+import type { Report } from "../types/report";
 import { ReportsBreadcrumb } from "../widgets/reports/ReportsBreadcrumb";
 import { ReportsHeader } from "../widgets/reports/ReportsHeader";
 import { ReportsList } from "../widgets/reports/ReportsList";

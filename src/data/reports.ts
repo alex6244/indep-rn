@@ -1,4 +1,4 @@
-import type { Report } from "../entities/report/types";
+import type { Report } from "../types/report";
 
 /** Local bundled images (no network) for mocks */
 import PLACEHOLDER_MAIN from "../assets/logo.png";

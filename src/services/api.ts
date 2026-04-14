@@ -256,6 +256,56 @@ function sleep(ms: number) {
   });
 }
 
+function decodeBase64Url(input: string): string | null {
+  const normalized = input.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = normalized.padEnd(normalized.length + ((4 - (normalized.length % 4)) % 4), "=");
+  try {
+    if (typeof globalThis.atob === "function") {
+      return globalThis.atob(padded);
+    }
+    const maybeBuffer = (globalThis as { Buffer?: { from: (v: string, enc: string) => { toString: (enc: string) => string } } }).Buffer;
+    if (maybeBuffer) {
+      return maybeBuffer.from(padded, "base64").toString("utf8");
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export function decodeJwtPayload(token: string): Record<string, unknown> | null {
+  const parts = token.split(".");
+  if (parts.length !== 3) return null;
+  const payloadRaw = decodeBase64Url(parts[1]);
+  if (!payloadRaw) return null;
+  try {
+    const parsed: unknown = JSON.parse(payloadRaw);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+    return parsed as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
+export function getTokenExp(token: string): number | null {
+  const payload = decodeJwtPayload(token);
+  if (!payload) return null;
+  const exp = payload.exp;
+  if (typeof exp === "number" && Number.isFinite(exp)) return exp;
+  if (typeof exp === "string") {
+    const numeric = Number(exp);
+    if (Number.isFinite(numeric)) return numeric;
+  }
+  return null;
+}
+
+export function isTokenExpired(token: string, leewaySec = 30): boolean {
+  const exp = getTokenExp(token);
+  if (exp == null) return false;
+  const nowSec = Math.floor(Date.now() / 1000);
+  return exp <= nowSec + Math.max(0, leewaySec);
+}
+
 function isAbortError(error: unknown): boolean {
   return (
     typeof error === "object" &&
@@ -326,7 +376,18 @@ async function tryRefreshToken(): Promise<string | null> {
 }
 
 async function requestOnce<T>(path: string, options: RequestOptions): Promise<T> {
-  const token = await tokenStorage.get();
+  let token = await tokenStorage.get();
+  if (token && !options._skipRefresh && isTokenExpired(token)) {
+    const refreshedToken = await tryRefreshToken();
+    if (refreshedToken) {
+      await tokenStorage.set(refreshedToken);
+      token = refreshedToken;
+    } else {
+      await Promise.all([tokenStorage.clear(), refreshTokenStorage.clear()]);
+      await triggerUnauthorizedHandler();
+      throw new ApiError(401, "Session expired");
+    }
+  }
   const timeoutMs = options.timeoutMs ?? getRequestTimeoutMs();
 
   const headers: Record<string, string> = {

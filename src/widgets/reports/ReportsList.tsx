@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import { ClientReportCard } from "../profile/ClientReportCard";
-import type { Report } from "../../entities/report/types";
+import type { Report } from "../../types/report";
 
 type Props = {
   reports: Report[];

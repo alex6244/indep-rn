@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { Href, Router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import type { Report } from "../../../../entities/report/types";
+import type { Report } from "../../../../types/report";
 import { reportService } from "../../../../services/reportService";
 import { reportsService } from "../../../../services/reportsService";
 import {

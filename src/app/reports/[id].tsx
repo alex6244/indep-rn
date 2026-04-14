@@ -1,7 +1,7 @@
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useLocalSearchParams, useRouter, type Href } from "expo-router";
-import type { Report } from "../../entities/report/types";
+import type { Report } from "../../types/report";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ReportsBreadcrumb } from "../../widgets/reports/ReportsBreadcrumb";
 import { ReportDetailsActions } from "../../widgets/reports/ReportDetailsActions";
