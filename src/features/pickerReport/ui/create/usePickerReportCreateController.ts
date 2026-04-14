@@ -115,23 +115,21 @@ export function usePickerReportCreateController() {
     setDraftReport((p) => ({ ...p, defects: next }));
   }, []);
 
-  const saveDraftAndContinue = useCallback(() => {
-    void (async () => {
-      try {
-        await AsyncStorage.setItem(
-          PICKER_REPORT_DRAFT_STORAGE_KEY,
-          JSON.stringify(draftReport),
-        );
-      } catch {
-        setNotice({
-          tone: "error",
-          message: "Не удалось сохранить черновик. Попробуйте ещё раз.",
-        });
-        return;
-      }
+  const saveDraftAndContinue = useCallback(async () => {
+    try {
+      await AsyncStorage.setItem(
+        PICKER_REPORT_DRAFT_STORAGE_KEY,
+        JSON.stringify(draftReport),
+      );
+    } catch {
+      setNotice({
+        tone: "error",
+        message: "Не удалось сохранить черновик. Попробуйте ещё раз.",
+      });
+      return;
+    }
 
-      router.push("/selection-confirm" as Href);
-    })();
+    router.push("/selection-confirm" as Href);
   }, [draftReport, router]);
 
   return {

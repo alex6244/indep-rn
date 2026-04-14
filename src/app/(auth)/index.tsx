@@ -15,6 +15,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { AuthHeader } from "../../widgets/header/AuthHeader";
 import { InlineMessage } from "../../shared/ui/InlineMessage";
 import { shadowStyle } from "../../shared/theme/shadow";
+import { isEmailValid, normalizeEmail } from "../../shared/validation/authValidation";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -32,8 +33,7 @@ export default function LoginScreen() {
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
+    if (!isEmailValid(normalizeEmail(trimmedEmail))) {
       setMessage({ tone: "error", text: "Введите корректный e-mail." });
       return;
     }
@@ -43,7 +43,7 @@ export default function LoginScreen() {
     }
 
     setLoading(true);
-    const result = await login({ email: trimmedEmail, password: trimmedPassword });
+    const result = await login({ email: normalizeEmail(trimmedEmail), password: trimmedPassword });
     setLoading(false);
 
     if (result.success) {

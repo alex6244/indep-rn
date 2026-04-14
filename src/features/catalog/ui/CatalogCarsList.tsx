@@ -16,7 +16,7 @@ type CatalogStyles = typeof import("./Catalog.styles").catalogStyles;
 
 type CatalogCarCardProps = {
   car: Car;
-  isFavorite: (carId: string) => boolean;
+  isFavorite: boolean;
   setFavorite: (carId: string, next: boolean) => void;
   styles: CatalogStyles;
 };
@@ -75,7 +75,7 @@ function CatalogCarCard({ car, isFavorite, setFavorite, styles }: CatalogCarCard
         </TouchableOpacity>
         <View style={styles.carFavWrap}>
           <FavoriteButton
-            initialActive={isFavorite(String(car.id))}
+            initialActive={isFavorite}
             onChange={(next: boolean) => setFavorite(String(car.id), next)}
           />
         </View>
@@ -89,16 +89,23 @@ function CatalogCarCard({ car, isFavorite, setFavorite, styles }: CatalogCarCard
   );
 }
 
+const MemoCatalogCarCard = React.memo(CatalogCarCard, (prev, next) =>
+  prev.car === next.car &&
+  prev.isFavorite === next.isFavorite &&
+  prev.setFavorite === next.setFavorite &&
+  prev.styles === next.styles,
+);
+
 export function CatalogCarsList({ displayedCars, isFavorite, setFavorite, styles }: CatalogCarsListProps) {
   if (displayedCars.length === 0) {
     return <Text style={styles.emptyStateText}>Ничего не найдено</Text>;
   }
 
   return displayedCars.map((car) => (
-    <CatalogCarCard
+    <MemoCatalogCarCard
       key={car.id}
       car={car}
-      isFavorite={isFavorite}
+      isFavorite={isFavorite(String(car.id))}
       setFavorite={setFavorite}
       styles={styles}
     />

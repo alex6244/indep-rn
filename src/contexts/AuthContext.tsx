@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { mockUsers, type User } from "../data/users";
+import { getMockUsers, type User } from "../data/users";
 import { setRefreshHandler, setUnauthorizedHandler, tokenStorage, refreshTokenStorage } from "../services/api";
 import { authService } from "../services/authService";
 import {
@@ -104,10 +104,34 @@ async function readSessionUser(): Promise<User | null> {
   }
 }
 
+function parseMockToken(token: string | null): { userId: string; issuedAt: number } | null {
+  if (!token) return null;
+  const match = /^mock_(.+)_(\d+)$/.exec(token);
+  if (!match) return null;
+  const issuedAt = Number(match[2]);
+  if (!Number.isFinite(issuedAt) || issuedAt <= 0) return null;
+  return { userId: match[1], issuedAt };
+}
+
 function createMockAuthGateway(): AuthGateway {
   return {
-    checkAuth: async () => readSessionUser(),
+    checkAuth: async () => {
+      const token = await tokenStorage.get();
+      const parsedToken = parseMockToken(token);
+      if (!parsedToken) {
+        if (token) await Promise.all([tokenStorage.clear(), AsyncStorage.removeItem(USER_KEY)]);
+        return null;
+      }
+
+      const sessionUser = await readSessionUser();
+      if (!sessionUser || sessionUser.id !== parsedToken.userId) {
+        await Promise.all([tokenStorage.clear(), AsyncStorage.removeItem(USER_KEY)]);
+        return null;
+      }
+      return sessionUser;
+    },
     login: async (credentials) => {
+      const mockUsers = getMockUsers();
       const trimmedEmail = credentials.email.trim();
       const found = [mockUsers.client, mockUsers.picker].find(
         (u) =>
@@ -123,6 +147,7 @@ function createMockAuthGateway(): AuthGateway {
       return sessionUser;
     },
     register: async (payload) => {
+      const mockUsers = getMockUsers();
       const trimmedEmail = payload.email.trim();
       const exists = [mockUsers.client, mockUsers.picker].some(
         (u) => (u.email ?? "").trim().toLowerCase() === trimmedEmail.toLowerCase(),

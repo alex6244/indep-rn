@@ -16,6 +16,11 @@ import { FONT_FAMILY } from "../../shared/theme/fonts";
 import { InlineMessage } from "../../shared/ui/InlineMessage";
 import { shadowStyle } from "../../shared/theme/shadow";
 import { AuthHeader } from "../../widgets/header/AuthHeader";
+import {
+  getPasswordStrength,
+  isEmailValid,
+  normalizeEmail,
+} from "../../shared/validation/authValidation";
 
 export default function RegisterScreen() {
   const [name, setName] = useState("");
@@ -42,14 +47,18 @@ export default function RegisterScreen() {
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
+    const normalizedEmail = normalizeEmail(trimmedEmail);
+    if (!isEmailValid(normalizedEmail)) {
       setMessage({ tone: "error", text: "Введите корректный e-mail." });
       return;
     }
 
-    if (password.trim().length < 6) {
-      setMessage({ tone: "error", text: "Пароль должен быть не короче 6 символов." });
+    const { isStrongEnough, feedback } = getPasswordStrength(password.trim(), [
+      trimmedName,
+      normalizedEmail,
+    ]);
+    if (!isStrongEnough) {
+      setMessage({ tone: "error", text: feedback ?? "Придумайте более надёжный пароль." });
       return;
     }
 
@@ -62,7 +71,7 @@ export default function RegisterScreen() {
     try {
       const result = await register({
         name: trimmedName,
-        email: trimmedEmail,
+        email: normalizeEmail(trimmedEmail),
         password: password.trim(),
         role,
       });

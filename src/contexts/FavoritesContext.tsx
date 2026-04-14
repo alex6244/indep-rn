@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 
@@ -29,6 +30,8 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [favoritesError, setFavoritesError] = useState<string | null>(null);
+  const favoriteIdsRef = useRef<string[]>([]);
+  const persistQueueRef = useRef<Promise<void>>(Promise.resolve());
 
   useEffect(() => {
     const load = async () => {
@@ -37,7 +40,9 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
         if (raw) {
           const parsed = JSON.parse(raw);
           if (Array.isArray(parsed)) {
-            setFavoriteIds(parsed.map(String));
+            const normalized = parsed.map(String);
+            favoriteIdsRef.current = normalized;
+            setFavoriteIds(normalized);
           }
         }
       } catch {
@@ -55,34 +60,40 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
     [favoriteIds],
   );
 
+  const persistFavoriteUpdate = useCallback((updater: (prev: string[]) => string[]) => {
+    persistQueueRef.current = persistQueueRef.current
+      .then(async () => {
+        const prev = favoriteIdsRef.current;
+        const next = updater(prev);
+        if (next === prev) return;
+
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+        favoriteIdsRef.current = next;
+        setFavoriteIds(next);
+      })
+      .catch(() => {
+        setFavoritesError("Не удалось сохранить избранное");
+      });
+  }, []);
+
   const setFavorite = useCallback((id: string, value: boolean) => {
     const sId = String(id);
-    setFavoriteIds((prev) => {
+    persistFavoriteUpdate((prev) => {
       const next = value
         ? prev.includes(sId) ? prev : [...prev, sId]
         : prev.filter((x) => x !== sId);
-      if (next === prev) return prev;
-      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next)).catch(() => {
-        setFavoriteIds(prev);
-        setFavoritesError("Не удалось сохранить избранное");
-      });
       return next;
     });
-  }, []);
+  }, [persistFavoriteUpdate]);
 
   const toggleFavorite = useCallback((id: string) => {
     const sId = String(id);
-    setFavoriteIds((prev) => {
-      const next = prev.includes(sId)
-        ? prev.filter((x) => x !== sId)
-        : [...prev, sId];
-      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next)).catch(() => {
-        setFavoriteIds(prev);
-        setFavoritesError("Не удалось сохранить избранное");
-      });
+    persistFavoriteUpdate((prev) => {
+      const wasInFavorites = prev.includes(sId);
+      const next = wasInFavorites ? prev.filter((x) => x !== sId) : [...prev, sId];
       return next;
     });
-  }, []);
+  }, [persistFavoriteUpdate]);
 
   return (
     <FavoritesContext.Provider
