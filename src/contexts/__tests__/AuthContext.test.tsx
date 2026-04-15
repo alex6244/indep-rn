@@ -38,12 +38,20 @@ const { authService } = jest.requireMock("../../services/authService") as {
   };
 };
 
-const { tokenStorage } = jest.requireMock("../../services/api") as {
+const { tokenStorage, refreshTokenStorage, setUnauthorizedHandler } = jest.requireMock(
+  "../../services/api",
+) as {
   tokenStorage: {
     get: jest.Mock;
     clear: jest.Mock;
     set: jest.Mock;
   };
+  refreshTokenStorage: {
+    get: jest.Mock;
+    clear: jest.Mock;
+    set: jest.Mock;
+  };
+  setUnauthorizedHandler: jest.Mock;
 };
 
 type AuthSnapshot = ReturnType<typeof useAuth>;
@@ -86,6 +94,7 @@ describe("AuthContext restore/logout flow", () => {
     process.env.EXPO_PUBLIC_MOCK_PICKER_PASSWORD = "picker123";
     tokenStorage.get.mockResolvedValue(null);
     tokenStorage.clear.mockResolvedValue(undefined);
+    refreshTokenStorage.clear.mockResolvedValue(undefined);
     authService.me.mockReset();
     authService.login.mockReset();
     authService.register.mockReset();
@@ -173,6 +182,43 @@ describe("AuthContext restore/logout flow", () => {
     });
 
     expect(authService.logout).toHaveBeenCalledTimes(1);
+    expect(AsyncStorage.removeItem).toHaveBeenCalledWith("@auth/user");
+    expect(latestSnapshot?.user).toBeNull();
+  });
+
+  it("clears refresh token in unauthorized handler", async () => {
+    process.env.EXPO_PUBLIC_AUTH_SOURCE = "api";
+    const user = sampleUser();
+    authService.login.mockResolvedValue(user);
+
+    const SnapshotProbe = createSnapshotProbe((snapshot) => {
+      latestSnapshot = snapshot;
+    });
+
+    await act(async () => {
+      TestRenderer.create(
+        <AuthProvider>
+          <SnapshotProbe />
+        </AuthProvider>,
+      );
+    });
+
+    await flushAsync();
+    await act(async () => {
+      await latestSnapshot?.login({ email: user.email, password: "123456" });
+    });
+    expect(latestSnapshot?.user?.id).toBe(user.id);
+
+    const unauthorizedHandler = setUnauthorizedHandler.mock.calls.find(
+      ([handler]) => typeof handler === "function",
+    )?.[0] as (() => Promise<void>) | undefined;
+    expect(unauthorizedHandler).toBeDefined();
+
+    await act(async () => {
+      await unauthorizedHandler?.();
+    });
+
+    expect(refreshTokenStorage.clear).toHaveBeenCalledTimes(1);
     expect(AsyncStorage.removeItem).toHaveBeenCalledWith("@auth/user");
     expect(latestSnapshot?.user).toBeNull();
   });

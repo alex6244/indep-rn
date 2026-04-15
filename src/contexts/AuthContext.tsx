@@ -235,6 +235,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     setUnauthorizedHandler(async () => {
+      await refreshTokenStorage.clear();
       await AsyncStorage.removeItem(USER_KEY);
       setUser(null);
     });
