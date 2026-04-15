@@ -34,6 +34,7 @@ export const reportsService = {
       const response = await api.get<ApiReport[]>("/reports/purchased");
       return response.map(mapApiReportToReport);
     } catch (error) {
+      // TODO(architecture): migrate service error contracts to a shared AppError format.
       throw new Error(mapReportsError(error));
     }
   },
@@ -50,6 +51,7 @@ export const reportsService = {
       const response = await api.get<ApiReport>(`/reports/${id}`);
       return mapApiReportToReport(response);
     } catch (error) {
+      // TODO(architecture): migrate service error contracts to a shared AppError format.
       throw new Error(mapReportsError(error));
     }
   },
@@ -62,6 +64,7 @@ export const reportsService = {
       const response = await api.get<ApiReport[]>("/reports/purchased");
       return response.map(mapApiReportToReport);
     } catch (error) {
+      // TODO(architecture): migrate service error contracts to a shared AppError format.
       throw new Error(mapReportsError(error));
     }
   },

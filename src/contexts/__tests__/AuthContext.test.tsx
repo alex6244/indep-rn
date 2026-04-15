@@ -3,7 +3,7 @@ import React from "react";
 import TestRenderer, { act } from "react-test-renderer";
 import { AuthProvider, useAuth } from "../AuthContext";
 import { AuthFlowError } from "../../services/authTypes";
-import type { User } from "../../data/users";
+import type { User } from "../../types/user";
 
 jest.mock("../../services/authService", () => ({
   authService: {

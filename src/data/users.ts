@@ -1,13 +1,6 @@
-export type UserRole = "client" | "picker";
+import type { User } from "../types/user";
 
-export interface User {
-  id: string;
-  login: string;
-  role: UserRole;
-  name: string;
-  phone?: string;
-  email: string;
-}
+export type { UserRole, User } from "../types/user";
 
 // Passwords are stored in .env.local (EXPO_PUBLIC_MOCK_*_PASSWORD), never in source.
 export type MockUserRecord = User & { password: string };

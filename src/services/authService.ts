@@ -1,5 +1,5 @@
 import { ApiError, api, tokenStorage, refreshTokenStorage } from "./api";
-import type { User } from "../data/users";
+import type { User } from "../types/user";
 import {
   type AuthCredentials,
   type AuthError,
@@ -11,10 +11,14 @@ import {
 // API transport/provider for auth endpoints: login/register/me/logout.
 // Source selection (mock|api via EXPO_PUBLIC_AUTH_SOURCE) is owned by AuthContext; UI works through useAuth().
 
-interface AuthResponse {
+type ApiAuthResponse = {
   token: string;
   refresh_token?: string;
   user: User;
+};
+
+function mapApiAuthResponseToDomainUser(response: ApiAuthResponse): User {
+  return response.user;
 }
 
 function requiresRefreshRotation(): boolean {
@@ -46,10 +50,10 @@ function mapAuthError(error: unknown): AuthError {
 export const authService = {
   login: async (data: AuthCredentials): Promise<User> => {
     try {
-      const res = await api.post<AuthResponse>("/auth/login", data);
+      const res = await api.post<ApiAuthResponse>("/auth/login", data);
       await tokenStorage.set(res.token);
       if (res.refresh_token) await refreshTokenStorage.set(res.refresh_token);
-      return res.user;
+      return mapApiAuthResponseToDomainUser(res);
     } catch (error) {
       throw mapAuthError(error);
     }
@@ -57,10 +61,10 @@ export const authService = {
 
   register: async (data: RegisterPayload): Promise<User> => {
     try {
-      const res = await api.post<AuthResponse>("/auth/register", data);
+      const res = await api.post<ApiAuthResponse>("/auth/register", data);
       await tokenStorage.set(res.token);
       if (res.refresh_token) await refreshTokenStorage.set(res.refresh_token);
-      return res.user;
+      return mapApiAuthResponseToDomainUser(res);
     } catch (error) {
       throw mapAuthError(error);
     }

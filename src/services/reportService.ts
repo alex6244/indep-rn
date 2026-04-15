@@ -1,7 +1,8 @@
 import { api } from "./api";
 import type { DraftReport } from "../features/pickerReport/ui/pickerReportTypes";
+import type { SubmittedReport } from "../types/submittedReport";
 
-export type ApiReport = {
+type ApiSubmittedReport = {
   id: string;
   carId: string;
   pickerId: string;
@@ -11,25 +12,25 @@ export type ApiReport = {
   data: DraftReport;
 };
 
-export type SubmittedReport = ApiReport;
-
-export function mapApiReportToSubmittedReport(apiReport: ApiReport): SubmittedReport {
+export function mapApiSubmittedReportToDomainSubmittedReport(
+  apiReport: ApiSubmittedReport,
+): SubmittedReport {
   return { ...apiReport };
 }
 
 export const reportService = {
   submit: async (draft: DraftReport): Promise<SubmittedReport> => {
-    const response = await api.post<ApiReport>("/reports", draft);
-    return mapApiReportToSubmittedReport(response);
+    const response = await api.post<ApiSubmittedReport>("/reports", draft);
+    return mapApiSubmittedReportToDomainSubmittedReport(response);
   },
 
   getById: async (id: string): Promise<SubmittedReport> => {
-    const response = await api.get<ApiReport>(`/reports/${id}`);
-    return mapApiReportToSubmittedReport(response);
+    const response = await api.get<ApiSubmittedReport>(`/reports/${id}`);
+    return mapApiSubmittedReportToDomainSubmittedReport(response);
   },
 
   getMy: async (): Promise<SubmittedReport[]> => {
-    const response = await api.get<ApiReport[]>("/reports/my");
-    return response.map(mapApiReportToSubmittedReport);
+    const response = await api.get<ApiSubmittedReport[]>("/reports/my");
+    return response.map(mapApiSubmittedReportToDomainSubmittedReport);
   },
 };

@@ -1,4 +1,4 @@
-import type { Car } from "../../../data/cars";
+import type { Car } from "../../../types/car";
 
 export function driveDisplay(car: Car): string {
   const label = car.driveLabel?.trim();

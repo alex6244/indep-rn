@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { getMockUsers, type User } from "../data/users";
+import { getMockUsers } from "../data/users";
+import type { User } from "../types/user";
 import { setRefreshHandler, setUnauthorizedHandler, tokenStorage, refreshTokenStorage } from "../services/api";
 import { authService } from "../services/authService";
 import {

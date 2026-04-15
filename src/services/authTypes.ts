@@ -1,4 +1,4 @@
-import type { UserRole } from "../data/users";
+import type { UserRole } from "../types/user";
 
 export type AuthCredentials = {
   email: string;

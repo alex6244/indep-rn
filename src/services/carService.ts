@@ -1,5 +1,6 @@
 import { ApiError, api } from "./api";
-import { cars as mockCars, type Car } from "../data/cars";
+import { cars as mockCars } from "../data/cars";
+import type { Car } from "../types/car";
 
 interface CarsParams {
   brand?: string;
@@ -11,6 +12,11 @@ interface CarsParams {
 }
 
 type CatalogSource = "mock" | "api";
+type ApiCar = Car;
+
+function mapApiCarToDomainCar(apiCar: ApiCar): Car {
+  return { ...apiCar };
+}
 
 function getCatalogSource(): CatalogSource {
   const raw = process.env.EXPO_PUBLIC_CATALOG_SOURCE?.trim().toLowerCase();
@@ -51,8 +57,10 @@ export const carService = {
     }
     const qs = query.toString();
     try {
-      return await api.get<Car[]>(`/cars${qs ? `?${qs}` : ""}`);
+      const response = await api.get<ApiCar[]>(`/cars${qs ? `?${qs}` : ""}`);
+      return response.map(mapApiCarToDomainCar);
     } catch (error) {
+      // TODO(architecture): migrate service error contracts to a shared AppError format.
       throw new Error(mapCarsError(error));
     }
   },
@@ -66,8 +74,10 @@ export const carService = {
       return car;
     }
     try {
-      return await api.get<Car>(`/cars/${id}`);
+      const response = await api.get<ApiCar>(`/cars/${id}`);
+      return mapApiCarToDomainCar(response);
     } catch (error) {
+      // TODO(architecture): migrate service error contracts to a shared AppError format.
       throw new Error(mapCarsError(error));
     }
   },

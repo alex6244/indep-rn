@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from "react";
-import type { Car } from "../../../data/cars";
+import type { Car } from "../../../types/car";
 
 const YEAR_MIN = 1880;
 const YEAR_MAX = new Date().getFullYear();
@@ -206,6 +206,10 @@ export function useCatalogFiltersController(cars: Car[]): CatalogFiltersControll
 
     if (mileageFrom != null && mileageTo != null && mileageFrom > mileageTo) {
       setError("Пробег (От) не должен быть больше пробега (До).");
+      return false;
+    }
+    if (priceFrom != null && priceTo != null && priceFrom > priceTo) {
+      setError("Цена (От) не должна быть больше цены (До).");
       return false;
     }
 

@@ -34,6 +34,13 @@
 - **Shared**: `src/shared/**`
   - Общие UI-компоненты, стили, конфиг, навигационные метрики.
 
+### DTO vs Domain Rule
+
+- API DTO типы (`ApiXxx`) живут только в `src/services/**`.
+- UI/Features/Widgets/Contexts должны работать только с domain-типами из `src/types/**`.
+- Mapping DTO -> Domain выполняется только внутри сервисов.
+- Временный технический долг: error-контракты сервисов частично различаются; планируется унификация на `AppError`.
+
 ## Навигация
 
 ### Корневой стек (`src/app/_layout.tsx`)
@@ -75,12 +82,12 @@
 ### `AuthContext` (`src/contexts/AuthContext.tsx`)
 
 - Публичный контракт:
-  - `login(credentials: { email: string; password: string }): Promise<boolean>`
-  - `register(payload: { name: string; email: string; password: string; role: UserRole }): Promise<boolean>`
+  - `login(credentials: { email: string; password: string }): Promise<{ success: true } | { success: false; error: { code: AuthErrorCode; message: string } }>`
+  - `register(payload: { name: string; email: string; password: string; role: UserRole }): Promise<{ success: true } | { success: false; error: { code: AuthErrorCode; message: string } }>`
   - `logout(): Promise<void>`
   - `user: User | null`
   - `loading: boolean`
-  - `authError: "invalid_credentials" | "user_exists" | "network_error" | "unknown" | null`
+  - `authError: { code: AuthErrorCode; message: string } | null`
 - Source переключается через `EXPO_PUBLIC_AUTH_SOURCE=mock|api`.
 - При `api`-source сессия восстанавливается через токен и `me()`-проверку.
 - `logout()` очищает токен и user-сессию.
@@ -108,9 +115,9 @@
 - Manual abort:
   - `Request aborted` не ретраится.
 - 401 policy:
-  - при `401` токен очищается через `tokenStorage.clear()`;
-  - вызывается обработчик из `setUnauthorizedHandler(...)`;
-  - наружу пробрасывается `ApiError(401, ...)`.
+  - preflight: access token проверяется по `exp`; при истечении выполняется refresh до запроса;
+  - fallback: при `401` выполняется единичный refresh retry (deduplicated);
+  - если refresh неуспешен: токены очищаются и вызывается `setUnauthorizedHandler(...)`.
 - Non-JSON ответы и transport-ошибки нормализуются в предсказуемые `ApiError`.
 
 ## Текущая структура экранов

@@ -1,5 +1,5 @@
 import React from "react";
-import type { Car } from "../../../data/cars";
+import type { Car } from "../../../types/car";
 import { Text, TouchableOpacity, View } from "react-native";
 import { ScreenStateEmpty } from "../../../shared/ui/ScreenStateEmpty";
 import { ScreenStateError } from "../../../shared/ui/ScreenStateError";

@@ -5,7 +5,7 @@ import type { View as RNView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useFavorites } from "../../../contexts/FavoritesContext";
-import type { Car } from "../../../data/cars";
+import type { Car } from "../../../types/car";
 import { useCatalogFiltersController, type SortOption } from "../hooks/useCatalogFiltersController";
 import { scrollBottomPaddingBelowTabBar } from "../../../shared/navigation/tabBarMetrics";
 import { getMainBurgerMenuItems, MainBurgerMenuFooter } from "../../../shared/config/mainBurgerMenu";

@@ -1,34 +1,6 @@
-export type CarId = string;
+import type { Car } from "../types/car";
 
-export interface Car {
-  id: CarId;
-  title: string;
-  brand: string;
-  price: number;
-  mileage: number;
-  year: number;
-  engine: string;
-  power: number;
-  driveType: string;
-  /** Подпись привода для карточки (например «Полный»). Иначе маппинг из driveType. */
-  driveLabel?: string;
-  /** КПП для строки ТС, напр. «AT», «MT». */
-  transmission?: string;
-  /** Топливо для строки ТС, напр. «Бензин». */
-  fuelType?: string;
-  address: string;
-  images: string[];
-
-  // Optional fields for catalog filters.
-  bodyType?: 'Седан' | 'Кроссовер' | 'Хэтчбек';
-  features?: string[];
-  paymentType?: 'cash' | 'credit';
-
-  // Flags for "pлашки" in catalog filters.
-  hasDiscount?: boolean;
-  vatReturn?: boolean;
-  weeklyOffer?: boolean;
-}
+export type { CarId, Car } from "../types/car";
 
 export const cars: Car[] = [
   {

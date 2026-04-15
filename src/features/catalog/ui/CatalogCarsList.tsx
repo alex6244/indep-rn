@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import type { Car } from "../../../data/cars";
+import type { Car } from "../../../types/car";
 import { FavoriteButton } from "../../favorites/ui/FavoriteButton";
 import { buildCarModelLine, buildCarSpecsLine } from "../utils/buildCarSpecsLine";
 
