@@ -135,7 +135,7 @@ export default function RegisterScreen() {
                 style={styles.input}
                 value={password}
                 onChangeText={setPassword}
-                placeholder="Минимум 6 символов"
+                placeholder="Придумайте надежный пароль"
                 secureTextEntry
                 autoCapitalize="none"
                 editable={!loading}

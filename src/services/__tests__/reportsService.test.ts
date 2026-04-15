@@ -1,24 +1,18 @@
-import type { Report } from "../../types/report";
-import { mapApiReportToReport } from "../reportsService";
+import { mapApiReportToReport, type ApiReport } from "../reportsService";
 
-function buildSampleReport(): Report {
-  const mainImage = { uri: "https://example.com/main.jpg" };
-  const carouselImage = { uri: "https://example.com/1.jpg" };
-  const schemeImage = { uri: "https://example.com/scheme.jpg" };
-  const defectsImage = { uri: "https://example.com/d1.jpg" };
-
+function buildSampleApiReport(): ApiReport {
   return {
     id: "r1",
     price: "1 200 000",
     title: "BMW 3",
     subtitle: "xDrive",
     city: "Moscow",
-    imageUrl: mainImage,
-    carouselImages: [carouselImage],
+    imageUrl: "https://example.com/main.jpg",
+    carouselImages: ["https://example.com/1.jpg"],
     photosCountText: "1 фото",
     defects: {
-      schemeImageUrl: schemeImage,
-      photoImageUrls: [defectsImage],
+      schemeImageUrl: "https://example.com/scheme.jpg",
+      photoImageUrls: ["https://example.com/d1.jpg"],
       summaryText: "Без серьезных дефектов",
     },
     ptsData: [{ label: "VIN", value: "XXX" }],
@@ -54,11 +48,20 @@ function buildSampleReport(): Report {
 
 describe("reportsService mapper", () => {
   it("maps api report to domain report", () => {
-    const apiReport = buildSampleReport();
+    const apiReport = buildSampleApiReport();
 
     const result = mapApiReportToReport(apiReport);
 
-    expect(result).toEqual(apiReport);
+    expect(result).toMatchObject({
+      ...apiReport,
+      imageUrl: { uri: "https://example.com/main.jpg" },
+      carouselImages: [{ uri: "https://example.com/1.jpg" }],
+      defects: {
+        ...apiReport.defects,
+        schemeImageUrl: { uri: "https://example.com/scheme.jpg" },
+        photoImageUrls: [{ uri: "https://example.com/d1.jpg" }],
+      },
+    });
     expect(result).not.toBe(apiReport);
   });
 });

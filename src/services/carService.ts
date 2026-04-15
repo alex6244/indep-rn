@@ -12,10 +12,52 @@ interface CarsParams {
 }
 
 type CatalogSource = "mock" | "api";
-type ApiCar = Car;
+type ApiCar = {
+  id: string;
+  title: string;
+  brand: string;
+  price: number;
+  mileage: number;
+  year: number;
+  engine: string;
+  power: number;
+  driveType: string;
+  driveLabel?: string;
+  transmission?: string;
+  fuelType?: string;
+  address: string;
+  images: string[];
+  bodyType?: "Седан" | "Кроссовер" | "Хэтчбек";
+  features?: string[];
+  paymentType?: "cash" | "credit";
+  hasDiscount?: boolean;
+  vatReturn?: boolean;
+  weeklyOffer?: boolean;
+};
 
 function mapApiCarToDomainCar(apiCar: ApiCar): Car {
-  return { ...apiCar };
+  return {
+    id: apiCar.id,
+    title: apiCar.title,
+    brand: apiCar.brand,
+    price: apiCar.price,
+    mileage: apiCar.mileage,
+    year: apiCar.year,
+    engine: apiCar.engine,
+    power: apiCar.power,
+    driveType: apiCar.driveType,
+    driveLabel: apiCar.driveLabel,
+    transmission: apiCar.transmission,
+    fuelType: apiCar.fuelType,
+    address: apiCar.address,
+    images: apiCar.images,
+    bodyType: apiCar.bodyType,
+    features: apiCar.features,
+    paymentType: apiCar.paymentType,
+    hasDiscount: apiCar.hasDiscount,
+    vatReturn: apiCar.vatReturn,
+    weeklyOffer: apiCar.weeklyOffer,
+  };
 }
 
 function getCatalogSource(): CatalogSource {

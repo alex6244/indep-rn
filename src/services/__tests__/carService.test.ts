@@ -33,6 +33,23 @@ const { api } = jest.requireMock("../api") as {
 const MockApiError = (jest.requireMock("../api") as { ApiError: new (status: number, message: string) => Error })
   .ApiError;
 
+function createApiCar(overrides?: Partial<Record<string, unknown>>) {
+  return {
+    id: "api-car-1",
+    title: "Skoda Octavia",
+    brand: "Skoda",
+    price: 1000000,
+    mileage: 50000,
+    year: 2021,
+    engine: "1.4",
+    power: 150,
+    driveType: "FWD",
+    address: "Moscow",
+    images: ["https://example.com/car.jpg"],
+    ...(overrides ?? {}),
+  };
+}
+
 describe("carService contract", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -47,7 +64,7 @@ describe("carService contract", () => {
 
   it("returns api response shape in api mode", async () => {
     process.env.EXPO_PUBLIC_CATALOG_SOURCE = "api";
-    const cars = [{ id: "api-car-1", brand: "Skoda", price: 1000000 }];
+    const cars = [createApiCar()];
     api.get.mockResolvedValue(cars);
 
     const result = await carService.getAll({ page: 2, limit: 20 });

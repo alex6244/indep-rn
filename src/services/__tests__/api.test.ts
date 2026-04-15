@@ -1,4 +1,11 @@
-import { ApiError, api, setRefreshHandler, setUnauthorizedHandler, tokenStorage } from "../api";
+import {
+  ApiError,
+  api,
+  resetApiBaseUrlCacheForTests,
+  setRefreshHandler,
+  setUnauthorizedHandler,
+  tokenStorage,
+} from "../api";
 
 type MockResponseOptions = {
   status: number;
@@ -55,6 +62,7 @@ describe("api retry/abort/401 policy", () => {
   const fetchMock = jest.fn();
 
   beforeEach(() => {
+    resetApiBaseUrlCacheForTests();
     process.env.EXPO_PUBLIC_API_URL = "https://api.example.com";
     process.env.EXPO_PUBLIC_ALLOW_HTTP_DEV = "false";
     fetchMock.mockReset();
@@ -64,6 +72,7 @@ describe("api retry/abort/401 policy", () => {
   });
 
   afterEach(() => {
+    resetApiBaseUrlCacheForTests();
     setUnauthorizedHandler(null);
     setRefreshHandler(null);
     jest.restoreAllMocks();
@@ -210,5 +219,26 @@ describe("api retry/abort/401 policy", () => {
 
     expect(refreshHandler).not.toHaveBeenCalled();
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("uses updated base URL after explicit cache reset", async () => {
+    process.env.EXPO_PUBLIC_API_URL = "https://first.example.com";
+    fetchMock.mockResolvedValue(createResponse({ status: 200, body: { ok: true } }));
+    await expect(api.get<{ ok: boolean }>("/cars")).resolves.toEqual({ ok: true });
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      1,
+      "https://first.example.com/cars",
+      expect.any(Object),
+    );
+
+    process.env.EXPO_PUBLIC_API_URL = "https://second.example.com";
+    resetApiBaseUrlCacheForTests();
+    fetchMock.mockResolvedValue(createResponse({ status: 200, body: { ok: true } }));
+    await expect(api.get<{ ok: boolean }>("/cars")).resolves.toEqual({ ok: true });
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      "https://second.example.com/cars",
+      expect.any(Object),
+    );
   });
 });

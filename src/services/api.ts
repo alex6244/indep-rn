@@ -36,6 +36,15 @@ function resolveBaseUrl(): string {
 
 let cachedBaseUrl: string | null = null;
 
+/**
+ * Test helper for deterministic API base URL behavior between tests.
+ * Intentionally a no-op outside test/dev environments.
+ */
+export function resetApiBaseUrlCacheForTests(): void {
+  if (process.env.NODE_ENV !== "test" && !__DEV__) return;
+  cachedBaseUrl = null;
+}
+
 function getBaseUrl(): string {
   if (!cachedBaseUrl) {
     cachedBaseUrl = resolveBaseUrl();
