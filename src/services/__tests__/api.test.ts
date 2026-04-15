@@ -149,6 +149,24 @@ describe("api retry/abort/401 policy", () => {
     expect(e2.status).toBe(401);
   });
 
+  it("does not force logout when refresh fails with transient error", async () => {
+    const clearSpy = jest.spyOn(tokenStorage, "clear").mockResolvedValue();
+    const unauthorizedHandler = jest.fn(async () => undefined);
+    setUnauthorizedHandler(unauthorizedHandler);
+    setRefreshHandler(async () => {
+      throw new ApiError(0, "Network request failed");
+    });
+    fetchMock.mockResolvedValue(createResponse({ status: 401, body: { message: "Unauthorized" } }));
+
+    await expect(api.get("/auth/me")).rejects.toMatchObject({
+      status: 0,
+      message: "Network request failed",
+    });
+
+    expect(clearSpy).not.toHaveBeenCalled();
+    expect(unauthorizedHandler).not.toHaveBeenCalled();
+  });
+
   it("refreshes expired access token before request", async () => {
     const expiredToken = createJwtWithExp(Math.floor(Date.now() / 1000) - 120);
     const refreshedToken = "fresh-access-token";

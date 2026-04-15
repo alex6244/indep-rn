@@ -25,6 +25,16 @@ function requiresRefreshRotation(): boolean {
   return process.env.EXPO_PUBLIC_REQUIRE_REFRESH_ROTATION === "true";
 }
 
+function isInvalidRefreshError(error: unknown): boolean {
+  return error instanceof ApiError && (error.status === 401 || error.status === 403);
+}
+
+function isTransientRefreshError(error: unknown): boolean {
+  if (error instanceof TypeError) return true;
+  if (!(error instanceof ApiError)) return false;
+  return error.status === 0 || error.status >= 500;
+}
+
 function mapAuthErrorCode(error: unknown): AuthErrorCode {
   if (error instanceof ApiError) {
     if (error.status === 0) return "network_error";
@@ -101,8 +111,15 @@ export const authService = {
         return null;
       }
       return res.token;
-    } catch {
-      return null;
+    } catch (error) {
+      if (isInvalidRefreshError(error)) {
+        await Promise.all([refreshTokenStorage.clear(), tokenStorage.clear()]);
+        return null;
+      }
+      if (isTransientRefreshError(error)) {
+        throw error;
+      }
+      throw new Error("Не удалось обновить сессию. Попробуйте ещё раз.");
     }
   },
 

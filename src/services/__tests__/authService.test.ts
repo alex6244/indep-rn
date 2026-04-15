@@ -31,7 +31,8 @@ jest.mock("../api", () => {
   };
 });
 
-const { api, tokenStorage, refreshTokenStorage } = jest.requireMock("../api") as {
+const { api, tokenStorage, refreshTokenStorage, ApiError } = jest.requireMock("../api") as {
+  ApiError: new (status: number, message: string) => Error;
   api: {
     post: jest.Mock;
     get: jest.Mock;
@@ -85,6 +86,36 @@ describe("authService.refresh rotation policy", () => {
     expect(tokenStorage.clear).toHaveBeenCalledTimes(1);
     expect(refreshTokenStorage.set).not.toHaveBeenCalled();
   });
+
+  it("invalidates session on refresh 401", async () => {
+    api.post.mockRejectedValue(new ApiError(401, "Unauthorized"));
+
+    const result = await authService.refresh();
+
+    expect(result).toBeNull();
+    expect(refreshTokenStorage.clear).toHaveBeenCalledTimes(1);
+    expect(tokenStorage.clear).toHaveBeenCalledTimes(1);
+  });
+
+  it("throws transient refresh network errors without forced cleanup", async () => {
+    api.post.mockRejectedValue(new ApiError(0, "Network request failed"));
+
+    await expect(authService.refresh()).rejects.toMatchObject({
+      message: "Network request failed",
+    });
+    expect(refreshTokenStorage.clear).not.toHaveBeenCalled();
+    expect(tokenStorage.clear).not.toHaveBeenCalled();
+  });
+
+  it("throws transient refresh 5xx errors without forced cleanup", async () => {
+    api.post.mockRejectedValue(new ApiError(500, "Server Error"));
+
+    await expect(authService.refresh()).rejects.toMatchObject({
+      message: "Server Error",
+    });
+    expect(refreshTokenStorage.clear).not.toHaveBeenCalled();
+    expect(tokenStorage.clear).not.toHaveBeenCalled();
+  });
 });
 
 describe("authService contract", () => {
@@ -119,7 +150,7 @@ describe("authService contract", () => {
   });
 
   it("login throws structured invalid_credentials error on 401", async () => {
-    const apiError = new (jest.requireMock("../api").ApiError)(401, "Unauthorized");
+    const apiError = new ApiError(401, "Unauthorized");
     api.post.mockRejectedValue(apiError);
 
     await expect(authService.login({ email: "user@test.com", password: "bad" })).rejects.toEqual({
@@ -185,7 +216,7 @@ describe("authService contract", () => {
   });
 
   it("me throws structured network_error for status 0", async () => {
-    const apiError = new (jest.requireMock("../api").ApiError)(0, "Network request failed");
+    const apiError = new ApiError(0, "Network request failed");
     api.get.mockRejectedValue(apiError);
 
     await expect(authService.me()).rejects.toEqual({
