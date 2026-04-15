@@ -54,6 +54,12 @@ const { tokenStorage, refreshTokenStorage, setUnauthorizedHandler } = jest.requi
   setUnauthorizedHandler: jest.Mock;
 };
 
+const asyncStorageMock = AsyncStorage as unknown as {
+  getItem: jest.Mock;
+  removeItem: jest.Mock;
+  setItem: jest.Mock;
+};
+
 type AuthSnapshot = ReturnType<typeof useAuth>;
 
 function createSnapshotProbe(onSnapshot: (snapshot: AuthSnapshot) => void) {
@@ -90,11 +96,15 @@ describe("AuthContext restore/logout flow", () => {
     latestSnapshot = null;
     jest.clearAllMocks();
     delete process.env.EXPO_PUBLIC_AUTH_SOURCE;
+    delete process.env.EXPO_PUBLIC_MOCK_TOKEN_TTL_MS;
     process.env.EXPO_PUBLIC_MOCK_CLIENT_PASSWORD = "client123";
     process.env.EXPO_PUBLIC_MOCK_PICKER_PASSWORD = "picker123";
     tokenStorage.get.mockResolvedValue(null);
     tokenStorage.clear.mockResolvedValue(undefined);
     refreshTokenStorage.clear.mockResolvedValue(undefined);
+    asyncStorageMock.getItem.mockResolvedValue(null);
+    asyncStorageMock.removeItem.mockResolvedValue(undefined);
+    asyncStorageMock.setItem.mockResolvedValue(undefined);
     authService.me.mockReset();
     authService.login.mockReset();
     authService.register.mockReset();
@@ -250,6 +260,94 @@ describe("AuthContext restore/logout flow", () => {
 
     expect(authService.login).not.toHaveBeenCalled();
     expect(latestSnapshot?.user?.email).toBe("client@test.com");
+  });
+
+  it("does not restore expired mock session and clears storage", async () => {
+    process.env.EXPO_PUBLIC_AUTH_SOURCE = "mock";
+    process.env.EXPO_PUBLIC_MOCK_TOKEN_TTL_MS = "1000";
+    const user = sampleUser();
+    const nowMs = 10_000;
+    const nowSpy = jest.spyOn(Date, "now").mockReturnValue(nowMs);
+    tokenStorage.get.mockResolvedValue(`mock_${user.id}_${nowMs - 1500}`);
+    asyncStorageMock.getItem.mockResolvedValue(JSON.stringify(user));
+
+    const SnapshotProbe = createSnapshotProbe((snapshot) => {
+      latestSnapshot = snapshot;
+    });
+
+    await act(async () => {
+      TestRenderer.create(
+        <AuthProvider>
+          <SnapshotProbe />
+        </AuthProvider>,
+      );
+    });
+
+    await flushAsync();
+
+    expect(tokenStorage.clear).toHaveBeenCalledTimes(1);
+    expect(asyncStorageMock.removeItem).toHaveBeenCalledWith("@auth/user");
+    expect(latestSnapshot?.loading).toBe(false);
+    expect(latestSnapshot?.user).toBeNull();
+    nowSpy.mockRestore();
+  });
+
+  it("restores fresh mock session within ttl", async () => {
+    process.env.EXPO_PUBLIC_AUTH_SOURCE = "mock";
+    process.env.EXPO_PUBLIC_MOCK_TOKEN_TTL_MS = "1000";
+    const user = sampleUser();
+    const nowMs = 20_000;
+    const nowSpy = jest.spyOn(Date, "now").mockReturnValue(nowMs);
+    tokenStorage.get.mockResolvedValue(`mock_${user.id}_${nowMs - 500}`);
+    asyncStorageMock.getItem.mockResolvedValue(JSON.stringify(user));
+
+    const SnapshotProbe = createSnapshotProbe((snapshot) => {
+      latestSnapshot = snapshot;
+    });
+
+    await act(async () => {
+      TestRenderer.create(
+        <AuthProvider>
+          <SnapshotProbe />
+        </AuthProvider>,
+      );
+    });
+
+    await flushAsync();
+
+    expect(tokenStorage.clear).not.toHaveBeenCalled();
+    expect(latestSnapshot?.loading).toBe(false);
+    expect(latestSnapshot?.user?.id).toBe(user.id);
+    nowSpy.mockRestore();
+  });
+
+  it("falls back to default ttl when env ttl is invalid", async () => {
+    process.env.EXPO_PUBLIC_AUTH_SOURCE = "mock";
+    process.env.EXPO_PUBLIC_MOCK_TOKEN_TTL_MS = "not-a-number";
+    const user = sampleUser();
+    const nowMs = 30_000;
+    const nowSpy = jest.spyOn(Date, "now").mockReturnValue(nowMs);
+    tokenStorage.get.mockResolvedValue(`mock_${user.id}_${nowMs - 1000}`);
+    asyncStorageMock.getItem.mockResolvedValue(JSON.stringify(user));
+
+    const SnapshotProbe = createSnapshotProbe((snapshot) => {
+      latestSnapshot = snapshot;
+    });
+
+    await act(async () => {
+      TestRenderer.create(
+        <AuthProvider>
+          <SnapshotProbe />
+        </AuthProvider>,
+      );
+    });
+
+    await flushAsync();
+
+    expect(tokenStorage.clear).not.toHaveBeenCalled();
+    expect(latestSnapshot?.loading).toBe(false);
+    expect(latestSnapshot?.user?.id).toBe(user.id);
+    nowSpy.mockRestore();
   });
 
   it("stores structured authError on login failure and clears it after success", async () => {

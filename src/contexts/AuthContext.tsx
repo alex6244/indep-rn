@@ -36,11 +36,19 @@ type AuthGateway = {
 };
 
 const USER_KEY = "@auth/user";
+const DEFAULT_MOCK_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 function resolveAuthSource(): AuthSource {
   const fromEnv = process.env.EXPO_PUBLIC_AUTH_SOURCE?.trim().toLowerCase();
   return fromEnv === "mock" ? "mock" : "api";
+}
+
+function getMockTokenTtlMs(): number {
+  const raw = process.env.EXPO_PUBLIC_MOCK_TOKEN_TTL_MS?.trim();
+  if (!raw) return DEFAULT_MOCK_TOKEN_TTL_MS;
+  const parsed = Number(raw);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_MOCK_TOKEN_TTL_MS;
 }
 
 function normalizeAuthError(error: unknown): AuthError {
@@ -111,6 +119,8 @@ function parseMockToken(token: string | null): { userId: string; issuedAt: numbe
   if (!match) return null;
   const issuedAt = Number(match[2]);
   if (!Number.isFinite(issuedAt) || issuedAt <= 0) return null;
+  const ageMs = Date.now() - issuedAt;
+  if (ageMs > getMockTokenTtlMs()) return null;
   return { userId: match[1], issuedAt };
 }
 
