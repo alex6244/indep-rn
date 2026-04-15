@@ -51,21 +51,31 @@ describe("reportService contract", () => {
     expect(result).toEqual(payload);
   });
 
-  it("getById returns SubmittedReport shape in api mode", async () => {
-    const payload = {
-      id: "rep-2",
-      carId: "car-2",
-      pickerId: "picker-2",
-      status: "completed",
-      createdAt: "2026-04-14T11:00:00.000Z",
-      data: { mileage: "120000" },
-    };
+  it("getSubmittedById resolves from submitted reports collection in api mode", async () => {
+    const payload = [
+      {
+        id: "rep-2",
+        carId: "car-2",
+        pickerId: "picker-2",
+        status: "completed",
+        createdAt: "2026-04-14T11:00:00.000Z",
+        data: { mileage: "120000" },
+      },
+      {
+        id: "rep-2-extra",
+        carId: "car-2-extra",
+        pickerId: "picker-2-extra",
+        status: "pending",
+        createdAt: "2026-04-14T11:05:00.000Z",
+        data: { mileage: "121000" },
+      },
+    ];
     api.get.mockResolvedValue(payload);
 
-    const result = await reportService.getById("rep-2");
+    const result = await reportService.getSubmittedById("rep-2");
 
-    expect(api.get).toHaveBeenCalledWith("/reports/rep-2");
-    expect(result).toEqual(payload);
+    expect(api.get).toHaveBeenCalledWith("/reports/my");
+    expect(result).toEqual(payload[0]);
   });
 
   it("getMy returns array shape in api mode", async () => {
@@ -136,7 +146,7 @@ describe("reportService contract", () => {
 
     const submitted = await reportService.submit(draft as never);
     const list = await reportService.getMy();
-    const byId = await reportService.getById(submitted.id);
+    const byId = await reportService.getSubmittedById(submitted.id);
 
     expect(api.post).not.toHaveBeenCalled();
     expect(api.get).not.toHaveBeenCalled();
@@ -153,9 +163,28 @@ describe("reportService contract", () => {
   it("throws not-found error in mock mode for unknown id", async () => {
     process.env.EXPO_PUBLIC_REPORTS_SOURCE = "mock";
 
-    await expect(reportService.getById("missing-id")).rejects.toMatchObject({
+    await expect(reportService.getSubmittedById("missing-id")).rejects.toMatchObject({
       message: "Отчёт не найден.",
     });
+  });
+
+  it("keeps deprecated getById alias for backward compatibility", async () => {
+    const payload = [
+      {
+        id: "rep-legacy",
+        carId: "car-legacy",
+        pickerId: "picker-legacy",
+        status: "pending",
+        createdAt: "2026-04-14T13:00:00.000Z",
+        data: { mileage: "150000" },
+      },
+    ];
+    api.get.mockResolvedValue(payload);
+
+    const result = await reportService.getById("rep-legacy");
+
+    expect(api.get).toHaveBeenCalledWith("/reports/my");
+    expect(result).toEqual(payload[0]);
   });
 });
 

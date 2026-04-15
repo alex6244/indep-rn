@@ -1,6 +1,7 @@
-import { ApiError, api } from "./api";
+import { api } from "./api";
 import type { DraftReport } from "../features/pickerReport/ui/pickerReportTypes";
 import type { SubmittedReport } from "../types/submittedReport";
+import { getReportsSource, mapReportsApiError } from "./reportServiceShared";
 
 type ApiSubmittedReport = {
   id: string;
@@ -12,27 +13,17 @@ type ApiSubmittedReport = {
   data: DraftReport;
 };
 
-type ReportSource = "mock" | "api";
-
 export function mapApiSubmittedReportToDomainSubmittedReport(
   apiReport: ApiSubmittedReport,
 ): SubmittedReport {
   return { ...apiReport };
 }
 
-function getReportSource(): ReportSource {
-  const raw = process.env.EXPO_PUBLIC_REPORTS_SOURCE?.trim().toLowerCase();
-  return raw === "api" ? "api" : "mock";
-}
-
 function mapReportServiceError(error: unknown): string {
-  if (error instanceof ApiError) {
-    if (error.status === 401) return "Сессия истекла. Войдите снова.";
-    if (error.status === 404) return "Отчёт не найден.";
-    if (error.status === 0) return "Проблема с сетью. Проверьте подключение и попробуйте ещё раз.";
-    if (error.status >= 500) return "Сервис отчётов временно недоступен. Попробуйте позже.";
-  }
-  return "Не удалось выполнить операцию с отчётом. Попробуйте ещё раз.";
+  return mapReportsApiError(error, {
+    notFound: "Отчёт не найден.",
+    fallback: "Не удалось выполнить операцию с отчётом. Попробуйте ещё раз.",
+  });
 }
 
 const mockSubmittedReports: SubmittedReport[] = [
@@ -81,9 +72,10 @@ const mockSubmittedReports: SubmittedReport[] = [
   },
 ];
 
+// Picker submitted reports service: submit/create and own submitted reports domain.
 export const reportService = {
   submit: async (draft: DraftReport): Promise<SubmittedReport> => {
-    if (getReportSource() === "mock") {
+    if (getReportsSource() === "mock") {
       const mockItem: SubmittedReport = {
         id: `mock_submitted_${Date.now()}`,
         carId: "car_mock_submitted",
@@ -105,26 +97,17 @@ export const reportService = {
     }
   },
 
-  getById: async (id: string): Promise<SubmittedReport> => {
-    if (getReportSource() === "mock") {
-      const report = mockSubmittedReports.find((item) => item.id === id);
-      if (!report) {
-        throw new Error("Отчёт не найден.");
-      }
-      return report;
+  getSubmittedById: async (id: string): Promise<SubmittedReport> => {
+    const reports = await reportService.getMy();
+    const report = reports.find((item) => item.id === id);
+    if (!report) {
+      throw new Error("Отчёт не найден.");
     }
-
-    try {
-      const response = await api.get<ApiSubmittedReport>(`/reports/${id}`);
-      return mapApiSubmittedReportToDomainSubmittedReport(response);
-    } catch (error) {
-      // TODO(architecture): migrate service error contracts to a shared AppError format.
-      throw new Error(mapReportServiceError(error));
-    }
+    return report;
   },
 
   getMy: async (): Promise<SubmittedReport[]> => {
-    if (getReportSource() === "mock") {
+    if (getReportsSource() === "mock") {
       return [...mockSubmittedReports];
     }
 
@@ -136,4 +119,7 @@ export const reportService = {
       throw new Error(mapReportServiceError(error));
     }
   },
+
+  /** @deprecated Use getSubmittedById for clearer submitted-report intent. */
+  getById: async (id: string): Promise<SubmittedReport> => reportService.getSubmittedById(id),
 };

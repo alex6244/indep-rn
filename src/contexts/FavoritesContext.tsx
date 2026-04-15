@@ -30,6 +30,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [favoritesError, setFavoritesError] = useState<string | null>(null);
+  const isMountedRef = useRef(true);
   const favoriteIdsRef = useRef<string[]>([]);
   const persistQueueRef = useRef<Promise<void>>(Promise.resolve());
 
@@ -42,6 +43,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
           if (Array.isArray(parsed)) {
             const normalized = parsed.map(String);
             favoriteIdsRef.current = normalized;
+            if (!isMountedRef.current) return;
             setFavoriteIds(normalized);
           }
         }
@@ -49,10 +51,14 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
         // Повреждённые данные — сбрасываем, избранное начнётся с чистого листа
         await AsyncStorage.removeItem(STORAGE_KEY);
       } finally {
+        if (!isMountedRef.current) return;
         setLoading(false);
       }
     };
-    load();
+    void load();
+    return () => {
+      isMountedRef.current = false;
+    };
   }, []);
 
   const isFavorite = useCallback(
@@ -69,9 +75,11 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
 
         await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next));
         favoriteIdsRef.current = next;
+        if (!isMountedRef.current) return;
         setFavoriteIds(next);
       })
       .catch(() => {
+        if (!isMountedRef.current) return;
         setFavoritesError("Не удалось сохранить избранное");
       });
   }, []);
