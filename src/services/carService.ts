@@ -1,6 +1,7 @@
 import { ApiError, api } from "./api";
 import { cars as mockCars } from "../data/cars";
 import type { Car } from "../types/car";
+import { reportTelemetry } from "../shared/monitoring/errorReporting";
 
 interface CarsParams {
   brand?: string;
@@ -62,7 +63,20 @@ function mapApiCarToDomainCar(apiCar: ApiCar): Car {
 
 function getCatalogSource(): CatalogSource {
   const raw = process.env.EXPO_PUBLIC_CATALOG_SOURCE?.trim().toLowerCase();
-  return raw === "api" ? "api" : "mock";
+  if (!raw || raw === "api") return "api";
+  if (raw === "mock") return "mock";
+  reportTelemetry("invalid_env_source", {
+    source: "catalog",
+    key: "EXPO_PUBLIC_CATALOG_SOURCE",
+    value: raw,
+    fallback: "api",
+  });
+  if (__DEV__) {
+    console.warn(
+      `[catalog] Invalid EXPO_PUBLIC_CATALOG_SOURCE="${raw}". Falling back to "api".`,
+    );
+  }
+  return "api";
 }
 
 function applyMockFilters(params?: CarsParams): Car[] {

@@ -1,5 +1,5 @@
 import { api } from "./api";
-import type { DraftReport } from "../features/pickerReport/ui/pickerReportTypes";
+import type { DraftReport } from "../types/draftReport";
 import type { SubmittedReport } from "../types/submittedReport";
 import { getReportsSource, mapReportsApiError } from "./reportServiceShared";
 
@@ -98,12 +98,21 @@ export const reportService = {
   },
 
   getSubmittedById: async (id: string): Promise<SubmittedReport> => {
-    const reports = await reportService.getMy();
-    const report = reports.find((item) => item.id === id);
-    if (!report) {
-      throw new Error("Отчёт не найден.");
+    if (getReportsSource() === "mock") {
+      const report = mockSubmittedReports.find((item) => item.id === id);
+      if (!report) {
+        throw new Error("Отчёт не найден.");
+      }
+      return report;
     }
-    return report;
+
+    try {
+      const response = await api.get<ApiSubmittedReport>(`/reports/${id}`);
+      return mapApiSubmittedReportToDomainSubmittedReport(response);
+    } catch (error) {
+      // TODO(architecture): migrate service error contracts to a shared AppError format.
+      throw new Error(mapReportServiceError(error));
+    }
   },
 
   getMy: async (): Promise<SubmittedReport[]> => {

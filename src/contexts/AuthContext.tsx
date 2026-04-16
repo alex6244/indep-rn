@@ -12,6 +12,7 @@ import {
   getDefaultAuthErrorMessage,
   type RegisterPayload,
 } from "../services/authTypes";
+import { reportTelemetry } from "../shared/monitoring/errorReporting";
 
 type AuthSource = "mock" | "api";
 
@@ -41,7 +42,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 function resolveAuthSource(): AuthSource {
   const fromEnv = process.env.EXPO_PUBLIC_AUTH_SOURCE?.trim().toLowerCase();
-  return fromEnv === "mock" ? "mock" : "api";
+  if (!fromEnv || fromEnv === "api") return "api";
+  if (fromEnv === "mock") return "mock";
+  reportTelemetry("invalid_env_source", {
+    source: "auth",
+    key: "EXPO_PUBLIC_AUTH_SOURCE",
+    value: fromEnv,
+    fallback: "api",
+  });
+  if (__DEV__) {
+    console.warn(
+      `[auth] Invalid EXPO_PUBLIC_AUTH_SOURCE="${fromEnv}". Falling back to "api".`,
+    );
+  }
+  return "api";
 }
 
 function getMockTokenTtlMs(): number {

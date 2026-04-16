@@ -137,6 +137,59 @@ describe("AuthContext restore/logout flow", () => {
     expect(latestSnapshot?.user?.id).toBe(user.id);
   });
 
+  it("falls back to api source and warns on invalid auth source env", async () => {
+    process.env.EXPO_PUBLIC_AUTH_SOURCE = "broken-source";
+    const telemetrySpy = jest.fn();
+    (
+      globalThis as unknown as {
+        __INDEP_REPORT_TELEMETRY__?: (payload: {
+          name: string;
+          attributes?: Record<string, unknown>;
+          timestamp: number;
+        }) => void;
+      }
+    ).__INDEP_REPORT_TELEMETRY__ = telemetrySpy;
+    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => undefined);
+    const user = sampleUser();
+    tokenStorage.get.mockResolvedValue("token");
+    authService.me.mockResolvedValue(user);
+
+    const SnapshotProbe = createSnapshotProbe((snapshot) => {
+      latestSnapshot = snapshot;
+    });
+
+    await act(async () => {
+      TestRenderer.create(
+        <AuthProvider>
+          <SnapshotProbe />
+        </AuthProvider>,
+      );
+    });
+
+    await flushAsync();
+
+    expect(authService.me).toHaveBeenCalledTimes(1);
+    expect(latestSnapshot?.user?.id).toBe(user.id);
+    expect(warnSpy).toHaveBeenCalledWith(
+      '[auth] Invalid EXPO_PUBLIC_AUTH_SOURCE="broken-source". Falling back to "api".',
+    );
+    expect(telemetrySpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "invalid_env_source",
+        attributes: expect.objectContaining({
+          source: "auth",
+          key: "EXPO_PUBLIC_AUTH_SOURCE",
+          value: "broken-source",
+          fallback: "api",
+        }),
+      }),
+    );
+    delete (
+      globalThis as unknown as { __INDEP_REPORT_TELEMETRY__?: unknown }
+    ).__INDEP_REPORT_TELEMETRY__;
+    warnSpy.mockRestore();
+  });
+
   it("clears invalid token on restore failure in api mode", async () => {
     process.env.EXPO_PUBLIC_AUTH_SOURCE = "api";
     tokenStorage.get.mockResolvedValue("bad-token");

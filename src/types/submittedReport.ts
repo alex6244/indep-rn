@@ -1,4 +1,4 @@
-import type { DraftReport } from "../features/pickerReport/ui/pickerReportTypes";
+import type { DraftReport } from "./draftReport";
 
 export type SubmittedReport = {
   id: string;

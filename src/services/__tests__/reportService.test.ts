@@ -51,31 +51,21 @@ describe("reportService contract", () => {
     expect(result).toEqual(payload);
   });
 
-  it("getSubmittedById resolves from submitted reports collection in api mode", async () => {
-    const payload = [
-      {
-        id: "rep-2",
-        carId: "car-2",
-        pickerId: "picker-2",
-        status: "completed",
-        createdAt: "2026-04-14T11:00:00.000Z",
-        data: { mileage: "120000" },
-      },
-      {
-        id: "rep-2-extra",
-        carId: "car-2-extra",
-        pickerId: "picker-2-extra",
-        status: "pending",
-        createdAt: "2026-04-14T11:05:00.000Z",
-        data: { mileage: "121000" },
-      },
-    ];
+  it("getSubmittedById returns SubmittedReport shape in api mode", async () => {
+    const payload = {
+      id: "rep-2",
+      carId: "car-2",
+      pickerId: "picker-2",
+      status: "completed",
+      createdAt: "2026-04-14T11:00:00.000Z",
+      data: { mileage: "120000" },
+    };
     api.get.mockResolvedValue(payload);
 
     const result = await reportService.getSubmittedById("rep-2");
 
-    expect(api.get).toHaveBeenCalledWith("/reports/my");
-    expect(result).toEqual(payload[0]);
+    expect(api.get).toHaveBeenCalledWith("/reports/rep-2");
+    expect(result).toEqual(payload);
   });
 
   it("getMy returns array shape in api mode", async () => {
@@ -169,22 +159,20 @@ describe("reportService contract", () => {
   });
 
   it("keeps deprecated getById alias for backward compatibility", async () => {
-    const payload = [
-      {
-        id: "rep-legacy",
-        carId: "car-legacy",
-        pickerId: "picker-legacy",
-        status: "pending",
-        createdAt: "2026-04-14T13:00:00.000Z",
-        data: { mileage: "150000" },
-      },
-    ];
+    const payload = {
+      id: "rep-legacy",
+      carId: "car-legacy",
+      pickerId: "picker-legacy",
+      status: "pending",
+      createdAt: "2026-04-14T13:00:00.000Z",
+      data: { mileage: "150000" },
+    };
     api.get.mockResolvedValue(payload);
 
     const result = await reportService.getById("rep-legacy");
 
-    expect(api.get).toHaveBeenCalledWith("/reports/my");
-    expect(result).toEqual(payload[0]);
+    expect(api.get).toHaveBeenCalledWith("/reports/rep-legacy");
+    expect(result).toEqual(payload);
   });
 });
 

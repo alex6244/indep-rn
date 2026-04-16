@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { FONT_FAMILY } from "../theme/fonts";
+import { reportError } from "../monitoring/errorReporting";
 
 interface State {
   hasError: boolean;
@@ -21,6 +22,10 @@ export class ErrorBoundary extends React.Component<
     if (__DEV__) {
       console.error("ErrorBoundary caught:", error, info);
     }
+    reportError(error, {
+      source: "ErrorBoundary",
+      componentStack: info.componentStack,
+    });
   }
 
   reset = () => this.setState({ hasError: false, error: null });

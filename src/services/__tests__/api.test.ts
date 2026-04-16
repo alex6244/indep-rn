@@ -209,19 +209,24 @@ describe("api retry/abort/401 policy", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
-  it("does not crash preflight on invalid JWT payload", async () => {
+  it("treats invalid JWT payload as expired and pre-refreshes safely", async () => {
     jest.spyOn(tokenStorage, "get").mockResolvedValue("broken.payload.token");
-    const refreshHandler = jest.fn(async () => "unused-token");
+    const refreshHandler = jest.fn(async () => "refreshed-token");
     setRefreshHandler(refreshHandler);
     fetchMock.mockResolvedValue(createResponse({ status: 200, body: { ok: true } }));
 
     await expect(api.get<{ ok: boolean }>("/secure")).resolves.toEqual({ ok: true });
 
-    expect(refreshHandler).not.toHaveBeenCalled();
+    expect(refreshHandler).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledTimes(1);
+    const requestInit = fetchMock.mock.calls[0][1] as RequestInit;
+    expect((requestInit.headers as Record<string, string>)["Authorization"]).toBe(
+      "Bearer refreshed-token",
+    );
   });
 
   it("uses updated base URL after explicit cache reset", async () => {
+    jest.spyOn(tokenStorage, "get").mockResolvedValue(null);
     process.env.EXPO_PUBLIC_API_URL = "https://first.example.com";
     fetchMock.mockResolvedValue(createResponse({ status: 200, body: { ok: true } }));
     await expect(api.get<{ ok: boolean }>("/cars")).resolves.toEqual({ ok: true });

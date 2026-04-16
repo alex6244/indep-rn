@@ -1,10 +1,24 @@
 import { ApiError } from "./api";
+import { reportTelemetry } from "../shared/monitoring/errorReporting";
 
 export type ReportsSource = "mock" | "api";
 
 export function getReportsSource(): ReportsSource {
   const raw = process.env.EXPO_PUBLIC_REPORTS_SOURCE?.trim().toLowerCase();
-  return raw === "api" ? "api" : "mock";
+  if (!raw || raw === "api") return "api";
+  if (raw === "mock") return "mock";
+  reportTelemetry("invalid_env_source", {
+    source: "reports",
+    key: "EXPO_PUBLIC_REPORTS_SOURCE",
+    value: raw,
+    fallback: "api",
+  });
+  if (__DEV__) {
+    console.warn(
+      `[reports] Invalid EXPO_PUBLIC_REPORTS_SOURCE="${raw}". Falling back to "api".`,
+    );
+  }
+  return "api";
 }
 
 type ReportsErrorMessages = {

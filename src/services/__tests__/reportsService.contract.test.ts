@@ -84,10 +84,56 @@ describe("reportsService contract", () => {
     delete process.env.EXPO_PUBLIC_REPORTS_SOURCE;
   });
 
-  it("returns purchased reports from mock source by default", async () => {
+  it("returns purchased reports from explicit mock source", async () => {
+    process.env.EXPO_PUBLIC_REPORTS_SOURCE = "mock";
     const result = await reportsService.getPurchasedReports();
 
     expect(result).toEqual([{ id: "r1", title: "Mock report" }]);
+  });
+
+  it("falls back to api source and warns on invalid env value", async () => {
+    process.env.EXPO_PUBLIC_REPORTS_SOURCE = "broken-source";
+    const telemetrySpy = jest.fn();
+    (
+      globalThis as unknown as {
+        __INDEP_REPORT_TELEMETRY__?: (payload: {
+          name: string;
+          attributes?: Record<string, unknown>;
+          timestamp: number;
+        }) => void;
+      }
+    ).__INDEP_REPORT_TELEMETRY__ = telemetrySpy;
+    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => undefined);
+    const apiReports = [createApiReport()];
+    api.get.mockResolvedValue(apiReports);
+
+    const result = await reportsService.getPurchasedReports();
+
+    expect(api.get).toHaveBeenCalledWith("/reports/purchased");
+    expect(result).toMatchObject([
+      {
+        id: "api-r1",
+        imageUrl: { uri: "https://example.com/main.jpg" },
+      },
+    ]);
+    expect(warnSpy).toHaveBeenCalledWith(
+      '[reports] Invalid EXPO_PUBLIC_REPORTS_SOURCE="broken-source". Falling back to "api".',
+    );
+    expect(telemetrySpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "invalid_env_source",
+        attributes: expect.objectContaining({
+          source: "reports",
+          key: "EXPO_PUBLIC_REPORTS_SOURCE",
+          value: "broken-source",
+          fallback: "api",
+        }),
+      }),
+    );
+    delete (
+      globalThis as unknown as { __INDEP_REPORT_TELEMETRY__?: unknown }
+    ).__INDEP_REPORT_TELEMETRY__;
+    warnSpy.mockRestore();
   });
 
   it("returns mapped purchased reports in api mode", async () => {
@@ -134,6 +180,7 @@ describe("reportsService contract", () => {
   });
 
   it("throws explicit not-found message for mock getReportById", async () => {
+    process.env.EXPO_PUBLIC_REPORTS_SOURCE = "mock";
     await expect(reportsService.getReportById("missing")).rejects.toMatchObject({
       message: "Отчёт не найден.",
     });

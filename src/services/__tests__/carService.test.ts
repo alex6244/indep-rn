@@ -56,10 +56,51 @@ describe("carService contract", () => {
     delete process.env.EXPO_PUBLIC_CATALOG_SOURCE;
   });
 
-  it("returns filtered cars in mock mode", async () => {
+  it("returns filtered cars in explicit mock mode", async () => {
+    process.env.EXPO_PUBLIC_CATALOG_SOURCE = "mock";
     const result = await carService.getAll({ brand: "bmw", minPrice: 1000000, maxPrice: 2000000 });
 
     expect(result).toEqual([{ id: "car-1", brand: "BMW", bodyType: "sedan", price: 1500000 }]);
+  });
+
+  it("falls back to api source and warns on invalid env value", async () => {
+    process.env.EXPO_PUBLIC_CATALOG_SOURCE = "broken-source";
+    const telemetrySpy = jest.fn();
+    (
+      globalThis as unknown as {
+        __INDEP_REPORT_TELEMETRY__?: (payload: {
+          name: string;
+          attributes?: Record<string, unknown>;
+          timestamp: number;
+        }) => void;
+      }
+    ).__INDEP_REPORT_TELEMETRY__ = telemetrySpy;
+    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => undefined);
+    const cars = [createApiCar()];
+    api.get.mockResolvedValue(cars);
+
+    const result = await carService.getAll();
+
+    expect(api.get).toHaveBeenCalledWith("/cars");
+    expect(result).toEqual(cars);
+    expect(warnSpy).toHaveBeenCalledWith(
+      '[catalog] Invalid EXPO_PUBLIC_CATALOG_SOURCE="broken-source". Falling back to "api".',
+    );
+    expect(telemetrySpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "invalid_env_source",
+        attributes: expect.objectContaining({
+          source: "catalog",
+          key: "EXPO_PUBLIC_CATALOG_SOURCE",
+          value: "broken-source",
+          fallback: "api",
+        }),
+      }),
+    );
+    delete (
+      globalThis as unknown as { __INDEP_REPORT_TELEMETRY__?: unknown }
+    ).__INDEP_REPORT_TELEMETRY__;
+    warnSpy.mockRestore();
   });
 
   it("returns api response shape in api mode", async () => {

@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
+import { reportTelemetry } from "../shared/monitoring/errorReporting";
 
 let inMemoryToken: string | null = null;
 const TOKEN_KEY = "@auth/token";
@@ -113,9 +114,7 @@ function toErrorMessage(error: unknown): string {
 // Non-blocking reporter: observability only, never control-flow.
 function reportStorageTelemetry(event: StorageTelemetryEvent): void {
   try {
-    if (__DEV__) {
-      console.warn("[telemetry][token_storage]", event);
-    }
+    reportTelemetry("token_storage_failure", event);
   } catch {
     // Never throw from telemetry path.
   }
@@ -310,7 +309,8 @@ export function getTokenExp(token: string): number | null {
 
 export function isTokenExpired(token: string, leewaySec = 30): boolean {
   const exp = getTokenExp(token);
-  if (exp == null) return false;
+  // Conservative default: malformed/missing exp should not be treated as a valid long-lived token.
+  if (exp == null) return true;
   const nowSec = Math.floor(Date.now() / 1000);
   return exp <= nowSec + Math.max(0, leewaySec);
 }
