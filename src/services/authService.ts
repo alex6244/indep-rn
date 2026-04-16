@@ -7,6 +7,7 @@ import {
   getDefaultAuthErrorMessage,
   type RegisterPayload,
 } from "./authTypes";
+import { envBool } from "../config/env";
 
 // API transport/provider for auth endpoints: login/register/me/logout.
 // Source selection (mock|api via EXPO_PUBLIC_AUTH_SOURCE) is owned by AuthContext; UI works through useAuth().
@@ -22,7 +23,7 @@ function mapApiAuthResponseToDomainUser(response: ApiAuthResponse): User {
 }
 
 function requiresRefreshRotation(): boolean {
-  return process.env.EXPO_PUBLIC_REQUIRE_REFRESH_ROTATION === "true";
+  return envBool("EXPO_PUBLIC_REQUIRE_REFRESH_ROTATION");
 }
 
 function isInvalidRefreshError(error: unknown): boolean {

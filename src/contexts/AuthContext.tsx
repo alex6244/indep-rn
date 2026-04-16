@@ -12,7 +12,8 @@ import {
   getDefaultAuthErrorMessage,
   type RegisterPayload,
 } from "../services/authTypes";
-import { reportTelemetry } from "../shared/monitoring/errorReporting";
+import { readSourceEnv } from "../config/sources";
+import { envNumber } from "../config/env";
 
 type AuthSource = "mock" | "api";
 
@@ -41,28 +42,17 @@ const DEFAULT_MOCK_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 function resolveAuthSource(): AuthSource {
-  const fromEnv = process.env.EXPO_PUBLIC_AUTH_SOURCE?.trim().toLowerCase();
-  if (!fromEnv || fromEnv === "api") return "api";
-  if (fromEnv === "mock") return "mock";
-  reportTelemetry("invalid_env_source", {
+  return readSourceEnv({
     source: "auth",
     key: "EXPO_PUBLIC_AUTH_SOURCE",
-    value: fromEnv,
+    allowed: ["api", "mock"] as const,
     fallback: "api",
   });
-  if (__DEV__) {
-    console.warn(
-      `[auth] Invalid EXPO_PUBLIC_AUTH_SOURCE="${fromEnv}". Falling back to "api".`,
-    );
-  }
-  return "api";
 }
 
 function getMockTokenTtlMs(): number {
-  const raw = process.env.EXPO_PUBLIC_MOCK_TOKEN_TTL_MS?.trim();
-  if (!raw) return DEFAULT_MOCK_TOKEN_TTL_MS;
-  const parsed = Number(raw);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_MOCK_TOKEN_TTL_MS;
+  const parsed = envNumber("EXPO_PUBLIC_MOCK_TOKEN_TTL_MS", DEFAULT_MOCK_TOKEN_TTL_MS);
+  return parsed > 0 ? parsed : DEFAULT_MOCK_TOKEN_TTL_MS;
 }
 
 function normalizeAuthError(error: unknown): AuthError {
