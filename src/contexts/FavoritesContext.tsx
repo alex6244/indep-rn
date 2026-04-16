@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -33,6 +34,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
   const isMountedRef = useRef(true);
   const favoriteIdsRef = useRef<string[]>([]);
   const persistQueueRef = useRef<Promise<void>>(Promise.resolve());
+  const favoriteIdsSet = useMemo(() => new Set(favoriteIds), [favoriteIds]);
 
   useEffect(() => {
     const load = async () => {
@@ -62,8 +64,8 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const isFavorite = useCallback(
-    (id: string) => favoriteIds.includes(String(id)),
-    [favoriteIds],
+    (id: string) => favoriteIdsSet.has(String(id)),
+    [favoriteIdsSet],
   );
 
   const persistFavoriteUpdate = useCallback((updater: (prev: string[]) => string[]) => {
