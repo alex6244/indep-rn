@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 import { reportTelemetry } from "../shared/monitoring/errorReporting";
+import { envBool, envNumber, envString } from "../config/env";
 
 let inMemoryToken: string | null = null;
 const TOKEN_KEY = "@auth/token";
@@ -8,8 +9,8 @@ const DEFAULT_TIMEOUT_MS = 10000;
 const RETRY_BACKOFF_MS = [300, 700] as const;
 
 function resolveBaseUrl(): string {
-  const envUrl = process.env.EXPO_PUBLIC_API_URL?.trim();
-  const allowHttpDevFallback = process.env.EXPO_PUBLIC_ALLOW_HTTP_DEV === "true";
+  const envUrl = envString("EXPO_PUBLIC_API_URL");
+  const allowHttpDevFallback = envBool("EXPO_PUBLIC_ALLOW_HTTP_DEV");
 
   if (!envUrl) {
     if (__DEV__ && allowHttpDevFallback) {
@@ -54,10 +55,8 @@ function getBaseUrl(): string {
 }
 
 function getRequestTimeoutMs(): number {
-  const raw = process.env.EXPO_PUBLIC_API_TIMEOUT_MS?.trim();
-  if (!raw) return DEFAULT_TIMEOUT_MS;
-  const parsed = Number(raw);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_TIMEOUT_MS;
+  const parsed = envNumber("EXPO_PUBLIC_API_TIMEOUT_MS", DEFAULT_TIMEOUT_MS);
+  return parsed > 0 ? parsed : DEFAULT_TIMEOUT_MS;
 }
 
 // ─── Типы ────────────────────────────────────────────────────────────────────
@@ -134,6 +133,12 @@ function trackStorageFailure(
   });
 }
 
+function allowInsecureAsyncTokenStorage(): boolean {
+  // AsyncStorage is not a secure storage for tokens. Keep it strictly opt-in.
+  if (process.env.NODE_ENV === "test") return true;
+  return envBool("EXPO_PUBLIC_ALLOW_INSECURE_TOKEN_STORAGE");
+}
+
 export function setUnauthorizedHandler(handler: UnauthorizedHandler | null) {
   unauthorizedHandler = handler;
 }
@@ -159,6 +164,7 @@ export const refreshTokenStorage = {
     } catch (error) {
       trackStorageFailure("get", "secure_store", error);
     }
+    if (!allowInsecureAsyncTokenStorage()) return null;
     try {
       const fallback = await AsyncStorage.getItem(REFRESH_TOKEN_KEY);
       if (fallback) {
@@ -178,6 +184,7 @@ export const refreshTokenStorage = {
     } catch (error) {
       trackStorageFailure("set", "secure_store", error);
     }
+    if (!allowInsecureAsyncTokenStorage()) return;
     try {
       await AsyncStorage.setItem(REFRESH_TOKEN_KEY, token);
     } catch (error) {
@@ -191,6 +198,7 @@ export const refreshTokenStorage = {
     } catch (error) {
       trackStorageFailure("clear", "secure_store", error);
     }
+    if (!allowInsecureAsyncTokenStorage()) return;
     try {
       await AsyncStorage.removeItem(REFRESH_TOKEN_KEY);
     } catch (error) {
@@ -213,6 +221,7 @@ export const tokenStorage = {
       trackStorageFailure("get", "secure_store", error);
     }
 
+    if (!allowInsecureAsyncTokenStorage()) return null;
     try {
       const fallback = await AsyncStorage.getItem(TOKEN_KEY);
       if (fallback) {
@@ -233,6 +242,7 @@ export const tokenStorage = {
     } catch (error) {
       trackStorageFailure("set", "secure_store", error);
     }
+    if (!allowInsecureAsyncTokenStorage()) return;
     try {
       await AsyncStorage.setItem(TOKEN_KEY, token);
     } catch (error) {
@@ -247,6 +257,7 @@ export const tokenStorage = {
     } catch (error) {
       trackStorageFailure("clear", "secure_store", error);
     }
+    if (!allowInsecureAsyncTokenStorage()) return;
     try {
       await AsyncStorage.removeItem(TOKEN_KEY);
     } catch (error) {

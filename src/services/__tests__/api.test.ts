@@ -6,6 +6,8 @@ import {
   setUnauthorizedHandler,
   tokenStorage,
 } from "../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
 
 type MockResponseOptions = {
   status: number;
@@ -69,6 +71,7 @@ describe("api retry/abort/401 policy", () => {
     (globalThis as { fetch?: typeof fetch }).fetch = fetchMock as unknown as typeof fetch;
     setUnauthorizedHandler(null);
     setRefreshHandler(null);
+    delete process.env.EXPO_PUBLIC_ALLOW_INSECURE_TOKEN_STORAGE;
   });
 
   afterEach(() => {
@@ -76,6 +79,55 @@ describe("api retry/abort/401 policy", () => {
     setUnauthorizedHandler(null);
     setRefreshHandler(null);
     jest.restoreAllMocks();
+  });
+
+  it("does not fall back to AsyncStorage for token storage by default", async () => {
+    const originalNodeEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = "production";
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => undefined);
+    const secureSetSpy = jest.spyOn(SecureStore, "setItemAsync").mockRejectedValue(new Error("secure fail"));
+    const asyncSetSpy = jest.spyOn(AsyncStorage, "setItem").mockResolvedValue(undefined as never);
+    const secureDeleteSpy = jest
+      .spyOn(SecureStore, "deleteItemAsync")
+      .mockResolvedValue(undefined as never);
+
+    await expect(tokenStorage.set("t")).resolves.toBeUndefined();
+
+    expect(secureSetSpy).toHaveBeenCalled();
+    expect(asyncSetSpy).not.toHaveBeenCalled();
+
+    await tokenStorage.clear();
+
+    secureSetSpy.mockRestore();
+    asyncSetSpy.mockRestore();
+    secureDeleteSpy.mockRestore();
+    consoleErrorSpy.mockRestore();
+    process.env.NODE_ENV = originalNodeEnv;
+  });
+
+  it("falls back to AsyncStorage only when explicit insecure flag is enabled", async () => {
+    const originalNodeEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = "production";
+    process.env.EXPO_PUBLIC_ALLOW_INSECURE_TOKEN_STORAGE = "true";
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => undefined);
+    const secureSetSpy = jest.spyOn(SecureStore, "setItemAsync").mockRejectedValue(new Error("secure fail"));
+    const asyncSetSpy = jest.spyOn(AsyncStorage, "setItem").mockResolvedValue(undefined as never);
+    const secureDeleteSpy = jest
+      .spyOn(SecureStore, "deleteItemAsync")
+      .mockResolvedValue(undefined as never);
+
+    await expect(tokenStorage.set("t")).resolves.toBeUndefined();
+
+    expect(secureSetSpy).toHaveBeenCalled();
+    expect(asyncSetSpy).toHaveBeenCalled();
+
+    await tokenStorage.clear();
+
+    secureSetSpy.mockRestore();
+    asyncSetSpy.mockRestore();
+    secureDeleteSpy.mockRestore();
+    consoleErrorSpy.mockRestore();
+    process.env.NODE_ENV = originalNodeEnv;
   });
 
   it("does not retry manually aborted GET", async () => {
@@ -156,6 +208,41 @@ describe("api retry/abort/401 policy", () => {
     expect(e2).toBeInstanceOf(ApiError);
     expect(e1.status).toBe(401);
     expect(e2.status).toBe(401);
+  });
+
+  it("refreshes token on 401 and retries request once", async () => {
+    // Ensure clean token state for this test.
+    const deleteSpy = jest.spyOn(SecureStore, "deleteItemAsync").mockResolvedValue(undefined as never);
+    const secureGetSpy = jest.spyOn(SecureStore, "getItemAsync").mockResolvedValue(null);
+    const secureSetSpy = jest.spyOn(SecureStore, "setItemAsync").mockResolvedValue(undefined as never);
+    const asyncGetSpy = jest.spyOn(AsyncStorage, "getItem").mockResolvedValue(null);
+    await tokenStorage.clear();
+
+    const refreshedJwt = createJwtWithExp(Math.floor(Date.now() / 1000) + 600);
+    const refreshHandler = jest.fn(async () => refreshedJwt);
+    setRefreshHandler(refreshHandler);
+    const unauthorizedHandler = jest.fn(async () => undefined);
+    setUnauthorizedHandler(unauthorizedHandler);
+
+    fetchMock
+      .mockResolvedValueOnce(createResponse({ status: 401, body: { message: "Unauthorized" } }))
+      .mockResolvedValueOnce(createResponse({ status: 200, body: { ok: true } }));
+
+    await expect(api.get<{ ok: boolean }>("/secure")).resolves.toEqual({ ok: true });
+
+    expect(refreshHandler).toHaveBeenCalledTimes(1);
+    expect(unauthorizedHandler).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+
+    const retryInit = fetchMock.mock.calls[1][1] as RequestInit;
+    expect((retryInit.headers as Record<string, string>)["Authorization"]).toBe(
+      `Bearer ${refreshedJwt}`,
+    );
+
+    deleteSpy.mockRestore();
+    secureGetSpy.mockRestore();
+    secureSetSpy.mockRestore();
+    asyncGetSpy.mockRestore();
   });
 
   it("does not force logout when refresh fails with transient error", async () => {
