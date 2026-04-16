@@ -2,6 +2,7 @@ import { api } from "./api";
 import type { Report } from "../types/report";
 import { reports as mockReports, getReportById as getMockReportById } from "../data/reports";
 import { getReportsSource, mapReportsApiError } from "./reportServiceShared";
+import { AppError } from "../shared/errors/appError";
 
 export type ApiReport = {
   id: string;
@@ -94,8 +95,12 @@ export const reportsService = {
       const response = await api.get<ApiReport[]>("/reports/purchased");
       return response.map(mapApiReportToReport);
     } catch (error) {
-      // TODO(architecture): migrate service error contracts to a shared AppError format.
-      throw new Error(mapReportsError(error));
+      throw new AppError({
+        kind: "unknown",
+        message: mapReportsError(error),
+        cause: error,
+        context: { service: "reportsService", action: "getPurchasedReports" },
+      });
     }
   },
   getReportById: async (id: string): Promise<Report> => {
@@ -111,8 +116,12 @@ export const reportsService = {
       const response = await api.get<ApiReport>(`/reports/${id}`);
       return mapApiReportToReport(response);
     } catch (error) {
-      // TODO(architecture): migrate service error contracts to a shared AppError format.
-      throw new Error(mapReportsError(error));
+      throw new AppError({
+        kind: "unknown",
+        message: mapReportsError(error),
+        cause: error,
+        context: { service: "reportsService", action: "getReportById" },
+      });
     }
   },
   getReportsForDuplicateCheck: async (): Promise<Report[]> => {

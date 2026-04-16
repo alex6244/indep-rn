@@ -2,6 +2,7 @@ import { api } from "./api";
 import type { DraftReport } from "../types/draftReport";
 import type { SubmittedReport } from "../types/submittedReport";
 import { getReportsSource, mapReportsApiError } from "./reportServiceShared";
+import { AppError } from "../shared/errors/appError";
 
 type ApiSubmittedReport = {
   id: string;
@@ -92,8 +93,12 @@ export const reportService = {
       const response = await api.post<ApiSubmittedReport>("/reports", draft);
       return mapApiSubmittedReportToDomainSubmittedReport(response);
     } catch (error) {
-      // TODO(architecture): migrate service error contracts to a shared AppError format.
-      throw new Error(mapReportServiceError(error));
+      throw new AppError({
+        kind: "unknown",
+        message: mapReportServiceError(error),
+        cause: error,
+        context: { service: "reportService", action: "submit" },
+      });
     }
   },
 
@@ -110,8 +115,12 @@ export const reportService = {
       const response = await api.get<ApiSubmittedReport>(`/reports/${id}`);
       return mapApiSubmittedReportToDomainSubmittedReport(response);
     } catch (error) {
-      // TODO(architecture): migrate service error contracts to a shared AppError format.
-      throw new Error(mapReportServiceError(error));
+      throw new AppError({
+        kind: "unknown",
+        message: mapReportServiceError(error),
+        cause: error,
+        context: { service: "reportService", action: "getSubmittedById" },
+      });
     }
   },
 
@@ -124,8 +133,12 @@ export const reportService = {
       const response = await api.get<ApiSubmittedReport[]>("/reports/my");
       return response.map(mapApiSubmittedReportToDomainSubmittedReport);
     } catch (error) {
-      // TODO(architecture): migrate service error contracts to a shared AppError format.
-      throw new Error(mapReportServiceError(error));
+      throw new AppError({
+        kind: "unknown",
+        message: mapReportServiceError(error),
+        cause: error,
+        context: { service: "reportService", action: "getMy" },
+      });
     }
   },
 

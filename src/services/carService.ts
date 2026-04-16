@@ -1,7 +1,8 @@
 import { ApiError, api } from "./api";
 import { cars as mockCars } from "../data/cars";
 import type { Car } from "../types/car";
-import { reportTelemetry } from "../shared/monitoring/errorReporting";
+import { AppError } from "../shared/errors/appError";
+import { readSourceEnv } from "../config/sources";
 
 interface CarsParams {
   brand?: string;
@@ -62,21 +63,12 @@ function mapApiCarToDomainCar(apiCar: ApiCar): Car {
 }
 
 function getCatalogSource(): CatalogSource {
-  const raw = process.env.EXPO_PUBLIC_CATALOG_SOURCE?.trim().toLowerCase();
-  if (!raw || raw === "api") return "api";
-  if (raw === "mock") return "mock";
-  reportTelemetry("invalid_env_source", {
+  return readSourceEnv({
     source: "catalog",
     key: "EXPO_PUBLIC_CATALOG_SOURCE",
-    value: raw,
+    allowed: ["api", "mock"] as const,
     fallback: "api",
   });
-  if (__DEV__) {
-    console.warn(
-      `[catalog] Invalid EXPO_PUBLIC_CATALOG_SOURCE="${raw}". Falling back to "api".`,
-    );
-  }
-  return "api";
 }
 
 function applyMockFilters(params?: CarsParams): Car[] {
@@ -116,8 +108,12 @@ export const carService = {
       const response = await api.get<ApiCar[]>(`/cars${qs ? `?${qs}` : ""}`);
       return response.map(mapApiCarToDomainCar);
     } catch (error) {
-      // TODO(architecture): migrate service error contracts to a shared AppError format.
-      throw new Error(mapCarsError(error));
+      throw new AppError({
+        kind: "unknown",
+        message: mapCarsError(error),
+        cause: error,
+        context: { service: "carService", action: "getAll" },
+      });
     }
   },
 
@@ -133,8 +129,12 @@ export const carService = {
       const response = await api.get<ApiCar>(`/cars/${id}`);
       return mapApiCarToDomainCar(response);
     } catch (error) {
-      // TODO(architecture): migrate service error contracts to a shared AppError format.
-      throw new Error(mapCarsError(error));
+      throw new AppError({
+        kind: "unknown",
+        message: mapCarsError(error),
+        cause: error,
+        context: { service: "carService", action: "getById" },
+      });
     }
   },
 };
