@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../contexts/AuthContext";
 import { FONT_FAMILY } from "../../shared/theme/fonts";
 import { InlineMessage } from "../../shared/ui/InlineMessage";
@@ -27,6 +28,8 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [role, setRole] = useState<"client" | "picker">("picker");
   const [loading, setLoading] = useState(false);
   const [agreed, setAgreed] = useState(false);
@@ -131,27 +134,57 @@ export default function RegisterScreen() {
             </View>
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Пароль</Text>
-              <TextInput
-                style={styles.input}
-                value={password}
-                onChangeText={setPassword}
-                placeholder="Придумайте надежный пароль"
-                secureTextEntry
-                autoCapitalize="none"
-                editable={!loading}
-              />
+              <View style={styles.passwordWrap}>
+                <TextInput
+                  style={[styles.input, styles.passwordInput]}
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder="Придумайте надежный пароль"
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  editable={!loading}
+                />
+                <TouchableOpacity
+                  style={styles.eyeButton}
+                  onPress={() => setShowPassword((v) => !v)}
+                  disabled={loading}
+                  accessibilityRole="button"
+                  accessibilityLabel={showPassword ? "Скрыть пароль" : "Показать пароль"}
+                >
+                  <Ionicons
+                    name={showPassword ? "eye-off-outline" : "eye-outline"}
+                    size={20}
+                    color="#767676"
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Подтверждение пароля</Text>
-              <TextInput
-                style={styles.input}
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-                placeholder="Повторите пароль"
-                secureTextEntry
-                autoCapitalize="none"
-                editable={!loading}
-              />
+              <View style={styles.passwordWrap}>
+                <TextInput
+                  style={[styles.input, styles.passwordInput]}
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  placeholder="Повторите пароль"
+                  secureTextEntry={!showConfirmPassword}
+                  autoCapitalize="none"
+                  editable={!loading}
+                />
+                <TouchableOpacity
+                  style={styles.eyeButton}
+                  onPress={() => setShowConfirmPassword((v) => !v)}
+                  disabled={loading}
+                  accessibilityRole="button"
+                  accessibilityLabel={showConfirmPassword ? "Скрыть пароль" : "Показать пароль"}
+                >
+                  <Ionicons
+                    name={showConfirmPassword ? "eye-off-outline" : "eye-outline"}
+                    size={20}
+                    color="#767676"
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
 
             {/* Тип пользователя */}
@@ -294,6 +327,20 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     fontSize: 16,
     color: "#080717",
+  },
+  passwordWrap: {
+    position: "relative",
+  },
+  passwordInput: {
+    paddingRight: 40,
+  },
+  eyeButton: {
+    position: "absolute",
+    right: 10,
+    top: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
   },
   checkboxContainer: {
     flexDirection: "row",

@@ -2,6 +2,13 @@ import type { TextStyle } from "react-native";
 import { FONT_FAMILY } from "./fonts";
 
 export const typography = {
+  sizes: {
+    caption: 12,
+    body: 14,
+    bodyLarge: 16,
+    title: 21,
+    heading: 30,
+  },
   textRegular: {
     fontFamily: FONT_FAMILY.regular,
     fontWeight: "400",

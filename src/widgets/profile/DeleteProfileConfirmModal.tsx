@@ -1,5 +1,6 @@
 import React from "react";
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { BlurView } from "expo-blur";
+import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { shadowStyle } from "../../shared/theme/shadow";
 
 type Props = {
@@ -15,8 +16,12 @@ export function DeleteProfileConfirmModal({
 }: Props) {
   return (
     <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
-      <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={onClose}>
-        <View style={styles.card} onStartShouldSetResponder={() => true}>
+      <View style={styles.root}>
+        <BlurView intensity={28} tint="light" style={StyleSheet.absoluteFillObject} />
+        <Pressable style={styles.backdrop} onPress={onClose} />
+
+        <View style={styles.contentWrap} pointerEvents="box-none">
+          <View style={styles.card} onStartShouldSetResponder={() => true}>
           <View style={styles.headerRow}>
             <Text style={styles.title}>
               Вы уверены, что хотите удалить эту страницу?
@@ -43,17 +48,23 @@ export function DeleteProfileConfirmModal({
               <Text style={styles.deleteText}>Удалить страницу</Text>
             </TouchableOpacity>
           </View>
+          </View>
         </View>
-      </TouchableOpacity>
+      </View>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
+  root: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.35)",
     justifyContent: "center",
+  },
+  backdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.25)",
+  },
+  contentWrap: {
     padding: 16,
   },
   card: {
@@ -108,19 +119,19 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: "#DB4431",
+    backgroundColor: "#F3F3F3",
     borderRadius: 12,
     paddingVertical: 10,
     alignItems: "center",
   },
   cancelText: {
-    color: "#FFFFFF",
+    color: "#1E1E1E",
     fontWeight: "700",
     fontSize: 13,
   },
   deleteButton: {
     flex: 1,
-    backgroundColor: "#555",
+    backgroundColor: "#DB4431",
     borderRadius: 12,
     paddingVertical: 10,
     alignItems: "center",

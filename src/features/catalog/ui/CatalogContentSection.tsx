@@ -1,6 +1,6 @@
 import React from "react";
 import type { Car } from "../../../types/car";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 import { ScreenStateEmpty } from "../../../shared/ui/ScreenStateEmpty";
 import { ScreenStateError } from "../../../shared/ui/ScreenStateError";
 import { ScreenStateLoading } from "../../../shared/ui/ScreenStateLoading";
@@ -58,9 +58,6 @@ export function CatalogContentSection({
               styles={styles}
             />
           </View>
-          <TouchableOpacity style={[styles.btn, styles.btnPrimary, styles.seeAllBtn]}>
-            <Text style={styles.btnTextPrimary}>Смотреть все</Text>
-          </TouchableOpacity>
           <CatalogFooter styles={styles} />
         </>
       )}

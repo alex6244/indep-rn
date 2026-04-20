@@ -105,6 +105,8 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   }, [persistFavoriteUpdate]);
 
+  const clearFavoritesError = useCallback(() => setFavoritesError(null), []);
+
   return (
     <FavoritesContext.Provider
       value={{
@@ -114,7 +116,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
         setFavorite,
         loading,
         favoritesError,
-        clearFavoritesError: () => setFavoritesError(null),
+        clearFavoritesError,
       }}
     >
       {children}

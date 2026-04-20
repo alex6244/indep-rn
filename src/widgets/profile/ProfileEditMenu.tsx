@@ -1,5 +1,7 @@
 import React from "react";
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { BlurView } from "expo-blur";
+import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DeleteProfileConfirmModal } from "./DeleteProfileConfirmModal";
 import { ProfileDeletedModal } from "./ProfileDeletedModal";
 import { shadowStyle } from "../../shared/theme/shadow";
@@ -14,6 +16,7 @@ type Props = {
   onCloseDeleteConfirm: () => void;
   onConfirmDelete: () => void;
   onCloseDeleted: () => void;
+  menuTopOffset?: number;
 };
 
 export function ProfileEditMenu({
@@ -26,7 +29,11 @@ export function ProfileEditMenu({
   onCloseDeleteConfirm,
   onConfirmDelete,
   onCloseDeleted,
+  menuTopOffset,
 }: Props) {
+  const insets = useSafeAreaInsets();
+  const menuTop = insets.top + (menuTopOffset ?? 56);
+
   return (
     <>
       <Modal
@@ -35,12 +42,11 @@ export function ProfileEditMenu({
         animationType="fade"
         onRequestClose={onCloseEditMenu}
       >
-        <TouchableOpacity
-          style={styles.overlay}
-          activeOpacity={1}
-          onPress={onCloseEditMenu}
-        >
-          <View style={styles.menu} onStartShouldSetResponder={() => true}>
+        <View style={styles.root}>
+          <BlurView intensity={24} tint="light" style={StyleSheet.absoluteFillObject} />
+          <Pressable style={styles.overlay} onPress={onCloseEditMenu} />
+
+          <View style={[styles.menu, { top: menuTop }]} onStartShouldSetResponder={() => true}>
             <TouchableOpacity
               style={styles.item}
               onPress={() => {
@@ -60,7 +66,7 @@ export function ProfileEditMenu({
               <Text style={[styles.itemText, styles.dangerText]}>Удалить профиль</Text>
             </TouchableOpacity>
           </View>
-        </TouchableOpacity>
+        </View>
       </Modal>
 
       <DeleteProfileConfirmModal
@@ -75,15 +81,15 @@ export function ProfileEditMenu({
 }
 
 const styles = StyleSheet.create({
-  overlay: {
+  root: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.35)",
-    flexDirection: "row",
-    justifyContent: "flex-end",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.26)",
   },
   menu: {
     position: "absolute",
-    top: 90,
     right: 16,
     width: 260,
     backgroundColor: "#FFFFFF",

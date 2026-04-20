@@ -8,13 +8,11 @@ type Props = {
   onOpenBurger: () => void;
 };
 
-export function PickerProfileHeader({
-  onOpenBurger,
-}: Props) {
+export function ProfileTopBar({ onOpenBurger }: Props) {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.pickerHeader, { paddingTop: insets.top + 6 }]}>
+    <View style={[styles.container, { paddingTop: insets.top + 6 }]}>
       <Logo width={110} height={28} />
       <BurgerButton onPress={onOpenBurger} hitSlop={8} />
     </View>
@@ -22,7 +20,7 @@ export function PickerProfileHeader({
 }
 
 const styles = StyleSheet.create({
-  pickerHeader: {
+  container: {
     minHeight: 56,
     marginHorizontal: 16,
     paddingHorizontal: 16,

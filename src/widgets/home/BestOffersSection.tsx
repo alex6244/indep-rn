@@ -1,5 +1,6 @@
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useRouter } from "expo-router";
 import FavIcon from "../../assets/icons/favourite.svg";
 
 const offers = [
@@ -22,6 +23,8 @@ const offers = [
 ];
 
 export function BestOffersSection() {
+  const router = useRouter();
+
   return (
     <View style={styles.section}>
       <Text style={styles.title}>Лучшие предложения на автомобили</Text>
@@ -34,7 +37,10 @@ export function BestOffersSection() {
               <Text style={styles.subtitle}>{offer.subtitle}</Text>
               <Text style={styles.name}>{offer.title}</Text>
               <View style={styles.row}>
-                <TouchableOpacity style={styles.buyButton}>
+                <TouchableOpacity
+                  style={styles.buyButton}
+                  onPress={() => router.push("/reports")}
+                >
                   <Text style={styles.buyText}>Купить отчёт</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.favButton}>

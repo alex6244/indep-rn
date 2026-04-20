@@ -13,8 +13,12 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Logo from "../../assets/logo.svg";
 import { useAuth } from "../../contexts/AuthContext";
 import { scrollBottomPaddingBelowTabBar } from "../../shared/navigation/tabBarMetrics";
+import { colors } from "../../shared/theme/colors";
+import { BurgerButton } from "../../shared/ui/BurgerButton";
+import type { UserRole } from "../../types/user";
 import { BenefitsRow } from "../../widgets/home/BenefitsRow";
 import { BestOffersSection } from "../../widgets/home/BestOffersSection";
 import { ChecksGridSection } from "../../widgets/home/ChecksGridSection";
@@ -28,18 +32,29 @@ import { WelcomeHero } from "../../widgets/home/WelcomeHero";
 export default function HomeTab() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [roleView, setRoleView] = useState<"picker" | "client">("client");
+  const [roleView, setRoleView] = useState<UserRole>(
+    user?.role === "picker" ? "picker" : "client",
+  );
+
+  React.useEffect(() => {
+    setRoleView(user?.role === "picker" ? "picker" : "client");
+  }, [user?.role]);
 
   const contentPadBottom = scrollBottomPaddingBelowTabBar(insets.bottom);
 
   return (
     <View style={styles.screen}>
+      <View style={[styles.topBar, { paddingTop: insets.top + 6 }]}>
+        <Logo width={82} height={22} />
+        <BurgerButton onPress={() => setMenuOpen(true)} hitSlop={8} />
+      </View>
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: contentPadBottom }]}
       >
         <WelcomeHero
+          showTopBar={false}
           onOpenBurger={() => setMenuOpen(true)}
           onOpenCatalog={() => router.push("/(tabs)/catalog" as Href)}
         />
@@ -60,6 +75,7 @@ export default function HomeTab() {
               style={styles.catalogCtaButton}
               onPress={() => router.push("/(tabs)/catalog" as Href)}
               accessibilityRole="button"
+              accessibilityLabel="Перейти в каталог авто"
             >
               <Text style={styles.catalogCtaText}>Перейти в каталог авто</Text>
             </TouchableOpacity>
@@ -84,24 +100,32 @@ export default function HomeTab() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surfacePrimary,
   },
   content: {
     paddingHorizontal: 16,
-    paddingTop: 10,
+    paddingTop: 8,
+  },
+  topBar: {
+    backgroundColor: colors.surfacePrimary,
+    paddingHorizontal: 16,
+    paddingBottom: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   catalogCtaButton: {
     marginTop: 16,
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.brandPrimary,
     paddingVertical: 10,
     paddingHorizontal: 16,
   },
   catalogCtaText: {
     fontSize: 16,
     fontWeight: "500",
-    color: "#FFFFFF",
+    color: colors.onDark,
   },
 });

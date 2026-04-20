@@ -11,6 +11,7 @@ import { Header } from "../../../widgets/header/Header";
 import { FavoriteButton } from "../../favorites/ui/FavoriteButton";
 import { RangeSlider } from "../../../shared/ui/RangeSlider";
 import { EntitiesToggle } from "../../../widgets/entitiesToggle/EntitiesToggle";
+import { ScreenStateEmpty } from "../../../shared/ui/ScreenStateEmpty";
 
 const MAIN_IMG = "https://via.placeholder.com/600x300";
 const THUMBS = [
@@ -20,6 +21,20 @@ const THUMBS = [
 ];
 
 export default function AutoScreen() {
+  if (!__DEV__) {
+    return (
+      <View style={styles.root}>
+        <Header title="Автомобиль" rightAction="none" />
+        <View style={styles.centered}>
+          <ScreenStateEmpty
+            title="Страница в разработке"
+            subtitle="Детальная информация об автомобиле появится в ближайшее время."
+          />
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.root}>
       <Header title="NISSAN Qashqai" rightAction="none" />
@@ -197,6 +212,11 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: "#FFFFFF",
+  },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
     padding: 16,

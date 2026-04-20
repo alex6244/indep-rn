@@ -16,13 +16,18 @@ import { CreatePtsSection } from "./create/CreatePtsSection";
 import { CreateRoleGate } from "./create/CreateRoleGate";
 import { styles } from "./create/PickerReportCreatePage.styles";
 import { InlineMessage } from "../../../shared/ui/InlineMessage";
+import { ScreenStateLoading } from "../../../shared/ui/ScreenStateLoading";
 
 export function PickerReportCreatePage() {
   const insets = useSafeAreaInsets();
   const controller = usePickerReportCreateController();
 
   if (controller.loading || !controller.user) {
-    return <View style={styles.center} />;
+    return (
+      <View style={[styles.screen, styles.center]}>
+        <ScreenStateLoading message="Загружаем данные..." />
+      </View>
+    );
   }
 
   if (!controller.isPicker) {

@@ -8,19 +8,25 @@ type Props = {
 
 export function PenaltiesCard({ report }: Props) {
   const penalties = report.penalties ?? [];
-  const allPaid = penalties.length > 0 && penalties.every((p) => p.paid);
+  const hasPenalties = penalties.length > 0;
+  const allPaid = hasPenalties && penalties.every((p) => p.paid);
+
+  const badgeLabel = !hasPenalties
+    ? "Нет штрафов"
+    : allPaid
+      ? "Оплачены"
+      : "Не оплачены";
+  const badgeBg = !hasPenalties || allPaid ? "#EAF7EE" : "#FFF1F3";
+  const badgeTextColor = !hasPenalties || allPaid ? "#2E7D32" : "#B42318";
 
   return (
     <View style={styles.card}>
       <View style={styles.headerRow}>
         <Text style={styles.title}>Штрафы</Text>
-        <View
-          style={[
-            styles.badge,
-            { backgroundColor: allPaid ? "#EAF7EE" : "#FFF1F3" },
-          ]}
-        >
-          <Text style={styles.badgeText}>{allPaid ? "Оплачены" : "Не оплачены"}</Text>
+        <View style={[styles.badge, { backgroundColor: badgeBg }]}>
+          <Text style={[styles.badgeText, { color: badgeTextColor }]}>
+            {badgeLabel}
+          </Text>
         </View>
       </View>
 
@@ -72,7 +78,6 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   badgeText: {
-    color: "#4DB95C",
     fontSize: 11,
     fontWeight: "700",
   },
@@ -114,4 +119,3 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
-

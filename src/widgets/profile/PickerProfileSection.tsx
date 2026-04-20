@@ -3,18 +3,15 @@ import React, { useMemo, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
-import AboutIcon from "../../assets/icons/burger/about.svg";
-import CooperationIcon from "../../assets/icons/burger/ads.svg";
-import FavIcon from "../../assets/icons/burger/favourites.svg";
-import SelectionIcon from "../../assets/icons/burger/selection.svg";
+import { getMainBurgerMenuItems } from "../../shared/config/mainBurgerMenu";
 import { BurgerMenu } from "../../shared/ui/BurgerMenu";
 import { BalanceModal } from "./BalanceModal";
-import { PickerProfileHeader } from "./PickerProfileHeader";
-import { PickerUserCard } from "./PickerUserCard";
+import { ProfileIdentityCard } from "./ProfileIdentityCard";
 import { ProfileEditMenu } from "./ProfileEditMenu";
 import { ProfileLogoutRow } from "./ProfileLogoutRow";
 import { ProfileQuickActions } from "./ProfileQuickActions";
 import { ProfileStats } from "./ProfileStats";
+import { ProfileTopBar } from "./ProfileTopBar";
 import { ReportsBanner } from "./ReportsBanner";
 import { useProfileEditFlow } from "./useProfileEditFlow";
 import { scrollBottomPaddingBelowTabBar } from "../../shared/navigation/tabBarMetrics";
@@ -51,7 +48,7 @@ export function PickerProfileSection({ initials, name, phone, onLogout }: Props)
 
   return (
     <View style={styles.pickerScreen}>
-      <PickerProfileHeader onOpenBurger={() => setMenuOpen(true)} />
+      <ProfileTopBar onOpenBurger={() => setMenuOpen(true)} />
 
       <ScrollView
         contentContainerStyle={[
@@ -62,10 +59,10 @@ export function PickerProfileSection({ initials, name, phone, onLogout }: Props)
         ]}
       >
         {infoMessage ? <InlineMessage tone="info" message={infoMessage} /> : null}
-        <PickerUserCard
-          initials={initials}
+        <ProfileIdentityCard
           name={name}
           phone={phone}
+          initials={initials}
           onOpenEdit={() => editFlow.setEditMenuOpen(true)}
         />
 
@@ -86,7 +83,7 @@ export function PickerProfileSection({ initials, name, phone, onLogout }: Props)
         <ProfileQuickActions
           variant="picker"
           onOpenFavorites={() => router.push("/(tabs)/favorites" as Href)}
-          onOpenBest={() => router.push("/selection" as Href)}
+          onOpenBest={() => router.push("/(tabs)/catalog" as Href)}
         />
 
         <Text style={styles.sectionTitle}>Мои отчёты</Text>
@@ -127,32 +124,7 @@ export function PickerProfileSection({ initials, name, phone, onLogout }: Props)
       <BurgerMenu
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
-        items={[
-          {
-            key: "favorites",
-            label: "Избранное",
-            href: "/(tabs)/favorites" as Href,
-            Icon: FavIcon,
-          },
-          {
-            key: "selection",
-            label: "Подбор авто",
-            href: "/selection" as Href,
-            Icon: SelectionIcon,
-          },
-          {
-            key: "coop",
-            label: "Сотрудничество",
-            href: "/cooperation" as Href,
-            Icon: CooperationIcon,
-          },
-          {
-            key: "about",
-            label: "О нас",
-            href: "/about" as Href,
-            Icon: AboutIcon,
-          },
-        ]}
+        items={getMainBurgerMenuItems()}
         footer={
           <ProfileLogoutRow
             onPress={() => {
@@ -170,7 +142,7 @@ export function PickerProfileSection({ initials, name, phone, onLogout }: Props)
         confirmDeleteOpen={editFlow.confirmDeleteOpen}
         deletedOpen={editFlow.deletedOpen}
         onCloseEditMenu={() => editFlow.setEditMenuOpen(false)}
-        onChangePhone={() => {}}
+        onChangePhone={() => setInfoMessage("Редактирование номера будет доступно позже.")}
         onOpenDeleteConfirm={() => editFlow.setConfirmDeleteOpen(true)}
         onCloseDeleteConfirm={() => editFlow.setConfirmDeleteOpen(false)}
         onConfirmDelete={editFlow.handleDeleteConfirm}

@@ -36,12 +36,6 @@ export function CatalogFiltersBar({
         <TouchableOpacity style={styles.allFiltersButton} onPress={openFilters}>
           <Text style={styles.allFiltersText}>Все фильтры</Text>
         </TouchableOpacity>
-
-        {["от 2023 до 2025 г.", "Со скидками", "Седан"].map((label) => (
-          <View key={label} style={styles.filterChip}>
-            <Text style={styles.filterChipText}>{label}</Text>
-          </View>
-        ))}
       </ScrollView>
     </View>
   );

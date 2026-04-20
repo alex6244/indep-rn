@@ -8,7 +8,6 @@ import {
   View,
 } from "react-native";
 import { Path, Svg } from "react-native-svg";
-import { RangeSlider } from "../../../shared/ui/RangeSlider";
 import { EntitiesToggle } from "../../../widgets/entitiesToggle/EntitiesToggle";
 import { MarkButton } from "./MarkButton";
 import { CarSearchFiltersBottomPanel } from "./CarSearchFiltersBottomPanel";
@@ -163,7 +162,6 @@ export function CatalogFiltersOverlay({
               placeholderTextColor="#979797"
             />
           </View>
-          <RangeSlider min={0} max={40_000_000} initial={10_000_000} />
         </View>
 
         <View style={styles.filterBlock}>

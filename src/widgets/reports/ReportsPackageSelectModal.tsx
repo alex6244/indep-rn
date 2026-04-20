@@ -79,7 +79,14 @@ export function ReportsPackageSelectModal({
                       active ? styles.pricePillActive : styles.pricePillInactive,
                     ]}
                   >
-                    <Text style={styles.priceText}>{formatRub(opt.priceRub)}</Text>
+                    <Text
+                      style={[
+                        styles.priceText,
+                        active ? styles.priceTextActive : styles.priceTextInactive,
+                      ]}
+                    >
+                      {formatRub(opt.priceRub)}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               );
@@ -173,13 +180,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#DB4431",
   },
   pricePillInactive: {
-    backgroundColor: "#E14332",
-    opacity: 0.95,
+    backgroundColor: "#F3F3F3",
   },
   priceText: {
-    color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "800",
+  },
+  priceTextActive: {
+    color: "#FFFFFF",
+  },
+  priceTextInactive: {
+    color: "#1E1E1E",
   },
 });
 

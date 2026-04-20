@@ -1,5 +1,7 @@
+import { jest, describe, it, expect, beforeEach } from "@jest/globals";
 import { renderHook, act } from "@testing-library/react-native";
 import { useProtected, useRequireAuth } from "../useProtected";
+
 
 jest.mock("../../contexts/AuthContext", () => ({
   useAuth: jest.fn(),

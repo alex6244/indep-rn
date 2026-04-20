@@ -85,12 +85,8 @@ export function MediaUploadCard({ value, onChange }: Props) {
 
   return (
     <View style={styles.section}>
-      <View style={[styles.bgWrap, { pointerEvents: "none" }]}>
-        <PhotosBg
-          style={StyleSheet.absoluteFillObject}
-          width="100%"
-          height="100%"
-        />
+      <View style={[styles.illustrationWrap, { pointerEvents: "none" }]}>
+        <PhotosBg width="100%" height="100%" />
       </View>
 
       <View style={styles.content}>
@@ -144,21 +140,22 @@ export function MediaUploadCard({ value, onChange }: Props) {
 
 const styles = StyleSheet.create({
   section: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#F1F1F1",
     borderRadius: 18,
-    overflow: "hidden",
     marginHorizontal: 16,
     marginBottom: 16,
-    paddingTop: 12,
+    paddingTop: 8,
+    overflow: "hidden",
   },
-  bgWrap: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "center",
-    alignItems: "center",
+  illustrationWrap: {
+    height: 160,
+    marginHorizontal: 8,
+    marginTop: 2,
   },
   content: {
     paddingHorizontal: 16,
-    paddingBottom: 14,
+    paddingTop: 4,
+    paddingBottom: 12,
   },
   title: {
     fontSize: 18,

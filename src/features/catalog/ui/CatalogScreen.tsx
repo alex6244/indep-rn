@@ -31,6 +31,8 @@ type MeasureInWindowRef = RNView & {
 };
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
+/** Минимальная ширина dropdown сортировки — достаточна, чтобы вместить все варианты без переноса. */
+const SORT_DROPDOWN_MIN_WIDTH = 260;
 
 export default function CatalogScreen() {
   const router = useRouter();
@@ -68,9 +70,9 @@ export default function CatalogScreen() {
   }, []);
 
   useEffect(() => {
-    const controller = new AbortController();
-    void loadCars(controller.signal);
-    return () => controller.abort();
+    const abortController = new AbortController();
+    void loadCars(abortController.signal);
+    return () => abortController.abort();
   }, [loadCars]);
 
   useEffect(() => {
@@ -109,7 +111,6 @@ export default function CatalogScreen() {
     setSortOpen(true);
   };
 
-  const SORT_DROPDOWN_MIN_WIDTH = 260;
   const dropdownWidth = Math.max(sortAnchor?.width || 0, SORT_DROPDOWN_MIN_WIDTH);
   const dropdownLeft = sortAnchor
     ? Math.max(16, Math.min(sortAnchor.x, SCREEN_WIDTH - dropdownWidth - 16))

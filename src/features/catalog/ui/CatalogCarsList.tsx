@@ -1,10 +1,10 @@
 import React from "react";
 import {
-  Dimensions,
   Image,
   ScrollView,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
@@ -28,11 +28,13 @@ type CatalogCarsListProps = {
   styles: CatalogStyles;
 };
 
-const SCREEN_W = Dimensions.get("window").width;
-/** Экран минус отступы экрана (16×2) и карточки (14×2) — ширина галереи ≈ ширине скролла для paging. */
-const CARD_IMAGE_WIDTH = SCREEN_W - 60;
+/** ru-RU форматтер цен: создаётся один раз на модуль, а не при каждом рендере. */
+const ruPriceFormat = new Intl.NumberFormat("ru-RU");
 
 function CatalogCarCard({ car, isFavorite, setFavorite, styles }: CatalogCarCardProps) {
+  const { width: screenW } = useWindowDimensions();
+  /** Экран минус отступы экрана (16×2) и карточки (14×2) — ширина галереи ≈ ширине скролла для paging. */
+  const cardImageWidth = screenW - 60;
   const specsLine = buildCarSpecsLine(car);
   const modelLine = buildCarModelLine(car);
 
@@ -47,11 +49,11 @@ function CatalogCarCard({ car, isFavorite, setFavorite, styles }: CatalogCarCard
       >
         {car.images.map((uri, idx) => (
           <Image
-            key={idx}
+            key={uri}
             source={{ uri }}
             style={[
               styles.carImage,
-              { width: CARD_IMAGE_WIDTH },
+              { width: cardImageWidth },
               idx === car.images.length - 1 && styles.carImageLast,
             ]}
             accessibilityLabel={`Фото ${idx + 1} из ${car.images.length}`}
@@ -60,7 +62,7 @@ function CatalogCarCard({ car, isFavorite, setFavorite, styles }: CatalogCarCard
       </ScrollView>
 
       <View style={styles.carInfo}>
-        <Text style={styles.carPrice}>{new Intl.NumberFormat("ru-RU").format(car.price)} ₽</Text>
+        <Text style={styles.carPrice}>{ruPriceFormat.format(car.price)} ₽</Text>
         <Text style={styles.carSpecsLine} numberOfLines={2}>
           {specsLine}
         </Text>

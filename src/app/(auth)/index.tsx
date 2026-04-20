@@ -1,6 +1,6 @@
 // src/app/(auth)/index.tsx — экран логина
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../contexts/AuthContext";
 import { AuthHeader } from "../../widgets/header/AuthHeader";
 import { InlineMessage } from "../../shared/ui/InlineMessage";
@@ -21,9 +22,10 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [agreed, setAgreed] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState<{ tone: "error" | "info"; text: string } | null>(null);
   const { login, authError, loading: authLoading } = useAuth();
+  const passwordRef = useRef<TextInput>(null);
 
   const handleSubmit = async () => {
     if (authLoading) {
@@ -83,40 +85,46 @@ export default function LoginScreen() {
                 placeholder="name@example.com"
                 autoCapitalize="none"
                 keyboardType="email-address"
+                returnKeyType="next"
+                onSubmitEditing={() => passwordRef.current?.focus()}
                 editable={!loading}
               />
             </View>
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Пароль</Text>
-              <TextInput
-                style={styles.input}
-                value={password}
-                onChangeText={setPassword}
-                placeholder="Введите пароль"
-                secureTextEntry
-                autoCapitalize="none"
-                editable={!loading}
-              />
+              <View style={styles.passwordWrap}>
+                <TextInput
+                  ref={passwordRef}
+                  style={[styles.input, styles.passwordInput]}
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder="Введите пароль"
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  returnKeyType="done"
+                  onSubmitEditing={handleSubmit}
+                  editable={!loading}
+                />
+                <TouchableOpacity
+                  style={styles.eyeButton}
+                  onPress={() => setShowPassword((v) => !v)}
+                  disabled={loading}
+                  accessibilityRole="button"
+                  accessibilityLabel={showPassword ? "Скрыть пароль" : "Показать пароль"}
+                >
+                  <Ionicons
+                    name={showPassword ? "eye-off-outline" : "eye-outline"}
+                    size={20}
+                    color="#767676"
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
 
             <TouchableOpacity
-              style={styles.checkboxContainer}
-              onPress={() => setAgreed((v) => !v)}
-              activeOpacity={0.7}
-            >
-              <View style={[styles.checkbox, agreed && styles.checkboxChecked]}>
-                {agreed && <Text style={styles.checkmark}>✓</Text>}
-              </View>
-              <Text style={styles.checkboxText}>
-                Даю согласие на{" "}
-                <Text style={styles.link}>обработку персональных данных</Text>
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.submitButton, (!agreed || loading) && styles.buttonDisabled]}
+              style={[styles.submitButton, loading && styles.buttonDisabled]}
               onPress={handleSubmit}
-              disabled={!agreed || loading}
+              disabled={loading}
             >
               {loading ? (
                 <Text style={styles.loadingText}>Загрузка...</Text>
@@ -185,36 +193,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#080717",
   },
-  checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 8,
+  passwordWrap: {
+    position: "relative",
   },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: "#DB4431",
-    backgroundColor: "transparent",
+  passwordInput: {
+    paddingRight: 40,
+  },
+  eyeButton: {
+    position: "absolute",
+    right: 10,
+    top: 0,
+    bottom: 0,
     justifyContent: "center",
     alignItems: "center",
-  },
-  checkboxChecked: {
-    backgroundColor: "#DB4431",
-  },
-  checkmark: {
-    color: "white",
-    fontSize: 14,
-    fontWeight: "bold",
-  },
-  checkboxText: {
-    fontSize: 14,
-    flex: 1,
-  },
-  link: {
-    color: "#DB4431",
-    textDecorationLine: "underline",
   },
   submitButton: {
     backgroundColor: "#DB4431",

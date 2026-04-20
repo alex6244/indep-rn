@@ -51,11 +51,7 @@ function mapAuthErrorCode(error: unknown): AuthErrorCode {
 
 function mapAuthError(error: unknown): AuthError {
   const code = mapAuthErrorCode(error);
-  const message =
-    error instanceof ApiError || error instanceof TypeError
-      ? (error.message?.trim() || getDefaultAuthErrorMessage(code))
-      : getDefaultAuthErrorMessage(code);
-  return { code, message };
+  return { code, message: getDefaultAuthErrorMessage(code) };
 }
 
 export const authService = {

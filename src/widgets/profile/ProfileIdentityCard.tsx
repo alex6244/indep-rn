@@ -3,17 +3,19 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import EditIcon from "../../assets/icons/edit.svg";
 
 type Props = {
-  initials: string;
   name: string;
   phone?: string;
-  onOpenEdit: () => void;
+  initials?: string;
+  onOpenEdit?: () => void;
 };
 
-export function PickerUserCard({ initials, name, phone, onOpenEdit }: Props) {
+export function ProfileIdentityCard({ name, phone, initials, onOpenEdit }: Props) {
+  const displayInitials = resolveInitials(name, initials);
+
   return (
     <View style={styles.profileTop}>
       <View style={styles.avatarCircle}>
-        <Text style={styles.avatarInitials}>{initials}</Text>
+        <Text style={styles.avatarInitials}>{displayInitials}</Text>
       </View>
 
       <View style={styles.profileMeta}>
@@ -21,18 +23,40 @@ export function PickerUserCard({ initials, name, phone, onOpenEdit }: Props) {
           <Text style={styles.profileName} numberOfLines={1}>
             {name}
           </Text>
-          <TouchableOpacity
-            onPress={onOpenEdit}
-            style={styles.editIconButton}
-            accessibilityRole="button"
-          >
-            <EditIcon width={16} height={16} />
-          </TouchableOpacity>
+          {onOpenEdit ? (
+            <TouchableOpacity
+              onPress={onOpenEdit}
+              style={styles.editIconButton}
+              accessibilityRole="button"
+              accessibilityLabel="Редактировать профиль"
+            >
+              <EditIcon width={16} height={16} />
+            </TouchableOpacity>
+          ) : null}
         </View>
         {!!phone && <Text style={styles.profilePhone}>{phone}</Text>}
       </View>
     </View>
   );
+}
+
+function resolveInitials(name: string, initials?: string): string {
+  const fromProps = initials?.trim();
+  if (fromProps) {
+    return fromProps.toUpperCase();
+  }
+
+  const words = name
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  if (words.length === 0) {
+    return "??";
+  }
+  if (words.length === 1) {
+    return words[0].slice(0, 2).toUpperCase();
+  }
+  return `${words[0][0] ?? ""}${words[1][0] ?? ""}`.toUpperCase();
 }
 
 const styles = StyleSheet.create({

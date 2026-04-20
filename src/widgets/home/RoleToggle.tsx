@@ -1,11 +1,11 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-
-type Role = "picker" | "client";
+import type { UserRole } from "../../types/user";
+import { colors } from "../../shared/theme/colors";
 
 type Props = {
-  value: Role;
-  onChange: (role: Role) => void;
+  value: UserRole;
+  onChange: (role: UserRole) => void;
 };
 
 export function RoleToggle({ value, onChange }: Props) {
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   optionActive: {
-    backgroundColor: "#111827",
+    backgroundColor: colors.buttonDark,
   },
   optionText: {
     fontSize: 14,
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     color: "#777",
   },
   optionTextActive: {
-    color: "#FFFFFF",
+    color: colors.onDark,
   },
 });
 

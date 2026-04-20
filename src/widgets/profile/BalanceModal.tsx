@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   withdrawBtn: {
     flex: 1,
     height: 43,
-    backgroundColor: "#E14332",
+    backgroundColor: "#DB4431",
   },
   keepText: {
     color: "#FFFFFF",

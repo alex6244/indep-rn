@@ -1,11 +1,17 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ScreenStateEmpty } from "../../shared/ui/ScreenStateEmpty";
 
 export default function CallsTab() {
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={styles.screen}>
-      <Text style={styles.title}>Звонки</Text>
-      <Text style={styles.text}>Экран скоро будет, отвечаю.</Text>
+    <View style={[styles.screen, { paddingTop: insets.top }]}>
+      <ScreenStateEmpty
+        title="Звонки"
+        subtitle="Раздел находится в разработке и появится в ближайшем обновлении."
+      />
     </View>
   );
 }
@@ -13,19 +19,8 @@ export default function CallsTab() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+    backgroundColor: "#F7F7F7",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F7F7F7",
-    padding: 16,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#1E1E1E",
-  },
-  text: {
-    marginTop: 8,
-    fontSize: 14,
-    color: "#777",
   },
 });
