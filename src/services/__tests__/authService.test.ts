@@ -155,7 +155,7 @@ describe("authService contract", () => {
 
     await expect(authService.login({ email: "user@test.com", password: "bad" })).rejects.toEqual({
       code: "invalid_credentials",
-      message: "Unauthorized",
+      message: getDefaultAuthErrorMessage("invalid_credentials"),
     });
   });
 
@@ -164,7 +164,7 @@ describe("authService contract", () => {
 
     await expect(authService.login({ email: "user@test.com", password: "123456" })).rejects.toEqual({
       code: "network_error",
-      message: "Network request failed",
+      message: getDefaultAuthErrorMessage("network_error"),
     });
   });
 
@@ -221,7 +221,7 @@ describe("authService contract", () => {
 
     await expect(authService.me()).rejects.toEqual({
       code: "network_error",
-      message: "Network request failed",
+      message: getDefaultAuthErrorMessage("network_error"),
     });
   });
 });
