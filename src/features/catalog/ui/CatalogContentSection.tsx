@@ -1,6 +1,6 @@
 import React from "react";
 import type { Car } from "../../../types/car";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { ScreenStateEmpty } from "../../../shared/ui/ScreenStateEmpty";
 import { ScreenStateError } from "../../../shared/ui/ScreenStateError";
 import { ScreenStateLoading } from "../../../shared/ui/ScreenStateLoading";
@@ -18,6 +18,7 @@ type CatalogContentSectionProps = {
   isFavorite: (carId: string) => boolean;
   setFavorite: (carId: string, next: boolean) => void;
   onRetry: () => void;
+  onOpenCallbackRequest: () => void;
 };
 
 export function CatalogContentSection({
@@ -29,6 +30,7 @@ export function CatalogContentSection({
   isFavorite,
   setFavorite,
   onRetry,
+  onOpenCallbackRequest,
 }: CatalogContentSectionProps) {
   return (
     <>
@@ -58,6 +60,14 @@ export function CatalogContentSection({
               styles={styles}
             />
           </View>
+          <TouchableOpacity
+            style={styles.orderReportBtn}
+            onPress={onOpenCallbackRequest}
+            accessibilityRole="button"
+            accessibilityLabel="Заказать отчёт"
+          >
+            <Text style={styles.orderReportBtnText}>Заказать отчёт</Text>
+          </TouchableOpacity>
           <CatalogFooter styles={styles} />
         </>
       )}

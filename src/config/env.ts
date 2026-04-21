@@ -7,7 +7,9 @@ export type EnvKey =
   | "EXPO_PUBLIC_REQUIRE_REFRESH_ROTATION"
   | "EXPO_PUBLIC_AUTH_SOURCE"
   | "EXPO_PUBLIC_CATALOG_SOURCE"
-  | "EXPO_PUBLIC_REPORTS_SOURCE";
+  | "EXPO_PUBLIC_REPORTS_SOURCE"
+  | "EXPO_PUBLIC_SENTRY_DSN"
+  | "EXPO_PUBLIC_SENTRY_ENVIRONMENT";
 
 function readEnvRaw(key: EnvKey): string | undefined {
   // Avoid dynamic process.env access to satisfy expo/no-dynamic-env-var.
@@ -30,6 +32,10 @@ function readEnvRaw(key: EnvKey): string | undefined {
       return process.env.EXPO_PUBLIC_CATALOG_SOURCE;
     case "EXPO_PUBLIC_REPORTS_SOURCE":
       return process.env.EXPO_PUBLIC_REPORTS_SOURCE;
+    case "EXPO_PUBLIC_SENTRY_DSN":
+      return process.env.EXPO_PUBLIC_SENTRY_DSN;
+    case "EXPO_PUBLIC_SENTRY_ENVIRONMENT":
+      return process.env.EXPO_PUBLIC_SENTRY_ENVIRONMENT;
   }
 }
 

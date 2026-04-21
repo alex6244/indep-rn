@@ -16,8 +16,10 @@ import { catalogStyles as styles } from "./Catalog.styles";
 import { CatalogHeaderSection } from "./CatalogHeaderSection";
 import { CatalogFiltersBar } from "./CatalogFiltersBar";
 import { CatalogContentSection } from "./CatalogContentSection";
+import { CatalogCallbackRequestModal } from "./CatalogCallbackRequestModal";
 import { carService } from "../../../services/carService";
 import { InlineMessage } from "../../../shared/ui/InlineMessage";
+import { createRequestVersionTracker } from "../../../shared/async/requestVersion";
 
 type SortAnchor = {
   x: number;
@@ -43,29 +45,32 @@ export default function CatalogScreen() {
   const [sortOpen, setSortOpen] = useState(false);
   const [sortAnchor, setSortAnchor] = useState<SortAnchor | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [callbackModalOpen, setCallbackModalOpen] = useState(false);
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
   const [dataError, setDataError] = useState<string | null>(null);
+  const loadRequestTrackerRef = useRef(createRequestVersionTracker());
   const sortButtonRef = useRef<MeasureInWindowRef | null>(null);
   const filtersX = useRef<Animated.Value>(new Animated.Value(-SCREEN_WIDTH)).current;
   const controller = useCatalogFiltersController(cars);
 
   const loadCars = useCallback(async (signal?: AbortSignal): Promise<void> => {
+    const requestId = loadRequestTrackerRef.current.next();
     setLoading(true);
     setDataError(null);
     try {
-      const fetchedCars = await carService.getAll();
-      if (signal?.aborted) return;
+      const fetchedCars = await carService.getAll(undefined, signal);
+      if (signal?.aborted || !loadRequestTrackerRef.current.isActive(requestId)) return;
       setCars(Array.isArray(fetchedCars) ? fetchedCars : []);
     } catch (error) {
-      if (signal?.aborted) return;
+      if (signal?.aborted || !loadRequestTrackerRef.current.isActive(requestId)) return;
       const message =
         error instanceof Error
           ? error.message
           : "Не удалось загрузить каталог. Проверьте подключение и попробуйте снова.";
       setDataError(message);
     } finally {
-      if (!signal?.aborted) setLoading(false);
+      if (!signal?.aborted && loadRequestTrackerRef.current.isActive(requestId)) setLoading(false);
     }
   }, []);
 
@@ -81,19 +86,19 @@ export default function CatalogScreen() {
     };
   }, [clearFavoritesError]);
 
-  const openFilters = (): void => {
+  const openFilters = useCallback((): void => {
     setFiltersOpen(true);
     setSortOpen(false);
     Animated.timing(filtersX, { toValue: 0, duration: 300, useNativeDriver: true }).start();
-  };
+  }, [filtersX]);
 
-  const closeFilters = (): void => {
+  const closeFilters = useCallback((): void => {
     Animated.timing(filtersX, { toValue: -SCREEN_WIDTH, duration: 300, useNativeDriver: true }).start(
       () => setFiltersOpen(false),
     );
-  };
+  }, [filtersX]);
 
-  const toggleSort = (): void => {
+  const toggleSort = useCallback((): void => {
     if (filtersOpen) return;
     if (sortOpen) {
       setSortOpen(false);
@@ -109,7 +114,7 @@ export default function CatalogScreen() {
     }
     setSortAnchor(null);
     setSortOpen(true);
-  };
+  }, [filtersOpen, sortOpen]);
 
   const dropdownWidth = Math.max(sortAnchor?.width || 0, SORT_DROPDOWN_MIN_WIDTH);
   const dropdownLeft = sortAnchor
@@ -118,14 +123,22 @@ export default function CatalogScreen() {
   const dropdownTop = sortAnchor ? sortAnchor.y + sortAnchor.height + 8 : 0;
   const contentError = dataError ?? controller.error;
   const contentErrorTitle = dataError ? "Не удалось загрузить каталог" : "Не удалось применить фильтры";
+  const resetFilters = controller.resetFilters;
 
-  const handleRetry = (): void => {
+  const handleRetry = useCallback((): void => {
     if (dataError) {
       void loadCars();
       return;
     }
-    controller.resetFilters();
-  };
+    resetFilters();
+  }, [dataError, loadCars, resetFilters]);
+
+  const handleCallbackSubmit = useCallback(async (_payload: { name: string; phone: string }) => {
+    // Placeholder for future backend integration.
+    await new Promise((resolve) => {
+      setTimeout(resolve, 500);
+    });
+  }, []);
 
   return (
     <View style={styles.root}>
@@ -156,6 +169,7 @@ export default function CatalogScreen() {
           isFavorite={isFavorite}
           setFavorite={setFavorite}
           onRetry={handleRetry}
+          onOpenCallbackRequest={() => setCallbackModalOpen(true)}
         />
       </ScrollView>
 
@@ -215,6 +229,12 @@ export default function CatalogScreen() {
           </Animated.View>
         </View>
       )}
+
+      <CatalogCallbackRequestModal
+        visible={callbackModalOpen}
+        onClose={() => setCallbackModalOpen(false)}
+        onSubmit={handleCallbackSubmit}
+      />
 
       <BurgerMenu
         open={menuOpen}

@@ -5,6 +5,7 @@ import PhotosBg from "../../../assets/addCar/photosBG.svg";
 import AddPhotoIcon from "../../../assets/addCar/addPhoto.svg";
 import AddVideoIcon from "../../../assets/addCar/addVideo.svg";
 import { FONT_FAMILY } from "../../../shared/theme/fonts";
+import { colors } from "../../../shared/theme/colors";
 import { InlineMessage } from "../../../shared/ui/InlineMessage";
 import { UploadMediaModal } from "./media/UploadMediaModal";
 import {
@@ -140,7 +141,7 @@ export function MediaUploadCard({ value, onChange }: Props) {
 
 const styles = StyleSheet.create({
   section: {
-    backgroundColor: "#F1F1F1",
+    backgroundColor: colors.surface.card,
     borderRadius: 18,
     marginHorizontal: 16,
     marginBottom: 16,
@@ -161,7 +162,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     marginBottom: 12,
-    color: "#1E1E1E",
+    color: colors.text.primary,
   },
   rows: {},
   row: {
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
   },
   rowLabel: {
     fontSize: 14,
-    color: "#1E1E1E",
+    color: colors.text.primary,
     width: 150,
   },
   btn: {
@@ -198,7 +199,7 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 14,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
     alignItems: "center",
     justifyContent: "center",
   },

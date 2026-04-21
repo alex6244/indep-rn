@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import DropdownIcon from "../../../assets/icons/dropdown.svg";
-import { shadowStyle } from "../../../shared/theme/shadow";
+import { colors } from "../../../shared/theme/colors";
 
 export type PtsType = "original" | "nonOriginal";
 
@@ -35,7 +35,7 @@ function Radio({
       <View
         style={[
           styles.radioOuter,
-          checked ? { borderColor: "#DB4431" } : { borderColor: "#6B757C" },
+          checked ? { borderColor: colors.brand.primary } : { borderColor: colors.text.tertiary },
         ]}
       >
         {checked ? <View style={styles.radioInner} /> : null}
@@ -61,7 +61,7 @@ function DropdownLikeInput({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor="#00000080"
+        placeholderTextColor={colors.text.muted}
       />
       <View style={styles.dropdownIconWrap}>
         <DropdownIcon width={14} height={14} />
@@ -82,7 +82,7 @@ export function PtsForm({ value, onChange }: Props) {
           value={value.vin}
           onChangeText={(t) => onChange({ ...value, vin: t })}
           placeholder="Введите VIN"
-          placeholderTextColor="#00000040"
+          placeholderTextColor={colors.text.muted}
         />
       </View>
 
@@ -93,7 +93,7 @@ export function PtsForm({ value, onChange }: Props) {
           value={value.brand}
           onChangeText={(t) => onChange({ ...value, brand: t })}
           placeholder="Укажите марку"
-          placeholderTextColor="#00000040"
+          placeholderTextColor={colors.text.muted}
         />
       </View>
 
@@ -104,7 +104,7 @@ export function PtsForm({ value, onChange }: Props) {
           value={value.model}
           onChangeText={(t) => onChange({ ...value, model: t })}
           placeholder="Укажите модель"
-          placeholderTextColor="#00000040"
+          placeholderTextColor={colors.text.muted}
         />
       </View>
 
@@ -174,25 +174,16 @@ export function PtsForm({ value, onChange }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.card,
     borderRadius: 18,
     marginHorizontal: 16,
     marginBottom: 16,
     padding: 16,
-    ...(shadowStyle({
-      boxShadow: "0px 4px 10px rgba(0,0,0,0.04)",
-      shadowColor: "#000000",
-      shadowOpacity: 0.04,
-      shadowRadius: 10,
-      shadowOffset: { width: 0, height: 4 },
-      elevation: 3,
-    }) as object),
-    elevation: 3,
   },
   title: {
     fontSize: 18,
     fontWeight: "800",
-    color: "#1E1E1E",
+    color: colors.text.primary,
     marginBottom: 12,
   },
   field: {
@@ -201,15 +192,15 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#1E1E1E",
+    color: colors.text.primary,
     marginBottom: 6,
   },
   input: {
     height: 46,
     borderRadius: 10,
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.neutral,
     paddingHorizontal: 14,
-    color: "#1E1E1E",
+    color: colors.text.primary,
     fontSize: 14,
   },
   dropdownWrap: {
@@ -218,10 +209,10 @@ const styles = StyleSheet.create({
   dropdownInput: {
     height: 46,
     borderRadius: 10,
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.neutral,
     paddingHorizontal: 14,
     paddingRight: 32,
-    color: "#1E1E1E",
+    color: colors.text.primary,
     fontSize: 14,
   },
   dropdownIconWrap: {
@@ -256,16 +247,16 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 999,
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.brand.primary,
   },
   radioLabel: {
     fontSize: 14,
-    color: "#6B757C",
+    color: colors.text.tertiary,
     fontWeight: "600",
   },
   radioLabelActive: {
     fontSize: 14,
-    color: "#DB4431",
+    color: colors.brand.primary,
     fontWeight: "700",
   },
 });

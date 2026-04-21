@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { FONT_FAMILY } from "../../shared/theme/fonts";
+import { colors } from "../../shared/theme/colors";
 import { InlineMessage } from "../../shared/ui/InlineMessage";
 
 export function ReportDetailsActions({ reportId }: { reportId: string }) {
@@ -43,19 +44,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   btnPrimary: {
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.control.buttonPrimaryBg,
   },
   btnSecondary: {
-    backgroundColor: "#F3F3F3",
+    backgroundColor: colors.control.buttonSecondaryBg,
   },
   btnText: {
-    color: "#FFFFFF",
+    color: colors.control.buttonPrimaryText,
     fontSize: 14,
     fontWeight: "700",
     fontFamily: FONT_FAMILY.button,
   },
   btnTextSecondary: {
-    color: "#1E1E1E",
+    color: colors.control.buttonSecondaryText,
     fontSize: 14,
     fontWeight: "700",
     fontFamily: FONT_FAMILY.button,

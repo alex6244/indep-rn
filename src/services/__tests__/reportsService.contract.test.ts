@@ -3,16 +3,29 @@ import { reportsService } from "../reportsService";
 jest.mock("../api", () => {
   class ApiError extends Error {
     status: number;
+    code?: string;
 
-    constructor(status: number, message: string) {
+    constructor(status: number, message: string, code?: string) {
       super(message);
       this.status = status;
+      this.code = code;
       this.name = "ApiError";
     }
   }
 
+  const classifyApiError = (error: unknown): string => {
+    if (!(error instanceof ApiError)) return "unknown";
+    if (error.code) return error.code;
+    if (error.status === 401) return "unauthorized";
+    if (error.status === 404) return "not_found";
+    if (error.status >= 500) return "server_error";
+    if (error.status === 0) return "network";
+    return "unknown";
+  };
+
   return {
     ApiError,
+    classifyApiError,
     api: {
       get: jest.fn(),
     },
@@ -28,8 +41,9 @@ const { api } = jest.requireMock("../api") as {
   api: { get: jest.Mock };
 };
 
-const MockApiError = (jest.requireMock("../api") as { ApiError: new (status: number, message: string) => Error })
-  .ApiError;
+const MockApiError = (jest.requireMock("../api") as {
+  ApiError: new (status: number, message: string, code?: string) => Error;
+}).ApiError;
 
 function createApiReport(overrides?: Partial<Record<string, unknown>>) {
   return {
@@ -159,6 +173,30 @@ describe("reportsService contract", () => {
 
     await expect(reportsService.getPurchasedReports()).rejects.toMatchObject({
       message: "Сервис отчётов временно недоступен. Попробуйте позже.",
+    });
+  });
+
+  it("maps timeout to user-friendly Error in api mode", async () => {
+    process.env.EXPO_PUBLIC_REPORTS_SOURCE = "api";
+    api.get.mockRejectedValue(new MockApiError(0, "Request timeout", "timeout"));
+
+    await expect(reportsService.getPurchasedReports()).rejects.toMatchObject({
+      message: "Сервис отчётов долго отвечает. Попробуйте снова.",
+    });
+  });
+
+  it("throws controlled AppError on invalid reports payload", async () => {
+    process.env.EXPO_PUBLIC_REPORTS_SOURCE = "api";
+    api.get.mockResolvedValue([{ id: "broken-report" }]);
+
+    await expect(reportsService.getPurchasedReports()).rejects.toMatchObject({
+      kind: "validation",
+      message: "Получены некорректные данные списка отчётов. Попробуйте позже.",
+      context: expect.objectContaining({
+        service: "reportsService",
+        action: "getPurchasedReports",
+        payloadShapeError: expect.any(Array),
+      }),
     });
   });
 

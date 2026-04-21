@@ -2,15 +2,13 @@ import type { User } from "../types/user";
 
 export type { UserRole, User } from "../types/user";
 
-// Passwords are stored in .env.local (EXPO_PUBLIC_MOCK_*_PASSWORD), never in source.
 export type MockUserRecord = User & { password: string };
 
-function getMockPasswords(): { client: string; picker: string } {
-  return {
-    client: process.env.EXPO_PUBLIC_MOCK_CLIENT_PASSWORD ?? "",
-    picker: process.env.EXPO_PUBLIC_MOCK_PICKER_PASSWORD ?? "",
-  };
-}
+// Dev-only mock credentials used only when EXPO_PUBLIC_AUTH_SOURCE=mock.
+const MOCK_PASSWORDS = {
+  client: "client123",
+  picker: "picker123",
+} as const;
 
 const mockUserProfiles: { client: User; picker: User } = {
   client: {
@@ -32,10 +30,9 @@ const mockUserProfiles: { client: User; picker: User } = {
 };
 
 export function getMockUsers(): { client: MockUserRecord; picker: MockUserRecord } {
-  const passwords = getMockPasswords();
   return {
-    client: { ...mockUserProfiles.client, password: passwords.client },
-    picker: { ...mockUserProfiles.picker, password: passwords.picker },
+    client: { ...mockUserProfiles.client, password: MOCK_PASSWORDS.client },
+    picker: { ...mockUserProfiles.picker, password: MOCK_PASSWORDS.picker },
   };
 }
 

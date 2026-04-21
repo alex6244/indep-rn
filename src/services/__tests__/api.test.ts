@@ -137,6 +137,7 @@ describe("api retry/abort/401 policy", () => {
     await expect(api.get("/cars", { signal: controller.signal })).rejects.toMatchObject({
       status: 0,
       message: "Request aborted",
+      code: "aborted",
     });
 
     expect(fetchMock).toHaveBeenCalledTimes(0);
@@ -161,10 +162,21 @@ describe("api retry/abort/401 policy", () => {
       {
         status: 0,
         message: "Network request failed",
+        code: "network",
       },
     );
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("classifies timeout errors when fetch aborts without caller signal", async () => {
+    fetchMock.mockRejectedValue({ name: "AbortError" });
+
+    await expect(api.get("/cars")).rejects.toMatchObject({
+      status: 0,
+      message: "Request timeout",
+      code: "timeout",
+    });
   });
 
   it("clears token and triggers unauthorized handler on 401", async () => {
@@ -177,6 +189,7 @@ describe("api retry/abort/401 policy", () => {
     await expect(api.get("/auth/me")).rejects.toMatchObject({
       status: 401,
       message: "Unauthorized",
+      code: "unauthorized",
     });
 
     expect(clearSpy).toHaveBeenCalledTimes(1);
@@ -245,6 +258,26 @@ describe("api retry/abort/401 policy", () => {
     asyncGetSpy.mockRestore();
   });
 
+  it("deduplicates refresh flow across parallel 401 responses", async () => {
+    const refreshedJwt = createJwtWithExp(Math.floor(Date.now() / 1000) + 600);
+    const refreshHandler = jest.fn(async () => refreshedJwt);
+    setRefreshHandler(refreshHandler);
+    fetchMock
+      .mockResolvedValueOnce(createResponse({ status: 401, body: { message: "Unauthorized" } }))
+      .mockResolvedValueOnce(createResponse({ status: 401, body: { message: "Unauthorized" } }))
+      .mockResolvedValueOnce(createResponse({ status: 200, body: { ok: true } }))
+      .mockResolvedValueOnce(createResponse({ status: 200, body: { ok: true } }));
+
+    const [r1, r2] = await Promise.all([
+      api.get<{ ok: boolean }>("/secure/1"),
+      api.get<{ ok: boolean }>("/secure/2"),
+    ]);
+
+    expect(r1).toEqual({ ok: true });
+    expect(r2).toEqual({ ok: true });
+    expect(refreshHandler).toHaveBeenCalledTimes(1);
+  });
+
   it("does not force logout when refresh fails with transient error", async () => {
     const clearSpy = jest.spyOn(tokenStorage, "clear").mockResolvedValue();
     const unauthorizedHandler = jest.fn(async () => undefined);
@@ -257,6 +290,7 @@ describe("api retry/abort/401 policy", () => {
     await expect(api.get("/auth/me")).rejects.toMatchObject({
       status: 0,
       message: "Network request failed",
+      code: "network",
     });
 
     expect(clearSpy).not.toHaveBeenCalled();
@@ -332,5 +366,25 @@ describe("api retry/abort/401 policy", () => {
       "https://second.example.com/cars",
       expect.any(Object),
     );
+  });
+
+  it("marks not found responses with not_found code", async () => {
+    jest.spyOn(tokenStorage, "get").mockResolvedValue(null);
+    fetchMock.mockResolvedValue(createResponse({ status: 404, body: { message: "Not found" } }));
+
+    await expect(api.get("/cars/unknown")).rejects.toMatchObject({
+      status: 404,
+      code: "not_found",
+    });
+  });
+
+  it("marks server responses with server_error code", async () => {
+    jest.spyOn(tokenStorage, "get").mockResolvedValue(null);
+    fetchMock.mockResolvedValue(createResponse({ status: 503, body: { message: "Service unavailable" } }));
+
+    await expect(api.get("/cars")).rejects.toMatchObject({
+      status: 503,
+      code: "server_error",
+    });
   });
 });

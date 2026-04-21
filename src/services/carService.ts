@@ -1,8 +1,9 @@
-import { ApiError, api } from "./api";
+import { ApiError, api, classifyApiError } from "./api";
 import { cars as mockCars } from "../data/cars";
 import type { Car } from "../types/car";
 import { AppError } from "../shared/errors/appError";
 import { readSourceEnv } from "../config/sources";
+import { apiCarSchema, apiCarsListSchema, type ApiCar } from "./schemas/carSchemas";
 
 interface CarsParams {
   brand?: string;
@@ -14,29 +15,6 @@ interface CarsParams {
 }
 
 type CatalogSource = "mock" | "api";
-type ApiCar = {
-  id: string;
-  title: string;
-  brand: string;
-  price: number;
-  mileage: number;
-  year: number;
-  engine: string;
-  power: number;
-  driveType: string;
-  driveLabel?: string;
-  transmission?: string;
-  fuelType?: string;
-  address: string;
-  images: string[];
-  bodyType?: "Седан" | "Кроссовер" | "Хэтчбек";
-  features?: string[];
-  paymentType?: "cash" | "credit";
-  hasDiscount?: boolean;
-  vatReturn?: boolean;
-  weeklyOffer?: boolean;
-};
-
 function mapApiCarToDomainCar(apiCar: ApiCar): Car {
   return {
     id: apiCar.id,
@@ -83,16 +61,37 @@ function applyMockFilters(params?: CarsParams): Car[] {
 }
 
 function mapCarsError(error: unknown): string {
+  const code = classifyApiError(error);
+  if (code === "network") return "Проблема с сетью. Проверьте подключение и попробуйте снова.";
+  if (code === "timeout") return "Каталог отвечает слишком долго. Попробуйте снова.";
+  if (code === "aborted") return "Запрос был отменён.";
+
   if (error instanceof ApiError) {
     if (error.status === 401) return "Войдите в аккаунт, чтобы открыть каталог.";
-    if (error.status === 0) return "Проблема с сетью. Проверьте подключение и попробуйте снова.";
+    if (error.status === 404) return "Автомобиль не найден.";
     if (error.status >= 500) return "Сервис каталога временно недоступен. Попробуйте позже.";
   }
   return "Не удалось загрузить каталог. Проверьте подключение и попробуйте снова.";
 }
 
+function mapCarsErrorKind(error: unknown): AppError["kind"] {
+  const code = classifyApiError(error);
+  if (code === "network" || code === "timeout" || code === "aborted") return "network";
+  if (code === "unauthorized") return "unauthorized";
+  if (code === "not_found") return "not_found";
+  if (code === "server_error") return "server";
+  return "unknown";
+}
+
+function getPayloadShapeError(error: unknown): string[] | undefined {
+  if (!(error instanceof Error) || !("issues" in error)) return undefined;
+  const issues = (error as { issues?: { path?: (string | number)[]; message?: string }[] }).issues;
+  if (!Array.isArray(issues)) return undefined;
+  return issues.slice(0, 5).map((issue) => `${(issue.path ?? []).join(".") || "root"}: ${issue.message || "invalid value"}`);
+}
+
 export const carService = {
-  getAll: async (params?: CarsParams): Promise<Car[]> => {
+  getAll: async (params?: CarsParams, signal?: AbortSignal): Promise<Car[]> => {
     if (getCatalogSource() === "mock") {
       return applyMockFilters(params);
     }
@@ -105,11 +104,28 @@ export const carService = {
     }
     const qs = query.toString();
     try {
-      const response = await api.get<ApiCar[]>(`/cars${qs ? `?${qs}` : ""}`);
-      return response.map(mapApiCarToDomainCar);
+      const path = `/cars${qs ? `?${qs}` : ""}`;
+      const response = signal
+        ? await api.get<ApiCar[]>(path, { signal })
+        : await api.get<ApiCar[]>(path);
+      const parsed = apiCarsListSchema.safeParse(response);
+      if (!parsed.success) {
+        throw new AppError({
+          kind: "validation",
+          message: "Получены некорректные данные каталога. Попробуйте позже.",
+          cause: parsed.error,
+          context: {
+            service: "carService",
+            action: "getAll",
+            payloadShapeError: getPayloadShapeError(parsed.error),
+          },
+        });
+      }
+      return parsed.data.map(mapApiCarToDomainCar);
     } catch (error) {
+      if (error instanceof AppError) throw error;
       throw new AppError({
-        kind: "unknown",
+        kind: mapCarsErrorKind(error),
         message: mapCarsError(error),
         cause: error,
         context: { service: "carService", action: "getAll" },
@@ -121,19 +137,38 @@ export const carService = {
     if (getCatalogSource() === "mock") {
       const car = mockCars.find((item) => item.id === id);
       if (!car) {
-        throw new Error("Автомобиль не найден.");
+        throw new AppError({
+          kind: "not_found",
+          message: "Автомобиль не найден.",
+          context: { id, service: "carService", action: "getById" },
+        });
       }
       return car;
     }
     try {
       const response = await api.get<ApiCar>(`/cars/${id}`);
-      return mapApiCarToDomainCar(response);
+      const parsed = apiCarSchema.safeParse(response);
+      if (!parsed.success) {
+        throw new AppError({
+          kind: "validation",
+          message: "Получены некорректные данные автомобиля. Попробуйте позже.",
+          cause: parsed.error,
+          context: {
+            service: "carService",
+            action: "getById",
+            id,
+            payloadShapeError: getPayloadShapeError(parsed.error),
+          },
+        });
+      }
+      return mapApiCarToDomainCar(parsed.data);
     } catch (error) {
+      if (error instanceof AppError) throw error;
       throw new AppError({
-        kind: "unknown",
+        kind: mapCarsErrorKind(error),
         message: mapCarsError(error),
         cause: error,
-        context: { service: "carService", action: "getById" },
+        context: { service: "carService", action: "getById", id },
       });
     }
   },

@@ -1,7 +1,7 @@
 import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import type { Report } from "../../types/report";
-import { shadowStyle } from "../../shared/theme/shadow";
+import { colors } from "../../shared/theme/colors";
 
 type Props = {
   report: Report;
@@ -51,25 +51,16 @@ export function ReportCarousel({ report }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.card,
     borderRadius: 20,
     overflow: "hidden",
     marginHorizontal: 16,
     marginBottom: 16,
-    ...(shadowStyle({
-      boxShadow: "0px 4px 10px rgba(0,0,0,0.06)",
-      shadowColor: "#000000",
-      shadowOpacity: 0.06,
-      shadowRadius: 10,
-      shadowOffset: { width: 0, height: 4 },
-      elevation: 4,
-    }) as object),
-    elevation: 4,
   },
   mainImage: {
     width: "100%",
     height: 200,
-    backgroundColor: "#EEE",
+    backgroundColor: colors.icon.placeholder,
   },
   thumbsRow: {
     flexDirection: "row",
@@ -81,18 +72,18 @@ const styles = StyleSheet.create({
     width: 74,
     height: 48,
     borderRadius: 10,
-    backgroundColor: "#F1F1F1",
+    backgroundColor: colors.surface.muted,
   },
   moreThumb: {
     width: 74,
     height: 48,
     borderRadius: 10,
-    backgroundColor: "rgba(0,0,0,0.35)",
+    backgroundColor: colors.overlay.backdrop,
     justifyContent: "center",
     alignItems: "center",
   },
   moreThumbText: {
-    color: "#FFFFFF",
+    color: colors.text.inverse,
     fontSize: 10,
     fontWeight: "700",
     textAlign: "center",
@@ -104,12 +95,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#1E1E1E",
+    color: colors.text.primary,
   },
   subtitle: {
     marginTop: 4,
     fontSize: 12,
-    color: "#6B6B6B",
+    color: colors.text.secondary,
   },
   metaRow: {
     marginTop: 10,
@@ -118,17 +109,17 @@ const styles = StyleSheet.create({
   },
   metaText: {
     fontSize: 12,
-    color: "#6B6B6B",
+    color: colors.text.secondary,
   },
   metaTextRight: {
     fontSize: 12,
-    color: "#6B6B6B",
+    color: colors.text.secondary,
   },
   price: {
     marginTop: 12,
     fontSize: 18,
     fontWeight: "900",
-    color: "#1E1E1E",
+    color: colors.text.primary,
   },
 });
 

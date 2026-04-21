@@ -44,6 +44,23 @@ To learn more about developing your project with Expo, look at the following res
 - [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
 - [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
+## Theme Colors
+
+- Use `src/shared/theme/colors.ts` as the single source of truth for UI colors.
+- Prefer semantic tokens (`colors.surface.card`, `colors.text.primary`, `colors.brand.primary`) over raw `#hex` values.
+- Add new colors only when a semantic token does not already fit.
+- Keep raw colors out of components; the only acceptable exceptions are explicit platform shadow presets where React Native APIs require inline shadow values.
+
+## Reliability And Monitoring
+
+- Enable Sentry by setting `EXPO_PUBLIC_SENTRY_DSN` and `EXPO_PUBLIC_SENTRY_ENVIRONMENT` in runtime env.
+- The app initializes Sentry in `src/app/_layout.tsx` and routes `reportError/reportTelemetry` through a monitoring adapter.
+- Request aborts are treated as expected control flow and are not captured as critical incidents.
+- `api.ts` classifies failures into `network`, `timeout`, `aborted`, `unauthorized`, `not_found`, `server_error`, `unknown`.
+- `carService` and `reportsService` validate API payloads with Zod before domain mapping and throw controlled `AppError` on schema mismatch.
+- For sourcemaps upload in CI/EAS, keep `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT` only in CI secrets (never in `EXPO_PUBLIC_*`).
+- Incidents and traces are viewed in your Sentry project dashboard; use `environment`, `release`, `platform`, `app_version` tags to filter.
+
 ## Join the community
 
 Join our community of developers creating universal apps.

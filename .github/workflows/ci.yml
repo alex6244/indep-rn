@@ -14,6 +14,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Guard public password env vars
+        shell: bash
+        run: |
+          MATCHES="$(git grep -nE 'EXPO_PUBLIC_[A-Z0-9_]*PASSWORD' -- . ':(exclude).github/workflows/*' || true)"
+          if [ -n "$MATCHES" ]; then
+            echo "Found forbidden public password env vars:"
+            echo "$MATCHES"
+            echo "Do not use EXPO_PUBLIC_*PASSWORD*. EXPO_PUBLIC values are bundled into client code."
+            echo "Use non-public env names or internal mock constants instead."
+            exit 1
+          fi
+
+      - name: Guard public Sentry upload token
+        shell: bash
+        run: |
+          MATCHES="$(git grep -nE 'EXPO_PUBLIC_SENTRY_AUTH_TOKEN' -- . ':(exclude).github/workflows/*' || true)"
+          if [ -n "$MATCHES" ]; then
+            echo "Found forbidden EXPO_PUBLIC_SENTRY_AUTH_TOKEN usage:"
+            echo "$MATCHES"
+            echo "Sentry upload token must stay in CI secrets (SENTRY_AUTH_TOKEN), never in EXPO_PUBLIC_*."
+            exit 1
+          fi
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:

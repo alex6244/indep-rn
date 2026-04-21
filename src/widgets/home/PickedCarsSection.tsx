@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import type { ImageSourcePropType } from "react-native";
 import { Image } from "expo-image";
 import { shadowStyle } from "../../shared/theme/shadow";
+import { colors } from "../../shared/theme/colors";
 
 type PickedCar = {
   id: string;
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: "700",
-    color: "#1E1E1E",
+    color: colors.text.primary,
     marginBottom: 12,
     letterSpacing: -0.3,
   },
@@ -79,13 +80,14 @@ const styles = StyleSheet.create({
   },
   card: {
     borderRadius: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
     padding: 12,
     flexDirection: "row",
     gap: 12,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "#E8E8E8",
+    borderColor: colors.border.subtle,
     ...(shadowStyle({
+      // Shadow raw values are kept intentionally for platform-specific shadow rendering.
       boxShadow: "0px 2px 8px rgba(0,0,0,0.06)",
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },
@@ -103,7 +105,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 12,
     overflow: "hidden",
-    backgroundColor: "#EEE",
+    backgroundColor: colors.icon.placeholder,
   },
   image: {
     width: "100%",
@@ -116,12 +118,12 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#1E1E1E",
+    color: colors.text.primary,
     marginBottom: 6,
   },
   text: {
     fontSize: 10,
-    color: "#666",
+    color: colors.text.secondary,
     lineHeight: 14,
   },
 });

@@ -2,6 +2,7 @@ import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import type { Report } from "../../types/report";
 import { shadowStyle } from "../../shared/theme/shadow";
+import { colors } from "../../shared/theme/colors";
 
 export function ReportDetailsHeader({ report }: { report: Report }) {
   return (
@@ -19,13 +20,13 @@ export function ReportDetailsHeader({ report }: { report: Report }) {
 
 const styles = StyleSheet.create({
   wrap: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
     borderRadius: 20,
     overflow: "hidden",
     marginHorizontal: 16,
     marginBottom: 16,
     ...(shadowStyle({
-      boxShadow: "0px 4px 10px rgba(0,0,0,0.06)",
+      boxShadow: "0px 4px 10px rgba(0,0,0,0.06)", // legacy shadow preset, keep for visual parity
       shadowColor: "#000000",
       shadowOpacity: 0.06,
       shadowRadius: 10,
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: 200,
-    backgroundColor: "#EEE",
+    backgroundColor: colors.icon.placeholder,
   },
   body: {
     padding: 16,
@@ -46,19 +47,19 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 20,
     fontWeight: "800",
-    color: "#1E1E1E",
+    color: colors.text.primary,
   },
   title: {
     fontSize: 14,
-    color: "#1E1E1E",
+    color: colors.text.primary,
   },
   subtitle: {
     fontSize: 12,
-    color: "#777777",
+    color: colors.text.tertiary,
   },
   city: {
     fontSize: 12,
-    color: "#777777",
+    color: colors.text.tertiary,
     marginTop: 2,
   },
 });

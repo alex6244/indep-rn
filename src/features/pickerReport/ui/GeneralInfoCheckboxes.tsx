@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import CheckIcon from "../../../assets/icons/badges/check.svg";
+import { colors } from "../../../shared/theme/colors";
 
 type Props = {
   value: Record<string, boolean>;
@@ -39,7 +40,7 @@ export function GeneralInfoCheckboxes({ value, onChange }: Props) {
             <View
               style={[
                 styles.box,
-                checked && { backgroundColor: "#43C356", borderColor: "#43C356" },
+                checked && { backgroundColor: colors.status.success, borderColor: colors.status.success },
               ]}
             >
               {checked ? <CheckIcon width={12} height={12} /> : null}
@@ -54,7 +55,7 @@ export function GeneralInfoCheckboxes({ value, onChange }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.card,
     borderRadius: 18,
     overflow: "hidden",
     marginHorizontal: 16,
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#1E1E1E",
+    color: colors.text.primary,
     marginBottom: 12,
   },
   row: {
@@ -78,14 +79,14 @@ const styles = StyleSheet.create({
     height: 18,
     borderRadius: 3,
     borderWidth: 1,
-    borderColor: "#D0D0D0",
+    borderColor: colors.border.input,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
   },
   label: {
     fontSize: 14,
-    color: "#1E1E1E",
+    color: colors.text.primary,
     flex: 1,
   },
 });

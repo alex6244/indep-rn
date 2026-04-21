@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import type { Report } from "../../types/report";
-import { shadowStyle } from "../../shared/theme/shadow";
+import { colors } from "../../shared/theme/colors";
 
 type Props = {
   report: Report;
@@ -21,41 +21,32 @@ export function CostEstimationCard({ report }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.card,
     borderRadius: 20,
     marginHorizontal: 16,
     marginBottom: 16,
     padding: 16,
-    ...(shadowStyle({
-      boxShadow: "0px 4px 10px rgba(0,0,0,0.06)",
-      shadowColor: "#000000",
-      shadowOpacity: 0.06,
-      shadowRadius: 10,
-      shadowOffset: { width: 0, height: 4 },
-      elevation: 4,
-    }) as object),
-    elevation: 4,
   },
   title: {
     fontSize: 16,
     fontWeight: "900",
-    color: "#1E1E1E",
+    color: colors.text.primary,
     marginBottom: 10,
   },
   text: {
     fontSize: 12,
-    color: "#777777",
+    color: colors.text.tertiary,
     lineHeight: 18,
     fontWeight: "600",
   },
   rangeWrap: {
     marginTop: 12,
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.neutral,
     borderRadius: 14,
     padding: 12,
   },
   range: {
-    color: "#1E1E1E",
+    color: colors.text.primary,
     fontSize: 12,
     fontWeight: "800",
   },

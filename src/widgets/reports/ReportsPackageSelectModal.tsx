@@ -10,6 +10,7 @@ import {
 
 import CloseIcon from "../../assets/icons/close.svg";
 import { shadowStyle } from "../../shared/theme/shadow";
+import { colors } from "../../shared/theme/colors";
 
 type PackageOption = {
   count: number;
@@ -101,7 +102,7 @@ export function ReportsPackageSelectModal({
 const styles = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.35)",
+    backgroundColor: colors.overlay.backdrop,
   },
   center: {
     flex: 1,
@@ -109,13 +110,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
     borderRadius: 20,
     paddingTop: 18,
     paddingBottom: 10,
     paddingHorizontal: 18,
     overflow: "hidden",
     ...(shadowStyle({
+      // Shadow raw values are kept intentionally for platform-specific shadow rendering.
       boxShadow: "0px 10px 18px rgba(0,0,0,0.12)",
       shadowColor: "#000",
       shadowOpacity: 0.12,
@@ -135,7 +137,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     zIndex: 2,
-    backgroundColor: "rgba(0,0,0,0.03)",
+    backgroundColor: colors.overlay.soft,
   },
   list: {
     marginTop: 6,
@@ -149,7 +151,7 @@ const styles = StyleSheet.create({
   },
   rowDivider: {
     borderBottomWidth: 1,
-    borderBottomColor: "#E9E9E9",
+    borderBottomColor: colors.surface.placeholder,
   },
   left: {
     flex: 1,
@@ -158,16 +160,16 @@ const styles = StyleSheet.create({
   countText: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#1E1E1E",
+    color: colors.text.primary,
   },
   countTextActive: {
-    color: "#DB4431",
+    color: colors.brand.primary,
   },
   durationText: {
     marginTop: 4,
     fontSize: 13,
     fontWeight: "600",
-    color: "#6B757C",
+    color: colors.text.tertiary,
   },
   pricePill: {
     width: 110,
@@ -177,20 +179,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   pricePillActive: {
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.brand.primary,
   },
   pricePillInactive: {
-    backgroundColor: "#F3F3F3",
+    backgroundColor: colors.surface.disabled,
   },
   priceText: {
     fontSize: 18,
     fontWeight: "800",
   },
   priceTextActive: {
-    color: "#FFFFFF",
+    color: colors.text.inverse,
   },
   priceTextInactive: {
-    color: "#1E1E1E",
+    color: colors.text.primary,
   },
 });
 

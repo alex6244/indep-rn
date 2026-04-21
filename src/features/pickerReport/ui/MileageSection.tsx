@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
+import { colors } from "../../../shared/theme/colors";
 
 type Props = {
   value: string;
@@ -28,7 +29,7 @@ export function MileageSection({ value, onChange }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.card,
     borderRadius: 18,
     marginHorizontal: 16,
     marginBottom: 16,
@@ -38,21 +39,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "800",
     marginBottom: 12,
-    color: "#1E1E1E",
+    color: colors.text.primary,
   },
   field: {},
   label: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#1E1E1E",
+    color: colors.text.primary,
     marginBottom: 8,
   },
   input: {
     height: 46,
     borderRadius: 10,
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.neutral,
     paddingHorizontal: 14,
-    color: "#1E1E1E",
+    color: colors.text.primary,
     fontSize: 14,
   },
 });

@@ -8,7 +8,7 @@ jest.mock("../../contexts/AuthContext", () => ({
 }));
 
 jest.mock("expo-router", () => ({
-  useRouter: jest.fn(),
+  useRouter: jest.fуn(),
 }));
 
 const { useAuth } = jest.requireMock("../../contexts/AuthContext") as {

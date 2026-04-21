@@ -1,6 +1,7 @@
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useRouter, type Href } from "expo-router";
+import { colors } from "../../shared/theme/colors";
 
 type Props = {
   active: string;
@@ -20,10 +21,10 @@ export function ReportsBreadcrumb({ active }: Props) {
       }}
     >
       <TouchableOpacity onPress={() => router.push("/(tabs)/profile" as Href)}>
-        <Text style={{ fontSize: 12, color: "#979797" }}>Профиль</Text>
+        <Text style={{ fontSize: 12, color: colors.text.subtle }}>Профиль</Text>
       </TouchableOpacity>
-      <Text style={{ fontSize: 12, color: "#979797" }}>{">"}</Text>
-      <Text style={{ fontSize: 12, color: "#DB4431" }}>{active}</Text>
+      <Text style={{ fontSize: 12, color: colors.text.subtle }}>{">"}</Text>
+      <Text style={{ fontSize: 12, color: colors.brand.primary }}>{active}</Text>
     </View>
   );
 }

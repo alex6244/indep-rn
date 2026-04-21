@@ -1,5 +1,6 @@
 import React from "react";
 import { Text } from "react-native";
+import { colors } from "../../shared/theme/colors";
 
 export function ReportsHeader({ title }: { title: string }) {
   return (
@@ -9,7 +10,7 @@ export function ReportsHeader({ title }: { title: string }) {
         fontWeight: "600",
         marginHorizontal: 16,
         marginBottom: 16,
-        color: "#1E1E1E",
+        color: colors.text.primary,
       }}
     >
       {title}

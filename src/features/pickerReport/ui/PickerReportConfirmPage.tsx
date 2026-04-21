@@ -10,6 +10,7 @@ import { styles } from "./confirm/PickerReportConfirmPage.styles";
 import { ConfirmStatusSection } from "./confirm/ConfirmStatusSection";
 import { usePickerReportConfirmController } from "./confirm/usePickerReportConfirmController";
 import { InlineMessage } from "../../../shared/ui/InlineMessage";
+import { colors } from "../../../shared/theme/colors";
 
 export function PickerReportConfirmPage() {
   const router = useRouter();
@@ -19,7 +20,7 @@ export function PickerReportConfirmPage() {
   if (controller.loading) {
     return (
       <View style={[styles.screen, styles.loadingScreen]}>
-        <ActivityIndicator size="large" color="#DB4431" />
+        <ActivityIndicator size="large" color={colors.brand.primary} />
         <Text style={styles.loadingText}>Загружаем отчёт...</Text>
       </View>
     );

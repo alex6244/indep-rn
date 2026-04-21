@@ -7,6 +7,7 @@ import {
   View,
 } from "react-native";
 import OrangePlusIcon from "../../../assets/icons/orange-plus.svg";
+import { colors } from "../../../shared/theme/colors";
 
 export type OwnerType = "jur" | "phys";
 
@@ -40,7 +41,7 @@ function RadioOption({
       <View
         style={[
           styles.radioOuter,
-          checked ? { borderColor: "#DB4431" } : { borderColor: "#6B757C" },
+          checked ? { borderColor: colors.brand.primary } : { borderColor: colors.text.tertiary },
         ]}
       >
         {checked ? <View style={styles.radioInner} /> : null}
@@ -150,7 +151,7 @@ export function OwnersForm({ value, onChange }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.card,
     borderRadius: 18,
     marginHorizontal: 16,
     marginBottom: 16,
@@ -159,18 +160,18 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "800",
-    color: "#1E1E1E",
+    color: colors.text.primary,
     marginBottom: 14,
   },
   ownerBlock: {
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.neutral,
     borderRadius: 12,
     padding: 14,
   },
   sectionLabel: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#1E1E1E",
+    color: colors.text.primary,
     marginBottom: 10,
   },
   radioRow: {
@@ -195,15 +196,15 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 999,
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.brand.primary,
   },
   radioLabel: {
-    color: "#6B757C",
+    color: colors.text.tertiary,
     fontWeight: "600",
     fontSize: 14,
   },
   radioLabelActive: {
-    color: "#DB4431",
+    color: colors.brand.primary,
     fontWeight: "700",
     fontSize: 14,
   },
@@ -213,15 +214,15 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#6B757C",
+    color: colors.text.tertiary,
     marginBottom: 8,
   },
   input: {
     height: 46,
     borderRadius: 10,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
     paddingHorizontal: 14,
-    color: "#1E1E1E",
+    color: colors.text.primary,
     fontSize: 14,
   },
   addMoreBtn: {
@@ -233,7 +234,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   addMoreText: {
-    color: "#DB4431",
+    color: colors.brand.primary,
     fontSize: 14,
     fontWeight: "700",
   },

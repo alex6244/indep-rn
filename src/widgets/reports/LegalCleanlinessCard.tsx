@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import type { Report } from "../../types/report";
-import { shadowStyle } from "../../shared/theme/shadow";
+import { colors } from "../../shared/theme/colors";
 
 export function LegalCleanlinessCard({ report }: { report: Report }) {
   return (
@@ -19,7 +19,7 @@ export function LegalCleanlinessCard({ report }: { report: Report }) {
             <View
               style={[
                 styles.dot,
-                { backgroundColor: it.tone === "ok" ? "#4DB95C" : "#DB4431" },
+                { backgroundColor: it.tone === "ok" ? colors.status.success : colors.brand.primary },
               ]}
             />
             <Text style={styles.itemText}>{it.text}</Text>
@@ -32,20 +32,11 @@ export function LegalCleanlinessCard({ report }: { report: Report }) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.card,
     borderRadius: 20,
     marginHorizontal: 16,
     marginBottom: 16,
     padding: 16,
-    ...(shadowStyle({
-      boxShadow: "0px 4px 10px rgba(0,0,0,0.06)",
-      shadowColor: "#000000",
-      shadowOpacity: 0.06,
-      shadowRadius: 10,
-      shadowOffset: { width: 0, height: 4 },
-      elevation: 4,
-    }) as object),
-    elevation: 4,
   },
   headerRow: {
     flexDirection: "row",
@@ -57,16 +48,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: "800",
-    color: "#1E1E1E",
+    color: colors.text.primary,
   },
   badge: {
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 999,
-    backgroundColor: "#EAF7EE",
+    backgroundColor: colors.status.successBg,
   },
   badgeText: {
-    color: "#4DB95C",
+    color: colors.status.success,
     fontSize: 11,
     fontWeight: "700",
   },
@@ -86,7 +77,7 @@ const styles = StyleSheet.create({
   },
   itemText: {
     flex: 1,
-    color: "#1E1E1E",
+    color: colors.text.primary,
     fontSize: 12,
     lineHeight: 16,
     fontWeight: "600",

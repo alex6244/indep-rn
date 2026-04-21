@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { colors } from "../../../shared/theme/colors";
 
 type Props = {
   onPress: () => void;
@@ -29,13 +30,13 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.brand.primary,
     alignItems: "center",
     justifyContent: "center",
     paddingTop: 16,
   },
   text: {
-    color: "#FFFFFF",
+    color: colors.text.inverse,
     fontSize: 16,
     fontWeight: "600",
   },

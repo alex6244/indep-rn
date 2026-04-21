@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
+import { colors } from "../../../../shared/theme/colors";
 
 type Props = {
   checked: boolean;
@@ -10,7 +11,7 @@ export function RadioIcon({ checked }: Props) {
     <View
       style={[
         styles.outer,
-        checked ? { borderColor: "#DB4431" } : { borderColor: "#6B757C" },
+        checked ? { borderColor: colors.brand.primary } : { borderColor: colors.text.tertiary },
       ]}
     >
       {checked ? <View style={styles.inner} /> : null}
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 999,
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.brand.primary,
   },
 });
 

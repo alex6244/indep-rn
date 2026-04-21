@@ -97,8 +97,6 @@ describe("AuthContext restore/logout flow", () => {
     jest.clearAllMocks();
     delete process.env.EXPO_PUBLIC_AUTH_SOURCE;
     delete process.env.EXPO_PUBLIC_MOCK_TOKEN_TTL_MS;
-    process.env.EXPO_PUBLIC_MOCK_CLIENT_PASSWORD = "client123";
-    process.env.EXPO_PUBLIC_MOCK_PICKER_PASSWORD = "picker123";
     tokenStorage.get.mockResolvedValue(null);
     tokenStorage.clear.mockResolvedValue(undefined);
     refreshTokenStorage.clear.mockResolvedValue(undefined);

@@ -9,6 +9,7 @@ import {
 
 import SchemeSvg from "../../../assets/auto/scheme.svg";
 import OrangePlusIcon from "../../../assets/icons/orange-plus.svg";
+import { colors } from "../../../shared/theme/colors";
 
 export type DefectsMode = "scheme" | "photos";
 
@@ -128,7 +129,7 @@ export function DefectsForm({ value, onChange }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.card,
     borderRadius: 18,
     marginHorizontal: 16,
     marginBottom: 20,
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "800",
-    color: "#1E1E1E",
+    color: colors.text.primary,
     marginBottom: 12,
   },
   schemeWrap: {
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   schemeInner: {
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.neutral,
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
@@ -154,22 +155,22 @@ const styles = StyleSheet.create({
   photosPlaceholder: {
     height: 90,
     borderRadius: 14,
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.neutral,
     alignItems: "center",
     justifyContent: "center",
   },
   photosPlaceholderText: {
     fontSize: 12,
-    color: "#6B757C",
+    color: colors.text.tertiary,
     fontWeight: "700",
   },
   divider: {
     height: 1,
-    backgroundColor: "#DEDEDE",
+    backgroundColor: colors.border.soft,
     marginVertical: 12,
   },
   descriptionBox: {
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.neutral,
     borderRadius: 12,
     padding: 12,
     minHeight: 72,
@@ -177,12 +178,12 @@ const styles = StyleSheet.create({
   descriptionInput: {
     minHeight: 42,
     fontSize: 14,
-    color: "#1E1E1E",
+    color: colors.text.primary,
   },
   addDamageBtn: {
     marginTop: 12,
     marginBottom: 12,
-    backgroundColor: "#F3E4E2",
+    backgroundColor: colors.status.warningBg,
     borderRadius: 12,
     paddingVertical: 10,
     flexDirection: "row",
@@ -192,7 +193,7 @@ const styles = StyleSheet.create({
   },
   addDamageText: {
     fontSize: 14,
-    color: "#DB4431",
+    color: colors.brand.primary,
     fontWeight: "800",
   },
   tabsRow: {
@@ -206,20 +207,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   tabBtnActive: {
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.brand.primary,
   },
   tabBtnInactive: {
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.neutral,
   },
   tabText: {
     fontSize: 14,
     fontWeight: "700",
   },
   tabTextActive: {
-    color: "#FFFFFF",
+    color: colors.text.inverse,
   },
   tabTextInactive: {
-    color: "#6B757C",
+    color: colors.text.tertiary,
   },
 });
 

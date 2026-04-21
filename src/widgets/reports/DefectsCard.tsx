@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { EntitiesToggle } from "../entitiesToggle/EntitiesToggle";
 import type { Report } from "../../types/report";
-import { shadowStyle } from "../../shared/theme/shadow";
+import { colors } from "../../shared/theme/colors";
 
 type DefectsMode = "scheme" | "photos";
 
@@ -55,25 +55,16 @@ export function DefectsCard({ report }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.card,
     borderRadius: 20,
     marginHorizontal: 16,
     marginBottom: 16,
     padding: 16,
-    ...(shadowStyle({
-      boxShadow: "0px 4px 10px rgba(0,0,0,0.06)",
-      shadowColor: "#000000",
-      shadowOpacity: 0.06,
-      shadowRadius: 10,
-      shadowOffset: { width: 0, height: 4 },
-      elevation: 4,
-    }) as object),
-    elevation: 4,
   },
   title: {
     fontSize: 18,
     fontWeight: "800",
-    color: "#1E1E1E",
+    color: colors.text.primary,
     marginBottom: 12,
   },
   body: {
@@ -82,7 +73,7 @@ const styles = StyleSheet.create({
   schemeImage: {
     width: "100%",
     height: 170,
-    backgroundColor: "#F1F1F1",
+    backgroundColor: colors.surface.muted,
     borderRadius: 12,
   },
   photosScroll: {
@@ -94,12 +85,12 @@ const styles = StyleSheet.create({
     height: 95,
     borderRadius: 12,
     marginRight: 10,
-    backgroundColor: "#F1F1F1",
+    backgroundColor: colors.surface.muted,
   },
   summaryText: {
     marginTop: 12,
     fontSize: 12,
-    color: "#777777",
+    color: colors.text.tertiary,
     lineHeight: 18,
   },
 });

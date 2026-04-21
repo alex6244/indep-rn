@@ -11,6 +11,7 @@ import {
 import CloseIcon from "../../../../assets/icons/close.svg";
 import { FONT_FAMILY } from "../../../../shared/theme/fonts";
 import { shadowStyle } from "../../../../shared/theme/shadow";
+import { colors } from "../../../../shared/theme/colors";
 
 export type UploadMediaModalProps = {
   visible: boolean;
@@ -70,7 +71,7 @@ export function UploadMediaModal({
 const styles = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.35)",
+    backgroundColor: colors.overlay.backdrop,
   },
   center: {
     flex: 1,
@@ -78,12 +79,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
     borderRadius: 20,
     paddingTop: 18,
     paddingBottom: 14,
     paddingHorizontal: 16,
     ...(shadowStyle({
+      // Shadow raw values are kept intentionally for platform-specific shadow rendering.
       boxShadow: "0px 10px 18px rgba(0,0,0,0.12)",
       shadowColor: "#000",
       shadowOpacity: 0.12,
@@ -103,7 +105,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(0,0,0,0.03)",
+    backgroundColor: colors.overlay.soft,
   },
   iconWrap: {
     marginTop: 8,
@@ -111,7 +113,7 @@ const styles = StyleSheet.create({
     width: 82,
     height: 82,
     borderRadius: 18,
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.neutral,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -119,12 +121,12 @@ const styles = StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: 10,
-    backgroundColor: "#E9E9E9",
+    backgroundColor: colors.surface.placeholder,
   },
   title: {
     fontSize: 18,
     fontWeight: "800",
-    color: "#1E1E1E",
+    color: colors.text.primary,
     textAlign: "center",
     marginBottom: 8,
   },
@@ -132,7 +134,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
     fontWeight: "600",
-    color: "#6B757C",
+    color: colors.text.tertiary,
     textAlign: "center",
     marginBottom: 14,
     paddingHorizontal: 4,
@@ -141,13 +143,13 @@ const styles = StyleSheet.create({
     width: "100%",
     borderRadius: 12,
     height: 44,
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.brand.primary,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 8,
   },
   primaryBtnText: {
-    color: "#FFFFFF",
+    color: colors.text.inverse,
     fontSize: 14,
     fontWeight: "700",
     fontFamily: FONT_FAMILY.button,
@@ -156,12 +158,12 @@ const styles = StyleSheet.create({
     width: "100%",
     borderRadius: 12,
     height: 44,
-    backgroundColor: "#F3F3F3",
+    backgroundColor: colors.surface.disabled,
     alignItems: "center",
     justifyContent: "center",
   },
   secondaryBtnText: {
-    color: "#1E1E1E",
+    color: colors.text.primary,
     fontSize: 14,
     fontWeight: "600",
     fontFamily: FONT_FAMILY.button,

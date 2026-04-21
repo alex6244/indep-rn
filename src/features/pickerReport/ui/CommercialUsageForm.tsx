@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { RadioIcon } from "./internal/RadioIcon";
+import { colors } from "../../../shared/theme/colors";
 
 export type CommercialUsageState = {
   taxiPermission: boolean; // такси
@@ -73,7 +74,7 @@ export function CommercialUsageForm({ value, onChange }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.card,
     borderRadius: 18,
     marginHorizontal: 16,
     marginBottom: 16,
@@ -82,7 +83,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "800",
-    color: "#1E1E1E",
+    color: colors.text.primary,
     marginBottom: 12,
   },
   question: {
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
   questionLabel: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#1E1E1E",
+    color: colors.text.primary,
     marginBottom: 8,
   },
   radioRow: {
@@ -104,12 +105,12 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   radioText: {
-    color: "#6B757C",
+    color: colors.text.tertiary,
     fontSize: 14,
     fontWeight: "700",
   },
   radioTextActive: {
-    color: "#DB4431",
+    color: colors.brand.primary,
     fontSize: 14,
     fontWeight: "800",
   },

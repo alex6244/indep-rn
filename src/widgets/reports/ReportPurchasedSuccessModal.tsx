@@ -10,6 +10,7 @@ import {
 import CloseIcon from "../../assets/icons/close.svg";
 import SuccessIllustration from "../../assets/mainpage/result/2.svg";
 import { shadowStyle } from "../../shared/theme/shadow";
+import { colors } from "../../shared/theme/colors";
 
 const pickReportWord = (count: number) => {
   // Упрощенная склонялка для RU:
@@ -83,7 +84,7 @@ export function ReportPurchasedSuccessModal({
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.35)",
+    backgroundColor: colors.overlay.backdrop,
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
@@ -91,10 +92,11 @@ const styles = StyleSheet.create({
   card: {
     width: "100%",
     maxWidth: 420,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
     borderRadius: 20,
     padding: 20,
     ...(shadowStyle({
+      // Shadow raw values are kept intentionally for platform-specific shadow rendering.
       boxShadow: "0px 10px 16px rgba(0,0,0,0.12)",
       shadowColor: "#000000",
       shadowOpacity: 0.12,
@@ -117,11 +119,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "900",
-    color: "#1E1E1E",
+    color: colors.text.primary,
     marginBottom: 10,
   },
   text: {
-    color: "#6B757C",
+    color: colors.text.tertiary,
     fontSize: 13,
     lineHeight: 18,
     fontWeight: "600",

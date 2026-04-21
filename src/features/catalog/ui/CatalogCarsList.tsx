@@ -1,6 +1,8 @@
 import React from "react";
 import {
+  FlatList,
   Image,
+  ListRenderItem,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -19,6 +21,7 @@ type CatalogCarCardProps = {
   isFavorite: boolean;
   setFavorite: (carId: string, next: boolean) => void;
   styles: CatalogStyles;
+  cardImageWidth: number;
 };
 
 type CatalogCarsListProps = {
@@ -31,10 +34,7 @@ type CatalogCarsListProps = {
 /** ru-RU форматтер цен: создаётся один раз на модуль, а не при каждом рендере. */
 const ruPriceFormat = new Intl.NumberFormat("ru-RU");
 
-function CatalogCarCard({ car, isFavorite, setFavorite, styles }: CatalogCarCardProps) {
-  const { width: screenW } = useWindowDimensions();
-  /** Экран минус отступы экрана (16×2) и карточки (14×2) — ширина галереи ≈ ширине скролла для paging. */
-  const cardImageWidth = screenW - 60;
+function CatalogCarCard({ car, isFavorite, setFavorite, styles, cardImageWidth }: CatalogCarCardProps) {
   const specsLine = buildCarSpecsLine(car);
   const modelLine = buildCarModelLine(car);
 
@@ -95,21 +95,40 @@ const MemoCatalogCarCard = React.memo(CatalogCarCard, (prev, next) =>
   prev.car === next.car &&
   prev.isFavorite === next.isFavorite &&
   prev.setFavorite === next.setFavorite &&
-  prev.styles === next.styles,
+  prev.styles === next.styles &&
+  prev.cardImageWidth === next.cardImageWidth,
 );
 
 export function CatalogCarsList({ displayedCars, isFavorite, setFavorite, styles }: CatalogCarsListProps) {
+  const { width: screenW } = useWindowDimensions();
+  /** Экран минус отступы экрана (16×2) и карточки (14×2) — ширина галереи ≈ ширине скролла для paging. */
+  const cardImageWidth = screenW - 60;
+
   if (displayedCars.length === 0) {
     return <Text style={styles.emptyStateText}>Ничего не найдено</Text>;
   }
 
-  return displayedCars.map((car) => (
+  const renderItem: ListRenderItem<Car> = ({ item: car }) => (
     <MemoCatalogCarCard
-      key={car.id}
       car={car}
       isFavorite={isFavorite(String(car.id))}
       setFavorite={setFavorite}
       styles={styles}
+      cardImageWidth={cardImageWidth}
     />
-  ));
+  );
+
+  return (
+    <FlatList
+      data={displayedCars}
+      keyExtractor={(car) => String(car.id)}
+      renderItem={renderItem}
+      ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+      initialNumToRender={6}
+      maxToRenderPerBatch={6}
+      windowSize={7}
+      removeClippedSubviews
+      scrollEnabled={false}
+    />
+  );
 }

@@ -1,11 +1,12 @@
 import { StyleSheet } from "react-native";
 import { typography } from "../../../shared/theme/typography";
 import { shadowStyle } from "../../../shared/theme/shadow";
+import { colors } from "../../../shared/theme/colors";
 
 export const catalogStyles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.screen,
     position: "relative",
   },
   content: {
@@ -17,7 +18,7 @@ export const catalogStyles = StyleSheet.create({
   breadcrumbText: {
     ...typography.caption,
     fontSize: 12,
-    color: "#979797",
+    color: colors.text.subtle,
   },
   filtersBar: {
     marginBottom: 16,
@@ -26,7 +27,7 @@ export const catalogStyles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.neutral,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 8,
@@ -34,7 +35,7 @@ export const catalogStyles = StyleSheet.create({
   sortIcon: {
     ...typography.textRegular,
     fontSize: 18,
-    color: "#080717",
+    color: colors.surface.inverse,
   },
   sortOverlay: {
     position: "absolute",
@@ -47,11 +48,12 @@ export const catalogStyles = StyleSheet.create({
   },
   sortDropdown: {
     position: "absolute",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
     borderRadius: 12,
     paddingVertical: 8,
     paddingHorizontal: 8,
     ...(shadowStyle({
+      // Shadow raw values are kept intentionally for platform-specific shadow rendering.
       boxShadow: "0px 4px 10px rgba(0,0,0,0.12)",
       shadowColor: "#000000",
       shadowOpacity: 0.12,
@@ -69,27 +71,27 @@ export const catalogStyles = StyleSheet.create({
   sortItemText: {
     ...typography.textRegular,
     fontSize: 14,
-    color: "#1A1A1A",
+    color: colors.text.primary,
     fontWeight: "500",
   },
   sortItemTextActive: {
-    color: "#DB4431",
+    color: colors.brand.primary,
     fontWeight: "700",
   },
   sortDivider: {
     height: 1,
-    backgroundColor: "#EDEDED",
+    backgroundColor: colors.surface.placeholder,
   },
   allFiltersButton: {
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 12,
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.brand.primary,
     marginRight: 8,
   },
   allFiltersText: {
     ...typography.buttonText,
-    color: "#FFFFFF",
+    color: colors.text.inverse,
     fontSize: 14,
     fontWeight: "500",
   },
@@ -97,13 +99,13 @@ export const catalogStyles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 12,
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.neutral,
     marginRight: 8,
   },
   filterChipText: {
     ...typography.caption,
     fontSize: 12,
-    color: "#807E7E",
+    color: colors.text.tertiary,
   },
   sectionTitle: {
     ...typography.title,
@@ -115,10 +117,11 @@ export const catalogStyles = StyleSheet.create({
     gap: 12,
   },
   carCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
     borderRadius: 20,
     padding: 14,
     ...(shadowStyle({
+      // Shadow raw values are kept intentionally for platform-specific shadow rendering.
       boxShadow: "0px 4px 12px rgba(0,0,0,0.08)",
       shadowColor: "#000000",
       shadowOpacity: 0.08,
@@ -150,20 +153,20 @@ export const catalogStyles = StyleSheet.create({
     ...typography.title,
     fontSize: 22,
     fontWeight: "700",
-    color: "#1A1A1A",
+    color: colors.text.primary,
     marginBottom: 6,
   },
   carSpecsLine: {
     ...typography.textRegular,
     fontSize: 13,
-    color: "#6B6B6B",
+    color: colors.text.secondary,
     lineHeight: 18,
     marginBottom: 6,
   },
   carModelLine: {
     ...typography.caption,
     fontSize: 12,
-    color: "#9A9A9A",
+    color: colors.icon.muted,
     lineHeight: 16,
   },
   carButtonsRow: {
@@ -176,7 +179,7 @@ export const catalogStyles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 12,
-    backgroundColor: "#EFEFEF",
+    backgroundColor: colors.surface.muted,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -194,7 +197,7 @@ export const catalogStyles = StyleSheet.create({
     ...typography.caption,
     flex: 1,
     fontSize: 11,
-    color: "#9A9A9A",
+    color: colors.icon.muted,
     lineHeight: 15,
   },
   btn: {
@@ -205,22 +208,37 @@ export const catalogStyles = StyleSheet.create({
     justifyContent: "center",
   },
   btnPrimary: {
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.brand.primary,
   },
   btnTextPrimary: {
     ...typography.buttonText,
-    color: "#FFFFFF",
+    color: colors.text.inverse,
     fontSize: 14,
     fontWeight: "500",
   },
   seeAllBtn: {
     marginTop: 16,
   },
+  orderReportBtn: {
+    marginTop: 14,
+    marginBottom: 8,
+    backgroundColor: colors.brand.darkAlt,
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  orderReportBtnText: {
+    ...typography.buttonText,
+    color: colors.text.inverse,
+    fontSize: 15,
+    fontWeight: "500",
+  },
   footer: {
     marginTop: 24,
     paddingVertical: 16,
     borderTopWidth: 1,
-    borderTopColor: "#DEDEDE",
+    borderTopColor: colors.border.soft,
   },
   footerLogo: {
     ...typography.title,
@@ -242,7 +260,7 @@ export const catalogStyles = StyleSheet.create({
   footerCopyright: {
     ...typography.caption,
     fontSize: 10,
-    color: "#888",
+    color: colors.text.subtle,
   },
   filtersOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -254,14 +272,14 @@ export const catalogStyles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.35)",
+    backgroundColor: colors.overlay.backdrop,
   },
   filtersPanel: {
     position: "absolute",
     top: 0,
     left: 0,
     width: "100%",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
     borderTopRightRadius: 12,
     borderBottomRightRadius: 12,
     overflow: "visible",
@@ -269,7 +287,7 @@ export const catalogStyles = StyleSheet.create({
   },
   emptyStateText: {
     ...typography.caption,
-    color: "#979797",
+    color: colors.text.subtle,
     fontSize: 14,
     textAlign: "center",
     paddingVertical: 24,

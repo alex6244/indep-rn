@@ -1,16 +1,17 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../../../shared/theme/colors";
 
 export const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.screen,
   },
   topBar: {
     paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
     borderRadius: 0,
   },
   content: {
@@ -18,7 +19,7 @@ export const styles = StyleSheet.create({
   },
   center: {
     flex: 1,
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.screen,
     justifyContent: "center",
     padding: 16,
   },
@@ -26,25 +27,25 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "800",
     marginBottom: 10,
-    color: "#1E1E1E",
+    color: colors.text.primary,
     textAlign: "center",
   },
   noticeText: {
     fontSize: 14,
-    color: "#6B757C",
+    color: colors.text.tertiary,
     textAlign: "center",
     lineHeight: 20,
     marginBottom: 20,
   },
   primaryBtn: {
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.brand.primary,
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 16,
     alignItems: "center",
   },
   primaryBtnText: {
-    color: "#FFFFFF",
+    color: colors.text.inverse,
     fontSize: 14,
     fontWeight: "700",
   },

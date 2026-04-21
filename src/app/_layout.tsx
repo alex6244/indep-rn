@@ -8,6 +8,9 @@ import { AuthProvider } from "../contexts/AuthContext";
 import { FavoritesProvider } from "../contexts/FavoritesContext";
 import { ErrorBoundary } from "../shared/ui/ErrorBoundary";
 import { FONT_SOURCES } from "../shared/theme/fonts";
+import { initSentryMonitoring } from "../shared/monitoring/sentry";
+
+initSentryMonitoring();
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts(FONT_SOURCES);

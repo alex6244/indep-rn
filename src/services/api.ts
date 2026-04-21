@@ -65,10 +65,36 @@ export class ApiError extends Error {
   constructor(
     public readonly status: number,
     message: string,
+    public readonly code: ApiErrorCode = classifyApiErrorByStatus(status),
   ) {
     super(message);
     this.name = "ApiError";
   }
+}
+
+export type ApiErrorCode =
+  | "network"
+  | "timeout"
+  | "aborted"
+  | "unauthorized"
+  | "not_found"
+  | "server_error"
+  | "http_error"
+  | "unknown";
+
+function classifyApiErrorByStatus(status: number): ApiErrorCode {
+  if (status === 0) return "network";
+  if (status === 401) return "unauthorized";
+  if (status === 404) return "not_found";
+  if (status >= 500) return "server_error";
+  if (status >= 400) return "http_error";
+  return "unknown";
+}
+
+export function classifyApiError(error: unknown): ApiErrorCode {
+  if (error instanceof ApiError) return error.code;
+  if (error instanceof TypeError) return "network";
+  return "unknown";
 }
 
 type RetryConfig = {
@@ -344,8 +370,8 @@ function shouldRetry(error: unknown, method: string, attempt: number, maxRetries
   if (!isRetryableMethod(method) || attempt >= maxRetries) return false;
   if (error instanceof ApiError) {
     if (error.status === 502 || error.status === 503 || error.status === 504) return true;
-    if (error.status !== 0) return false;
-    return error.message === "Request timeout" || error.message === "Network request failed";
+    if (error.code === "network" || error.code === "timeout") return true;
+    return false;
   }
   return false;
 }
@@ -405,7 +431,7 @@ async function requestOnce<T>(path: string, options: RequestOptions): Promise<T>
     } else {
       await Promise.all([tokenStorage.clear(), refreshTokenStorage.clear()]);
       await triggerUnauthorizedHandler();
-      throw new ApiError(401, "Session expired");
+      throw new ApiError(401, "Session expired", "unauthorized");
     }
   }
   const timeoutMs = options.timeoutMs ?? getRequestTimeoutMs();
@@ -423,7 +449,7 @@ async function requestOnce<T>(path: string, options: RequestOptions): Promise<T>
   const controller = new AbortController();
   const callerSignal = options.signal;
   if (callerSignal?.aborted) {
-    throw new ApiError(0, "Request aborted");
+    throw new ApiError(0, "Request aborted", "aborted");
   }
 
   const onCallerAbort = () => controller.abort();
@@ -441,11 +467,11 @@ async function requestOnce<T>(path: string, options: RequestOptions): Promise<T>
   } catch (error) {
     if (isAbortError(error)) {
       if (callerSignal?.aborted) {
-        throw new ApiError(0, "Request aborted");
+        throw new ApiError(0, "Request aborted", "aborted");
       }
-      throw new ApiError(0, "Request timeout");
+      throw new ApiError(0, "Request timeout", "timeout");
     }
-    throw new ApiError(0, "Network request failed");
+    throw new ApiError(0, "Network request failed", "network");
   } finally {
     clearTimeout(timeoutId);
     if (callerSignal) callerSignal.removeEventListener("abort", onCallerAbort);
@@ -453,7 +479,7 @@ async function requestOnce<T>(path: string, options: RequestOptions): Promise<T>
 
   if (!response.ok) {
     const message = await parseErrorMessage(response);
-    throw new ApiError(response.status, message);
+    throw new ApiError(response.status, message, classifyApiErrorByStatus(response.status));
   }
 
   // 204 No Content — возвращаем undefined
