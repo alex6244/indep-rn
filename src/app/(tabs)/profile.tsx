@@ -7,7 +7,7 @@ import { PickerProfileSection } from "../../widgets/profile/PickerProfileSection
 import { styles } from "../../shared/styles/profile.styles";
 import { ScreenStateEmpty } from "../../shared/ui/ScreenStateEmpty";
 import { ScreenStateLoading } from "../../shared/ui/ScreenStateLoading";
-import { reportsService } from "../../services/reportsService";
+import { clientReportsService } from "../../services/clientReportsService";
 import type { Report } from "../../types/report";
 
 export default function ProfileTab() {
@@ -21,7 +21,7 @@ export default function ProfileTab() {
     setReportsLoading(true);
     setReportsError(null);
     try {
-      const next = await reportsService.getPurchasedReports();
+      const next = await clientReportsService.getPurchasedReports();
       setClientReports(next);
     } catch (e) {
       setClientReports([]);

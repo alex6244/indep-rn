@@ -1,5 +1,7 @@
 import React, { useMemo } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { spacing } from "../../shared/theme/spacing";
+import { AppButton } from "../../shared/ui/AppButton";
 import {
   PickerOnboardingIllustration1,
   PickerOnboardingIllustration2,
@@ -68,38 +70,26 @@ export function PickerOnboardingSection({ onPressRegister }: Props) {
         ))}
       </View>
 
-      <TouchableOpacity
+      <AppButton
+        label="Зарегистрироваться"
         style={styles.registerButton}
         onPress={onPressRegister}
-        accessibilityRole="button"
-      >
-        <Text style={styles.registerButtonText}>Зарегистрироваться</Text>
-      </TouchableOpacity>
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   grid: {
-    marginTop: 14,
+    marginTop: spacing.md,
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    rowGap: 18,
+    rowGap: spacing.lg + 2,
   },
   registerButton: {
-    marginTop: 24,
-    marginBottom: 8,
-    height: 52,
-    borderRadius: 16,
-    backgroundColor: "#DB4431",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  registerButtonText: {
-    color: "#FFFFFF",
-    fontSize: 24 / 2,
-    lineHeight: 16,
-    fontWeight: "600",
+    marginTop: spacing.xxl,
+    marginBottom: spacing.sm,
+    minHeight: 52,
   },
 });

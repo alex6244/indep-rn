@@ -1,5 +1,8 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { colors } from "../../shared/theme/colors";
+import { radius } from "../../shared/theme/radius";
+import { spacing } from "../../shared/theme/spacing";
 
 type Props = {
   step: string;
@@ -32,38 +35,38 @@ const styles = StyleSheet.create({
   },
   illustrationWrap: {
     height: 124,
-    borderRadius: 14,
-    backgroundColor: "#F1F1F1",
+    borderRadius: radius.md + 2,
+    backgroundColor: colors.surface.muted,
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
-    marginBottom: 10,
-    padding: 10,
+    marginBottom: spacing.sm + 2,
+    padding: spacing.sm + 2,
   },
   badge: {
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: "#F7E8E8",
+    backgroundColor: colors.status.warningBg,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   badgeText: {
-    color: "#DB4431",
+    color: colors.brand.primary,
     fontSize: 13,
     fontWeight: "700",
   },
   title: {
     fontSize: 34 / 2,
     lineHeight: 42 / 2,
-    color: "#1E1E1E",
+    color: colors.text.primary,
     fontWeight: "600",
-    marginBottom: 6,
+    marginBottom: spacing.xs + 2,
   },
   description: {
     fontSize: 15,
     lineHeight: 22,
-    color: "#333333",
+    color: colors.text.primary,
   },
 });

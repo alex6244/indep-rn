@@ -16,7 +16,7 @@ import { PenaltiesCard } from "../../widgets/reports/PenaltiesCard";
 import { CostEstimationCard } from "../../widgets/reports/CostEstimationCard";
 import { ScreenStateError } from "../../shared/ui/ScreenStateError";
 import { ScreenStateLoading } from "../../shared/ui/ScreenStateLoading";
-import { reportsService } from "../../services/reportsService";
+import { clientReportsService } from "../../services/clientReportsService";
 
 export default function ReportDetailsRoute() {
   const router = useRouter();
@@ -39,7 +39,7 @@ export default function ReportDetailsRoute() {
     setLoading(true);
     setError(null);
     try {
-      const nextReport = await reportsService.getReportById(id);
+      const nextReport = await clientReportsService.getPurchasedReportById(id);
       setReport(nextReport);
     } catch (e) {
       const message = e instanceof Error ? e.message : "Не удалось загрузить отчёт. Попробуйте ещё раз.";

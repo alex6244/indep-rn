@@ -2,6 +2,8 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import { colors } from "../../../shared/theme/colors";
+import { radius } from "../../../shared/theme/radius";
+import { spacing } from "../../../shared/theme/spacing";
 import type { ChecksLawItem } from "./homeChecks.data";
 
 type Props = {
@@ -25,12 +27,12 @@ export function ChecksLawList({ items }: Props) {
 
 const styles = StyleSheet.create({
   list: {
-    gap: 12,
+    gap: spacing.md,
   },
   row: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   lastRow: {
     marginBottom: 2,
@@ -38,8 +40,8 @@ const styles = StyleSheet.create({
   iconCard: {
     width: 74,
     height: 74,
-    borderRadius: 12,
-    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.md,
+    backgroundColor: colors.surface.muted,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -47,6 +49,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     lineHeight: 20,
-    color: "#262626",
+    color: colors.text.primary,
   },
 });

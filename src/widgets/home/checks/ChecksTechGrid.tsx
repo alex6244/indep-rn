@@ -2,6 +2,8 @@ import React, { useMemo, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import { colors } from "../../../shared/theme/colors";
+import { radius } from "../../../shared/theme/radius";
+import { spacing } from "../../../shared/theme/spacing";
 import type { ChecksTechItem } from "./homeChecks.data";
 
 type Props = {
@@ -11,12 +13,12 @@ type Props = {
 
 export function ChecksTechGrid({ items, columns = 3 }: Props) {
   const [gridWidth, setGridWidth] = useState(0);
-  const gap = 10;
+  const gap = spacing.sm + 2;
 
   const cardWidth = useMemo(() => {
     if (!gridWidth) return undefined;
     return (gridWidth - gap * (columns - 1)) / columns;
-  }, [gridWidth, columns]);
+  }, [gridWidth, columns, gap]);
 
   const rows: ChecksTechItem[][] = [];
   for (let i = 0; i < items.length; i += columns) {
@@ -50,19 +52,19 @@ const styles = StyleSheet.create({
   row: { flexDirection: "row", justifyContent: "space-between" },
   cell: { alignItems: "center" },
   card: {
-    borderRadius: 12,
-    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.md,
+    backgroundColor: colors.surface.muted,
     height: 84,
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
   },
   label: {
-    marginTop: 8,
+    marginTop: spacing.sm,
     width: "100%",
     fontSize: 12,
     textAlign: "left",
-    color: "#2D2D2D",
+    color: colors.text.primary,
     lineHeight: 16,
   },
 });

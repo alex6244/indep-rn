@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Animated, Dimensions, ScrollView, TouchableOpacity, View } from "react-native";
+import { Animated, Dimensions, TouchableOpacity, View } from "react-native";
 import type { View as RNView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -14,11 +14,9 @@ import { CatalogSortDropdown } from "./CatalogSortDropdown";
 import { CatalogFiltersOverlay } from "../../filters/ui/CatalogFiltersOverlay";
 import { catalogStyles as styles } from "./Catalog.styles";
 import { CatalogHeaderSection } from "./CatalogHeaderSection";
-import { CatalogFiltersBar } from "./CatalogFiltersBar";
 import { CatalogContentSection } from "./CatalogContentSection";
 import { CatalogCallbackRequestModal } from "./CatalogCallbackRequestModal";
 import { carService } from "../../../services/carService";
-import { InlineMessage } from "../../../shared/ui/InlineMessage";
 import { createRequestVersionTracker } from "../../../shared/async/requestVersion";
 
 type SortAnchor = {
@@ -147,31 +145,22 @@ export default function CatalogScreen() {
         onLogoPress={() => router.push("/(tabs)")}
         onOpenBurger={() => setMenuOpen(true)}
       />
-      <ScrollView
-        contentContainerStyle={[
-          styles.content,
-          { paddingBottom: scrollBottomPaddingBelowTabBar(insets.bottom) },
-        ]}
-      >
-        {favoritesError ? <InlineMessage tone="error" message={favoritesError} /> : null}
-        <CatalogFiltersBar
-          styles={styles}
-          sortButtonRef={sortButtonRef}
-          toggleSort={toggleSort}
-          openFilters={openFilters}
-        />
-        <CatalogContentSection
-          styles={styles}
-          loading={loading}
-          errorTitle={contentErrorTitle}
-          error={contentError}
-          cars={controller.displayedCars}
-          isFavorite={isFavorite}
-          setFavorite={setFavorite}
-          onRetry={handleRetry}
-          onOpenCallbackRequest={() => setCallbackModalOpen(true)}
-        />
-      </ScrollView>
+      <CatalogContentSection
+        styles={styles}
+        loading={loading}
+        errorTitle={contentErrorTitle}
+        error={contentError}
+        cars={controller.displayedCars}
+        isFavorite={isFavorite}
+        setFavorite={setFavorite}
+        onRetry={handleRetry}
+        onOpenCallbackRequest={() => setCallbackModalOpen(true)}
+        favoritesError={favoritesError}
+        sortButtonRef={sortButtonRef}
+        toggleSort={toggleSort}
+        openFilters={openFilters}
+        contentPadBottom={scrollBottomPaddingBelowTabBar(insets.bottom)}
+      />
 
       <CatalogSortDropdown
         visible={sortOpen && !filtersOpen}

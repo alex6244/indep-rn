@@ -2,7 +2,6 @@ import React from "react";
 import {
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
   useWindowDimensions,
 } from "react-native";
@@ -10,7 +9,24 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import HeroIllustration from "../../assets/banners/1.svg";
 import Logo from "../../assets/logo.svg";
 import { colors } from "../../shared/theme/colors";
+import { radius } from "../../shared/theme/radius";
+import { spacing } from "../../shared/theme/spacing";
+import { AppButton } from "../../shared/ui/AppButton";
 import { BurgerButton } from "../../shared/ui/BurgerButton";
+
+const HERO_RADIUS = radius.lg + 2;
+const HERO_HORIZONTAL_PADDING = spacing.xxl;
+const HERO_TOP_PADDING = spacing.xxl;
+const HERO_BOTTOM_PADDING = spacing.lg + 2;
+const HERO_TITLE_BREAKPOINT = 360;
+const HERO_TITLE_FONT_SMALL = 26;
+const HERO_TITLE_FONT_LARGE = 29;
+const HERO_ART_HEIGHT_MIN = 270;
+const HERO_ART_HEIGHT_MAX = 360;
+const HERO_ART_HEIGHT_FACTOR = 0.9;
+const HERO_BUTTON_TOP_MARGIN = 10;
+const HERO_BUTTON_BOTTOM_MARGIN = 6;
+
 type Props = {
   onOpenBurger: () => void;
   onOpenCatalog: () => void;
@@ -21,11 +37,12 @@ export function WelcomeHero({ onOpenBurger, onOpenCatalog, showTopBar = true }: 
   const { width: screenWidth } = useWindowDimensions();
   const insets = useSafeAreaInsets();
 
-  // Keep hero compact on mobile while preserving readability.
-  const heroTitleFontSize = screenWidth < 360 ? 23 : 25;
-  const heroTitleLineHeight = Math.round(heroTitleFontSize * 1.15);
+  // Keep hero prominent and resilient across narrow devices.
+  const heroTitleFontSize =
+    screenWidth < HERO_TITLE_BREAKPOINT ? HERO_TITLE_FONT_SMALL : HERO_TITLE_FONT_LARGE;
+  const heroTitleLineHeight = Math.round(heroTitleFontSize * 1.12);
   const heroArtHeight = Math.round(
-    Math.min(280, Math.max(220, screenWidth * 0.7)),
+    Math.min(HERO_ART_HEIGHT_MAX, Math.max(HERO_ART_HEIGHT_MIN, screenWidth * HERO_ART_HEIGHT_FACTOR)),
   );
 
   return (
@@ -45,21 +62,19 @@ export function WelcomeHero({ onOpenBurger, onOpenCatalog, showTopBar = true }: 
           ]}
         >
           <Text style={styles.heroTitleAccent}>Честный </Text>
-          подбор — спокойная покупка
+          {"подбор —\nспокойная покупка"}
         </Text>
 
         <View style={[styles.heroArt, { height: heroArtHeight }]}>
           <HeroIllustration width="100%" height="100%" />
         </View>
 
-        <TouchableOpacity
+        <AppButton
+          label="Перейти в каталог авто"
           style={styles.heroButton}
           onPress={onOpenCatalog}
-          accessibilityRole="button"
           accessibilityLabel="Перейти в каталог авто"
-        >
-          <Text style={styles.heroButtonText}>Перейти в каталог авто</Text>
-        </TouchableOpacity>
+        />
       </View>
     </View>
   );
@@ -73,39 +88,29 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   heroCard: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: 16,
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 0,
+    backgroundColor: colors.surface.muted,
+    borderRadius: HERO_RADIUS,
+    paddingHorizontal: HERO_HORIZONTAL_PADDING,
+    paddingTop: HERO_TOP_PADDING,
+    paddingBottom: HERO_BOTTOM_PADDING,
     justifyContent: "flex-start",
   },
   heroTitle: {
-    fontWeight: "500",
-    color: colors.textPrimary,
-    maxWidth: "90%",
+    fontWeight: "600",
+    color: colors.text.primary,
+    maxWidth: "95%",
   },
   heroArt: {
     alignSelf: "center",
     width: "100%",
-    marginTop: 10,
+    marginTop: 16,
   },
   heroButton: {
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.brandPrimary,
     width: "100%",
-    marginTop: -46,
-    marginBottom: 28,
-    paddingVertical: 10,
-  },
-  heroButtonText: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: colors.onDark,
+    marginTop: HERO_BUTTON_TOP_MARGIN,
+    marginBottom: HERO_BUTTON_BOTTOM_MARGIN,
   },
   heroTitleAccent: {
-    color: colors.brandPrimary,
+    color: colors.brand.primary,
   },
 });

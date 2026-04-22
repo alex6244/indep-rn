@@ -2,8 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { Href, Router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import type { Report } from "../../../../types/report";
-import { reportService } from "../../../../services/reportService";
-import { reportsService } from "../../../../services/reportsService";
+import { pickerReportsService } from "../../../../services/pickerReportsService";
+import { clientReportsService } from "../../../../services/clientReportsService";
 import {
   type DraftReport,
   PICKER_REPORT_DRAFT_STORAGE_KEY,
@@ -90,7 +90,7 @@ export function usePickerReportConfirmController(router: Router) {
     let active = true;
     void (async () => {
       try {
-        const reportList = await reportsService.getReportsForDuplicateCheck();
+        const reportList = await clientReportsService.getReportsForDuplicateCheck();
         if (!active) return;
         setReportsForDuplicateCheck(Array.isArray(reportList) ? reportList : []);
       } catch {
@@ -139,7 +139,7 @@ export function usePickerReportConfirmController(router: Router) {
     }
 
     try {
-      await reportService.submit(draftReport);
+      await pickerReportsService.submit(draftReport);
       await AsyncStorage.removeItem(PICKER_REPORT_DRAFT_STORAGE_KEY);
       router.push("/reports" as Href);
     } catch {

@@ -2,6 +2,8 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import type { UserRole } from "../../types/user";
 import { colors } from "../../shared/theme/colors";
+import { radius } from "../../shared/theme/radius";
+import { spacing } from "../../shared/theme/spacing";
 
 type Props = {
   value: UserRole;
@@ -33,29 +35,29 @@ export function RoleToggle({ value, onChange }: Props) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginTop: 12,
-    backgroundColor: "#EFEFEF",
-    borderRadius: 14,
-    padding: 4,
+    marginTop: spacing.md,
+    backgroundColor: colors.surface.placeholder,
+    borderRadius: radius.md + 2,
+    padding: spacing.xs,
     flexDirection: "row",
-    gap: 4,
+    gap: spacing.xs,
   },
   option: {
     flex: 1,
-    borderRadius: 12,
-    paddingVertical: 10,
+    borderRadius: radius.md,
+    paddingVertical: spacing.sm + 2,
     alignItems: "center",
   },
   optionActive: {
-    backgroundColor: colors.buttonDark,
+    backgroundColor: colors.brand.dark,
   },
   optionText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#777",
+    color: colors.text.secondary,
   },
   optionTextActive: {
-    color: colors.onDark,
+    color: colors.text.inverse,
   },
 });
 

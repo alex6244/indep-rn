@@ -9,7 +9,7 @@ import { InlineMessage } from "../shared/ui/InlineMessage";
 import { ScreenStateEmpty } from "../shared/ui/ScreenStateEmpty";
 import { ScreenStateError } from "../shared/ui/ScreenStateError";
 import { ScreenStateLoading } from "../shared/ui/ScreenStateLoading";
-import { reportsService } from "../services/reportsService";
+import { clientReportsService } from "../services/clientReportsService";
 
 export default function ReportsScreen() {
   const router = useRouter();
@@ -22,7 +22,7 @@ export default function ReportsScreen() {
     setLoading(true);
     setError(null);
     try {
-      const next = await reportsService.getPurchasedReports();
+      const next = await clientReportsService.getPurchasedReports();
       setReports(next);
     } catch (e) {
       const message = e instanceof Error ? e.message : "Не удалось загрузить отчёты. Попробуйте ещё раз.";

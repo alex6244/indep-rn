@@ -2,6 +2,12 @@ import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import FavIcon from "../../assets/icons/favourite.svg";
+import { colors } from "../../shared/theme/colors";
+import { radius } from "../../shared/theme/radius";
+import { spacing } from "../../shared/theme/spacing";
+import { AppButton } from "../../shared/ui/AppButton";
+import { AppCard } from "../../shared/ui/AppCard";
+import { SectionTitle } from "../../shared/ui/SectionTitle";
 
 const offers = [
   {
@@ -27,29 +33,28 @@ export function BestOffersSection() {
 
   return (
     <View style={styles.section}>
-      <Text style={styles.title}>Лучшие предложения на автомобили</Text>
+      <SectionTitle>Лучшие предложения на автомобили</SectionTitle>
       <View style={styles.stack}>
         {offers.map((offer) => (
-          <View key={offer.id} style={styles.card}>
+          <AppCard key={offer.id} style={styles.card} padded={false} muted>
             <Image source={{ uri: offer.imageUrl }} style={styles.image} />
             <View style={styles.body}>
               <Text style={styles.price}>{offer.price}</Text>
               <Text style={styles.subtitle}>{offer.subtitle}</Text>
               <Text style={styles.name}>{offer.title}</Text>
               <View style={styles.row}>
-                <TouchableOpacity
+                <AppButton
+                  label="Купить отчёт"
                   style={styles.buyButton}
                   onPress={() => router.push("/reports")}
-                >
-                  <Text style={styles.buyText}>Купить отчёт</Text>
-                </TouchableOpacity>
+                />
                 <TouchableOpacity style={styles.favButton}>
                   <FavIcon width={18} height={18} />
                 </TouchableOpacity>
               </View>
               <Text style={styles.city}>{offer.city}</Text>
             </View>
-          </View>
+          </AppCard>
         ))}
       </View>
     </View>
@@ -58,75 +63,58 @@ export function BestOffersSection() {
 
 const styles = StyleSheet.create({
   section: {
-    marginTop: 18,
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: "700",
-    color: "#1E1E1E",
-    marginBottom: 10,
+    marginTop: spacing.lg,
+    marginBottom: spacing.xxl,
   },
   stack: {
-    gap: 12,
+    gap: spacing.md,
   },
   card: {
-    borderRadius: 16,
     overflow: "hidden",
-    backgroundColor: "#F1F1F1",
   },
   image: {
     width: "100%",
     height: 180,
   },
   body: {
-    padding: 12,
+    padding: spacing.md,
   },
   price: {
     fontSize: 20,
     fontWeight: "800",
-    color: "#1E1E1E",
+    color: colors.text.primary,
   },
   subtitle: {
-    marginTop: 4,
+    marginTop: spacing.xs,
     fontSize: 12,
-    color: "#666",
+    color: colors.text.secondary,
   },
   name: {
-    marginTop: 4,
+    marginTop: spacing.xs,
     fontSize: 12,
-    color: "#8A8A8A",
+    color: colors.text.muted,
   },
   row: {
-    marginTop: 10,
+    marginTop: spacing.sm,
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: spacing.sm,
   },
   buyButton: {
     flex: 1,
-    backgroundColor: "#DB4431",
-    borderRadius: 12,
-    paddingVertical: 10,
-    alignItems: "center",
-  },
-  buyText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "600",
   },
   favButton: {
     width: 40,
     height: 40,
-    borderRadius: 10,
-    backgroundColor: "#FFFFFF",
+    borderRadius: radius.sm,
+    backgroundColor: colors.surface.primary,
     alignItems: "center",
     justifyContent: "center",
   },
   city: {
-    marginTop: 8,
+    marginTop: spacing.sm,
     fontSize: 11,
-    color: "#777",
+    color: colors.text.secondary,
   },
 });
 

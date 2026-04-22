@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -8,18 +8,35 @@ import {
   View,
 } from "react-native";
 import { Path, Svg } from "react-native-svg";
+import { colors } from "../../../shared/theme/colors";
 import { EntitiesToggle } from "../../../widgets/entitiesToggle/EntitiesToggle";
 import { MarkButton } from "./MarkButton";
 import { CarSearchFiltersBottomPanel } from "./CarSearchFiltersBottomPanel";
-import { MileageRangePicker } from "./MileageRangePicker";
+import { MileageBottomSheet } from "./MileageBottomSheet";
+import { formatMileageRange } from "./mileagePickerUtils";
 import type { PaymentType } from "../../catalog/hooks/useCatalogFiltersController";
+
+const SPACING_MD = 16;
+const RADIUS_SM = 8;
+const INPUT_MIN_HEIGHT = 44;
 
 function BackCaretBlack({ width = 18, height = 18 }: { width?: number; height?: number }) {
   return (
     <Svg width={width} height={height} viewBox="0 0 18 18">
       <Path
-        fill="#000000"
+        fill={colors.text.primary}
         d="M11.847 14.0281C12.0055 14.1866 12.0945 14.4016 12.0945 14.6257C12.0945 14.8499 12.0055 15.0649 11.847 15.2234C11.6885 15.3819 11.4735 15.4709 11.2493 15.4709C11.0252 15.4709 10.8102 15.3819 10.6517 15.2234L5.02667 9.59839C4.94801 9.52 4.8856 9.42686 4.84301 9.3243C4.80042 9.22174 4.7785 9.11178 4.7785 9.00073C4.7785 8.88968 4.80042 8.77972 4.84301 8.67717C4.8856 8.57461 4.94801 8.48146 5.02667 8.40307L10.6517 2.77807C10.8102 2.61957 11.0252 2.53052 11.2493 2.53052C11.4735 2.53052 11.6885 2.61957 11.847 2.77808C12.0055 2.93658 12.0945 3.15157 12.0945 3.37573C12.0945 3.5999 12.0055 3.81488 11.847 3.97339L6.82034 9.00003L11.847 14.0281Z"
+      />
+    </Svg>
+  );
+}
+
+function ChevronRight() {
+  return (
+    <Svg width={16} height={16} viewBox="0 0 16 16">
+      <Path
+        fill={colors.text.subtle}
+        d="M6.153 3.47a.75.75 0 0 0 0 1.06L9.623 8l-3.47 3.47a.75.75 0 1 0 1.06 1.06l4-4a.75.75 0 0 0 0-1.06l-4-4a.75.75 0 0 0-1.06 0Z"
       />
     </Svg>
   );
@@ -100,6 +117,11 @@ export function CatalogFiltersOverlay({
   onApply,
   onClose,
 }: CatalogFiltersOverlayProps) {
+  const [mileageSheetVisible, setMileageSheetVisible] = useState(false);
+
+  const mileageLabel = formatMileageRange(mileageFromText, mileageToText);
+  const hasMileageFilter = mileageFromText.trim() !== "" || mileageToText.trim() !== "";
+
   return (
     <View style={styles.root}>
       <ScrollView
@@ -121,14 +143,14 @@ export function CatalogFiltersOverlay({
             value={brandQuery}
             onChangeText={onChangeBrandQuery}
             style={styles.input}
-            placeholderTextColor="#979797"
+            placeholderTextColor={colors.text.subtle}
           />
           <TextInput
             placeholder="Модель"
             value={modelQuery}
             onChangeText={onChangeModelQuery}
             style={styles.input}
-            placeholderTextColor="#979797"
+            placeholderTextColor={colors.text.subtle}
           />
         </View>
 
@@ -151,7 +173,7 @@ export function CatalogFiltersOverlay({
               value={priceFromText}
               onChangeText={onChangePriceFromText}
               style={[styles.input, styles.inputHalf]}
-              placeholderTextColor="#979797"
+              placeholderTextColor={colors.text.subtle}
             />
             <TextInput
               placeholder="До"
@@ -159,7 +181,7 @@ export function CatalogFiltersOverlay({
               value={priceToText}
               onChangeText={onChangePriceToText}
               style={[styles.input, styles.inputHalf]}
-              placeholderTextColor="#979797"
+              placeholderTextColor={colors.text.subtle}
             />
           </View>
         </View>
@@ -173,7 +195,7 @@ export function CatalogFiltersOverlay({
               value={yearFromText}
               onChangeText={(t) => onChangeYearFromText(onlyDigits(t).slice(0, 4))}
               style={[styles.input, styles.inputHalf]}
-              placeholderTextColor="#979797"
+              placeholderTextColor={colors.text.subtle}
             />
             <TextInput
               placeholder="До 2026"
@@ -181,19 +203,29 @@ export function CatalogFiltersOverlay({
               value={yearToText}
               onChangeText={(t) => onChangeYearToText(onlyDigits(t).slice(0, 4))}
               style={[styles.input, styles.inputHalf]}
-              placeholderTextColor="#979797"
+              placeholderTextColor={colors.text.subtle}
             />
           </View>
         </View>
 
         <View style={styles.filterBlock}>
           <Text style={styles.filterLabel}>Пробег, км</Text>
-          <MileageRangePicker
-            fromText={mileageFromText}
-            toText={mileageToText}
-            onChangeFromText={onChangeMileageFromText}
-            onChangeToText={onChangeMileageToText}
-          />
+          <TouchableOpacity
+            style={styles.mileageRow}
+            onPress={() => setMileageSheetVisible(true)}
+            accessibilityLabel={`Пробег: ${mileageLabel}. Нажмите для выбора.`}
+            accessibilityRole="button"
+          >
+            <Text
+              style={[
+                styles.mileageRowText,
+                hasMileageFilter && styles.mileageRowTextActive,
+              ]}
+            >
+              {mileageLabel}
+            </Text>
+            <ChevronRight />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.filterBlock}>
@@ -241,6 +273,22 @@ export function CatalogFiltersOverlay({
         onApply={onApply}
         onClose={onClose}
       />
+
+      <MileageBottomSheet
+        visible={mileageSheetVisible}
+        mileageFromText={mileageFromText}
+        mileageToText={mileageToText}
+        filteredCount={filteredCount}
+        onApply={(from, to) => {
+          onChangeMileageFromText(from);
+          onChangeMileageToText(to);
+        }}
+        onReset={() => {
+          onChangeMileageFromText("");
+          onChangeMileageToText("");
+        }}
+        onClose={() => setMileageSheetVisible(false)}
+      />
     </View>
   );
 }
@@ -248,12 +296,12 @@ export function CatalogFiltersOverlay({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
   },
   scroll: { flex: 1 },
   content: {
-    padding: 16,
-    paddingBottom: 16,
+    padding: SPACING_MD,
+    paddingBottom: SPACING_MD,
   },
   backBtn: {
     flexDirection: "row",
@@ -262,7 +310,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   backBtnText: {
-    color: "#DB4431",
+    color: colors.brand.primary,
     fontSize: 14,
     fontWeight: "500",
     marginLeft: 8,
@@ -273,20 +321,21 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   filterBlock: {
-    marginBottom: 16,
+    marginBottom: SPACING_MD,
   },
   filterLabel: {
     fontSize: 12,
     fontWeight: "500",
     marginBottom: 8,
+    color: colors.text.tertiary,
   },
   input: {
-    borderRadius: 8,
-    backgroundColor: "#F8F8F8",
+    borderRadius: RADIUS_SM,
+    backgroundColor: colors.surface.input,
     paddingHorizontal: 12,
     paddingVertical: 8,
     fontSize: 14,
-    color: "#000",
+    color: colors.text.primary,
     marginBottom: 8,
   },
   inputsRow: {
@@ -299,5 +348,22 @@ const styles = StyleSheet.create({
   marksRow: {
     flexDirection: "row",
     flexWrap: "wrap",
+  },
+  mileageRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderRadius: RADIUS_SM,
+    backgroundColor: colors.surface.input,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    minHeight: INPUT_MIN_HEIGHT,
+  },
+  mileageRowText: {
+    fontSize: 14,
+    color: colors.text.subtle,
+  },
+  mileageRowTextActive: {
+    color: colors.text.primary,
   },
 });

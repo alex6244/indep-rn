@@ -3,10 +3,12 @@ import {
   FlatList,
   Image,
   ListRenderItem,
+  StyleProp,
   ScrollView,
   Text,
   TouchableOpacity,
   useWindowDimensions,
+  ViewStyle,
   View,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
@@ -29,6 +31,10 @@ type CatalogCarsListProps = {
   isFavorite: (carId: string) => boolean;
   setFavorite: (carId: string, next: boolean) => void;
   styles: CatalogStyles;
+  ListHeaderComponent?: React.ComponentType<unknown> | React.ReactElement | null;
+  ListFooterComponent?: React.ComponentType<unknown> | React.ReactElement | null;
+  ListEmptyComponent?: React.ComponentType<unknown> | React.ReactElement | null;
+  contentContainerStyle?: StyleProp<ViewStyle>;
 };
 
 /** ru-RU форматтер цен: создаётся один раз на модуль, а не при каждом рендере. */
@@ -99,14 +105,19 @@ const MemoCatalogCarCard = React.memo(CatalogCarCard, (prev, next) =>
   prev.cardImageWidth === next.cardImageWidth,
 );
 
-export function CatalogCarsList({ displayedCars, isFavorite, setFavorite, styles }: CatalogCarsListProps) {
+export function CatalogCarsList({
+  displayedCars,
+  isFavorite,
+  setFavorite,
+  styles,
+  ListHeaderComponent,
+  ListFooterComponent,
+  ListEmptyComponent,
+  contentContainerStyle,
+}: CatalogCarsListProps) {
   const { width: screenW } = useWindowDimensions();
   /** Экран минус отступы экрана (16×2) и карточки (14×2) — ширина галереи ≈ ширине скролла для paging. */
   const cardImageWidth = screenW - 60;
-
-  if (displayedCars.length === 0) {
-    return <Text style={styles.emptyStateText}>Ничего не найдено</Text>;
-  }
 
   const renderItem: ListRenderItem<Car> = ({ item: car }) => (
     <MemoCatalogCarCard
@@ -124,11 +135,14 @@ export function CatalogCarsList({ displayedCars, isFavorite, setFavorite, styles
       keyExtractor={(car) => String(car.id)}
       renderItem={renderItem}
       ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-      initialNumToRender={6}
-      maxToRenderPerBatch={6}
-      windowSize={7}
+      initialNumToRender={8}
+      maxToRenderPerBatch={5}
+      windowSize={5}
       removeClippedSubviews
-      scrollEnabled={false}
+      ListHeaderComponent={ListHeaderComponent}
+      ListFooterComponent={ListFooterComponent}
+      ListEmptyComponent={ListEmptyComponent}
+      contentContainerStyle={contentContainerStyle}
     />
   );
 }

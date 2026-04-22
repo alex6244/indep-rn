@@ -7,12 +7,17 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
+  type TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../contexts/AuthContext";
+import { colors } from "../../shared/theme/colors";
+import { radius } from "../../shared/theme/radius";
+import { spacing } from "../../shared/theme/spacing";
+import { AppButton } from "../../shared/ui/AppButton";
+import { AppInput } from "../../shared/ui/AppInput";
 import { AuthHeader } from "../../widgets/header/AuthHeader";
 import { InlineMessage } from "../../shared/ui/InlineMessage";
 import { shadowStyle } from "../../shared/theme/shadow";
@@ -77,61 +82,55 @@ export default function LoginScreen() {
             {message ? <InlineMessage tone={message.tone} message={message.text} /> : null}
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Почта</Text>
-              <TextInput
-                style={styles.input}
+              <AppInput
+                label="Почта"
                 value={email}
                 onChangeText={setEmail}
                 placeholder="name@example.com"
                 autoCapitalize="none"
                 keyboardType="email-address"
                 returnKeyType="next"
-                onSubmitEditing={() => passwordRef.current?.focus()}
-                editable={!loading}
+                onSubmitEditing={() => passwordRef.current?.focus?.()}
+                disabled={loading}
               />
             </View>
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Пароль</Text>
-              <View style={styles.passwordWrap}>
-                <TextInput
-                  ref={passwordRef}
-                  style={[styles.input, styles.passwordInput]}
-                  value={password}
-                  onChangeText={setPassword}
-                  placeholder="Введите пароль"
-                  secureTextEntry={!showPassword}
-                  autoCapitalize="none"
-                  returnKeyType="done"
-                  onSubmitEditing={handleSubmit}
-                  editable={!loading}
-                />
-                <TouchableOpacity
-                  style={styles.eyeButton}
-                  onPress={() => setShowPassword((v) => !v)}
-                  disabled={loading}
-                  accessibilityRole="button"
-                  accessibilityLabel={showPassword ? "Скрыть пароль" : "Показать пароль"}
-                >
-                  <Ionicons
-                    name={showPassword ? "eye-off-outline" : "eye-outline"}
-                    size={20}
-                    color="#767676"
-                  />
-                </TouchableOpacity>
-              </View>
+              <AppInput
+                ref={passwordRef}
+                label="Пароль"
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Введите пароль"
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+                returnKeyType="done"
+                onSubmitEditing={handleSubmit}
+                disabled={loading}
+                rightElement={(
+                  <TouchableOpacity
+                    style={styles.eyeButton}
+                    onPress={() => setShowPassword((v) => !v)}
+                    disabled={loading}
+                    accessibilityRole="button"
+                    accessibilityLabel={showPassword ? "Скрыть пароль" : "Показать пароль"}
+                  >
+                    <Ionicons
+                      name={showPassword ? "eye-off-outline" : "eye-outline"}
+                      size={20}
+                      color={colors.icon.muted}
+                    />
+                  </TouchableOpacity>
+                )}
+              />
             </View>
 
-            <TouchableOpacity
-              style={[styles.submitButton, loading && styles.buttonDisabled]}
+            <AppButton
+              label="Войти"
               onPress={handleSubmit}
               disabled={loading}
-            >
-              {loading ? (
-                <Text style={styles.loadingText}>Загрузка...</Text>
-              ) : (
-                <Text style={styles.submitText}>Войти</Text>
-              )}
-            </TouchableOpacity>
+              loading={loading}
+              style={styles.submitButton}
+            />
 
             <Text style={styles.registerLink}>
               У вас ещё нет аккаунта?{" "}
@@ -152,15 +151,15 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.neutral,
   },
   scrollContainer: {
     flexGrow: 1,
     justifyContent: "center",
-    padding: 20,
+    padding: spacing.xl,
   },
   formCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
     ...(shadowStyle({
       boxShadow: "0px 4px 12px rgba(0,0,0,0.10)",
       shadowColor: "#000",
@@ -170,69 +169,35 @@ const styles = StyleSheet.create({
       elevation: 8,
     }) as object),
     elevation: 8,
-    padding: 20,
-    borderRadius: 16,
-    gap: 16,
+    padding: spacing.xl,
+    borderRadius: radius.lg,
+    gap: spacing.lg,
   },
   title: {
     fontSize: 28,
     fontWeight: "500",
     textAlign: "left",
+    color: colors.text.primary,
   },
   inputGroup: {
-    gap: 6,
-  },
-  label: {
-    fontSize: 14,
-    color: "#080717",
-  },
-  input: {
-    backgroundColor: "#F8F8F8",
-    padding: 12,
-    borderRadius: 8,
-    fontSize: 16,
-    color: "#080717",
-  },
-  passwordWrap: {
-    position: "relative",
-  },
-  passwordInput: {
-    paddingRight: 40,
+    gap: spacing.xs,
   },
   eyeButton: {
-    position: "absolute",
-    right: 10,
-    top: 0,
-    bottom: 0,
+    width: 28,
+    height: 28,
     justifyContent: "center",
     alignItems: "center",
   },
   submitButton: {
-    backgroundColor: "#DB4431",
-    paddingVertical: 12,
-    borderRadius: 12,
-    alignItems: "center",
-    marginTop: 24,
-  },
-  buttonDisabled: {
-    backgroundColor: "#ccc",
-  },
-  submitText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  loadingText: {
-    color: "white",
-    fontSize: 16,
+    marginTop: spacing.xl,
   },
   registerLink: {
     fontSize: 14,
-    color: "#A0A0A0",
+    color: colors.text.subtle,
     textAlign: "center",
   },
   registerLinkText: {
-    color: "#DB4431",
+    color: colors.brand.primary,
     fontWeight: "500",
     textDecorationLine: "underline",
   },

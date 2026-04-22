@@ -7,10 +7,11 @@ import Catalogpin from "../../assets/icons/mobilemenu/catalogpin2.svg";
 import Homepin from "../../assets/icons/mobilemenu/homepin2.svg";
 import Profilepin from "../../assets/icons/mobilemenu/profilepin2.svg";
 import { tabBarSafeAreaBottom, tabBarTotalHeight } from "../../shared/navigation/tabBarMetrics";
+import { colors } from "../../shared/theme/colors";
 
-const ACTIVE = "#DB4431";
-const INACTIVE = "#A0A0A0";
-const NAV_BG = "#FFFFFF";
+const ACTIVE = colors.brand.primary;
+const INACTIVE = colors.icon.muted;
+const NAV_BG = colors.surface.primary;
 /** Натуральный размер ассетов с подписью внутри SVG. */
 const TAB_ICON_SIZE = 62;
 
@@ -51,7 +52,7 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: NAV_BG,
           borderTopWidth: 1,
-          borderTopColor: "#E8E8E8",
+          borderTopColor: colors.border.subtle,
           elevation: 0,
           boxShadow: "none",
           height: barHeight,

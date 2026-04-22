@@ -1,9 +1,12 @@
 import { BlurView } from "expo-blur";
 import React, { useEffect, useState } from "react";
-import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { colors } from "../../../shared/theme/colors";
+import { radius } from "../../../shared/theme/radius";
 import { spacing } from "../../../shared/theme/spacing";
+import { AppButton } from "../../../shared/ui/AppButton";
+import { AppInput } from "../../../shared/ui/AppInput";
 
 type Props = {
   visible: boolean;
@@ -49,34 +52,29 @@ export function CallbackModal({ visible, onClose }: Props) {
             Оставьте свой номер, и мы перезвоним, чтобы ответить на вопросы.
           </Text>
 
-          <Text style={styles.label}>Имя</Text>
-          <TextInput
-            style={styles.input}
+          <AppInput
+            label="Имя"
             placeholder="Укажите Ваше имя"
-            placeholderTextColor={colors.textMuted}
             value={name}
             onChangeText={setName}
+            containerStyle={styles.inputWrap}
           />
 
-          <Text style={styles.label}>Номер телефона</Text>
-          <TextInput
-            style={styles.input}
+          <AppInput
+            label="Номер телефона"
             placeholder="+7 (___) ___-__-__"
-            placeholderTextColor={colors.textMuted}
             keyboardType="phone-pad"
             value={phone}
             onChangeText={setPhone}
+            containerStyle={styles.inputWrap}
           />
 
-          <TouchableOpacity
+          <AppButton
+            label="Перезвоните мне"
             style={styles.submitBtn}
             onPress={onClose}
-            activeOpacity={0.88}
-            accessibilityRole="button"
             accessibilityLabel="Отправить заявку на обратный звонок"
-          >
-            <Text style={styles.submitText}>Перезвоните мне</Text>
-          </TouchableOpacity>
+          />
         </View>
       </View>
     </Modal>
@@ -92,11 +90,11 @@ const styles = StyleSheet.create({
   },
   dimLayer: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.overlayDark,
+    backgroundColor: colors.overlay.dark,
   },
   sheet: {
-    backgroundColor: colors.surfacePrimary,
-    borderRadius: spacing.lg,
+    backgroundColor: colors.surface.primary,
+    borderRadius: radius.lg,
     padding: spacing.xxl,
     width: "100%",
     maxWidth: 560,
@@ -114,7 +112,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   closeText: {
-    color: "#B8B8B8",
+    color: colors.icon.muted,
     fontSize: 30,
     lineHeight: 30,
     fontWeight: "400",
@@ -122,40 +120,20 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 21,
     fontWeight: "700",
-    color: colors.textPrimary,
+    color: colors.text.primary,
     marginBottom: spacing.md - 2,
     paddingRight: 30,
   },
   subtitle: {
     fontSize: 16,
-    color: colors.textPrimary,
+    color: colors.text.primary,
     marginBottom: spacing.xl,
     lineHeight: 22,
   },
-  label: {
-    fontSize: 14,
-    color: colors.textPrimary,
-    marginBottom: spacing.sm,
-  },
-  input: {
-    backgroundColor: colors.surfaceInput,
-    borderRadius: spacing.md,
-    paddingHorizontal: 14,
-    paddingVertical: 13,
-    fontSize: 16,
-    color: colors.textPrimary,
+  inputWrap: {
     marginBottom: spacing.lg,
   },
   submitBtn: {
-    backgroundColor: colors.brandPrimary,
-    borderRadius: spacing.md,
-    paddingVertical: 13,
-    alignItems: "center",
     marginTop: spacing.xs,
-  },
-  submitText: {
-    color: colors.onDark,
-    fontSize: 16,
-    fontWeight: "600",
   },
 });

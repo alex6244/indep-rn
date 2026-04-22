@@ -11,8 +11,19 @@ jest.mock("../api", () => {
     }
   }
 
+  const classifyApiError = (error: unknown) => {
+    if (error instanceof ApiError) {
+      if (error.status === 0) return "network";
+      if (error.status === 401) return "unauthorized";
+      if (error.status === 404) return "not_found";
+      if (error.status >= 500) return "server_error";
+    }
+    return "unknown";
+  };
+
   return {
     ApiError,
+    classifyApiError,
     api: {
       post: jest.fn(),
       get: jest.fn(),

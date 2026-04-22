@@ -1,5 +1,9 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { colors } from "../../shared/theme/colors";
+import { spacing } from "../../shared/theme/spacing";
+import { AppCard } from "../../shared/ui/AppCard";
+import { SectionTitle } from "../../shared/ui/SectionTitle";
 
 const steps = [
   {
@@ -27,10 +31,10 @@ const steps = [
 export function HowItWorksSection() {
   return (
     <View style={styles.section}>
-      <Text style={styles.title}>Как это работает</Text>
+      <SectionTitle>Как это работает</SectionTitle>
       <View style={styles.grid}>
         {steps.map((step) => (
-          <View key={step.id} style={styles.card}>
+          <AppCard key={step.id} style={styles.card} muted>
             <View style={styles.badge}>
               <Text style={styles.badgeText}>{step.id}</Text>
             </View>
@@ -43,7 +47,7 @@ export function HowItWorksSection() {
               {step.title}
             </Text>
             <Text style={styles.cardText}>{step.text}</Text>
-          </View>
+          </AppCard>
         ))}
       </View>
     </View>
@@ -52,49 +56,40 @@ export function HowItWorksSection() {
 
 const styles = StyleSheet.create({
   section: {
-    marginTop: 18,
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: "700",
-    color: "#1E1E1E",
-    marginBottom: 10,
+    marginTop: spacing.lg,
   },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   card: {
     width: "48.5%",
-    borderRadius: 12,
-    backgroundColor: "#F1F1F1",
-    padding: 12,
     minHeight: 150,
   },
   badge: {
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: "#FBDAD6",
+    backgroundColor: colors.status.warningBg,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   badgeText: {
     fontSize: 12,
-    color: "#DB4431",
+    color: colors.brand.primary,
     fontWeight: "700",
   },
   cardTitle: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#1E1E1E",
-    marginBottom: 8,
+    color: colors.text.primary,
+    marginBottom: spacing.sm,
   },
   cardText: {
     fontSize: 11,
-    color: "#777",
+    color: colors.text.secondary,
     lineHeight: 16,
   },
 });

@@ -3,12 +3,15 @@ import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 import ParameterIcon from "../../assets/mainpage/carousel/parameter.svg";
 import ReportIcon from "../../assets/mainpage/carousel/report.svg";
 import TimeIcon from "../../assets/mainpage/carousel/time.svg";
+import { colors } from "../../shared/theme/colors";
+import { spacing } from "../../shared/theme/spacing";
+import { AppCard } from "../../shared/ui/AppCard";
 
 export function BenefitsRow() {
   const screenWidth = Dimensions.get("window").width;
   const horizontalPadding = 32; // HomeTab: paddingHorizontal: 16
   const availableWidth = Math.max(0, screenWidth - horizontalPadding);
-  const gap = 10; // должен совпадать с marginRight у карточек
+  const gap = spacing.sm + 2; // должен совпадать с marginRight у карточек
   // Геометрия старта: видим 1-ю полностью, 2-ю частично, 3-ю не видим.
   // При начале скролла (x=0):
   // 2-я начинает в (cardWidth + gap) и должна “заканчиваться” позже правого края вьюпорта.
@@ -44,13 +47,14 @@ export function BenefitsRow() {
         contentContainerStyle={styles.rowScrollContent}
       >
         {benefits.map((b, idx) => (
-          <View
+          <AppCard
             key={b.key}
             style={[
               styles.card,
               { width: cardWidth, alignSelf: "flex-start" },
               idx === benefits.length - 1 && styles.cardLast,
             ]}
+            muted
           >
             <View style={styles.cardRow}>
               <View style={styles.iconWrap}>{b.icon}</View>
@@ -59,7 +63,7 @@ export function BenefitsRow() {
                 <Text style={styles.text}>{b.text}</Text>
               </View>
             </View>
-          </View>
+          </AppCard>
         ))}
       </ScrollView>
     </View>
@@ -68,16 +72,13 @@ export function BenefitsRow() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 12,
+    marginTop: spacing.md,
   },
   rowScrollContent: {
     paddingRight: 0,
   },
   card: {
-    borderRadius: 12,
-    backgroundColor: "#F1F1F1",
-    padding: 12,
-    marginRight: 10,
+    marginRight: spacing.sm + 2,
     minHeight: 124,
   },
   cardLast: {
@@ -86,7 +87,7 @@ const styles = StyleSheet.create({
   cardRow: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   iconWrap: {
     marginTop: 2,
@@ -97,11 +98,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 13,
     fontWeight: "700",
-    color: "#1E1E1E",
+    color: colors.text.primary,
   },
   text: {
     fontSize: 11,
-    color: "#777",
+    color: colors.text.secondary,
     lineHeight: 15,
   },
 });
