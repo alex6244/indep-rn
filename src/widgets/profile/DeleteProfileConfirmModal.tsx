@@ -2,6 +2,9 @@ import React from "react";
 import { BlurView } from "expo-blur";
 import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { shadowStyle } from "../../shared/theme/shadow";
+import { colors } from "../../shared/theme/colors";
+import { radius } from "../../shared/theme/radius";
+import { spacing } from "../../shared/theme/spacing";
 
 type Props = {
   visible: boolean;
@@ -65,15 +68,15 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.25)",
   },
   contentWrap: {
-    padding: 16,
+    padding: spacing.lg,
   },
   card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 18,
-    padding: 16,
+    backgroundColor: colors.surface.primary,
+    borderRadius: radius.lg + 2,
+    padding: spacing.lg,
     ...(shadowStyle({
       boxShadow: "0px 10px 16px rgba(0,0,0,0.12)",
-      shadowColor: "#000",
+      shadowColor: colors.text.primary,
       shadowOpacity: 0.12,
       shadowRadius: 16,
       shadowOffset: { width: 0, height: 10 },
@@ -88,56 +91,60 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   closeButton: {
-    width: 28,
-    height: 28,
-    borderRadius: 10,
+    width: 44,
+    minHeight: 44,
+    borderRadius: radius.md,
     alignItems: "center",
     justifyContent: "center",
   },
   closeText: {
     fontSize: 22,
     lineHeight: 22,
-    color: "#777",
+    color: colors.text.subtle,
     fontWeight: "700",
   },
   title: {
     flex: 1,
     fontSize: 16,
     fontWeight: "800",
-    color: "#1E1E1E",
+    color: colors.text.primary,
   },
   body: {
-    marginTop: 8,
+    marginTop: spacing.sm,
     fontSize: 12,
-    color: "#777",
+    color: colors.text.subtle,
     lineHeight: 16,
   },
   row: {
-    marginTop: 14,
+    marginTop: spacing.md,
     flexDirection: "row",
     gap: 10,
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: "#F3F3F3",
-    borderRadius: 12,
+    backgroundColor: colors.control.buttonSecondaryBg,
+    borderRadius: radius.md,
+    minHeight: 44,
     paddingVertical: 10,
     alignItems: "center",
+    justifyContent: "center",
   },
   cancelText: {
-    color: "#1E1E1E",
+    color: colors.control.buttonSecondaryText,
     fontWeight: "700",
     fontSize: 13,
   },
   deleteButton: {
     flex: 1,
-    backgroundColor: "#DB4431",
-    borderRadius: 12,
+    backgroundColor: colors.brand.primary,
+    borderRadius: radius.md,
+    minHeight: 44,
     paddingVertical: 10,
     alignItems: "center",
+    justifyContent: "center",
   },
   deleteText: {
-    color: "#FFFFFF",
+    color: colors.text.inverse,
     fontWeight: "700",
     fontSize: 13,
   },

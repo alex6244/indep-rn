@@ -9,6 +9,9 @@ import {
   View,
 } from "react-native";
 import { shadowStyle } from "../../shared/theme/shadow";
+import { colors } from "../../shared/theme/colors";
+import { radius } from "../../shared/theme/radius";
+import { spacing } from "../../shared/theme/spacing";
 
 type Props = {
   visible: boolean;
@@ -94,20 +97,20 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.26)",
   },
   sheetWrap: {
-    paddingHorizontal: 18,
+    paddingHorizontal: spacing.lg,
   },
   card: {
     width: "100%",
     maxWidth: 640,
     alignSelf: "center",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 24,
-    paddingHorizontal: 22,
+    backgroundColor: colors.surface.primary,
+    borderRadius: radius.lg + 8,
+    paddingHorizontal: spacing.xxl,
     paddingTop: 26,
-    paddingBottom: 18,
+    paddingBottom: spacing.lg,
     ...(shadowStyle({
       boxShadow: "0px 12px 24px rgba(0,0,0,0.12)",
-      shadowColor: "#000",
+      shadowColor: colors.text.primary,
       shadowOffset: { width: 0, height: 12 },
       shadowOpacity: 0.12,
       shadowRadius: 24,
@@ -119,8 +122,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 10,
     right: 12,
-    width: 34,
-    height: 34,
+    width: 44,
+    minHeight: 44,
     alignItems: "center",
     justifyContent: "center",
     zIndex: 2,
@@ -128,52 +131,51 @@ const styles = StyleSheet.create({
   closeText: {
     fontSize: 40,
     lineHeight: 40,
-    color: "#CFCFCF",
+    color: colors.surface.placeholder,
     fontWeight: "300",
   },
   caption: {
     fontSize: 18,
     lineHeight: 24,
     fontWeight: "500",
-    color: "#1F1F1F",
+    color: colors.text.primary,
   },
   amount: {
     marginTop: 8,
     fontSize: 56,
     lineHeight: 62,
     fontWeight: "600",
-    color: "#1F1F1F",
+    color: colors.text.primary,
   },
   actionsRow: {
-    marginTop: 22,
+    marginTop: spacing.xxl,
     flexDirection: "row",
     gap: 12,
     alignItems: "center",
     justifyContent: "center",
   },
   actionBtn: {
-    borderRadius: 14,
+    borderRadius: radius.md + 2,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 8,
+    paddingHorizontal: spacing.md,
+    minHeight: 44,
   },
   keepBtn: {
     flex: 2,
-    height: 43,
-    backgroundColor: "#777777",
+    backgroundColor: colors.surface.inverse,
   },
   withdrawBtn: {
     flex: 1,
-    height: 43,
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.brand.primary,
   },
   keepText: {
-    color: "#FFFFFF",
+    color: colors.text.inverse,
     fontSize: 16,
     fontWeight: "500",
   },
   withdrawText: {
-    color: "#FFFFFF",
+    color: colors.text.inverse,
     fontSize: 16,
     fontWeight: "500",
   },

@@ -30,12 +30,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.sizes.heading,
     fontWeight: "700",
-    color: colors.textPrimary,
+    color: colors.text.primary,
     marginBottom: 10,
   },
   subtitle: {
     fontSize: typography.sizes.title,
-    color: colors.textPrimary,
+    color: colors.text.primary,
     fontWeight: "700",
     marginBottom: 10,
   },

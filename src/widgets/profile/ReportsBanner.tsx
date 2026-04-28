@@ -7,6 +7,9 @@ import {
   useWindowDimensions,
 } from "react-native";
 import MicroBanner from "../../assets/profile/microbanner.svg";
+import { colors } from "../../shared/theme/colors";
+import { radius } from "../../shared/theme/radius";
+import { spacing } from "../../shared/theme/spacing";
 
 /** Пропорции microbanner.svg (viewBox 335×95). */
 const BANNER_ASPECT_W = 335;
@@ -68,13 +71,13 @@ const styles = StyleSheet.create({
   microBanner: {
     marginTop: 12,
     marginHorizontal: MARGIN_H,
-    borderRadius: 12,
+    borderRadius: radius.md,
     overflow: "hidden",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
     justifyContent: "center",
     position: "relative",
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.brand.primary,
   },
   microContent: {
     zIndex: 2,
@@ -90,7 +93,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   microText2: {
-    color: "#FFFFFF",
+    color: colors.text.inverse,
     fontSize: 18,
     lineHeight: 22,
     fontWeight: "800",

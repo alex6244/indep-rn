@@ -11,6 +11,7 @@ import {
 import CloseIcon from "../../assets/icons/close.svg";
 import { shadowStyle } from "../../shared/theme/shadow";
 import { colors } from "../../shared/theme/colors";
+import { spacing } from "../../shared/theme/spacing";
 
 type PackageOption = {
   count: number;
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
   center: {
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
   },
   card: {
     backgroundColor: colors.surface.primary,
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
     ...(shadowStyle({
       // Shadow raw values are kept intentionally for platform-specific shadow rendering.
       boxShadow: "0px 10px 18px rgba(0,0,0,0.12)",
-      shadowColor: "#000",
+      shadowColor: colors.text.primary,
       shadowOpacity: 0.12,
       shadowRadius: 18,
       shadowOffset: { width: 0, height: 10 },
@@ -131,8 +132,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 12,
     right: 12,
-    width: 28,
-    height: 28,
+    width: 44,
+    minHeight: 44,
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",

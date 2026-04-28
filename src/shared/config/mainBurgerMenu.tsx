@@ -7,6 +7,7 @@ import FavIcon from "../../assets/icons/burger/favourites.svg";
 import LogoutIcon from "../../assets/icons/burger/logout.svg";
 import SelectionIcon from "../../assets/icons/burger/selection.svg";
 import type { BurgerMenuItem } from "../ui/BurgerMenu";
+import { colors } from "../theme/colors";
 
 export function getMainBurgerMenuItems(): BurgerMenuItem[] {
   return [
@@ -72,6 +73,6 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#666",
+    color: colors.text.secondary,
   },
 });

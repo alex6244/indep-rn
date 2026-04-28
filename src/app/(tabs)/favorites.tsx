@@ -2,6 +2,8 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFavorites } from "../../contexts/FavoritesContext";
+import { colors } from "../../shared/theme/colors";
+import { spacing } from "../../shared/theme/spacing";
 import { InlineMessage } from "../../shared/ui/InlineMessage";
 import { ScreenStateEmpty } from "../../shared/ui/ScreenStateEmpty";
 
@@ -16,7 +18,7 @@ export default function FavoritesTab() {
   }, [clearFavoritesError]);
 
   return (
-    <View style={[styles.screen, { paddingTop: insets.top + 8 }]}>
+    <View style={[styles.screen, { paddingTop: insets.top + spacing.sm }]}>
       {favoritesError ? (
         <View style={styles.noticeWrap}>
           <InlineMessage tone="error" message={favoritesError} />
@@ -35,11 +37,11 @@ export default function FavoritesTab() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#F7F7F7",
-    paddingHorizontal: 16,
+    backgroundColor: colors.surface.neutral,
+    paddingHorizontal: spacing.lg,
   },
   noticeWrap: {
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   content: {
     flex: 1,

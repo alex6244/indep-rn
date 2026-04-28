@@ -5,6 +5,7 @@ import {
   type TouchableOpacityProps,
   View,
 } from "react-native";
+import { colors } from "../theme/colors";
 
 const LINE_WIDTH = 22;
 const ICON_HEIGHT = 14;
@@ -58,6 +59,6 @@ const styles = StyleSheet.create({
     width: LINE_WIDTH,
     height: 2,
     borderRadius: 2,
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.brand.primary,
   },
 });

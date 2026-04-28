@@ -8,6 +8,7 @@ import {
   PROFILE_STATS_ROW_PAD_H,
   useProfileStatCardSize,
 } from "./profileStatCardMetrics";
+import { colors } from "../../shared/theme/colors";
 import { shadowStyle } from "../../shared/theme/shadow";
 const WALLET_W = 51.21;
 const WALLET_H = 59.24;
@@ -107,14 +108,14 @@ const styles = StyleSheet.create({
   },
   statCardPublished: {
     borderRadius: PROFILE_STAT_CARD_RADIUS,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
     paddingHorizontal: 10,
     paddingTop: 8,
     paddingBottom: 8,
     justifyContent: "space-between",
     ...(shadowStyle({
       boxShadow: "0px 4px 10px rgba(0,0,0,0.04)",
-      shadowColor: "#000",
+      shadowColor: colors.text.primary,
       shadowOpacity: 0.04,
       shadowRadius: 10,
       shadowOffset: { width: 0, height: 4 },
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
   },
   statCardBalance: {
     borderRadius: PROFILE_STAT_CARD_RADIUS,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
     paddingHorizontal: 10,
     paddingTop: 8,
     paddingBottom: 8,
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     overflow: "visible",
     ...(shadowStyle({
       boxShadow: "0px 4px 10px rgba(0,0,0,0.04)",
-      shadowColor: "#000",
+      shadowColor: colors.text.primary,
       shadowOpacity: 0.04,
       shadowRadius: 10,
       shadowOffset: { width: 0, height: 4 },
@@ -152,19 +153,19 @@ const styles = StyleSheet.create({
   statLabel: {
     fontSize: 10,
     lineHeight: 13,
-    color: "#999",
+    color: colors.text.muted,
   },
   statValue: {
     fontSize: 20,
     fontWeight: "800",
-    color: "#1E1E1E",
+    color: colors.text.primary,
     marginBottom: 2,
   },
   statValueBalance: {
     marginTop: 6,
     fontSize: 20,
     fontWeight: "800",
-    color: "#1E1E1E",
+    color: colors.text.primary,
     maxWidth: "55%",
   },
   statValueCompact: {

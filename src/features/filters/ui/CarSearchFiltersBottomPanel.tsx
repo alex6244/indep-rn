@@ -1,5 +1,8 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { colors } from "../../../shared/theme/colors";
+import { radius } from "../../../shared/theme/radius";
+import { spacing } from "../../../shared/theme/spacing";
 
 type CarSearchFiltersBottomPanelProps = {
   filteredCount?: number;
@@ -53,45 +56,45 @@ export function CarSearchFiltersBottomPanel({
 
 const styles = StyleSheet.create({
   filtersBottom: {
-    padding: 16,
+    padding: spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: "#EEEEEE",
-    backgroundColor: "#FFFFFF",
+    borderTopColor: colors.border.subtle,
+    backgroundColor: colors.surface.primary,
   },
   filtersFound: {
     fontSize: 12,
-    color: "#979797",
+    color: colors.text.subtle,
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   filtersError: {
     fontSize: 12,
-    color: "#DB4431",
+    color: colors.brand.primary,
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   filtersButtonsRow: {
     flexDirection: "row",
-    gap: 8,
+    gap: spacing.sm,
   },
   filtersBtnHalf: {
     flex: 1,
   },
   btn: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 12,
+    minHeight: 44,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radius.md,
     alignItems: "center",
     justifyContent: "center",
   },
   btnPrimary: {
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.brand.primary,
   },
   btnDark: {
-    backgroundColor: "#080717",
+    backgroundColor: colors.surface.inverse,
   },
   btnTextPrimary: {
-    color: "#FFFFFF",
+    color: colors.text.inverse,
     fontSize: 14,
     fontWeight: "500",
   },

@@ -2,6 +2,9 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Logo from "../../assets/logo.svg";
+import { colors } from "../../shared/theme/colors";
+import { radius } from "../../shared/theme/radius";
+import { spacing } from "../../shared/theme/spacing";
 import { BurgerButton } from "../../shared/ui/BurgerButton";
 
 type Props = {
@@ -22,12 +25,12 @@ export function ProfileTopBar({ onOpenBurger }: Props) {
 const styles = StyleSheet.create({
   container: {
     minHeight: 56,
-    marginHorizontal: 16,
-    paddingHorizontal: 16,
+    marginHorizontal: spacing.lg,
+    paddingHorizontal: spacing.lg,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 18,
+    backgroundColor: colors.surface.primary,
+    borderRadius: radius.lg + 2,
   },
 });

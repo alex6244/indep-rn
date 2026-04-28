@@ -2,6 +2,8 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
 import { colors } from "../../../shared/theme/colors";
+import { radius } from "../../../shared/theme/radius";
+import { spacing } from "../../../shared/theme/spacing";
 
 type Props = {
   label?: string;
@@ -24,16 +26,17 @@ export function SectionMoreButton({ label = "Смотреть еще", onPress }
 
 const styles = StyleSheet.create({
   moreButton: {
-    marginTop: 16,
+    marginTop: spacing.lg,
     width: 160,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.buttonDark,
+    minHeight: 44,
+    borderRadius: radius.lg,
+    backgroundColor: colors.brand.dark,
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: spacing.lg,
   },
   moreButtonText: {
-    color: colors.onDark,
+    color: colors.text.inverse,
     fontSize: 14,
     fontWeight: "600",
   },

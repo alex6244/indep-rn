@@ -1,5 +1,8 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { colors } from "../theme/colors";
+import { radius } from "../theme/radius";
+import { spacing } from "../theme/spacing";
 
 type Props = {
   title: string;
@@ -23,30 +26,32 @@ export function ScreenStateError({ title, message, onRetry }: Props) {
 
 const styles = StyleSheet.create({
   wrap: {
-    paddingVertical: 24,
-    paddingHorizontal: 16,
+    paddingVertical: spacing.xxl,
+    paddingHorizontal: spacing.lg,
     alignItems: "center",
   },
   title: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#1E1E1E",
-    marginBottom: 6,
+    color: colors.text.primary,
+    marginBottom: spacing.xs,
   },
   message: {
     fontSize: 14,
-    color: "#666",
+    color: colors.text.secondary,
     textAlign: "center",
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   retryBtn: {
-    backgroundColor: "#DB4431",
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    backgroundColor: colors.brand.primary,
+    borderRadius: radius.sm + 2,
+    minHeight: 44,
+    paddingHorizontal: spacing.lg,
+    alignItems: "center",
+    justifyContent: "center",
   },
   retryText: {
-    color: "#FFF",
+    color: colors.text.inverse,
     fontWeight: "700",
     fontSize: 13,
   },

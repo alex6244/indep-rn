@@ -13,7 +13,10 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../contexts/AuthContext";
+import { colors } from "../../shared/theme/colors";
 import { FONT_FAMILY } from "../../shared/theme/fonts";
+import { radius } from "../../shared/theme/radius";
+import { spacing } from "../../shared/theme/spacing";
 import { InlineMessage } from "../../shared/ui/InlineMessage";
 import { shadowStyle } from "../../shared/theme/shadow";
 import { AuthHeader } from "../../widgets/header/AuthHeader";
@@ -154,7 +157,7 @@ export default function RegisterScreen() {
                   <Ionicons
                     name={showPassword ? "eye-off-outline" : "eye-outline"}
                     size={20}
-                    color="#767676"
+                    color={colors.icon.muted}
                   />
                 </TouchableOpacity>
               </View>
@@ -181,7 +184,7 @@ export default function RegisterScreen() {
                   <Ionicons
                     name={showConfirmPassword ? "eye-off-outline" : "eye-outline"}
                     size={20}
-                    color="#767676"
+                    color={colors.icon.muted}
                   />
                 </TouchableOpacity>
               </View>
@@ -199,6 +202,9 @@ export default function RegisterScreen() {
                   activeOpacity={0.8}
                   disabled={loading}
                   onPress={() => setRole("picker")}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: role === "picker", disabled: loading }}
+                  accessibilityLabel="Тип пользователя: Подборщик"
                 >
                   <View
                     style={[
@@ -219,6 +225,9 @@ export default function RegisterScreen() {
                   activeOpacity={0.8}
                   disabled={loading}
                   onPress={() => setRole("client")}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: role === "client", disabled: loading }}
+                  accessibilityLabel="Тип пользователя: Ищу авто"
                 >
                   <View
                     style={[
@@ -238,6 +247,9 @@ export default function RegisterScreen() {
               style={styles.checkboxContainer}
               onPress={() => setAgreed((v) => !v)}
               activeOpacity={0.7}
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: agreed }}
+              accessibilityLabel="Согласие с политикой и обработкой персональных данных"
             >
               <View style={[styles.checkbox, agreed && styles.checkboxChecked]}>
                 {agreed && <Text style={styles.checkmark}>✓</Text>}
@@ -284,34 +296,34 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.neutral,
   },
   scrollContainer: {
     flexGrow: 1,
     justifyContent: "center",
-    padding: 20,
+    padding: spacing.xl,
   },
   formCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
     ...(shadowStyle({
       boxShadow: "0px 4px 12px rgba(0,0,0,0.10)",
-      shadowColor: "#000",
+      shadowColor: colors.text.primary,
       shadowOpacity: 0.1,
       shadowRadius: 12,
       shadowOffset: { width: 0, height: 4 },
       elevation: 8,
     }) as object),
     elevation: 8,
-    padding: 32,
-    borderRadius: 20,
-    gap: 20,
+    padding: spacing.xxxl,
+    borderRadius: radius.lg + 4,
+    gap: spacing.xl,
   },
   title: {
     fontFamily: FONT_FAMILY.regular,
     fontSize: 28,
     fontWeight: "600",
     textAlign: "center",
-    color: "#080717",
+    color: colors.text.primary,
   },
   inputGroup: {
     gap: 6,
@@ -319,14 +331,14 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#080717",
+    color: colors.text.primary,
   },
   input: {
-    backgroundColor: "#F8F8F8",
-    padding: 16,
-    borderRadius: 12,
+    backgroundColor: colors.surface.input,
+    padding: spacing.lg,
+    borderRadius: radius.md,
     fontSize: 16,
-    color: "#080717",
+    color: colors.text.primary,
   },
   passwordWrap: {
     position: "relative",
@@ -350,48 +362,50 @@ const styles = StyleSheet.create({
   checkbox: {
     width: 24,
     height: 24,
-    borderRadius: 6,
+    borderRadius: radius.sm - 2,
     borderWidth: 2,
-    borderColor: "#DB4431",
+    borderColor: colors.brand.primary,
     backgroundColor: "transparent",
     justifyContent: "center",
     alignItems: "center",
   },
   checkboxChecked: {
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.brand.primary,
   },
   checkmark: {
-    color: "white",
+    color: colors.text.inverse,
     fontSize: 16,
     fontWeight: "bold",
   },
   checkboxText: {
     fontSize: 14,
     flex: 1,
-    color: "#666",
+    color: colors.text.secondary,
     lineHeight: 20,
   },
   link: {
-    color: "#DB4431",
+    color: colors.brand.primary,
     fontWeight: "500",
     textDecorationLine: "underline",
   },
   submitButton: {
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.brand.primary,
+    minHeight: 44,
     paddingVertical: 18,
-    borderRadius: 14,
+    borderRadius: radius.md + 2,
     alignItems: "center",
+    justifyContent: "center",
   },
   buttonDisabled: {
-    backgroundColor: "#ccc",
+    backgroundColor: colors.surface.placeholder,
   },
   submitText: {
-    color: "white",
+    color: colors.text.inverse,
     fontSize: 18,
     fontWeight: "600",
   },
   loadingText: {
-    color: "white",
+    color: colors.text.inverse,
     fontSize: 16,
   },
   roleRow: {
@@ -406,37 +420,38 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 10,
     paddingHorizontal: 12,
-    borderRadius: 12,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
-    backgroundColor: "#FFFFFF",
+    borderColor: colors.border.input,
+    backgroundColor: colors.surface.primary,
+    minHeight: 44,
   },
   roleOptionActive: {
-    borderColor: "#DB4431",
-    backgroundColor: "#FDEBE8",
+    borderColor: colors.brand.primary,
+    backgroundColor: colors.status.warningBg,
   },
   radioOuter: {
     width: 18,
     height: 18,
     borderRadius: 9,
     borderWidth: 2,
-    borderColor: "#C4C4C4",
+    borderColor: colors.border.input,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 8,
   },
   radioOuterActive: {
-    borderColor: "#DB4431",
+    borderColor: colors.brand.primary,
   },
   radioInner: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.brand.primary,
   },
   roleText: {
     fontSize: 14,
-    color: "#080717",
+    color: colors.text.primary,
   },
   loginLinkWrapper: {
     marginTop: 4,
@@ -444,10 +459,10 @@ const styles = StyleSheet.create({
   },
   loginQuestion: {
     fontSize: 13,
-    color: "#A0A0A0",
+    color: colors.text.subtle,
   },
   loginLink: {
-    color: "#DB4431",
+    color: colors.brand.primary,
     fontWeight: "600",
     textDecorationLine: "underline",
   },

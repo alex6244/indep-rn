@@ -10,6 +10,8 @@ import { ScreenStateEmpty } from "../shared/ui/ScreenStateEmpty";
 import { ScreenStateError } from "../shared/ui/ScreenStateError";
 import { ScreenStateLoading } from "../shared/ui/ScreenStateLoading";
 import { clientReportsService } from "../services/clientReportsService";
+import { colors } from "../shared/theme/colors";
+import { spacing } from "../shared/theme/spacing";
 
 export default function ReportsScreen() {
   const router = useRouter();
@@ -77,11 +79,11 @@ export default function ReportsScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
   },
   scrollContent: {
-    paddingTop: 16,
-    paddingBottom: 32,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.xxxl,
   },
 });
 

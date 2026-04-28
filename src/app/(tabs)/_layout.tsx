@@ -6,7 +6,10 @@ import Callpin from "../../assets/icons/mobilemenu/callpin2.svg";
 import Catalogpin from "../../assets/icons/mobilemenu/catalogpin2.svg";
 import Homepin from "../../assets/icons/mobilemenu/homepin2.svg";
 import Profilepin from "../../assets/icons/mobilemenu/profilepin2.svg";
-import { tabBarSafeAreaBottom, tabBarTotalHeight } from "../../shared/navigation/tabBarMetrics";
+import {
+  tabBarSafeAreaBottom,
+  tabBarTotalHeight,
+} from "../../shared/navigation/tabBarMetrics";
 import { colors } from "../../shared/theme/colors";
 
 const ACTIVE = colors.brand.primary;
@@ -30,6 +33,7 @@ function SvgTabIcon({ Icon, color, focused }: SvgTabIconProps) {
         alignItems: "center",
         justifyContent: "center",
         opacity: focused ? 1 : 0.88,
+        transform: [{ translateY: 3 }],
       }}
     >
       <Icon width={TAB_ICON_SIZE} height={TAB_ICON_SIZE} color={color} />

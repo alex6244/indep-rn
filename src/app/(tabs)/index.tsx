@@ -17,6 +17,8 @@ import Logo from "../../assets/logo.svg";
 import { useAuth } from "../../contexts/AuthContext";
 import { scrollBottomPaddingBelowTabBar } from "../../shared/navigation/tabBarMetrics";
 import { colors } from "../../shared/theme/colors";
+import { radius } from "../../shared/theme/radius";
+import { spacing } from "../../shared/theme/spacing";
 import { BurgerButton } from "../../shared/ui/BurgerButton";
 import type { UserRole } from "../../types/user";
 import { BenefitsRow } from "../../widgets/home/BenefitsRow";
@@ -100,32 +102,32 @@ export default function HomeTab() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: colors.surface.primary,
   },
   content: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.sm,
   },
   topBar: {
-    backgroundColor: colors.surfacePrimary,
-    paddingHorizontal: 16,
-    paddingBottom: 10,
+    backgroundColor: colors.surface.primary,
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.md,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
   catalogCtaButton: {
-    marginTop: 16,
-    borderRadius: 12,
+    marginTop: spacing.lg,
+    borderRadius: radius.md,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.brandPrimary,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    backgroundColor: colors.brand.primary,
+    minHeight: 44,
+    paddingHorizontal: spacing.lg,
   },
   catalogCtaText: {
     fontSize: 16,
     fontWeight: "500",
-    color: colors.onDark,
+    color: colors.text.inverse,
   },
 });

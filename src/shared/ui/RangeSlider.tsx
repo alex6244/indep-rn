@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import Slider from '@react-native-community/slider';
+import Slider from "@react-native-community/slider";
+import React, { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { colors } from "../theme/colors";
+import { radius } from "../theme/radius";
+import { spacing } from "../theme/spacing";
 
 type RangeSliderProps = {
   min?: number;
@@ -24,26 +27,22 @@ export const RangeSlider = ({
     onChange?.(v);
   };
 
-  const percent = ((value - min) / (max - min)) * 100 || 0;
-
   return (
     <View style={styles.container}>
       {label && <Text style={styles.label}>{label}</Text>}
-
-      <View style={styles.trackContainer}>
-        <View style={[styles.trackFilled, { width: `${percent}%` }]} />
-        <View style={styles.trackEmpty} />
-      </View>
 
       <Slider
         style={styles.slider}
         minimumValue={min}
         maximumValue={max}
         value={value}
-        minimumTrackTintColor="transparent"
-        maximumTrackTintColor="transparent"
-        thumbTintColor="#DB4431"
+        minimumTrackTintColor={colors.brand.primary}
+        maximumTrackTintColor={colors.icon.placeholder}
+        thumbTintColor={colors.brand.primary}
         onValueChange={handleChange}
+        accessibilityLabel={label ?? "Диапазон"}
+        accessibilityRole="adjustable"
+        accessibilityValue={{ min, max, now: Math.round(value) }}
       />
 
       <Text style={styles.value}>{Math.round(value)}</Text>
@@ -53,33 +52,20 @@ export const RangeSlider = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 8,
+    marginVertical: spacing.sm,
   },
   label: {
-    marginBottom: 4,
-  },
-  trackContainer: {
-    height: 4,
-    borderRadius: 2,
-    overflow: 'hidden',
-    backgroundColor: '#EEE',
-  },
-  trackFilled: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    bottom: 0,
-    backgroundColor: '#DB4431',
-  },
-  trackEmpty: {
-    flex: 1,
+    marginBottom: spacing.xs,
+    color: colors.text.primary,
   },
   slider: {
-    marginTop: -14,
+    width: "100%",
+    minHeight: 44,
   },
   value: {
-    marginTop: 4,
+    marginTop: spacing.xs,
     fontSize: 12,
-    color: '#555',
+    color: colors.text.secondary,
+    borderRadius: radius.sm,
   },
 });

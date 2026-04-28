@@ -2,6 +2,9 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import BestIcon from "../../assets/profile/best.svg";
 import FavouriteBanner from "../../assets/profile/favouritebanner.svg";
+import { colors } from "../../shared/theme/colors";
+import { radius } from "../../shared/theme/radius";
+import { spacing } from "../../shared/theme/spacing";
 
 type Props = {
   onOpenFavorites: () => void;
@@ -53,28 +56,28 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12,
     marginTop: 12,
-    marginHorizontal: 16,
+    marginHorizontal: spacing.lg,
   },
   card: {
     flex: 1,
     minHeight: 72,
-    borderRadius: 12,
+    borderRadius: radius.md,
     overflow: "hidden",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
   },
   bestCardInner: {
     flex: 1,
     minHeight: 72,
-    paddingHorizontal: 12,
-    paddingTop: 10,
-    paddingBottom: 14,
-    paddingRight: 8,
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.md,
+    paddingRight: spacing.sm,
     position: "relative",
     justifyContent: "flex-start",
   },
   bestText: {
     fontSize: 12,
-    color: "#989898",
+    color: colors.text.muted,
     fontWeight: "600",
     lineHeight: 16,
     maxWidth: "78%",

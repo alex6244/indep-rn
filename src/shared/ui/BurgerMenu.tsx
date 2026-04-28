@@ -10,6 +10,8 @@ import {
   type ViewStyle,
 } from "react-native";
 import Logo from "../../assets/logo.svg";
+import { colors } from "../theme/colors";
+import { spacing } from "../theme/spacing";
 
 export type BurgerMenuItem = {
   key: string;
@@ -100,15 +102,15 @@ const styles = StyleSheet.create({
   },
   panel: {
     width: "78%",
-    backgroundColor: "#FFFFFF",
-    paddingTop: 16,
-    paddingHorizontal: 16,
+    backgroundColor: colors.surface.primary,
+    paddingTop: spacing.lg,
+    paddingHorizontal: spacing.lg,
     paddingBottom: 20,
   },
   logo: {
     fontSize: 18,
     fontWeight: "800",
-    color: "#DB4431",
+    color: colors.brand.primary,
     marginBottom: 10,
   },
   item: {
@@ -116,7 +118,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: "#505050",
+    borderBottomColor: colors.border.muted,
     gap: 10,
   },
   icon: {
@@ -125,7 +127,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: "#1E1E1E",
+    color: colors.text.primary,
     fontWeight: "600",
   },
   footer: {

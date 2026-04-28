@@ -17,6 +17,8 @@ import { CostEstimationCard } from "../../widgets/reports/CostEstimationCard";
 import { ScreenStateError } from "../../shared/ui/ScreenStateError";
 import { ScreenStateLoading } from "../../shared/ui/ScreenStateLoading";
 import { clientReportsService } from "../../services/clientReportsService";
+import { colors } from "../../shared/theme/colors";
+import { spacing } from "../../shared/theme/spacing";
 
 export default function ReportDetailsRoute() {
   const router = useRouter();
@@ -137,23 +139,23 @@ export default function ReportDetailsRoute() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.primary,
   },
   content: {
-    paddingTop: 16,
+    paddingTop: spacing.lg,
     paddingBottom: 140,
   },
   notFoundTitle: {
     fontSize: 22,
     fontWeight: "700",
-    color: "#1E1E1E",
+    color: colors.text.primary,
     marginTop: 14,
     marginHorizontal: 16,
   },
   notFoundText: {
     marginTop: 8,
     fontSize: 13,
-    color: "#777777",
+    color: colors.text.subtle,
     marginHorizontal: 16,
     lineHeight: 18,
   },
@@ -167,7 +169,7 @@ const styles = StyleSheet.create({
   backLink: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#DB4431",
+    color: colors.brand.primary,
   },
 });
 

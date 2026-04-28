@@ -5,6 +5,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DeleteProfileConfirmModal } from "./DeleteProfileConfirmModal";
 import { ProfileDeletedModal } from "./ProfileDeletedModal";
 import { shadowStyle } from "../../shared/theme/shadow";
+import { colors } from "../../shared/theme/colors";
+import { radius } from "../../shared/theme/radius";
+import { spacing } from "../../shared/theme/spacing";
 
 type Props = {
   editMenuOpen: boolean;
@@ -90,14 +93,14 @@ const styles = StyleSheet.create({
   },
   menu: {
     position: "absolute",
-    right: 16,
+    right: spacing.lg,
     width: 260,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    backgroundColor: colors.surface.primary,
+    borderRadius: radius.md + 2,
     paddingVertical: 6,
     ...(shadowStyle({
       boxShadow: "0px 10px 16px rgba(0,0,0,0.12)",
-      shadowColor: "#000",
+      shadowColor: colors.text.primary,
       shadowOpacity: 0.12,
       shadowRadius: 16,
       shadowOffset: { width: 0, height: 10 },
@@ -106,16 +109,16 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   item: {
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
   },
   itemText: {
     fontSize: 14,
-    color: "#1E1E1E",
+    color: colors.text.primary,
     fontWeight: "600",
   },
   dangerText: {
-    color: "#DB4431",
+    color: colors.brand.primary,
   },
 });
 

@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import React, { useState } from "react";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { colors } from "../../../shared/theme/colors";
+import { radius } from "../../../shared/theme/radius";
+import { spacing } from "../../../shared/theme/spacing";
 
 type MarkButtonProps = {
   label: string;
@@ -13,8 +16,8 @@ export const MarkButton = ({ label, selected, onToggle }: MarkButtonProps) => {
   const isControlled = selected !== undefined;
   const isActive = isControlled ? selected : active;
 
-  const bg = isActive ? '#DB4431' : '#F3F3F3';
-  const color = isActive ? '#FFFFFF' : '#080717';
+  const bg = isActive ? colors.brand.primary : colors.control.buttonSecondaryBg;
+  const color = isActive ? colors.text.inverse : colors.text.primary;
 
   return (
     <TouchableOpacity
@@ -23,18 +26,27 @@ export const MarkButton = ({ label, selected, onToggle }: MarkButtonProps) => {
         if (!isControlled) setActive((v) => !v);
         onToggle?.();
       }}
+      accessibilityRole="button"
+      accessibilityState={{ selected: isActive }}
+      accessibilityLabel={label}
     >
-      <Text style={{ color }}>{label}</Text>
+      <Text style={[styles.label, { color }]}>{label}</Text>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   chip: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    marginRight: 8,
-    marginBottom: 8,
+    minHeight: 44,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radius.lg,
+    marginRight: spacing.sm,
+    marginBottom: spacing.sm,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: "600",
   },
 });

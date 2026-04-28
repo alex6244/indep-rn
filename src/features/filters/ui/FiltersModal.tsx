@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { colors } from "../../../shared/theme/colors";
+import { spacing } from "../../../shared/theme/spacing";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -56,7 +58,7 @@ const styles = StyleSheet.create({
   },
   panel: {
     width: "80%",
-    backgroundColor: "#fff",
-    padding: 16,
+    backgroundColor: colors.surface.primary,
+    padding: spacing.lg,
   },
 });

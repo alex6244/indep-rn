@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface.primary,
     ...(shadowStyle({
       boxShadow: "0px 4px 12px rgba(0,0,0,0.10)",
-      shadowColor: "#000",
+      shadowColor: colors.text.primary,
       shadowOpacity: 0.1,
       shadowRadius: 12,
       shadowOffset: { width: 0, height: 4 },
@@ -183,8 +183,8 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   eyeButton: {
-    width: 28,
-    height: 28,
+    width: 44,
+    minHeight: 44,
     justifyContent: "center",
     alignItems: "center",
   },

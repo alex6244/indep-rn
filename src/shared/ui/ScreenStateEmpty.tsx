@@ -1,5 +1,8 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { colors } from "../theme/colors";
+import { radius } from "../theme/radius";
+import { spacing } from "../theme/spacing";
 
 type Props = {
   title: string;
@@ -24,32 +27,34 @@ export function ScreenStateEmpty({ title, subtitle, actionLabel, onAction }: Pro
 
 const styles = StyleSheet.create({
   wrap: {
-    paddingVertical: 24,
-    paddingHorizontal: 16,
+    paddingVertical: spacing.xxl,
+    paddingHorizontal: spacing.lg,
     alignItems: "center",
   },
   title: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#1E1E1E",
+    color: colors.text.primary,
   },
   subtitle: {
-    marginTop: 6,
+    marginTop: spacing.xs,
     fontSize: 14,
-    color: "#666",
+    color: colors.text.secondary,
     textAlign: "center",
   },
   actionBtn: {
-    marginTop: 12,
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    backgroundColor: "#F3F3F3",
+    marginTop: spacing.md,
+    borderRadius: radius.sm + 2,
+    minHeight: 44,
+    paddingHorizontal: spacing.lg,
+    backgroundColor: colors.control.buttonSecondaryBg,
+    alignItems: "center",
+    justifyContent: "center",
   },
   actionText: {
     fontSize: 13,
     fontWeight: "700",
-    color: "#1E1E1E",
+    color: colors.control.buttonSecondaryText,
   },
 });
 

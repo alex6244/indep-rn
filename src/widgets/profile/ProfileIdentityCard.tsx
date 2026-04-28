@@ -1,6 +1,9 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import EditIcon from "../../assets/icons/edit.svg";
+import { colors } from "../../shared/theme/colors";
+import { radius } from "../../shared/theme/radius";
+import { spacing } from "../../shared/theme/spacing";
 
 type Props = {
   name: string;
@@ -63,28 +66,28 @@ const styles = StyleSheet.create({
   profileTop: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 12,
-    marginHorizontal: 16,
-    padding: 14,
-    borderRadius: 18,
-    backgroundColor: "#FFFFFF",
+    marginTop: spacing.md,
+    marginHorizontal: spacing.lg,
+    padding: spacing.md,
+    borderRadius: radius.lg + 2,
+    backgroundColor: colors.surface.primary,
   },
   avatarCircle: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: "#1E1E1E",
+    backgroundColor: colors.text.primary,
     alignItems: "center",
     justifyContent: "center",
   },
   avatarInitials: {
-    color: "#FFFFFF",
+    color: colors.text.inverse,
     fontSize: 18,
     fontWeight: "700",
   },
   profileMeta: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: spacing.md,
   },
   nameRow: {
     flexDirection: "row",
@@ -95,22 +98,22 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 30,
     fontWeight: "700",
-    color: "#1E1E1E",
+    color: colors.text.primary,
     marginRight: 10,
   },
   editIconButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
-    backgroundColor: "#FFFFFF",
+    width: 44,
+    minHeight: 44,
+    borderRadius: radius.md,
+    backgroundColor: colors.surface.primary,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "#EDEDED",
+    borderColor: colors.border.subtle,
   },
   profilePhone: {
     marginTop: 4,
     fontSize: 18,
-    color: "#A7A7A7",
+    color: colors.text.muted,
   },
 });

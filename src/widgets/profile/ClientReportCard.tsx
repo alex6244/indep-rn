@@ -3,6 +3,9 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import type { ImageSourcePropType } from "react-native";
 import { FONT_FAMILY } from "../../shared/theme/fonts";
 import { shadowStyle } from "../../shared/theme/shadow";
+import { colors } from "../../shared/theme/colors";
+import { radius } from "../../shared/theme/radius";
+import { spacing } from "../../shared/theme/spacing";
 
 type ClientReport = {
   id: string;
@@ -47,14 +50,14 @@ export function ClientReportCard({ report, onOpen, onDownloadPdf }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 20,
+    backgroundColor: colors.surface.primary,
+    borderRadius: radius.lg + 4,
     overflow: "hidden",
-    marginHorizontal: 16,
-    marginBottom: 16,
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.lg,
     ...(shadowStyle({
       boxShadow: "0px 4px 10px rgba(0,0,0,0.06)",
-      shadowColor: "#000",
+      shadowColor: colors.text.primary,
       shadowOpacity: 0.06,
       shadowRadius: 10,
       shadowOffset: { width: 0, height: 4 },
@@ -67,32 +70,34 @@ const styles = StyleSheet.create({
     height: 176,
   },
   body: {
-    padding: 16,
+    padding: spacing.lg,
     gap: 4,
   },
   price: {
     fontSize: 20,
     fontWeight: "800",
-    color: "#1E1E1E",
+    color: colors.text.primary,
   },
   subtitle: {
     fontSize: 12,
-    color: "#777",
+    color: colors.text.subtle,
   },
   title: {
     fontSize: 12,
-    color: "#777",
+    color: colors.text.subtle,
     marginBottom: 4,
   },
   ctaButton: {
     marginTop: 8,
-    borderRadius: 16,
-    backgroundColor: "#DB4431",
-    paddingVertical: 10,
+    borderRadius: radius.lg,
+    backgroundColor: colors.brand.primary,
+    minHeight: 44,
+    paddingVertical: spacing.sm,
     alignItems: "center",
+    justifyContent: "center",
   },
   ctaText: {
-    color: "#FFFFFF",
+    color: colors.text.inverse,
     fontSize: 14,
     fontWeight: "600",
     fontFamily: FONT_FAMILY.button,
@@ -105,11 +110,11 @@ const styles = StyleSheet.create({
   },
   city: {
     fontSize: 11,
-    color: "#777",
+    color: colors.text.subtle,
   },
   pdfLink: {
     fontSize: 11,
-    color: "#16A34A",
+    color: colors.status.success,
     textDecorationLine: "underline",
     fontFamily: FONT_FAMILY.button,
   },

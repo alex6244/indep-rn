@@ -3,6 +3,9 @@ import { BlurView } from "expo-blur";
 import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import DeletedIllustration from "../../assets/profile/empty.svg";
 import { shadowStyle } from "../../shared/theme/shadow";
+import { colors } from "../../shared/theme/colors";
+import { radius } from "../../shared/theme/radius";
+import { spacing } from "../../shared/theme/spacing";
 
 type Props = {
   visible: boolean;
@@ -42,17 +45,17 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.25)",
   },
   contentWrap: {
-    padding: 16,
+    padding: spacing.lg,
   },
   card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 18,
-    paddingHorizontal: 16,
-    paddingTop: 18,
-    paddingBottom: 16,
+    backgroundColor: colors.surface.primary,
+    borderRadius: radius.lg + 2,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.lg,
     ...(shadowStyle({
       boxShadow: "0px 10px 16px rgba(0,0,0,0.12)",
-      shadowColor: "#000",
+      shadowColor: colors.text.primary,
       shadowOpacity: 0.12,
       shadowRadius: 16,
       shadowOffset: { width: 0, height: 10 },
@@ -64,7 +67,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 20,
     fontWeight: "800",
-    color: "#1E1E1E",
+    color: colors.text.primary,
   },
   illustrationWrap: {
     marginTop: 14,
@@ -75,13 +78,15 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 12,
-    backgroundColor: "#DB4431",
-    borderRadius: 14,
-    paddingVertical: 12,
+    backgroundColor: colors.brand.primary,
+    borderRadius: radius.md + 2,
+    minHeight: 44,
+    paddingVertical: spacing.sm,
     alignItems: "center",
+    justifyContent: "center",
   },
   buttonText: {
-    color: "#FFFFFF",
+    color: colors.text.inverse,
     fontWeight: "700",
     fontSize: 14,
   },

@@ -1,8 +1,9 @@
 import React from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { colors } from "../../../shared/theme/colors";
 import { FONT_FAMILY } from "../../../shared/theme/fonts";
+import { radius } from "../../../shared/theme/radius";
 import { spacing } from "../../../shared/theme/spacing";
 import type { PricingPlan } from "./pricingPlans.data";
 
@@ -22,11 +23,7 @@ export function PricingCard({ plan, width, onOrderPress }: Props) {
       </View>
 
       <View style={styles.cardContent}>
-        <ScrollView
-          style={styles.textScroll}
-          contentContainerStyle={styles.textScrollContent}
-          showsVerticalScrollIndicator={false}
-        >
+        <View style={styles.textContent}>
           <View style={styles.titleWrap}>
             <Text style={styles.cardTitle}>{plan.title}</Text>
           </View>
@@ -44,7 +41,7 @@ export function PricingCard({ plan, width, onOrderPress }: Props) {
               </View>
             ))}
           </View>
-        </ScrollView>
+        </View>
 
         <View style={styles.bottom}>
           <Text style={styles.price}>{plan.price}</Text>
@@ -64,10 +61,10 @@ export function PricingCard({ plan, width, onOrderPress }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: spacing.md,
+    borderRadius: radius.sm,
     overflow: "hidden",
-    height: 460,
-    backgroundColor: colors.surfaceMuted,
+    minHeight: 490,
+    backgroundColor: colors.surface.muted,
     position: "relative",
   },
   cardBg: {
@@ -79,19 +76,14 @@ const styles = StyleSheet.create({
     padding: 12,
     position: "relative",
     zIndex: 1,
-    justifyContent: "space-between",
   },
-  textScroll: {
-    flex: 1,
-  },
-  textScrollContent: {
-    paddingBottom: spacing.sm,
-    minHeight: 292,
+  textContent: {
+    flexGrow: 1,
   },
   cardTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: colors.textPrimary,
+    color: colors.text.primary,
     lineHeight: 20,
   },
   titleWrap: {
@@ -100,7 +92,7 @@ const styles = StyleSheet.create({
   },
   cardText: {
     fontSize: 15,
-    color: colors.textSecondary,
+    color: colors.text.secondary,
     lineHeight: 20,
   },
   introWrap: {
@@ -110,7 +102,7 @@ const styles = StyleSheet.create({
   listTitle: {
     fontSize: 15,
     fontWeight: "700",
-    color: colors.textPrimary,
+    color: colors.text.primary,
     lineHeight: 20,
   },
   listTitleWrap: {
@@ -127,33 +119,37 @@ const styles = StyleSheet.create({
     width: spacing.lg,
     fontSize: 15,
     lineHeight: 20,
-    color: colors.textPrimary,
+    color: colors.text.primary,
   },
   bulletText: {
     flex: 1,
     fontSize: 15,
     lineHeight: 20,
-    color: colors.textPrimary,
+    color: colors.text.primary,
   },
   bottom: {
-    marginTop: spacing.sm,
+    marginTop: "auto",
+    paddingTop: spacing.sm,
   },
   price: {
     fontSize: 34,
     fontWeight: "800",
-    color: colors.textPrimary,
+    color: colors.text.primary,
   },
   button: {
-    marginTop: spacing.sm + 2,
-    backgroundColor: colors.brandPrimary,
-    borderRadius: spacing.md,
-    paddingVertical: 9,
+    marginTop: spacing.sm,
+    backgroundColor: colors.brand.primary,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    minHeight: 44,
+    alignSelf: "stretch",
     alignItems: "center",
     justifyContent: "center",
   },
   buttonText: {
-    color: colors.onDark,
-    fontSize: 15,
+    color: colors.text.inverse,
+    fontSize: 12,
+    lineHeight: 15,
     fontWeight: "600",
     fontFamily: FONT_FAMILY.button,
   },

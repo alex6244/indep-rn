@@ -2,6 +2,8 @@ import { BlurView } from "expo-blur";
 import React, { useEffect, useMemo, useState } from "react";
 import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { colors } from "../../../shared/theme/colors";
+import { radius } from "../../../shared/theme/radius";
+import { spacing } from "../../../shared/theme/spacing";
 
 type CallbackPayload = {
   name: string;
@@ -188,7 +190,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
   },
   dimLayer: {
     ...StyleSheet.absoluteFillObject,
@@ -197,18 +199,18 @@ const styles = StyleSheet.create({
   sheet: {
     width: "100%",
     backgroundColor: colors.surface.primary,
-    borderRadius: 16,
-    paddingHorizontal: 24,
+    borderRadius: radius.lg,
+    paddingHorizontal: spacing.xxl,
     paddingTop: 22,
-    paddingBottom: 24,
+    paddingBottom: spacing.xxl,
     zIndex: 1,
   },
   closeBtn: {
     position: "absolute",
     right: 14,
     top: 10,
-    width: 32,
-    height: 32,
+    width: 44,
+    minHeight: 44,
     alignItems: "center",
     justifyContent: "center",
     zIndex: 2,
@@ -223,28 +225,28 @@ const styles = StyleSheet.create({
     fontSize: 21,
     fontWeight: "700",
     color: colors.text.primary,
-    marginBottom: 10,
+    marginBottom: spacing.sm,
     paddingRight: 30,
   },
   subtitle: {
     fontSize: 16,
     lineHeight: 22,
     color: colors.text.primary,
-    marginBottom: 20,
+    marginBottom: spacing.xl,
   },
   label: {
     fontSize: 14,
     color: colors.text.primary,
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   input: {
     backgroundColor: colors.control.inputBg,
-    borderRadius: 12,
+    borderRadius: radius.md,
     paddingHorizontal: 14,
     paddingVertical: 13,
     fontSize: 16,
     color: colors.text.primary,
-    marginBottom: 6,
+    marginBottom: spacing.xs,
   },
   inputError: {
     borderWidth: 1,
@@ -253,14 +255,16 @@ const styles = StyleSheet.create({
   errorText: {
     color: colors.brand.primary,
     fontSize: 13,
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   primaryBtn: {
-    marginTop: 14,
+    marginTop: spacing.md,
     backgroundColor: colors.control.buttonPrimaryBg,
-    borderRadius: 12,
-    paddingVertical: 13,
+    borderRadius: radius.md,
+    minHeight: 44,
+    paddingHorizontal: spacing.lg,
     alignItems: "center",
+    justifyContent: "center",
   },
   primaryBtnDisabled: {
     opacity: 0.8,

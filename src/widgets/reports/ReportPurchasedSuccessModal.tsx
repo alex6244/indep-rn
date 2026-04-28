@@ -11,6 +11,7 @@ import CloseIcon from "../../assets/icons/close.svg";
 import SuccessIllustration from "../../assets/mainpage/result/2.svg";
 import { shadowStyle } from "../../shared/theme/shadow";
 import { colors } from "../../shared/theme/colors";
+import { spacing } from "../../shared/theme/spacing";
 
 const pickReportWord = (count: number) => {
   // Упрощенная склонялка для RU:
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.overlay.backdrop,
     justifyContent: "center",
     alignItems: "center",
-    padding: 16,
+    padding: spacing.lg,
   },
   card: {
     width: "100%",
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
     ...(shadowStyle({
       // Shadow raw values are kept intentionally for platform-specific shadow rendering.
       boxShadow: "0px 10px 16px rgba(0,0,0,0.12)",
-      shadowColor: "#000000",
+      shadowColor: colors.text.primary,
       shadowOpacity: 0.12,
       shadowRadius: 16,
       shadowOffset: { width: 0, height: 10 },
@@ -110,8 +111,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 14,
     right: 14,
-    width: 34,
-    height: 34,
+    width: 44,
+    minHeight: 44,
     borderRadius: 17,
     alignItems: "center",
     justifyContent: "center",

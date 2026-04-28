@@ -3,6 +3,7 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import type { Report } from "../../types/report";
 import { shadowStyle } from "../../shared/theme/shadow";
 import { colors } from "../../shared/theme/colors";
+import { spacing } from "../../shared/theme/spacing";
 
 export function ReportDetailsHeader({ report }: { report: Report }) {
   return (
@@ -23,11 +24,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface.primary,
     borderRadius: 20,
     overflow: "hidden",
-    marginHorizontal: 16,
-    marginBottom: 16,
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.lg,
     ...(shadowStyle({
       boxShadow: "0px 4px 10px rgba(0,0,0,0.06)", // legacy shadow preset, keep for visual parity
-      shadowColor: "#000000",
+      shadowColor: colors.text.primary,
       shadowOpacity: 0.06,
       shadowRadius: 10,
       shadowOffset: { width: 0, height: 4 },
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.icon.placeholder,
   },
   body: {
-    padding: 16,
+    padding: spacing.lg,
     gap: 6,
   },
   price: {
