@@ -4,7 +4,7 @@
     "slug": "indep-rn",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/profile/avatar.jpg",
+    "icon": "./src/assets/logo.svg",
     "scheme": "indeprn",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -14,16 +14,16 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./src/assets/profile/avatar.jpg",
-        "backgroundImage": "./src/assets/profile/avatar.jpg",
-        "monochromeImage": "./src/assets/profile/avatar.jpg"
+        "foregroundImage": "./src/assets/logo.svg",
+        "backgroundImage": "./src/assets/logo-white.svg",
+        "monochromeImage": "./src/assets/logo-white.svg"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "static",
-      "favicon": "./src/assets/logo.png"
+      "favicon": "./src/assets/logo.svg"
     },
     "plugins": [
       [
@@ -35,7 +35,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./src/assets/profile/avatar.jpg",
+          "image": "./src/assets/logo.svg",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",

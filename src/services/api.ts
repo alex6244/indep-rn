@@ -4,7 +4,8 @@ import { reportTelemetry } from "../shared/monitoring/errorReporting";
 import { envBool, envNumber, envString } from "../config/env";
 
 let inMemoryToken: string | null = null;
-const TOKEN_KEY = "@auth/token";
+const TOKEN_KEY = "auth.token";
+const LEGACY_TOKEN_KEY = "@auth/token";
 const DEFAULT_TIMEOUT_MS = 10000;
 const RETRY_BACKOFF_MS = [300, 700] as const;
 
@@ -175,30 +176,91 @@ export function setRefreshHandler(handler: RefreshHandler | null) {
 
 // ─── Токены ──────────────────────────────────────────────────────────────────
 
-const REFRESH_TOKEN_KEY = "@auth/refresh_token";
+const REFRESH_TOKEN_KEY = "auth.refresh_token";
+const LEGACY_REFRESH_TOKEN_KEY = "@auth/refresh_token";
 let inMemoryRefreshToken: string | null = null;
+
+async function getSecureItemWithMigration(
+  key: string,
+  legacyKey: string,
+): Promise<string | null> {
+  try {
+    const currentValue = await SecureStore.getItemAsync(key);
+    if (currentValue) return currentValue;
+  } catch (error) {
+    trackStorageFailure("get", "secure_store", error);
+  }
+
+  try {
+    const legacyValue = await SecureStore.getItemAsync(legacyKey);
+    if (!legacyValue) return null;
+    try {
+      await SecureStore.setItemAsync(key, legacyValue);
+    } catch (error) {
+      trackStorageFailure("set", "secure_store", error);
+    }
+    try {
+      await SecureStore.deleteItemAsync(legacyKey);
+    } catch (error) {
+      trackStorageFailure("clear", "secure_store", error);
+    }
+    return legacyValue;
+  } catch (error) {
+    trackStorageFailure("get", "secure_store", error);
+    return null;
+  }
+}
+
+async function getAsyncItemWithMigration(
+  key: string,
+  legacyKey: string,
+): Promise<string | null> {
+  try {
+    const currentValue = await AsyncStorage.getItem(key);
+    if (currentValue) return currentValue;
+  } catch (error) {
+    trackStorageFailure("get", "async_storage", error);
+  }
+
+  try {
+    const legacyValue = await AsyncStorage.getItem(legacyKey);
+    if (!legacyValue) return null;
+    try {
+      await AsyncStorage.setItem(key, legacyValue);
+    } catch (error) {
+      trackStorageFailure("set", "async_storage", error);
+    }
+    try {
+      await AsyncStorage.removeItem(legacyKey);
+    } catch (error) {
+      trackStorageFailure("clear", "async_storage", error);
+    }
+    return legacyValue;
+  } catch (error) {
+    trackStorageFailure("get", "async_storage", error);
+    return null;
+  }
+}
 
 export const refreshTokenStorage = {
   get: async () => {
     if (inMemoryRefreshToken) return inMemoryRefreshToken;
-    try {
-      const secure = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
-      if (secure) {
-        inMemoryRefreshToken = secure;
-        return secure;
-      }
-    } catch (error) {
-      trackStorageFailure("get", "secure_store", error);
+    const secure = await getSecureItemWithMigration(
+      REFRESH_TOKEN_KEY,
+      LEGACY_REFRESH_TOKEN_KEY,
+    );
+    if (secure) {
+      inMemoryRefreshToken = secure;
+      return secure;
     }
     if (!allowInsecureAsyncTokenStorage()) return null;
-    try {
-      const fallback = await AsyncStorage.getItem(REFRESH_TOKEN_KEY);
-      if (fallback) {
-        inMemoryRefreshToken = fallback;
-        return fallback;
-      }
-    } catch (error) {
-      trackStorageFailure("get", "async_storage", error);
+    const fallback = await getAsyncItemWithMigration(
+      REFRESH_TOKEN_KEY,
+      LEGACY_REFRESH_TOKEN_KEY,
+    );
+    if (fallback) {
+      inMemoryRefreshToken = fallback;
+      return fallback;
     }
     return null;
   },
@@ -224,9 +286,19 @@ export const refreshTokenStorage = {
     } catch (error) {
       trackStorageFailure("clear", "secure_store", error);
     }
+    try {
+      await SecureStore.deleteItemAsync(LEGACY_REFRESH_TOKEN_KEY);
+    } catch (error) {
+      trackStorageFailure("clear", "secure_store", error);
+    }
     if (!allowInsecureAsyncTokenStorage()) return;
     try {
       await AsyncStorage.removeItem(REFRESH_TOKEN_KEY);
+    } catch (error) {
+      trackStorageFailure("clear", "async_storage", error);
+    }
+    try {
+      await AsyncStorage.removeItem(LEGACY_REFRESH_TOKEN_KEY);
     } catch (error) {
       trackStorageFailure("clear", "async_storage", error);
     }
@@ -237,25 +309,17 @@ export const tokenStorage = {
   get: async () => {
     if (inMemoryToken) return inMemoryToken;
 
-    try {
-      const secure = await SecureStore.getItemAsync(TOKEN_KEY);
-      if (secure) {
-        inMemoryToken = secure;
-        return secure;
-      }
-    } catch (error) {
-      trackStorageFailure("get", "secure_store", error);
+    const secure = await getSecureItemWithMigration(TOKEN_KEY, LEGACY_TOKEN_KEY);
+    if (secure) {
+      inMemoryToken = secure;
+      return secure;
     }
 
     if (!allowInsecureAsyncTokenStorage()) return null;
-    try {
-      const fallback = await AsyncStorage.getItem(TOKEN_KEY);
-      if (fallback) {
-        inMemoryToken = fallback;
-        return fallback;
-      }
-    } catch (error) {
-      trackStorageFailure("get", "async_storage", error);
+    const fallback = await getAsyncItemWithMigration(TOKEN_KEY, LEGACY_TOKEN_KEY);
+    if (fallback) {
+      inMemoryToken = fallback;
+      return fallback;
     }
 
     return null;
@@ -283,9 +347,20 @@ export const tokenStorage = {
     } catch (error) {
       trackStorageFailure("clear", "secure_store", error);
     }
+    try {
+      await SecureStore.deleteItemAsync(LEGACY_TOKEN_KEY);
+    } catch (error) {
+      trackStorageFailure("clear", "secure_store", error);
+    }
     if (!allowInsecureAsyncTokenStorage()) return;
     try {
       await AsyncStorage.removeItem(TOKEN_KEY);
+    } catch (error) {
+      trackStorageFailure("clear", "async_storage", error);
+      trackStorageFailure("clear", "fallback", error);
+    }
+    try {
+      await AsyncStorage.removeItem(LEGACY_TOKEN_KEY);
     } catch (error) {
       trackStorageFailure("clear", "async_storage", error);
       trackStorageFailure("clear", "fallback", error);
