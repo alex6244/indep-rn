@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { colors } from "../theme/colors";
 import { radius } from "../theme/radius";
 import { spacing } from "../theme/spacing";
+import { typography } from "../theme/typography";
 
 type Props = {
   title: string;
@@ -32,11 +33,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
+    ...typography.title,
     fontSize: 16,
-    fontWeight: "700",
     color: colors.text.primary,
   },
   subtitle: {
+    ...typography.textRegular,
     marginTop: spacing.xs,
     fontSize: 14,
     color: colors.text.secondary,
@@ -52,8 +54,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   actionText: {
+    ...typography.title,
     fontSize: 13,
-    fontWeight: "700",
     color: colors.control.buttonSecondaryText,
   },
 });

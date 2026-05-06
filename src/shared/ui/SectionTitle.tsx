@@ -3,6 +3,7 @@ import { StyleSheet, Text, type StyleProp, type TextStyle } from "react-native";
 
 import { colors } from "../theme/colors";
 import { spacing } from "../theme/spacing";
+import { typography } from "../theme/typography";
 
 type Props = {
   children: React.ReactNode;
@@ -15,9 +16,9 @@ export function SectionTitle({ children, style }: Props) {
 
 const styles = StyleSheet.create({
   title: {
+    ...typography.title,
     fontSize: 30,
     lineHeight: 34,
-    fontWeight: "700",
     color: colors.text.primary,
     marginBottom: spacing.sm,
   },

@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     color: colors.text.inverse,
     fontSize: 14,
     fontWeight: "700",
-    fontFamily: FONT_FAMILY.button,
+    fontFamily: FONT_FAMILY.regular,
   },
   secondaryBtn: {
     width: "100%",
@@ -166,6 +166,6 @@ const styles = StyleSheet.create({
     color: colors.text.primary,
     fontSize: 14,
     fontWeight: "600",
-    fontFamily: FONT_FAMILY.button,
+    fontFamily: FONT_FAMILY.regular,
   },
 });

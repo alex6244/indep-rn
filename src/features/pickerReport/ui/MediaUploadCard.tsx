@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 14,
     fontWeight: "600",
-    fontFamily: FONT_FAMILY.button,
+    fontFamily: FONT_FAMILY.regular,
   },
   modalIconWrap: {
     width: 52,

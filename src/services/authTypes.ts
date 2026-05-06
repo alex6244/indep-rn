@@ -14,7 +14,10 @@ export type RegisterPayload = {
 
 export type AuthErrorCode =
   | "invalid_credentials"
+  | "validation_error"
   | "user_exists"
+  | "rate_limited"
+  | "server_error"
   | "network_error"
   | "unknown";
 
@@ -25,7 +28,10 @@ export type AuthError = {
 
 const AUTH_ERROR_MESSAGES: Record<AuthErrorCode, string> = {
   invalid_credentials: "Неверный e-mail или пароль.",
+  validation_error: "Проверьте корректность введённых данных.",
   user_exists: "Пользователь с таким e-mail уже существует.",
+  rate_limited: "Слишком много попыток. Попробуйте позже.",
+  server_error: "Сервис временно недоступен. Попробуйте позже.",
   network_error: "Сервис авторизации недоступен или нет сети. Попробуйте снова.",
   unknown: "Сервис авторизации недоступен. Попробуйте снова.",
 };

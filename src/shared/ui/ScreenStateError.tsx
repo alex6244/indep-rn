@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { colors } from "../theme/colors";
 import { radius } from "../theme/radius";
 import { spacing } from "../theme/spacing";
+import { typography } from "../theme/typography";
 
 type Props = {
   title: string;
@@ -31,12 +32,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
+    ...typography.title,
     fontSize: 16,
-    fontWeight: "700",
     color: colors.text.primary,
     marginBottom: spacing.xs,
   },
   message: {
+    ...typography.textRegular,
     fontSize: 14,
     color: colors.text.secondary,
     textAlign: "center",
@@ -51,8 +53,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   retryText: {
+    ...typography.title,
     color: colors.text.inverse,
-    fontWeight: "700",
     fontSize: 13,
   },
 });

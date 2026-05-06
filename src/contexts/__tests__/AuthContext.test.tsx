@@ -10,6 +10,8 @@ jest.mock("../../services/authService", () => ({
     me: jest.fn(),
     login: jest.fn(),
     register: jest.fn(),
+    requestVerification: jest.fn(),
+    confirmVerification: jest.fn(),
     logout: jest.fn(),
   },
 }));
@@ -34,6 +36,8 @@ const { authService } = jest.requireMock("../../services/authService") as {
     me: jest.Mock;
     login: jest.Mock;
     register: jest.Mock;
+    requestVerification: jest.Mock;
+    confirmVerification: jest.Mock;
     logout: jest.Mock;
   };
 };
@@ -106,6 +110,8 @@ describe("AuthContext restore/logout flow", () => {
     authService.me.mockReset();
     authService.login.mockReset();
     authService.register.mockReset();
+    authService.requestVerification.mockReset();
+    authService.confirmVerification.mockReset();
     authService.logout.mockReset();
   });
 
@@ -445,5 +451,77 @@ describe("AuthContext restore/logout flow", () => {
       expect(success).toEqual({ success: true });
     });
     expect(latestSnapshot?.authError).toBeNull();
+  });
+
+  it("requestVerification + confirmVerification set user in api mode", async () => {
+    process.env.EXPO_PUBLIC_AUTH_SOURCE = "api";
+    const user = sampleUser();
+    authService.requestVerification.mockResolvedValue({ message: "sent" });
+    authService.confirmVerification.mockResolvedValue(user);
+
+    const SnapshotProbe = createSnapshotProbe((snapshot) => {
+      latestSnapshot = snapshot;
+    });
+    await act(async () => {
+      TestRenderer.create(
+        <AuthProvider>
+          <SnapshotProbe />
+        </AuthProvider>,
+      );
+    });
+    await flushAsync();
+
+    await act(async () => {
+      const requested = await latestSnapshot?.requestVerification("client@test.com");
+      expect(requested).toEqual({ success: true });
+    });
+    await act(async () => {
+      const confirmed = await latestSnapshot?.confirmVerification({
+        email: "client@test.com",
+        code: "123456",
+      });
+      expect(confirmed).toEqual({ success: true });
+    });
+
+    expect(authService.requestVerification).toHaveBeenCalledWith("client@test.com");
+    expect(authService.confirmVerification).toHaveBeenCalledWith({
+      email: "client@test.com",
+      code: "123456",
+    });
+    expect(latestSnapshot?.user?.id).toBe(user.id);
+  });
+
+  it("returns structured error when confirmVerification fails", async () => {
+    process.env.EXPO_PUBLIC_AUTH_SOURCE = "api";
+    authService.confirmVerification.mockRejectedValue(
+      new AuthFlowError("validation_error", "Неверный код"),
+    );
+
+    const SnapshotProbe = createSnapshotProbe((snapshot) => {
+      latestSnapshot = snapshot;
+    });
+    await act(async () => {
+      TestRenderer.create(
+        <AuthProvider>
+          <SnapshotProbe />
+        </AuthProvider>,
+      );
+    });
+    await flushAsync();
+
+    await act(async () => {
+      const result = await latestSnapshot?.confirmVerification({
+        email: "client@test.com",
+        code: "000000",
+      });
+      expect(result).toEqual({
+        success: false,
+        error: { code: "validation_error", message: "Неверный код" },
+      });
+    });
+    expect(latestSnapshot?.authError).toEqual({
+      code: "validation_error",
+      message: "Неверный код",
+    });
   });
 });

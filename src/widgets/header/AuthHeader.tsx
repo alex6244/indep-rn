@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../../contexts/AuthContext";
+import { colors } from "../../shared/theme/colors";
 import {
   getMainBurgerMenuItems,
   MainBurgerMenuFooter,
@@ -47,7 +48,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.screen,
   },
   logoRow: {
     flexDirection: "row",

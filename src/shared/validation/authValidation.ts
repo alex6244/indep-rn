@@ -12,7 +12,7 @@ zxcvbnOptions.setOptions({
   },
 });
 
-const PASSWORD_SCORE_THRESHOLD = 3;
+const PASSWORD_SCORE_THRESHOLD = 2;
 
 const FEEDBACK_RU: Record<string, string> = {
   // warnings

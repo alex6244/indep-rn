@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     color: colors.text.inverse,
     fontSize: 14,
     fontWeight: "600",
-    fontFamily: FONT_FAMILY.button,
+    fontFamily: FONT_FAMILY.regular,
   },
   footerRow: {
     marginTop: 10,
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: colors.status.success,
     textDecorationLine: "underline",
-    fontFamily: FONT_FAMILY.button,
+    fontFamily: FONT_FAMILY.regular,
   },
 });
 

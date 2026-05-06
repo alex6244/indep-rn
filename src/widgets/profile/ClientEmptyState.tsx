@@ -80,6 +80,6 @@ const styles = StyleSheet.create({
     color: colors.text.inverse,
     fontSize: 16,
     fontWeight: "600",
-    fontFamily: FONT_FAMILY.button,
+    fontFamily: FONT_FAMILY.regular,
   },
 });

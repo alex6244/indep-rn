@@ -12,6 +12,7 @@ import {
 import { colors } from "../theme/colors";
 import { radius } from "../theme/radius";
 import { spacing } from "../theme/spacing";
+import { typography } from "../theme/typography";
 
 type Props = TextInputProps & {
   label?: string;
@@ -60,12 +61,14 @@ export const AppInput = forwardRef<TextInput, Props>(function AppInput(
 
 const styles = StyleSheet.create({
   label: {
+    ...typography.textRegular,
     fontSize: 14,
     lineHeight: 18,
     color: colors.text.primary,
     marginBottom: spacing.xs,
   },
   input: {
+    ...typography.textRegular,
     minHeight: 48,
     borderRadius: radius.sm,
     backgroundColor: colors.control.inputBg,
@@ -90,6 +93,7 @@ const styles = StyleSheet.create({
     opacity: 0.72,
   },
   errorText: {
+    ...typography.textRegular,
     marginTop: spacing.xs,
     fontSize: 12,
     lineHeight: 16,

@@ -24,7 +24,7 @@ export function ProfileLogoutRow({ onPress }: Props) {
             fontSize: 14,
             fontWeight: "600",
             color: colors.text.secondary,
-            fontFamily: FONT_FAMILY.button,
+            fontFamily: FONT_FAMILY.regular,
           }}
         >
           Выйти из аккаунта

@@ -2,6 +2,7 @@ import React from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { colors } from "../theme/colors";
 import { spacing } from "../theme/spacing";
+import { typography } from "../theme/typography";
 
 type Props = {
   message?: string;
@@ -24,6 +25,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   text: {
+    ...typography.textRegular,
     color: colors.text.secondary,
     fontSize: 14,
   },

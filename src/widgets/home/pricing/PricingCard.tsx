@@ -151,6 +151,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 15,
     fontWeight: "600",
-    fontFamily: FONT_FAMILY.button,
+    fontFamily: FONT_FAMILY.regular,
   },
 });

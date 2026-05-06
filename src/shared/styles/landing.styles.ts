@@ -47,7 +47,7 @@ export const landingStyles = StyleSheet.create({
   headerLink: {
     fontSize: 14,
     color: "#080717",
-    fontFamily: FONT_FAMILY.button,
+    fontFamily: FONT_FAMILY.regular,
   },
   iconButton: {
     paddingHorizontal: 4,
@@ -97,7 +97,7 @@ export const landingStyles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "500",
     fontSize: 14,
-    fontFamily: FONT_FAMILY.button,
+    fontFamily: FONT_FAMILY.regular,
   },
 
   section: {
@@ -153,7 +153,7 @@ export const landingStyles = StyleSheet.create({
   toggleButtonText: {
     fontSize: 14,
     color: "#080717",
-    fontFamily: FONT_FAMILY.button,
+    fontFamily: FONT_FAMILY.regular,
   },
   toggleButtonTextActive: {
     color: "#FFFFFF",

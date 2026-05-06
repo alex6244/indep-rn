@@ -14,7 +14,7 @@ export const typography = {
     fontWeight: "400",
   } as TextStyle,
   buttonText: {
-    fontFamily: FONT_FAMILY.button,
+    fontFamily: FONT_FAMILY.regular,
     fontWeight: "500",
   } as TextStyle,
   title: {

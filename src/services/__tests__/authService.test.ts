@@ -137,8 +137,8 @@ describe("authService contract", () => {
       email: "user@test.com",
     };
     api.post.mockResolvedValue({
-      token: "access-token",
-      refresh_token: "refresh-token",
+      accessToken: "access-token",
+      refreshToken: "refresh-token",
       user,
     });
 
@@ -186,7 +186,7 @@ describe("authService contract", () => {
       email: "new@test.com",
     };
     api.post.mockResolvedValue({
-      token: "register-token",
+      accessToken: "register-token",
       user,
     });
 
@@ -201,6 +201,27 @@ describe("authService contract", () => {
     expect(tokenStorage.set).toHaveBeenCalledWith("register-token");
   });
 
+  it("supports legacy auth DTO fields for backward compatibility", async () => {
+    const user = {
+      id: "u4",
+      login: "legacy@test.com",
+      role: "client",
+      name: "Legacy",
+      email: "legacy@test.com",
+    };
+    api.post.mockResolvedValue({
+      token: "legacy-token",
+      refresh_token: "legacy-refresh",
+      user,
+    });
+
+    const result = await authService.login({ email: "legacy@test.com", password: "123456" });
+
+    expect(result).toEqual(user);
+    expect(tokenStorage.set).toHaveBeenCalledWith("legacy-token");
+    expect(refreshTokenStorage.set).toHaveBeenCalledWith("legacy-refresh");
+  });
+
   it("me returns user on success", async () => {
     const user = {
       id: "u3",
@@ -212,7 +233,7 @@ describe("authService contract", () => {
     api.get.mockResolvedValue(user);
 
     await expect(authService.me()).resolves.toEqual(user);
-    expect(api.get).toHaveBeenCalledWith("/auth/me");
+    expect(api.get).toHaveBeenCalledWith("/me");
   });
 
   it("me throws structured network_error for status 0", async () => {
@@ -222,6 +243,47 @@ describe("authService contract", () => {
     await expect(authService.me()).rejects.toEqual({
       code: "network_error",
       message: getDefaultAuthErrorMessage("network_error"),
+    });
+  });
+
+  it("requestVerification calls backend endpoint", async () => {
+    api.post.mockResolvedValue({ message: "Код отправлен" });
+    await expect(authService.requestVerification("user@test.com")).resolves.toEqual({
+      message: "Код отправлен",
+    });
+    expect(api.post).toHaveBeenCalledWith("/auth/request-verification", { email: "user@test.com" });
+  });
+
+  it("confirmVerification stores token and returns user", async () => {
+    const user = {
+      id: "u5",
+      login: "otp@test.com",
+      role: "client",
+      name: "OTP User",
+      email: "otp@test.com",
+    };
+    api.post.mockResolvedValue({
+      token: "otp-access-token",
+      user,
+    });
+
+    await expect(
+      authService.confirmVerification({ email: "otp@test.com", code: "123456" }),
+    ).resolves.toEqual(user);
+    expect(tokenStorage.set).toHaveBeenCalledWith("otp-access-token");
+    expect(api.post).toHaveBeenCalledWith("/auth/confirm-verification", {
+      email: "otp@test.com",
+      code: "123456",
+    });
+  });
+
+  it("confirmVerification maps 429 into rate_limited auth error", async () => {
+    api.post.mockRejectedValue(new ApiError(429, "Too many requests"));
+    await expect(
+      authService.confirmVerification({ email: "otp@test.com", code: "123456" }),
+    ).rejects.toEqual({
+      code: "rate_limited",
+      message: getDefaultAuthErrorMessage("rate_limited"),
     });
   });
 });

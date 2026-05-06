@@ -25,6 +25,8 @@ type AuthContextType = {
   user: User | null;
   login: (credentials: AuthCredentials) => Promise<AuthResult>;
   register: (payload: RegisterPayload) => Promise<AuthResult>;
+  requestVerification: (email: string) => Promise<AuthResult>;
+  confirmVerification: (payload: { email: string; code: string }) => Promise<AuthResult>;
   logout: () => Promise<void>;
   authError: AuthError | null;
   loading: boolean;
@@ -34,6 +36,8 @@ type AuthGateway = {
   checkAuth: () => Promise<User | null>;
   login: (credentials: AuthCredentials) => Promise<User>;
   register: (payload: RegisterPayload) => Promise<User>;
+  requestVerification: (email: string) => Promise<void>;
+  confirmVerification: (payload: { email: string; code: string }) => Promise<User>;
   logout: () => Promise<void>;
 };
 
@@ -182,6 +186,37 @@ function createMockAuthGateway(): AuthGateway {
       await persistSessionUser(newUser);
       return newUser;
     },
+    requestVerification: async () => {
+      return;
+    },
+    confirmVerification: async (payload) => {
+      const mockUsers = getMockUsers();
+      const trimmedEmail = payload.email.trim();
+      const existing = [mockUsers.client, mockUsers.picker].find(
+        (u) => (u.email ?? "").trim().toLowerCase() === trimmedEmail.toLowerCase(),
+      );
+      const sessionUser: User =
+        existing
+          ? {
+              id: existing.id,
+              login: existing.login,
+              role: existing.role,
+              name: existing.name,
+              phone: existing.phone,
+              email: existing.email,
+            }
+          : {
+              id: Date.now().toString(),
+              login: trimmedEmail,
+              role: "client",
+              name: trimmedEmail.split("@")[0] || "Пользователь",
+              phone: "",
+              email: trimmedEmail,
+            };
+      await tokenStorage.set(`mock_${sessionUser.id}_${Date.now()}`);
+      await persistSessionUser(sessionUser);
+      return sessionUser;
+    },
     logout: async () => {
       await AsyncStorage.removeItem(USER_KEY);
       await tokenStorage.clear();
@@ -214,6 +249,14 @@ function createApiAuthGateway(): AuthGateway {
     },
     register: async (payload) => {
       const user = await authService.register(payload);
+      await persistSessionUser(user);
+      return user;
+    },
+    requestVerification: async (email) => {
+      await authService.requestVerification(email);
+    },
+    confirmVerification: async (payload) => {
+      const user = await authService.confirmVerification(payload);
       await persistSessionUser(user);
       return user;
     },
@@ -294,6 +337,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const requestVerification: AuthContextType["requestVerification"] = async (email) => {
+    try {
+      await gateway.requestVerification(email);
+      setAuthError(null);
+      return { success: true };
+    } catch (error) {
+      const normalized = normalizeAuthError(error);
+      setAuthError(normalized);
+      return { success: false, error: normalized };
+    }
+  };
+
+  const confirmVerification: AuthContextType["confirmVerification"] = async (payload) => {
+    try {
+      const sessionUser = await gateway.confirmVerification(payload);
+      setUser(sessionUser);
+      setAuthError(null);
+      return { success: true };
+    } catch (error) {
+      const normalized = normalizeAuthError(error);
+      setAuthError(normalized);
+      return { success: false, error: normalized };
+    }
+  };
+
   const logout: AuthContextType["logout"] = async () => {
     await gateway.logout();
     setUser(null);
@@ -301,7 +369,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, authError, loading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        register,
+        requestVerification,
+        confirmVerification,
+        logout,
+        authError,
+        loading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

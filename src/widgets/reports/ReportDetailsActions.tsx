@@ -53,13 +53,13 @@ const styles = StyleSheet.create({
     color: colors.control.buttonPrimaryText,
     fontSize: 14,
     fontWeight: "700",
-    fontFamily: FONT_FAMILY.button,
+    fontFamily: FONT_FAMILY.regular,
   },
   btnTextSecondary: {
     color: colors.control.buttonSecondaryText,
     fontSize: 14,
     fontWeight: "700",
-    fontFamily: FONT_FAMILY.button,
+    fontFamily: FONT_FAMILY.regular,
   },
 });
 

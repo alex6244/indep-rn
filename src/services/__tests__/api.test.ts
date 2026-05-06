@@ -147,7 +147,7 @@ describe("api retry/abort/401 policy", () => {
     fetchMock
       .mockRejectedValueOnce(new TypeError("Network request failed"))
       .mockRejectedValueOnce(new TypeError("Network request failed"))
-      .mockResolvedValueOnce(createResponse({ status: 200, body: [{ id: "1" }] }));
+      .mockResolvedValueOnce(createResponse({ status: 200, body: { data: [{ id: "1" }] } }));
 
     const result = await api.get<{ id: string }[]>("/cars");
 
@@ -184,12 +184,19 @@ describe("api retry/abort/401 policy", () => {
     const unauthorizedHandler = jest.fn(async () => undefined);
     setUnauthorizedHandler(unauthorizedHandler);
 
-    fetchMock.mockResolvedValue(createResponse({ status: 401, body: { message: "Unauthorized" } }));
+    fetchMock.mockResolvedValue(
+      createResponse({
+        status: 401,
+        body: { error: { code: "UNAUTHENTICATED", message: "Unauthorized", requestId: "req-1" } },
+      }),
+    );
 
     await expect(api.get("/auth/me")).rejects.toMatchObject({
       status: 401,
       message: "Unauthorized",
       code: "unauthorized",
+      contractCode: "UNAUTHENTICATED",
+      requestId: "req-1",
     });
 
     expect(clearSpy).toHaveBeenCalledTimes(1);
@@ -239,7 +246,7 @@ describe("api retry/abort/401 policy", () => {
 
     fetchMock
       .mockResolvedValueOnce(createResponse({ status: 401, body: { message: "Unauthorized" } }))
-      .mockResolvedValueOnce(createResponse({ status: 200, body: { ok: true } }));
+      .mockResolvedValueOnce(createResponse({ status: 200, body: { data: { ok: true } } }));
 
     await expect(api.get<{ ok: boolean }>("/secure")).resolves.toEqual({ ok: true });
 
@@ -265,8 +272,8 @@ describe("api retry/abort/401 policy", () => {
     fetchMock
       .mockResolvedValueOnce(createResponse({ status: 401, body: { message: "Unauthorized" } }))
       .mockResolvedValueOnce(createResponse({ status: 401, body: { message: "Unauthorized" } }))
-      .mockResolvedValueOnce(createResponse({ status: 200, body: { ok: true } }))
-      .mockResolvedValueOnce(createResponse({ status: 200, body: { ok: true } }));
+      .mockResolvedValueOnce(createResponse({ status: 200, body: { data: { ok: true } } }))
+      .mockResolvedValueOnce(createResponse({ status: 200, body: { data: { ok: true } } }));
 
     const [r1, r2] = await Promise.all([
       api.get<{ ok: boolean }>("/secure/1"),
@@ -304,7 +311,7 @@ describe("api retry/abort/401 policy", () => {
     const tokenSetSpy = jest.spyOn(tokenStorage, "set").mockResolvedValue();
     const refreshHandler = jest.fn(async () => refreshedToken);
     setRefreshHandler(refreshHandler);
-    fetchMock.mockResolvedValue(createResponse({ status: 200, body: { ok: true } }));
+    fetchMock.mockResolvedValue(createResponse({ status: 200, body: { data: { ok: true } } }));
 
     await expect(api.get<{ ok: boolean }>("/secure")).resolves.toEqual({ ok: true });
 
@@ -322,7 +329,7 @@ describe("api retry/abort/401 policy", () => {
     jest.spyOn(tokenStorage, "get").mockResolvedValue(validToken);
     const refreshHandler = jest.fn(async () => "unused-token");
     setRefreshHandler(refreshHandler);
-    fetchMock.mockResolvedValue(createResponse({ status: 200, body: { ok: true } }));
+    fetchMock.mockResolvedValue(createResponse({ status: 200, body: { data: { ok: true } } }));
 
     await expect(api.get<{ ok: boolean }>("/secure")).resolves.toEqual({ ok: true });
 
@@ -334,7 +341,7 @@ describe("api retry/abort/401 policy", () => {
     jest.spyOn(tokenStorage, "get").mockResolvedValue("broken.payload.token");
     const refreshHandler = jest.fn(async () => "refreshed-token");
     setRefreshHandler(refreshHandler);
-    fetchMock.mockResolvedValue(createResponse({ status: 200, body: { ok: true } }));
+    fetchMock.mockResolvedValue(createResponse({ status: 200, body: { data: { ok: true } } }));
 
     await expect(api.get<{ ok: boolean }>("/secure")).resolves.toEqual({ ok: true });
 
@@ -349,21 +356,21 @@ describe("api retry/abort/401 policy", () => {
   it("uses updated base URL after explicit cache reset", async () => {
     jest.spyOn(tokenStorage, "get").mockResolvedValue(null);
     process.env.EXPO_PUBLIC_API_URL = "https://first.example.com";
-    fetchMock.mockResolvedValue(createResponse({ status: 200, body: { ok: true } }));
+    fetchMock.mockResolvedValue(createResponse({ status: 200, body: { data: { ok: true } } }));
     await expect(api.get<{ ok: boolean }>("/cars")).resolves.toEqual({ ok: true });
     expect(fetchMock).toHaveBeenNthCalledWith(
       1,
-      "https://first.example.com/cars",
+      "https://first.example.com/v1/cars",
       expect.any(Object),
     );
 
     process.env.EXPO_PUBLIC_API_URL = "https://second.example.com";
     resetApiBaseUrlCacheForTests();
-    fetchMock.mockResolvedValue(createResponse({ status: 200, body: { ok: true } }));
+    fetchMock.mockResolvedValue(createResponse({ status: 200, body: { data: { ok: true } } }));
     await expect(api.get<{ ok: boolean }>("/cars")).resolves.toEqual({ ok: true });
     expect(fetchMock).toHaveBeenNthCalledWith(
       2,
-      "https://second.example.com/cars",
+      "https://second.example.com/v1/cars",
       expect.any(Object),
     );
   });
@@ -385,6 +392,50 @@ describe("api retry/abort/401 policy", () => {
     await expect(api.get("/cars")).rejects.toMatchObject({
       status: 503,
       code: "server_error",
+    });
+  });
+
+  it("unwraps success envelope { data } from API contract", async () => {
+    jest.spyOn(tokenStorage, "get").mockResolvedValue(null);
+    fetchMock.mockResolvedValue(
+      createResponse({ status: 200, body: { data: { id: "car-1", brand: "BMW" } } }),
+    );
+
+    await expect(api.get<{ id: string; brand: string }>("/cars/1")).resolves.toEqual({
+      id: "car-1",
+      brand: "BMW",
+    });
+  });
+
+  it("keeps backward compatibility with raw success payload", async () => {
+    jest.spyOn(tokenStorage, "get").mockResolvedValue(null);
+    fetchMock.mockResolvedValue(createResponse({ status: 200, body: { ok: true } }));
+    await expect(api.get<{ ok: boolean }>("/legacy")).resolves.toEqual({ ok: true });
+  });
+
+  it("maps RATE_LIMITED envelope errors to rate_limited code", async () => {
+    jest.spyOn(tokenStorage, "get").mockResolvedValue(null);
+    fetchMock.mockResolvedValue(
+      createResponse({
+        status: 429,
+        body: {
+          error: {
+            code: "RATE_LIMITED",
+            message: "Too many requests",
+            details: { retryAfterSec: 30 },
+            requestId: "req-rate-1",
+          },
+        },
+      }),
+    );
+
+    await expect(api.get("/cars")).rejects.toMatchObject({
+      status: 429,
+      message: "Too many requests",
+      code: "rate_limited",
+      contractCode: "RATE_LIMITED",
+      requestId: "req-rate-1",
+      details: { retryAfterSec: 30 },
     });
   });
 });

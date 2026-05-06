@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { colors } from "../theme/colors";
 import { radius } from "../theme/radius";
 import { spacing } from "../theme/spacing";
+import { typography } from "../theme/typography";
 
 type Tone = "success" | "warning" | "error" | "info";
 
@@ -37,6 +38,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   text: {
+    ...typography.textRegular,
     fontSize: 13,
     lineHeight: 18,
     fontWeight: "600",

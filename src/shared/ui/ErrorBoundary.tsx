@@ -1,9 +1,9 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { colors } from "../theme/colors";
-import { FONT_FAMILY } from "../theme/fonts";
 import { radius } from "../theme/radius";
 import { spacing } from "../theme/spacing";
+import { typography } from "../theme/typography";
 import { reportError } from "../monitoring/errorReporting";
 
 interface State {
@@ -61,12 +61,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface.neutral,
   },
   title: {
+    ...typography.textRegular,
     fontSize: 20,
     fontWeight: "600",
     color: colors.text.primary,
     marginBottom: spacing.sm,
   },
   message: {
+    ...typography.textRegular,
     fontSize: 14,
     color: colors.text.secondary,
     textAlign: "center",
@@ -81,9 +83,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   buttonText: {
+    ...typography.buttonText,
     color: colors.text.inverse,
     fontWeight: "600",
     fontSize: 16,
-    fontFamily: FONT_FAMILY.button,
   },
 });

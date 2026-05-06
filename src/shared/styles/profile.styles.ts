@@ -69,7 +69,7 @@ export const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "600",
-    fontFamily: FONT_FAMILY.button,
+    fontFamily: FONT_FAMILY.regular,
   },
   secondaryButton: {
     marginTop: 10,
@@ -85,7 +85,7 @@ export const styles = StyleSheet.create({
     color: "#DB4431",
     fontSize: 16,
     fontWeight: "600",
-    fontFamily: FONT_FAMILY.button,
+    fontFamily: FONT_FAMILY.regular,
   },
   pickerScreen: {
     flex: 1,
@@ -158,7 +158,7 @@ export const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "700",
     fontSize: 14,
-    fontFamily: FONT_FAMILY.button,
+    fontFamily: FONT_FAMILY.regular,
   },
   fab: {
     position: "absolute",
@@ -184,7 +184,7 @@ export const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "700",
     marginTop: -2,
-    fontFamily: FONT_FAMILY.button,
+    fontFamily: FONT_FAMILY.regular,
   },
 });
 

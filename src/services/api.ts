@@ -67,6 +67,9 @@ export class ApiError extends Error {
     public readonly status: number,
     message: string,
     public readonly code: ApiErrorCode = classifyApiErrorByStatus(status),
+    public readonly contractCode?: string,
+    public readonly details?: unknown,
+    public readonly requestId?: string,
   ) {
     super(message);
     this.name = "ApiError";
@@ -78,7 +81,11 @@ export type ApiErrorCode =
   | "timeout"
   | "aborted"
   | "unauthorized"
+  | "forbidden"
   | "not_found"
+  | "conflict"
+  | "rate_limited"
+  | "validation"
   | "server_error"
   | "http_error"
   | "unknown";
@@ -86,10 +93,36 @@ export type ApiErrorCode =
 function classifyApiErrorByStatus(status: number): ApiErrorCode {
   if (status === 0) return "network";
   if (status === 401) return "unauthorized";
+  if (status === 403) return "forbidden";
   if (status === 404) return "not_found";
+  if (status === 409) return "conflict";
+  if (status === 422) return "validation";
+  if (status === 429) return "rate_limited";
   if (status >= 500) return "server_error";
   if (status >= 400) return "http_error";
   return "unknown";
+}
+
+function classifyApiErrorByContractCode(code: unknown): ApiErrorCode | null {
+  if (typeof code !== "string") return null;
+  switch (code.trim().toUpperCase()) {
+    case "UNAUTHENTICATED":
+      return "unauthorized";
+    case "FORBIDDEN":
+      return "forbidden";
+    case "NOT_FOUND":
+      return "not_found";
+    case "CONFLICT":
+      return "conflict";
+    case "RATE_LIMITED":
+      return "rate_limited";
+    case "VALIDATION_ERROR":
+      return "validation";
+    case "INTERNAL":
+      return "server_error";
+    default:
+      return null;
+  }
 }
 
 export function classifyApiError(error: unknown): ApiErrorCode {
@@ -455,7 +488,20 @@ async function parseErrorMessage(response: Response): Promise<string> {
   const fallback = `HTTP ${response.status}`;
   try {
     const body = await response.json();
-    if (body && typeof body.message === "string" && body.message.trim()) return body.message;
+    if (
+      body &&
+      typeof body === "object" &&
+      "error" in body &&
+      body.error &&
+      typeof body.error === "object"
+    ) {
+      const envelopeMessage = (body.error as { message?: unknown }).message;
+      if (typeof envelopeMessage === "string" && envelopeMessage.trim()) return envelopeMessage;
+    }
+    if (body && typeof body === "object" && "message" in body) {
+      const rawMessage = (body as { message?: unknown }).message;
+      if (typeof rawMessage === "string" && rawMessage.trim()) return rawMessage;
+    }
     return fallback;
   } catch {
     try {
@@ -465,6 +511,59 @@ async function parseErrorMessage(response: Response): Promise<string> {
       return fallback;
     }
   }
+}
+
+async function parseErrorPayload(response: Response): Promise<{
+  message: string;
+  contractCode?: string;
+  details?: unknown;
+  requestId?: string;
+}> {
+  const fallback = `HTTP ${response.status}`;
+  try {
+    const body = await response.json();
+    if (
+      body &&
+      typeof body === "object" &&
+      "error" in body &&
+      body.error &&
+      typeof body.error === "object"
+    ) {
+      const payload = body.error as {
+        code?: unknown;
+        message?: unknown;
+        details?: unknown;
+        requestId?: unknown;
+      };
+      return {
+        message:
+          typeof payload.message === "string" && payload.message.trim()
+            ? payload.message
+            : fallback,
+        contractCode: typeof payload.code === "string" ? payload.code : undefined,
+        details: payload.details,
+        requestId: typeof payload.requestId === "string" ? payload.requestId : undefined,
+      };
+    }
+    if (body && typeof body === "object" && "message" in body) {
+      const rawMessage = (body as { message?: unknown }).message;
+      if (typeof rawMessage === "string" && rawMessage.trim()) {
+        return { message: rawMessage };
+      }
+    }
+    return { message: fallback };
+  } catch {
+    const message = await parseErrorMessage(response);
+    return { message };
+  }
+}
+
+function normalizeApiPath(path: string): string {
+  if (!path.startsWith("/")) {
+    return normalizeApiPath(`/${path}`);
+  }
+  if (path === "/v1" || path.startsWith("/v1/")) return path;
+  return `/v1${path}`;
 }
 
 async function triggerUnauthorizedHandler() {
@@ -553,8 +652,17 @@ async function requestOnce<T>(path: string, options: RequestOptions): Promise<T>
   }
 
   if (!response.ok) {
-    const message = await parseErrorMessage(response);
-    throw new ApiError(response.status, message, classifyApiErrorByStatus(response.status));
+    const parsedError = await parseErrorPayload(response);
+    const mappedByContract = classifyApiErrorByContractCode(parsedError.contractCode);
+    const mappedByStatus = classifyApiErrorByStatus(response.status);
+    throw new ApiError(
+      response.status,
+      parsedError.message,
+      mappedByContract ?? mappedByStatus,
+      parsedError.contractCode,
+      parsedError.details,
+      parsedError.requestId,
+    );
   }
 
   // 204 No Content — возвращаем undefined
@@ -562,7 +670,11 @@ async function requestOnce<T>(path: string, options: RequestOptions): Promise<T>
     return undefined as T;
   }
 
-  return response.json() as Promise<T>;
+  const payload = (await response.json()) as unknown;
+  if (payload && typeof payload === "object" && "data" in payload) {
+    return (payload as { data: T }).data;
+  }
+  return payload as T;
 }
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
@@ -606,17 +718,29 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
 
 export const api = {
   get: <T>(path: string, options?: RequestOptions) =>
-    request<T>(path, { ...(options ?? {}), method: "GET" }),
+    request<T>(normalizeApiPath(path), { ...(options ?? {}), method: "GET" }),
 
   post: <T>(path: string, body: unknown, options?: RequestOptions) =>
-    request<T>(path, { ...(options ?? {}), method: "POST", body: JSON.stringify(body) }),
+    request<T>(normalizeApiPath(path), {
+      ...(options ?? {}),
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
 
   put: <T>(path: string, body: unknown, options?: RequestOptions) =>
-    request<T>(path, { ...(options ?? {}), method: "PUT", body: JSON.stringify(body) }),
+    request<T>(normalizeApiPath(path), {
+      ...(options ?? {}),
+      method: "PUT",
+      body: JSON.stringify(body),
+    }),
 
   patch: <T>(path: string, body: unknown, options?: RequestOptions) =>
-    request<T>(path, { ...(options ?? {}), method: "PATCH", body: JSON.stringify(body) }),
+    request<T>(normalizeApiPath(path), {
+      ...(options ?? {}),
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
 
   delete: <T>(path: string, options?: RequestOptions) =>
-    request<T>(path, { ...(options ?? {}), method: "DELETE" }),
+    request<T>(normalizeApiPath(path), { ...(options ?? {}), method: "DELETE" }),
 };

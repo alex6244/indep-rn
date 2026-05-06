@@ -1,12 +1,13 @@
 import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { LogBox } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider } from "../contexts/AuthContext";
 import { FavoritesProvider } from "../contexts/FavoritesContext";
 import { ErrorBoundary } from "../shared/ui/ErrorBoundary";
+import { applyProjectFontDefaults } from "../shared/theme/applyFontDefaults";
 import { FONT_SOURCES } from "../shared/theme/fonts";
 import { initSentryMonitoring } from "../shared/monitoring/sentry";
 
@@ -33,6 +34,11 @@ export default function RootLayout() {
     if (fontsLoaded) {
       void SplashScreen.hideAsync();
     }
+  }, [fontsLoaded]);
+
+  useLayoutEffect(() => {
+    if (!fontsLoaded) return;
+    applyProjectFontDefaults();
   }, [fontsLoaded]);
 
   return (
