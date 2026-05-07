@@ -1,10 +1,11 @@
 import { StyleSheet } from "react-native";
 import { FONT_FAMILY } from "../theme/fonts";
+import { colors } from "../theme/colors";
 
 export const landingStyles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.screen,
   },
   scrollContent: {
     paddingBottom: 32,
@@ -14,11 +15,11 @@ export const landingStyles = StyleSheet.create({
     paddingBottom: 12,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#DEDEDE",
+    borderBottomColor: colors.border.soft,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.screen,
   },
   headerLeft: {
     flexDirection: "row",
@@ -30,14 +31,14 @@ export const landingStyles = StyleSheet.create({
     width: 120,
   },
   searchContainer: {
-    backgroundColor: "#F8F8F8",
+    backgroundColor: colors.surface.soft,
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
   searchPlaceholder: {
     fontSize: 12,
-    color: "#979797",
+    color: colors.text.subtle,
   },
   headerRight: {
     flexDirection: "row",
@@ -46,7 +47,7 @@ export const landingStyles = StyleSheet.create({
   },
   headerLink: {
     fontSize: 14,
-    color: "#080717",
+    color: colors.surface.inverse,
     fontFamily: FONT_FAMILY.regular,
   },
   iconButton: {
@@ -74,27 +75,27 @@ export const landingStyles = StyleSheet.create({
   },
   heroTitle: {
     fontSize: 28,
-    color: "#FFFFFF",
+    color: colors.text.inverse,
     fontWeight: "600",
     marginBottom: 12,
   },
   heroTitleAccent: {
-    color: "#DB4431",
+    color: colors.brand.primary,
   },
   heroSubtitle: {
     fontSize: 13,
-    color: "#F5F5F5",
+    color: colors.surface.card,
     marginBottom: 16,
   },
   primaryButton: {
-    backgroundColor: "#DB4431",
+    backgroundColor: colors.brand.primary,
     borderRadius: 12,
     paddingVertical: 10,
     paddingHorizontal: 20,
     alignItems: "center",
   },
   primaryButtonText: {
-    color: "#FFFFFF",
+    color: colors.text.inverse,
     fontWeight: "500",
     fontSize: 14,
     fontFamily: FONT_FAMILY.regular,
@@ -108,7 +109,7 @@ export const landingStyles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "600",
     marginBottom: 12,
-    color: "#1E1E1E",
+    color: colors.text.primary,
   },
 
   horizontalCards: {
@@ -116,7 +117,7 @@ export const landingStyles = StyleSheet.create({
   },
   benefitCard: {
     width: 220,
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.neutral,
     borderRadius: 12,
     padding: 12,
   },
@@ -132,12 +133,12 @@ export const landingStyles = StyleSheet.create({
   },
   benefitText: {
     fontSize: 11,
-    color: "#555",
+    color: colors.text.dim,
   },
 
   toggleContainer: {
     flexDirection: "row",
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.neutral,
     padding: 4,
     borderRadius: 18,
   },
@@ -148,15 +149,15 @@ export const landingStyles = StyleSheet.create({
     alignItems: "center",
   },
   toggleButtonActive: {
-    backgroundColor: "#080717",
+    backgroundColor: colors.surface.inverse,
   },
   toggleButtonText: {
     fontSize: 14,
-    color: "#080717",
+    color: colors.surface.inverse,
     fontFamily: FONT_FAMILY.regular,
   },
   toggleButtonTextActive: {
-    color: "#FFFFFF",
+    color: colors.text.inverse,
   },
 
   stepsGrid: {
@@ -164,11 +165,11 @@ export const landingStyles = StyleSheet.create({
     gap: 12,
   },
   stepCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface.screen,
     borderRadius: 12,
     padding: 12,
     borderWidth: 1,
-    borderColor: "#F5F5F5",
+    borderColor: colors.surface.card,
   },
   stepImage: {
     height: 120,
@@ -178,11 +179,11 @@ export const landingStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 8,
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.neutral,
   },
   stepNumber: {
-    backgroundColor: "#F3E4E2",
-    color: "#DB4431",
+    backgroundColor: colors.status.warningMutedBg,
+    color: colors.brand.primary,
     width: 24,
     height: 24,
     borderRadius: 12,
@@ -198,7 +199,7 @@ export const landingStyles = StyleSheet.create({
   },
   stepText: {
     fontSize: 11,
-    color: "#555",
+    color: colors.text.dim,
   },
 
   carsGrid: {
@@ -206,7 +207,7 @@ export const landingStyles = StyleSheet.create({
     gap: 16,
   },
   carCard: {
-    backgroundColor: "#F7F7F7",
+    backgroundColor: colors.surface.neutral,
     borderRadius: 16,
     padding: 12,
   },
@@ -233,8 +234,8 @@ export const landingStyles = StyleSheet.create({
   },
   carMileage: {
     fontSize: 11,
-    color: "#FFFFFF",
-    backgroundColor: "#DB4431",
+    color: colors.text.inverse,
+    backgroundColor: colors.brand.primary,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 12,
@@ -242,11 +243,11 @@ export const landingStyles = StyleSheet.create({
   carName: {
     fontSize: 13,
     fontWeight: "500",
-    color: "#1E1E1E",
+    color: colors.text.primary,
   },
   carDetails: {
     fontSize: 11,
-    color: "#777",
+    color: colors.text.faint,
   },
   carButtonsRow: {
     flexDirection: "row",
@@ -258,7 +259,7 @@ export const landingStyles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 12,
-    backgroundColor: "#EFEFEF",
+    backgroundColor: colors.surface.placeholder,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -269,6 +270,6 @@ export const landingStyles = StyleSheet.create({
   },
   carAddress: {
     fontSize: 10,
-    color: "#555",
+    color: colors.text.dim,
   },
 });

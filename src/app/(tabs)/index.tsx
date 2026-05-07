@@ -48,7 +48,7 @@ export default function HomeTab() {
 
   return (
     <View style={styles.screen}>
-      <View style={[styles.topBar, { paddingTop: insets.top + 6 }]}>
+      <View testID="home-top-bar" style={[styles.topBar, { paddingTop: insets.top + 6 }]}>
         <Logo width={82} height={22} />
         <BurgerButton onPress={() => setMenuOpen(true)} hitSlop={8} />
       </View>

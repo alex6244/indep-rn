@@ -18,7 +18,8 @@
         "monochromeImage": "./src/assets/logo.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.indeprn"
     },
     "web": {
       "output": "static",
@@ -44,6 +45,7 @@
         }
       ],
       "expo-secure-store",
+      "expo-detox-config-plugin",
       "@sentry/react-native/expo",
       "@sentry/react-native"
     ],

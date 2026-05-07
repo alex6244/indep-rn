@@ -55,7 +55,7 @@ export const catalogStyles = StyleSheet.create({
     ...(shadowStyle({
       // Shadow raw values are kept intentionally for platform-specific shadow rendering.
       boxShadow: "0px 4px 10px rgba(0,0,0,0.12)",
-      shadowColor: "#000000",
+      shadowColor: colors.overlay.shadow,
       shadowOpacity: 0.12,
       shadowRadius: 10,
       shadowOffset: { width: 0, height: 4 },
@@ -123,7 +123,7 @@ export const catalogStyles = StyleSheet.create({
     ...(shadowStyle({
       // Shadow raw values are kept intentionally for platform-specific shadow rendering.
       boxShadow: "0px 4px 12px rgba(0,0,0,0.08)",
-      shadowColor: "#000000",
+      shadowColor: colors.overlay.shadow,
       shadowOpacity: 0.08,
       shadowRadius: 12,
       shadowOffset: { width: 0, height: 4 },

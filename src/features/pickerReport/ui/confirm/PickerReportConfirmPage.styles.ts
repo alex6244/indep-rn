@@ -245,7 +245,7 @@ export const styles = StyleSheet.create({
     ...(shadowStyle({
       // Shadow raw values are kept intentionally for platform-specific shadow rendering.
       boxShadow: "0px 10px 16px rgba(0,0,0,0.12)",
-      shadowColor: "#000",
+      shadowColor: colors.overlay.shadow,
       shadowOpacity: 0.12,
       shadowRadius: 16,
       shadowOffset: { width: 0, height: 10 },

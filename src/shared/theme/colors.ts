@@ -3,6 +3,7 @@ export const colors = {
     screen: "#FFFFFF",
     card: "#F5F5F5",
     primary: "#FFFFFF",
+    soft: "#F8F8F8",
     muted: "#F1F1F1",
     input: "#F1F1F3",
     neutral: "#F7F7F7",
@@ -20,6 +21,8 @@ export const colors = {
     accent: "#DB4431",
     success: "#4DB95C",
     warning: "#B42318",
+    dim: "#555555",
+    faint: "#777777",
   },
   border: {
     muted: "#E0E0E0",
@@ -35,16 +38,19 @@ export const colors = {
   },
   status: {
     success: "#4DB95C",
+    successStrong: "#43C356",
     successBg: "#EAF7EE",
     warning: "#B42318",
     warningBg: "#FFF1F3",
     info: "#0A84FF",
+    warningMutedBg: "#F3E4E2",
   },
   overlay: {
     soft: "rgba(0,0,0,0.03)",
     backdrop: "rgba(0,0,0,0.35)",
     backdropStrong: "rgba(0,0,0,0.45)",
     dark: "rgba(17, 17, 17, 0.4)",
+    shadow: "#000000",
   },
   icon: {
     placeholder: "#EEE",

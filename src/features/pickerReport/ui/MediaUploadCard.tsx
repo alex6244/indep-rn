@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import PhotosBg from "../../../assets/addCar/photosBG.svg";
@@ -35,54 +35,64 @@ export function MediaUploadCard({ value, onChange }: Props) {
   const [activeModalKind, setActiveModalKind] = useState<UploadMediaKind | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
-  const rows: Row[] = [
-    {
-      key: "salonPhoto",
-      modalKind: "salon_photo",
-      label: "Фото салона",
-      icon: <AddPhotoIcon width={16} height={16} />,
-      successColor: "#43C356",
-      failColor: "#DB4431",
-    },
-    {
-      key: "bodyPhoto",
-      modalKind: "body_photo",
-      label: "Фото кузова",
-      icon: <AddPhotoIcon width={16} height={16} />,
-      successColor: "#43C356",
-      failColor: "#43C356",
-    },
-    {
-      key: "salonVideo",
-      modalKind: "salon_video",
-      label: "Видео салона",
-      icon: <AddVideoIcon width={16} height={16} />,
-      successColor: "#43C356",
-      failColor: "#DB4431",
-    },
-    {
-      key: "bodyVideo",
-      modalKind: "body_video",
-      label: "Видео кузова",
-      icon: <AddVideoIcon width={16} height={16} />,
-      successColor: "#43C356",
-      failColor: "#DB4431",
-    },
-  ];
+  const rows: Row[] = useMemo(
+    () => [
+      {
+        key: "salonPhoto",
+        modalKind: "salon_photo",
+        label: "Фото салона",
+        icon: <AddPhotoIcon width={16} height={16} />,
+        successColor: colors.status.successStrong,
+        failColor: colors.brand.primary,
+      },
+      {
+        key: "bodyPhoto",
+        modalKind: "body_photo",
+        label: "Фото кузова",
+        icon: <AddPhotoIcon width={16} height={16} />,
+        successColor: colors.status.successStrong,
+        failColor: colors.status.successStrong,
+      },
+      {
+        key: "salonVideo",
+        modalKind: "salon_video",
+        label: "Видео салона",
+        icon: <AddVideoIcon width={16} height={16} />,
+        successColor: colors.status.successStrong,
+        failColor: colors.brand.primary,
+      },
+      {
+        key: "bodyVideo",
+        modalKind: "body_video",
+        label: "Видео кузова",
+        icon: <AddVideoIcon width={16} height={16} />,
+        successColor: colors.status.successStrong,
+        failColor: colors.brand.primary,
+      },
+    ],
+    [],
+  );
 
-  const activeRow = rows.find((row) => row.modalKind === activeModalKind);
+  const activeRow = useMemo(
+    () => rows.find((row) => row.modalKind === activeModalKind),
+    [activeModalKind, rows],
+  );
   const isModalVisible = activeModalKind !== null;
   const modalConfig = activeModalKind ? getUploadModalConfig(activeModalKind) : null;
 
-  const closeModal = () => setActiveModalKind(null);
+  const closeModal = useCallback(() => setActiveModalKind(null), []);
 
-  const handlePickPress = () => {
+  const handlePickPress = useCallback(() => {
     if (activeRow) {
       onChange({ ...value, [activeRow.key]: true });
     }
     closeModal();
     setNotice("Подключим выбор фото и видео в следующем обновлении.");
-  };
+  }, [activeRow, closeModal, onChange, value]);
+
+  const handleOpenModal = useCallback((kind: UploadMediaKind) => {
+    setActiveModalKind(kind);
+  }, []);
 
   return (
     <View style={styles.section}>
@@ -106,7 +116,7 @@ export function MediaUploadCard({ value, onChange }: Props) {
                 <TouchableOpacity
                   activeOpacity={0.9}
                   style={[styles.btn, { backgroundColor: bg }]}
-                  onPress={() => setActiveModalKind(r.modalKind)}
+                  onPress={() => handleOpenModal(r.modalKind)}
                 >
                   <View style={styles.btnInner}>
                     {r.icon}
@@ -190,7 +200,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   btnText: {
-    color: "#FFFFFF",
+    color: colors.text.inverse,
     fontSize: 14,
     fontWeight: "600",
     fontFamily: FONT_FAMILY.regular,

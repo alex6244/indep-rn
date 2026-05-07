@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -54,7 +54,7 @@ function RadioOption({
 }
 
 export function OwnersForm({ value, onChange }: Props) {
-  const addOwner = () => {
+  const addOwner = useCallback(() => {
     const next: OwnerDraft[] = [
       ...value,
       {
@@ -65,7 +65,14 @@ export function OwnersForm({ value, onChange }: Props) {
       },
     ];
     onChange(next);
-  };
+  }, [onChange, value]);
+
+  const updateOwner = useCallback(
+    (ownerId: string, patch: Partial<OwnerDraft>) => {
+      onChange(value.map((owner) => (owner.id === ownerId ? { ...owner, ...patch } : owner)));
+    },
+    [onChange, value],
+  );
 
   return (
     <View style={styles.card}>
@@ -78,26 +85,12 @@ export function OwnersForm({ value, onChange }: Props) {
             <RadioOption
               checked={owner.type === "jur"}
               label="Юридическое лицо"
-              onPress={() => {
-                const next = value.map((o) =>
-                  o.id === owner.id
-                    ? { ...o, type: "jur" as OwnerType }
-                    : o,
-                );
-                onChange(next);
-              }}
+              onPress={() => updateOwner(owner.id, { type: "jur" })}
             />
             <RadioOption
               checked={owner.type === "phys"}
               label="Физическое лицо"
-              onPress={() => {
-                const next = value.map((o) =>
-                  o.id === owner.id
-                    ? { ...o, type: "phys" as OwnerType }
-                    : o,
-                );
-                onChange(next);
-              }}
+              onPress={() => updateOwner(owner.id, { type: "phys" })}
             />
           </View>
 
@@ -106,14 +99,9 @@ export function OwnersForm({ value, onChange }: Props) {
             <TextInput
               style={styles.input}
               value={owner.startDate}
-              onChangeText={(t) => {
-                const next = value.map((o) =>
-                  o.id === owner.id ? { ...o, startDate: t } : o,
-                );
-                onChange(next);
-              }}
+              onChangeText={(t) => updateOwner(owner.id, { startDate: t })}
               placeholder="дд мм.мммм"
-              placeholderTextColor="#00000040"
+              placeholderTextColor={colors.text.muted}
             />
           </View>
 
@@ -122,14 +110,9 @@ export function OwnersForm({ value, onChange }: Props) {
             <TextInput
               style={styles.input}
               value={owner.endDate}
-              onChangeText={(t) => {
-                const next = value.map((o) =>
-                  o.id === owner.id ? { ...o, endDate: t } : o,
-                );
-                onChange(next);
-              }}
+              onChangeText={(t) => updateOwner(owner.id, { endDate: t })}
               placeholder="дд мм.мммм"
-              placeholderTextColor="#00000040"
+              placeholderTextColor={colors.text.muted}
             />
           </View>
 

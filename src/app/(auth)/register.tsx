@@ -1,6 +1,6 @@
 // src/app/(auth)/register.tsx — ✅ ГОТОВЫЙ!
 import { router } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -44,7 +44,7 @@ export default function RegisterScreen() {
     };
   }, [step, resendSeconds]);
 
-  const handleRequestCode = async () => {
+  const handleRequestCode = useCallback(async () => {
     const trimmedEmail = email.trim();
 
     const normalizedEmail = normalizeEmail(trimmedEmail);
@@ -72,9 +72,9 @@ export default function RegisterScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [authError, email, requestVerification]);
 
-  const handleConfirmCode = async () => {
+  const handleConfirmCode = useCallback(async () => {
     if (submittingCodeRef.current) return;
     const normalizedEmail = normalizeEmail(email.trim());
     const trimmedCode = code.trim();
@@ -103,15 +103,15 @@ export default function RegisterScreen() {
       setLoading(false);
       submittingCodeRef.current = false;
     }
-  };
+  }, [authError, code, confirmVerification, email]);
 
   useEffect(() => {
     if (step !== "confirm") return;
     if (code.length !== 6 || loading) return;
     void handleConfirmCode();
-  }, [code, step, loading]);
+  }, [code, step, loading, handleConfirmCode]);
 
-  const handleCodeChange = (text: string) => {
+  const handleCodeChange = useCallback((text: string) => {
     const next = sanitizeOtpCode(text);
     setCode(next);
     if (next.length < 6) {
@@ -119,16 +119,16 @@ export default function RegisterScreen() {
     } else {
       setCodeErrorText(undefined);
     }
-  };
+  }, []);
 
-  const handleChangeEmail = () => {
+  const handleChangeEmail = useCallback(() => {
     if (loading) return;
     setStep("request");
     setCode("");
     setResendSeconds(0);
     setCodeErrorText(undefined);
     setMessage(null);
-  };
+  }, [loading]);
 
   return (
     <>

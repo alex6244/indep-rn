@@ -137,13 +137,38 @@ export default function CatalogScreen() {
       setTimeout(resolve, 500);
     });
   }, []);
+  const handleLogoPress = useCallback(() => {
+    router.push("/(tabs)");
+  }, [router]);
+  const handleOpenBurger = useCallback(() => {
+    setMenuOpen(true);
+  }, []);
+  const handleOpenCallbackRequest = useCallback(() => {
+    setCallbackModalOpen(true);
+  }, []);
+  const handleCloseSort = useCallback(() => {
+    setSortOpen(false);
+  }, []);
+  const handleSelectSort = useCallback(
+    (next: SortOption) => {
+      controller.setSortOption(next);
+      setSortOpen(false);
+    },
+    [controller],
+  );
+  const handleCloseCallbackModal = useCallback(() => {
+    setCallbackModalOpen(false);
+  }, []);
+  const handleCloseBurger = useCallback(() => {
+    setMenuOpen(false);
+  }, []);
 
   return (
     <View style={styles.root}>
       <CatalogHeaderSection
         styles={styles}
-        onLogoPress={() => router.push("/(tabs)")}
-        onOpenBurger={() => setMenuOpen(true)}
+        onLogoPress={handleLogoPress}
+        onOpenBurger={handleOpenBurger}
       />
       <CatalogContentSection
         styles={styles}
@@ -154,7 +179,7 @@ export default function CatalogScreen() {
         isFavorite={isFavorite}
         setFavorite={setFavorite}
         onRetry={handleRetry}
-        onOpenCallbackRequest={() => setCallbackModalOpen(true)}
+        onOpenCallbackRequest={handleOpenCallbackRequest}
         favoritesError={favoritesError}
         sortButtonRef={sortButtonRef}
         toggleSort={toggleSort}
@@ -168,11 +193,8 @@ export default function CatalogScreen() {
         dropdownTop={dropdownTop}
         dropdownLeft={dropdownLeft}
         dropdownWidth={dropdownWidth}
-        onClose={() => setSortOpen(false)}
-        onSelect={(next: SortOption) => {
-          controller.setSortOption(next);
-          setSortOpen(false);
-        }}
+        onClose={handleCloseSort}
+        onSelect={handleSelectSort}
         styles={styles}
       />
 
@@ -221,13 +243,13 @@ export default function CatalogScreen() {
 
       <CatalogCallbackRequestModal
         visible={callbackModalOpen}
-        onClose={() => setCallbackModalOpen(false)}
+        onClose={handleCloseCallbackModal}
         onSubmit={handleCallbackSubmit}
       />
 
       <BurgerMenu
         open={menuOpen}
-        onClose={() => setMenuOpen(false)}
+        onClose={handleCloseBurger}
         items={getMainBurgerMenuItems()}
         footer={<MainBurgerMenuFooter onLogout={logout} />}
       />

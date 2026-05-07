@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import type { PaymentType } from '../../features/catalog/hooks/useCatalogFiltersController';
+import { colors } from '../../shared/theme/colors';
 
 type EntitiesToggleProps = {
   leftLabel?: string;
@@ -13,7 +14,7 @@ type EntitiesToggleProps = {
 export const EntitiesToggle = ({
   leftLabel = 'Хочу продать авто',
   rightLabel = 'Хочу купить авто',
-  activeColor = '#080717',
+  activeColor = colors.surface.inverse,
   value,
   onChange,
 }: EntitiesToggleProps) => {
@@ -28,8 +29,8 @@ export const EntitiesToggle = ({
         : null
     : tab;
 
-  const activeText = '#FFFFFF';
-  const inactiveText = '#080717';
+  const activeText = colors.text.inverse;
+  const inactiveText = colors.surface.inverse;
 
   return (
     <View>

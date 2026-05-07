@@ -1,6 +1,6 @@
 // src/app/(auth)/index.tsx — экран логина
 import { router } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -44,7 +44,7 @@ export default function LoginScreen() {
     };
   }, [step, resendSeconds]);
 
-  const handleRequestCode = async () => {
+  const handleRequestCode = useCallback(async () => {
     if (authLoading) {
       setMessage({ tone: "info", text: "Идёт инициализация авторизации." });
       return;
@@ -76,9 +76,9 @@ export default function LoginScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [authError, authLoading, email, requestVerification]);
 
-  const handleConfirmCode = async () => {
+  const handleConfirmCode = useCallback(async () => {
     if (submittingCodeRef.current) return;
     const normalizedEmail = normalizeEmail(email.trim());
     const trimmedCode = code.trim();
@@ -107,15 +107,15 @@ export default function LoginScreen() {
       setLoading(false);
       submittingCodeRef.current = false;
     }
-  };
+  }, [authError, code, confirmVerification, email]);
 
   useEffect(() => {
     if (step !== "confirm") return;
     if (code.length !== 6 || loading) return;
     void handleConfirmCode();
-  }, [code, step, loading]);
+  }, [code, step, loading, handleConfirmCode]);
 
-  const handleCodeChange = (text: string) => {
+  const handleCodeChange = useCallback((text: string) => {
     const next = sanitizeOtpCode(text);
     setCode(next);
     if (next.length < 6) {
@@ -123,16 +123,16 @@ export default function LoginScreen() {
     } else {
       setCodeErrorText(undefined);
     }
-  };
+  }, []);
 
-  const handleChangeEmail = () => {
+  const handleChangeEmail = useCallback(() => {
     if (loading) return;
     setStep("request");
     setCode("");
     setResendSeconds(0);
     setCodeErrorText(undefined);
     setMessage(null);
-  };
+  }, [loading]);
 
   return (
     <>

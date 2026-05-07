@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   FlatList,
   Image,
@@ -15,6 +15,7 @@ import { Feather } from "@expo/vector-icons";
 import type { Car } from "../../../types/car";
 import { FavoriteButton } from "../../favorites/ui/FavoriteButton";
 import { buildCarModelLine, buildCarSpecsLine } from "../utils/buildCarSpecsLine";
+import { colors } from "../../../shared/theme/colors";
 
 type CatalogStyles = typeof import("./Catalog.styles").catalogStyles;
 
@@ -90,7 +91,7 @@ function CatalogCarCard({ car, isFavorite, setFavorite, styles, cardImageWidth }
       </View>
 
       <View style={styles.carAddressRow}>
-        <Feather name="map-pin" size={12} color="#9A9A9A" style={styles.carAddressIcon} />
+        <Feather name="map-pin" size={12} color={colors.icon.muted} style={styles.carAddressIcon} />
         <Text style={styles.carAddress}>{car.address}</Text>
       </View>
     </View>
@@ -119,22 +120,27 @@ export function CatalogCarsList({
   /** Экран минус отступы экрана (16×2) и карточки (14×2) — ширина галереи ≈ ширине скролла для paging. */
   const cardImageWidth = screenW - 60;
 
-  const renderItem: ListRenderItem<Car> = ({ item: car }) => (
-    <MemoCatalogCarCard
-      car={car}
-      isFavorite={isFavorite(String(car.id))}
-      setFavorite={setFavorite}
-      styles={styles}
-      cardImageWidth={cardImageWidth}
-    />
+  const renderItem = useCallback<ListRenderItem<Car>>(
+    ({ item: car }) => (
+      <MemoCatalogCarCard
+        car={car}
+        isFavorite={isFavorite(String(car.id))}
+        setFavorite={setFavorite}
+        styles={styles}
+        cardImageWidth={cardImageWidth}
+      />
+    ),
+    [cardImageWidth, isFavorite, setFavorite, styles],
   );
+  const keyExtractor = useCallback((car: Car) => String(car.id), []);
+  const ItemSeparatorComponent = useCallback(() => <View style={{ height: 12 }} />, []);
 
   return (
     <FlatList
       data={displayedCars}
-      keyExtractor={(car) => String(car.id)}
+      keyExtractor={keyExtractor}
       renderItem={renderItem}
-      ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+      ItemSeparatorComponent={ItemSeparatorComponent}
       initialNumToRender={8}
       maxToRenderPerBatch={5}
       windowSize={5}
