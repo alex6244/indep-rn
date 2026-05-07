@@ -472,7 +472,10 @@ describe("AuthContext restore/logout flow", () => {
     await flushAsync();
 
     await act(async () => {
-      const requested = await latestSnapshot?.requestVerification("client@test.com");
+      const requested = await latestSnapshot?.requestVerification({
+        email: "client@test.com",
+        name: "Client",
+      });
       expect(requested).toEqual({ success: true });
     });
     await act(async () => {
@@ -483,7 +486,10 @@ describe("AuthContext restore/logout flow", () => {
       expect(confirmed).toEqual({ success: true });
     });
 
-    expect(authService.requestVerification).toHaveBeenCalledWith("client@test.com");
+    expect(authService.requestVerification).toHaveBeenCalledWith({
+      email: "client@test.com",
+      name: "Client",
+    });
     expect(authService.confirmVerification).toHaveBeenCalledWith({
       email: "client@test.com",
       code: "123456",

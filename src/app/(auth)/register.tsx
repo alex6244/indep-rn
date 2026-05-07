@@ -24,6 +24,7 @@ import { AuthHeader } from "../../widgets/header/AuthHeader";
 import { isEmailValid, normalizeEmail } from "../../shared/validation/authValidation";
 
 export default function RegisterScreen() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [step, setStep] = useState<"request" | "confirm">("request");
@@ -33,6 +34,7 @@ export default function RegisterScreen() {
   const [message, setMessage] = useState<{ tone: "error" | "info"; text: string } | null>(null);
   const { requestVerification, confirmVerification, authError } = useAuth();
   const submittingCodeRef = useRef(false);
+  const lastAutoSubmittedCodeRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (step !== "confirm" || resendSeconds <= 0) return;
@@ -45,7 +47,13 @@ export default function RegisterScreen() {
   }, [step, resendSeconds]);
 
   const handleRequestCode = useCallback(async () => {
+    const trimmedName = name.trim();
     const trimmedEmail = email.trim();
+
+    if (!trimmedName) {
+      setMessage({ tone: "error", text: "Введите имя." });
+      return;
+    }
 
     const normalizedEmail = normalizeEmail(trimmedEmail);
     if (!isEmailValid(normalizedEmail)) {
@@ -55,7 +63,7 @@ export default function RegisterScreen() {
 
     setLoading(true);
     try {
-      const result = await requestVerification(normalizedEmail);
+      const result = await requestVerification({ email: normalizedEmail, name: trimmedName });
       if (result.success) {
         setStep("confirm");
         setResendSeconds(60);
@@ -72,7 +80,7 @@ export default function RegisterScreen() {
     } finally {
       setLoading(false);
     }
-  }, [authError, email, requestVerification]);
+  }, [authError, email, name, requestVerification]);
 
   const handleConfirmCode = useCallback(async () => {
     if (submittingCodeRef.current) return;
@@ -108,12 +116,17 @@ export default function RegisterScreen() {
   useEffect(() => {
     if (step !== "confirm") return;
     if (code.length !== 6 || loading) return;
+    if (lastAutoSubmittedCodeRef.current === code) return;
+    lastAutoSubmittedCodeRef.current = code;
     void handleConfirmCode();
   }, [code, step, loading, handleConfirmCode]);
 
   const handleCodeChange = useCallback((text: string) => {
     const next = sanitizeOtpCode(text);
     setCode(next);
+    if (next.length < 6) {
+      lastAutoSubmittedCodeRef.current = null;
+    }
     if (next.length < 6) {
       setCodeErrorText("Введите 6-значный код подтверждения.");
     } else {
@@ -125,6 +138,7 @@ export default function RegisterScreen() {
     if (loading) return;
     setStep("request");
     setCode("");
+    lastAutoSubmittedCodeRef.current = null;
     setResendSeconds(0);
     setCodeErrorText(undefined);
     setMessage(null);
@@ -143,6 +157,13 @@ export default function RegisterScreen() {
             {message ? <InlineMessage tone={message.tone} message={message.text} /> : null}
 
             <View style={styles.inputGroup}>
+              <AppInput
+                label="Имя"
+                value={name}
+                onChangeText={setName}
+                placeholder="Ваше имя"
+                disabled={loading || step === "confirm"}
+              />
               <AppInput
                 label="Почта"
                 value={email}

@@ -33,6 +33,7 @@ export default function LoginScreen() {
   const [message, setMessage] = useState<{ tone: "error" | "info"; text: string } | null>(null);
   const { requestVerification, confirmVerification, authError, loading: authLoading } = useAuth();
   const submittingCodeRef = useRef(false);
+  const lastAutoSubmittedCodeRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (step !== "confirm" || resendSeconds <= 0) return;
@@ -59,7 +60,7 @@ export default function LoginScreen() {
 
     setLoading(true);
     try {
-      const result = await requestVerification(normalizedEmail);
+      const result = await requestVerification({ email: normalizedEmail });
       if (result.success) {
         setStep("confirm");
         setResendSeconds(60);
@@ -112,12 +113,17 @@ export default function LoginScreen() {
   useEffect(() => {
     if (step !== "confirm") return;
     if (code.length !== 6 || loading) return;
+    if (lastAutoSubmittedCodeRef.current === code) return;
+    lastAutoSubmittedCodeRef.current = code;
     void handleConfirmCode();
   }, [code, step, loading, handleConfirmCode]);
 
   const handleCodeChange = useCallback((text: string) => {
     const next = sanitizeOtpCode(text);
     setCode(next);
+    if (next.length < 6) {
+      lastAutoSubmittedCodeRef.current = null;
+    }
     if (next.length < 6) {
       setCodeErrorText("Введите 6-значный код подтверждения.");
     } else {
@@ -129,6 +135,7 @@ export default function LoginScreen() {
     if (loading) return;
     setStep("request");
     setCode("");
+    lastAutoSubmittedCodeRef.current = null;
     setResendSeconds(0);
     setCodeErrorText(undefined);
     setMessage(null);

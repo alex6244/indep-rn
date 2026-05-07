@@ -25,7 +25,7 @@ type AuthContextType = {
   user: User | null;
   login: (credentials: AuthCredentials) => Promise<AuthResult>;
   register: (payload: RegisterPayload) => Promise<AuthResult>;
-  requestVerification: (email: string) => Promise<AuthResult>;
+  requestVerification: (payload: { email: string; name?: string }) => Promise<AuthResult>;
   confirmVerification: (payload: { email: string; code: string }) => Promise<AuthResult>;
   logout: () => Promise<void>;
   authError: AuthError | null;
@@ -36,7 +36,7 @@ type AuthGateway = {
   checkAuth: () => Promise<User | null>;
   login: (credentials: AuthCredentials) => Promise<User>;
   register: (payload: RegisterPayload) => Promise<User>;
-  requestVerification: (email: string) => Promise<void>;
+  requestVerification: (payload: { email: string; name?: string }) => Promise<void>;
   confirmVerification: (payload: { email: string; code: string }) => Promise<User>;
   logout: () => Promise<void>;
 };
@@ -252,8 +252,8 @@ function createApiAuthGateway(): AuthGateway {
       await persistSessionUser(user);
       return user;
     },
-    requestVerification: async (email) => {
-      await authService.requestVerification(email);
+    requestVerification: async (payload) => {
+      await authService.requestVerification(payload);
     },
     confirmVerification: async (payload) => {
       const user = await authService.confirmVerification(payload);
@@ -337,9 +337,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const requestVerification: AuthContextType["requestVerification"] = async (email) => {
+  const requestVerification: AuthContextType["requestVerification"] = async (payload) => {
     try {
-      await gateway.requestVerification(email);
+      await gateway.requestVerification(payload);
       setAuthError(null);
       return { success: true };
     } catch (error) {

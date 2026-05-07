@@ -375,6 +375,22 @@ describe("api retry/abort/401 policy", () => {
     );
   });
 
+  it("does not append /v1 when base URL already contains version segment", async () => {
+    jest.spyOn(tokenStorage, "get").mockResolvedValue(null);
+    process.env.EXPO_PUBLIC_API_URL = "https://indep.su/api/v1.0";
+    resetApiBaseUrlCacheForTests();
+    fetchMock.mockResolvedValue(createResponse({ status: 200, body: { data: { ok: true } } }));
+
+    await expect(api.get<{ ok: boolean }>("/auth/request-verification")).resolves.toEqual({
+      ok: true,
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://indep.su/api/v1.0/auth/request-verification",
+      expect.any(Object),
+    );
+  });
+
   it("marks not found responses with not_found code", async () => {
     jest.spyOn(tokenStorage, "get").mockResolvedValue(null);
     fetchMock.mockResolvedValue(createResponse({ status: 404, body: { message: "Not found" } }));

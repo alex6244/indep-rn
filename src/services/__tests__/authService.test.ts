@@ -248,10 +248,15 @@ describe("authService contract", () => {
 
   it("requestVerification calls backend endpoint", async () => {
     api.post.mockResolvedValue({ message: "Код отправлен" });
-    await expect(authService.requestVerification("user@test.com")).resolves.toEqual({
+    await expect(
+      authService.requestVerification({ email: "user@test.com", name: "User Name" }),
+    ).resolves.toEqual({
       message: "Код отправлен",
     });
-    expect(api.post).toHaveBeenCalledWith("/auth/request-verification", { email: "user@test.com" });
+    expect(api.post).toHaveBeenCalledWith("/auth/request-verification", {
+      email: "user@test.com",
+      name: "User Name",
+    });
   });
 
   it("confirmVerification stores token and returns user", async () => {
@@ -284,6 +289,16 @@ describe("authService contract", () => {
     ).rejects.toEqual({
       code: "rate_limited",
       message: getDefaultAuthErrorMessage("rate_limited"),
+    });
+  });
+
+  it("confirmVerification preserves backend validation message for 422", async () => {
+    api.post.mockRejectedValue(new ApiError(422, "Неверный или истёкший код"));
+    await expect(
+      authService.confirmVerification({ email: "otp@test.com", code: "123456" }),
+    ).rejects.toEqual({
+      code: "validation_error",
+      message: "Неверный или истёкший код",
     });
   });
 });

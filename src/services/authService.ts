@@ -21,6 +21,7 @@ type ApiAuthResponse = {
   user: User;
 };
 type VerificationRequestResponse = { message?: string };
+type VerificationRequestPayload = { email: string; name?: string };
 type ConfirmVerificationPayload = { email: string; code: string };
 
 function mapApiAuthResponseToDomainUser(response: ApiAuthResponse): User {
@@ -85,13 +86,23 @@ function mapAuthErrorCode(error: unknown): AuthErrorCode {
 
 function mapAuthError(error: unknown): AuthError {
   const code = mapAuthErrorCode(error);
+  if (
+    error instanceof ApiError &&
+    (error.status === 400 || error.status === 422) &&
+    typeof error.message === "string" &&
+    error.message.trim().length > 0
+  ) {
+    return { code, message: error.message };
+  }
   return { code, message: getDefaultAuthErrorMessage(code) };
 }
 
 export const authService = {
-  requestVerification: async (email: string): Promise<VerificationRequestResponse | void> => {
+  requestVerification: async (
+    payload: VerificationRequestPayload,
+  ): Promise<VerificationRequestResponse | void> => {
     try {
-      return await api.post<VerificationRequestResponse>("/auth/request-verification", { email });
+      return await api.post<VerificationRequestResponse>("/auth/request-verification", payload);
     } catch (error) {
       throw mapAuthError(error);
     }

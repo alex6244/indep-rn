@@ -569,7 +569,11 @@ function normalizeApiPath(path: string): string {
     try {
       const parsed = new URL(envUrl);
       const p = parsed.pathname.replace(/\/+$/, "");
-      if (p === "/v1" || p.startsWith("/v1/") || p === "/v1.0" || p.startsWith("/v1.0/")) {
+      const hasVersionSegment = p
+        .split("/")
+        .filter(Boolean)
+        .some((segment) => segment === "v1" || segment === "v1.0");
+      if (hasVersionSegment) {
         return path;
       }
     } catch {
@@ -628,6 +632,7 @@ async function requestOnce<T>(path: string, options: RequestOptions): Promise<T>
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
+    Accept: "application/json",
     ...(options.headers as Record<string, string>),
   };
 
