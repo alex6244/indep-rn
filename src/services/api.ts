@@ -562,7 +562,23 @@ function normalizeApiPath(path: string): string {
   if (!path.startsWith("/")) {
     return normalizeApiPath(`/${path}`);
   }
+  // If the base URL already includes a version segment (e.g. ".../api/v1.0"),
+  // do not prefix another version here.
+  const envUrl = envString("EXPO_PUBLIC_API_URL");
+  if (envUrl) {
+    try {
+      const parsed = new URL(envUrl);
+      const p = parsed.pathname.replace(/\/+$/, "");
+      if (p === "/v1" || p.startsWith("/v1/") || p === "/v1.0" || p.startsWith("/v1.0/")) {
+        return path;
+      }
+    } catch {
+      // ignore; invalid URL will be handled in resolveBaseUrl()
+    }
+  }
+
   if (path === "/v1" || path.startsWith("/v1/")) return path;
+  if (path === "/v1.0" || path.startsWith("/v1.0/")) return path;
   return `/v1${path}`;
 }
 
