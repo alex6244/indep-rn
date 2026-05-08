@@ -1,4 +1,4 @@
-import { reportService } from "../reportService";
+import { pickerReportsService as reportService } from "../pickerReportsService";
 
 jest.mock("../api", () => {
   class ApiError extends Error {

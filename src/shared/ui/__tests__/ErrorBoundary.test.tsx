@@ -11,7 +11,7 @@ const { reportError } = jest.requireMock("../../monitoring/errorReporting") as {
   reportError: jest.Mock;
 };
 
-function ThrowingChild() {
+function ThrowingChild(): never {
   throw new Error("boom");
 }
 

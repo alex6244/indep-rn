@@ -82,8 +82,7 @@ describe("api retry/abort/401 policy", () => {
   });
 
   it("does not fall back to AsyncStorage for token storage by default", async () => {
-    const originalNodeEnv = process.env.NODE_ENV;
-    process.env.NODE_ENV = "production";
+    jest.replaceProperty(process.env, "NODE_ENV", "production");
     const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => undefined);
     const secureSetSpy = jest.spyOn(SecureStore, "setItemAsync").mockRejectedValue(new Error("secure fail"));
     const asyncSetSpy = jest.spyOn(AsyncStorage, "setItem").mockResolvedValue(undefined as never);
@@ -102,12 +101,10 @@ describe("api retry/abort/401 policy", () => {
     asyncSetSpy.mockRestore();
     secureDeleteSpy.mockRestore();
     consoleErrorSpy.mockRestore();
-    process.env.NODE_ENV = originalNodeEnv;
   });
 
   it("falls back to AsyncStorage only when explicit insecure flag is enabled", async () => {
-    const originalNodeEnv = process.env.NODE_ENV;
-    process.env.NODE_ENV = "production";
+    jest.replaceProperty(process.env, "NODE_ENV", "production");
     process.env.EXPO_PUBLIC_ALLOW_INSECURE_TOKEN_STORAGE = "true";
     const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => undefined);
     const secureSetSpy = jest.spyOn(SecureStore, "setItemAsync").mockRejectedValue(new Error("secure fail"));
@@ -127,7 +124,6 @@ describe("api retry/abort/401 policy", () => {
     asyncSetSpy.mockRestore();
     secureDeleteSpy.mockRestore();
     consoleErrorSpy.mockRestore();
-    process.env.NODE_ENV = originalNodeEnv;
   });
 
   it("does not retry manually aborted GET", async () => {

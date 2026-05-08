@@ -57,7 +57,7 @@ To learn more about developing your project with Expo, look at the following res
 - The app initializes Sentry in `src/app/_layout.tsx` and routes `reportError/reportTelemetry` through a monitoring adapter.
 - Request aborts are treated as expected control flow and are not captured as critical incidents.
 - `api.ts` classifies failures into `network`, `timeout`, `aborted`, `unauthorized`, `not_found`, `server_error`, `unknown`.
-- `carService` and `reportsService` validate API payloads with Zod before domain mapping and throw controlled `AppError` on schema mismatch.
+- `carService`, `clientReportsService`, and `pickerReportsService` validate API payloads with Zod before domain mapping and throw controlled `AppError` on schema mismatch.
 - For sourcemaps upload in CI/EAS, keep `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT` only in CI secrets (never in `EXPO_PUBLIC_*`).
 - Incidents and traces are viewed in your Sentry project dashboard; use `environment`, `release`, `platform`, `app_version` tags to filter.
 

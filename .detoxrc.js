@@ -1,4 +1,6 @@
 /** @type {Detox.DetoxConfig} */
+const gradlew = process.platform === 'win32' ? 'gradlew.bat' : './gradlew';
+
 module.exports = {
   testRunner: {
     args: {
@@ -15,7 +17,7 @@ module.exports = {
     'android.debug': {
       type: 'android.apk',
       binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
-      build: 'cd android && gradlew.bat assembleDebug assembleAndroidTest -DtestBuildType=debug',
+      build: `cd android && ${gradlew} assembleDebug assembleAndroidTest -DtestBuildType=debug`,
       reversePorts: [
         8081
       ]
@@ -23,7 +25,7 @@ module.exports = {
     'android.release': {
       type: 'android.apk',
       binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
-      build: 'cd android && gradlew.bat assembleRelease assembleAndroidTest -DtestBuildType=release'
+      build: `cd android && ${gradlew} assembleRelease assembleAndroidTest -DtestBuildType=release`
     }
   },
   devices: {

@@ -1,4 +1,4 @@
-import { mapApiReportToReport, type ApiReport } from "../reportsService";
+import { mapApiReportToReport, type ApiReport } from "../clientReportsService";
 
 function buildSampleApiReport(): ApiReport {
   return {

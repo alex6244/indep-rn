@@ -30,7 +30,7 @@
 - **Contexts**: `src/contexts/**`
   - Глобальные состояния (`AuthContext`, `FavoritesContext`).
 - **Services**: `src/services/**`
-  - API-клиент и доменные сервисы (`authService`, `carService`, `reportsService`).
+  - API-клиент и доменные сервисы (`authService`, `carService`, `clientReportsService`, `pickerReportsService`).
 - **Shared**: `src/shared/**`
   - Общие UI-компоненты, стили, конфиг, навигационные метрики.
 
@@ -91,7 +91,7 @@
 - Source переключается через `EXPO_PUBLIC_AUTH_SOURCE=mock|api`.
 - При `api`-source сессия восстанавливается через токен и `me()`-проверку.
 - `logout()` очищает токен и user-сессию.
-- `reportsService` переключает источник отчётов через `EXPO_PUBLIC_REPORTS_SOURCE=mock|api` (по умолчанию `mock` для dev без backend).
+- `clientReportsService` и `pickerReportsService` переключают источник отчётов через `EXPO_PUBLIC_REPORTS_SOURCE=mock|api` (по умолчанию `mock` для dev без backend).
 
 ### `useProtected` (`src/hooks/useProtected.ts`)
 

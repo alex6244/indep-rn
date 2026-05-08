@@ -7,6 +7,24 @@ module.exports = defineConfig([
   {
     ignores: ['dist/*'],
   },
+  {
+    files: ['e2e/**/*.{js,jsx}'],
+    languageOptions: {
+      globals: {
+        afterAll: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        beforeEach: 'readonly',
+        by: 'readonly',
+        describe: 'readonly',
+        device: 'readonly',
+        element: 'readonly',
+        expect: 'readonly',
+        it: 'readonly',
+        waitFor: 'readonly',
+      },
+    },
+  },
   // Guardrails: discourage raw hex colors in components.
   // Prefer tokens from `src/shared/theme/colors.ts`.
   //
