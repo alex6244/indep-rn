@@ -475,6 +475,7 @@ describe("AuthContext restore/logout flow", () => {
       const requested = await latestSnapshot?.requestVerification({
         email: "client@test.com",
         name: "Client",
+        role: "client",
       });
       expect(requested).toEqual({ success: true });
     });
@@ -489,6 +490,7 @@ describe("AuthContext restore/logout flow", () => {
     expect(authService.requestVerification).toHaveBeenCalledWith({
       email: "client@test.com",
       name: "Client",
+      role: "client",
     });
     expect(authService.confirmVerification).toHaveBeenCalledWith({
       email: "client@test.com",

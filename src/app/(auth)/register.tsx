@@ -63,7 +63,11 @@ export default function RegisterScreen() {
 
     setLoading(true);
     try {
-      const result = await requestVerification({ email: normalizedEmail, name: trimmedName });
+      const result = await requestVerification({
+        email: normalizedEmail,
+        name: trimmedName,
+        role: "client",
+      });
       if (result.success) {
         setStep("confirm");
         setResendSeconds(60);
@@ -84,8 +88,14 @@ export default function RegisterScreen() {
 
   const handleConfirmCode = useCallback(async () => {
     if (submittingCodeRef.current) return;
+    const trimmedName = name.trim();
     const normalizedEmail = normalizeEmail(email.trim());
     const trimmedCode = code.trim();
+    if (!trimmedName) {
+      setMessage({ tone: "error", text: "Введите имя." });
+      setStep("request");
+      return;
+    }
     if (!isEmailValid(normalizedEmail)) {
       setMessage({ tone: "error", text: "Введите корректный e-mail." });
       setStep("request");
@@ -99,7 +109,12 @@ export default function RegisterScreen() {
     submittingCodeRef.current = true;
     setLoading(true);
     try {
-      const result = await confirmVerification({ email: normalizedEmail, code: trimmedCode });
+      const result = await confirmVerification({
+        email: normalizedEmail,
+        code: trimmedCode,
+        name: trimmedName,
+        role: "client",
+      });
       if (result.success) {
         router.replace("/(tabs)/profile");
         return;
@@ -111,7 +126,7 @@ export default function RegisterScreen() {
       setLoading(false);
       submittingCodeRef.current = false;
     }
-  }, [authError, code, confirmVerification, email]);
+  }, [authError, code, confirmVerification, email, name]);
 
   useEffect(() => {
     if (step !== "confirm") return;

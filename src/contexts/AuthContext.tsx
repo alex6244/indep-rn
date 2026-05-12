@@ -1,19 +1,30 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { envNumber } from "../config/env";
+import { readSourceEnv } from "../config/sources";
 import { getMockUsers } from "../data/users";
-import type { User } from "../types/user";
-import { setRefreshHandler, setUnauthorizedHandler, tokenStorage, refreshTokenStorage } from "../services/api";
+import {
+  refreshTokenStorage,
+  setRefreshHandler,
+  setUnauthorizedHandler,
+  tokenStorage,
+} from "../services/api";
 import { authService } from "../services/authService";
 import {
   type AuthCredentials,
   type AuthError,
-  AuthFlowError,
   type AuthErrorCode,
+  AuthFlowError,
   getDefaultAuthErrorMessage,
   type RegisterPayload,
 } from "../services/authTypes";
-import { readSourceEnv } from "../config/sources";
-import { envNumber } from "../config/env";
+import type { User } from "../types/user";
 
 type AuthSource = "mock" | "api";
 
@@ -25,8 +36,18 @@ type AuthContextType = {
   user: User | null;
   login: (credentials: AuthCredentials) => Promise<AuthResult>;
   register: (payload: RegisterPayload) => Promise<AuthResult>;
-  requestVerification: (payload: { email: string; name?: string }) => Promise<AuthResult>;
-  confirmVerification: (payload: { email: string; code: string }) => Promise<AuthResult>;
+  requestVerification: (payload: {
+    email: string;
+    name?: string;
+    role?: string;
+  }) => Promise<AuthResult>;
+  confirmVerification: (payload: {
+    email: string;
+    code: string;
+    name?: string;
+    role?: string;
+  }) => Promise<AuthResult>;
+
   logout: () => Promise<void>;
   authError: AuthError | null;
   loading: boolean;
@@ -36,8 +57,17 @@ type AuthGateway = {
   checkAuth: () => Promise<User | null>;
   login: (credentials: AuthCredentials) => Promise<User>;
   register: (payload: RegisterPayload) => Promise<User>;
-  requestVerification: (payload: { email: string; name?: string }) => Promise<void>;
-  confirmVerification: (payload: { email: string; code: string }) => Promise<User>;
+  requestVerification: (payload: {
+    email: string;
+    name?: string;
+    role?: string;
+  }) => Promise<void>;
+  confirmVerification: (payload: {
+    email: string;
+    code: string;
+    name?: string;
+    role?: string;
+  }) => Promise<User>;
   logout: () => Promise<void>;
 };
 
@@ -55,7 +85,10 @@ function resolveAuthSource(): AuthSource {
 }
 
 function getMockTokenTtlMs(): number {
-  const parsed = envNumber("EXPO_PUBLIC_MOCK_TOKEN_TTL_MS", DEFAULT_MOCK_TOKEN_TTL_MS);
+  const parsed = envNumber(
+    "EXPO_PUBLIC_MOCK_TOKEN_TTL_MS",
+    DEFAULT_MOCK_TOKEN_TTL_MS,
+  );
   return parsed > 0 ? parsed : DEFAULT_MOCK_TOKEN_TTL_MS;
 }
 
@@ -121,7 +154,9 @@ async function readSessionUser(): Promise<User | null> {
   }
 }
 
-function parseMockToken(token: string | null): { userId: string; issuedAt: number } | null {
+function parseMockToken(
+  token: string | null,
+): { userId: string; issuedAt: number } | null {
   if (!token) return null;
   const match = /^mock_(.+)_(\d+)$/.exec(token);
   if (!match) return null;
@@ -138,13 +173,20 @@ function createMockAuthGateway(): AuthGateway {
       const token = await tokenStorage.get();
       const parsedToken = parseMockToken(token);
       if (!parsedToken) {
-        if (token) await Promise.all([tokenStorage.clear(), AsyncStorage.removeItem(USER_KEY)]);
+        if (token)
+          await Promise.all([
+            tokenStorage.clear(),
+            AsyncStorage.removeItem(USER_KEY),
+          ]);
         return null;
       }
 
       const sessionUser = await readSessionUser();
       if (!sessionUser || sessionUser.id !== parsedToken.userId) {
-        await Promise.all([tokenStorage.clear(), AsyncStorage.removeItem(USER_KEY)]);
+        await Promise.all([
+          tokenStorage.clear(),
+          AsyncStorage.removeItem(USER_KEY),
+        ]);
         return null;
       }
       return sessionUser;
@@ -169,7 +211,8 @@ function createMockAuthGateway(): AuthGateway {
       const mockUsers = getMockUsers();
       const trimmedEmail = payload.email.trim();
       const exists = [mockUsers.client, mockUsers.picker].some(
-        (u) => (u.email ?? "").trim().toLowerCase() === trimmedEmail.toLowerCase(),
+        (u) =>
+          (u.email ?? "").trim().toLowerCase() === trimmedEmail.toLowerCase(),
       );
       if (exists) {
         throw new AuthFlowError("user_exists");
@@ -193,26 +236,26 @@ function createMockAuthGateway(): AuthGateway {
       const mockUsers = getMockUsers();
       const trimmedEmail = payload.email.trim();
       const existing = [mockUsers.client, mockUsers.picker].find(
-        (u) => (u.email ?? "").trim().toLowerCase() === trimmedEmail.toLowerCase(),
+        (u) =>
+          (u.email ?? "").trim().toLowerCase() === trimmedEmail.toLowerCase(),
       );
-      const sessionUser: User =
-        existing
-          ? {
-              id: existing.id,
-              login: existing.login,
-              role: existing.role,
-              name: existing.name,
-              phone: existing.phone,
-              email: existing.email,
-            }
-          : {
-              id: Date.now().toString(),
-              login: trimmedEmail,
-              role: "client",
-              name: trimmedEmail.split("@")[0] || "Пользователь",
-              phone: "",
-              email: trimmedEmail,
-            };
+      const sessionUser: User = existing
+        ? {
+            id: existing.id,
+            login: existing.login,
+            role: existing.role,
+            name: existing.name,
+            phone: existing.phone,
+            email: existing.email,
+          }
+        : {
+            id: Date.now().toString(),
+            login: trimmedEmail,
+            role: "client",
+            name: trimmedEmail.split("@")[0] || "Пользователь",
+            phone: "",
+            email: trimmedEmail,
+          };
       await tokenStorage.set(`mock_${sessionUser.id}_${Date.now()}`);
       await persistSessionUser(sessionUser);
       return sessionUser;
@@ -237,7 +280,10 @@ function createApiAuthGateway(): AuthGateway {
       } catch (error) {
         const code = normalizeAuthError(error).code;
         if (code === "invalid_credentials" || code === "unknown") {
-          await Promise.all([tokenStorage.clear(), AsyncStorage.removeItem(USER_KEY)]);
+          await Promise.all([
+            tokenStorage.clear(),
+            AsyncStorage.removeItem(USER_KEY),
+          ]);
         }
         return null;
       }
@@ -267,7 +313,9 @@ function createApiAuthGateway(): AuthGateway {
   };
 }
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState<AuthError | null>(null);
@@ -337,7 +385,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const requestVerification: AuthContextType["requestVerification"] = async (payload) => {
+  const requestVerification: AuthContextType["requestVerification"] = async (
+    payload,
+  ) => {
     try {
       await gateway.requestVerification(payload);
       setAuthError(null);
@@ -349,7 +399,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const confirmVerification: AuthContextType["confirmVerification"] = async (payload) => {
+  const confirmVerification: AuthContextType["confirmVerification"] = async (
+    payload,
+  ) => {
     try {
       const sessionUser = await gateway.confirmVerification(payload);
       setUser(sessionUser);

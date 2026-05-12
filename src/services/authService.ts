@@ -14,6 +14,7 @@ import { envBool } from "../config/env";
 
 type ApiAuthResponse = {
   token?: string;
+  api_token?: string;
   refresh_token?: string;
   accessToken?: string;
   refreshToken?: string;
@@ -21,35 +22,58 @@ type ApiAuthResponse = {
   user: User;
 };
 type VerificationRequestResponse = { message?: string };
-type VerificationRequestPayload = { email: string; name?: string };
-type ConfirmVerificationPayload = { email: string; code: string };
+type VerificationRequestPayload = { email: string; name?: string; role?: string };
+type ConfirmVerificationPayload = {
+  email: string;
+  code: string;
+  name?: string;
+  role?: string;
+};
 
-function mapApiAuthResponseToDomainUser(response: ApiAuthResponse): User {
-  return response.user;
-}
-
-function getAccessToken(response: {
-  token?: string;
-  accessToken?: string;
-}): string | null {
-  if (typeof response.accessToken === "string" && response.accessToken.trim()) {
-    return response.accessToken;
+/** Reads access token from common API shapes (camelCase, Laravel snake_case, `api_token`, nested `tokens`). */
+function pickAccessToken(source: unknown): string | null {
+  if (!source || typeof source !== "object") return null;
+  const o = source as Record<string, unknown>;
+  for (const key of ["accessToken", "token", "access_token", "api_token"] as const) {
+    const v = o[key];
+    if (typeof v === "string" && v.trim()) return v;
   }
-  if (typeof response.token === "string" && response.token.trim()) {
-    return response.token;
+  const nested = o.tokens;
+  if (nested && typeof nested === "object") {
+    return pickAccessToken(nested);
   }
   return null;
 }
 
-function getRefreshToken(response: {
-  refresh_token?: string;
-  refreshToken?: string;
-}): string | null {
-  if (typeof response.refreshToken === "string" && response.refreshToken.trim()) {
-    return response.refreshToken;
+/** Reads refresh token from common API shapes (including nested `tokens`). */
+function pickRefreshToken(source: unknown): string | null {
+  if (!source || typeof source !== "object") return null;
+  const o = source as Record<string, unknown>;
+  for (const key of ["refreshToken", "refresh_token"] as const) {
+    const v = o[key];
+    if (typeof v === "string" && v.trim()) return v;
   }
-  if (typeof response.refresh_token === "string" && response.refresh_token.trim()) {
-    return response.refresh_token;
+  const nested = o.tokens;
+  if (nested && typeof nested === "object") {
+    return pickRefreshToken(nested);
+  }
+  return null;
+}
+
+function getAccessToken(response: unknown): string | null {
+  return pickAccessToken(response);
+}
+
+function getRefreshToken(response: unknown): string | null {
+  return pickRefreshToken(response);
+}
+
+/** Backend may return only tokens; then we hydrate the user via GET /me. */
+function extractUserFromAuthPayload(res: unknown): User | null {
+  if (!res || typeof res !== "object") return null;
+  const u = (res as Record<string, unknown>).user;
+  if (u !== null && u !== undefined && typeof u === "object") {
+    return u as User;
   }
   return null;
 }
@@ -94,6 +118,27 @@ function mapAuthError(error: unknown): AuthError {
   ) {
     return { code, message: error.message };
   }
+  // 5xx: show backend message when present (helps debug server bugs; avoids generic "server_error" only).
+  if (
+    error instanceof ApiError &&
+    error.status >= 500 &&
+    typeof error.message === "string" &&
+    error.message.trim().length > 0 &&
+    error.message !== `HTTP ${error.status}`
+  ) {
+    return { code, message: error.message };
+  }
+  // Plain Error (e.g. success HTTP body without token / user) — show real message, not generic "unknown".
+  // Exclude TypeError so network failures still use localized `network_error` copy.
+  if (
+    !(error instanceof ApiError) &&
+    error instanceof Error &&
+    !(error instanceof TypeError) &&
+    typeof error.message === "string" &&
+    error.message.trim().length > 0
+  ) {
+    return { code, message: error.message };
+  }
   return { code, message: getDefaultAuthErrorMessage(code) };
 }
 
@@ -118,7 +163,8 @@ export const authService = {
       await tokenStorage.set(accessToken);
       const refreshToken = getRefreshToken(res);
       if (refreshToken) await refreshTokenStorage.set(refreshToken);
-      return mapApiAuthResponseToDomainUser(res);
+      const userFromPayload = extractUserFromAuthPayload(res);
+      return userFromPayload ?? (await authService.me());
     } catch (error) {
       throw mapAuthError(error);
     }
@@ -134,7 +180,8 @@ export const authService = {
       await tokenStorage.set(accessToken);
       const refreshToken = getRefreshToken(res);
       if (refreshToken) await refreshTokenStorage.set(refreshToken);
-      return mapApiAuthResponseToDomainUser(res);
+      const userFromPayload = extractUserFromAuthPayload(res);
+      return userFromPayload ?? (await authService.me());
     } catch (error) {
       throw mapAuthError(error);
     }
@@ -150,7 +197,8 @@ export const authService = {
       await tokenStorage.set(accessToken);
       const refreshToken = getRefreshToken(res);
       if (refreshToken) await refreshTokenStorage.set(refreshToken);
-      return mapApiAuthResponseToDomainUser(res);
+      const userFromPayload = extractUserFromAuthPayload(res);
+      return userFromPayload ?? (await authService.me());
     } catch (error) {
       throw mapAuthError(error);
     }

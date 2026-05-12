@@ -168,12 +168,12 @@ describe("authService contract", () => {
     });
   });
 
-  it("login throws structured unknown error with fallback message", async () => {
+  it("login surfaces plain Error message as unknown auth error", async () => {
     api.post.mockRejectedValue(new Error("non-api-failure"));
 
     await expect(authService.login({ email: "user@test.com", password: "123456" })).rejects.toEqual({
       code: "unknown",
-      message: getDefaultAuthErrorMessage("unknown"),
+      message: "non-api-failure",
     });
   });
 
@@ -249,13 +249,14 @@ describe("authService contract", () => {
   it("requestVerification calls backend endpoint", async () => {
     api.post.mockResolvedValue({ message: "Код отправлен" });
     await expect(
-      authService.requestVerification({ email: "user@test.com", name: "User Name" }),
+      authService.requestVerification({ email: "user@test.com", name: "User Name", role: "client" }),
     ).resolves.toEqual({
       message: "Код отправлен",
     });
     expect(api.post).toHaveBeenCalledWith("/auth/request-verification", {
       email: "user@test.com",
       name: "User Name",
+      role: "client",
     });
   });
 
@@ -282,6 +283,68 @@ describe("authService contract", () => {
     });
   });
 
+  it("confirmVerification accepts Laravel-style access_token and nested tokens", async () => {
+    const user = {
+      id: "u6",
+      login: "snake@test.com",
+      role: "client",
+      name: "Snake",
+      email: "snake@test.com",
+    };
+    api.post.mockResolvedValue({
+      user,
+      tokens: {
+        access_token: "snake-access",
+        refresh_token: "snake-refresh",
+      },
+    });
+
+    await expect(
+      authService.confirmVerification({ email: "snake@test.com", code: "123456" }),
+    ).resolves.toEqual(user);
+    expect(tokenStorage.set).toHaveBeenCalledWith("snake-access");
+    expect(refreshTokenStorage.set).toHaveBeenCalledWith("snake-refresh");
+    expect(api.get).not.toHaveBeenCalled();
+  });
+
+  it("confirmVerification persists backend api_token (single-issue token)", async () => {
+    const user = {
+      id: "u-api-token",
+      login: "api@test.com",
+      role: "client",
+      name: "Api Token User",
+      email: "api@test.com",
+    };
+    api.post.mockResolvedValue({
+      api_token: "secret-api-token-once",
+      user,
+    });
+
+    await expect(
+      authService.confirmVerification({ email: "api@test.com", code: "123456" }),
+    ).resolves.toEqual(user);
+    expect(tokenStorage.set).toHaveBeenCalledWith("secret-api-token-once");
+    expect(api.get).not.toHaveBeenCalled();
+  });
+
+  it("confirmVerification calls me() when response has tokens but no user object", async () => {
+    const user = {
+      id: "u7",
+      login: "me@test.com",
+      role: "client",
+      name: "Me User",
+      email: "me@test.com",
+    };
+    api.post.mockResolvedValue({ access_token: "only-token" });
+    api.get.mockResolvedValue(user);
+
+    await expect(
+      authService.confirmVerification({ email: "me@test.com", code: "123456" }),
+    ).resolves.toEqual(user);
+    expect(tokenStorage.set).toHaveBeenCalledWith("only-token");
+    expect(api.get).toHaveBeenCalledWith("/me");
+  });
+
   it("confirmVerification maps 429 into rate_limited auth error", async () => {
     api.post.mockRejectedValue(new ApiError(429, "Too many requests"));
     await expect(
@@ -299,6 +362,18 @@ describe("authService contract", () => {
     ).rejects.toEqual({
       code: "validation_error",
       message: "Неверный или истёкший код",
+    });
+  });
+
+  it("confirmVerification surfaces backend message for 500 when not generic HTTP text", async () => {
+    api.post.mockRejectedValue(
+      new ApiError(500, "SQLSTATE[42S22]: Column not found"),
+    );
+    await expect(
+      authService.confirmVerification({ email: "otp@test.com", code: "123456" }),
+    ).rejects.toEqual({
+      code: "server_error",
+      message: "SQLSTATE[42S22]: Column not found",
     });
   });
 });
