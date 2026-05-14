@@ -1,7 +1,9 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import type { ImageSourcePropType } from "react-native";
 import { Image } from "expo-image";
+import type { ImageSource } from "expo-image";
+
+type PickedCarImage = ImageSource | number;
 import { shadowStyle } from "../../shared/theme/shadow";
 import { colors } from "../../shared/theme/colors";
 
@@ -10,7 +12,7 @@ type PickedCar = {
   name: string;
   text: string;
   /** Bundled asset (Metro) */
-  image: ImageSourcePropType;
+  image: PickedCarImage;
 };
 
 const cars: PickedCar[] = [

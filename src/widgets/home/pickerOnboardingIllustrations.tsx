@@ -1,5 +1,4 @@
 import React from "react";
-import type { ImageSourcePropType } from "react-native";
 import { StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import SellerStep1 from "../../assets/mainpage/manual/seller/1.svg";
@@ -8,7 +7,7 @@ import SellerStep4 from "../../assets/mainpage/manual/seller/4.svg";
 
 /** Единый источник ассетов для 2×2 онбординга «Я подборщик». */
 export const PICKER_ONBOARDING_CAR_IMAGE =
-  require("../../assets/cars1.jpg") as ImageSourcePropType;
+  require("../../assets/cars1.jpg") as number;
 
 const imageStyle = StyleSheet.create({
   cover: {

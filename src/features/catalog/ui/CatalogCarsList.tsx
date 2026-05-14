@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import {
   FlatList,
-  Image,
   ListRenderItem,
   StyleProp,
   ScrollView,
@@ -11,6 +10,7 @@ import {
   ViewStyle,
   View,
 } from "react-native";
+import { Image } from "expo-image";
 import { Feather } from "@expo/vector-icons";
 import type { Car } from "../../../types/car";
 import { FavoriteButton } from "../../favorites/ui/FavoriteButton";

@@ -30,7 +30,7 @@ export default function ReportDetailsRoute() {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
-  const loadReport = React.useCallback(async (): Promise<void> => {
+  const loadReport = React.useCallback(async (signal: AbortSignal): Promise<void> => {
     if (!id) {
       setReport(null);
       setError("Отчёт не найден.");
@@ -41,19 +41,23 @@ export default function ReportDetailsRoute() {
     setLoading(true);
     setError(null);
     try {
-      const nextReport = await clientReportsService.getPurchasedReportById(id);
+      const nextReport = await clientReportsService.getPurchasedReportById(id, signal);
+      if (signal.aborted) return;
       setReport(nextReport);
     } catch (e) {
+      if (signal.aborted) return;
       const message = e instanceof Error ? e.message : "Не удалось загрузить отчёт. Попробуйте ещё раз.";
       setError(message);
       setReport(null);
     } finally {
-      setLoading(false);
+      if (!signal.aborted) setLoading(false);
     }
   }, [id]);
 
   React.useEffect(() => {
-    void loadReport();
+    const controller = new AbortController();
+    void loadReport(controller.signal);
+    return () => controller.abort();
   }, [loadReport]);
 
   if (loading) {
@@ -76,7 +80,8 @@ export default function ReportDetailsRoute() {
             title="Не удалось загрузить отчёт"
             message={error}
             onRetry={() => {
-              void loadReport();
+              const controller = new AbortController();
+              void loadReport(controller.signal);
             }}
           />
         </ScrollView>
@@ -130,7 +135,7 @@ export default function ReportDetailsRoute() {
         <PenaltiesCard report={report} />
         <CostEstimationCard report={report} />
 
-        <ReportDetailsActions reportId={report.id} />
+        <ReportDetailsActions reportId={report.id} report={report} />
       </ScrollView>
     </View>
   );

@@ -101,7 +101,7 @@ export function DefectsForm({ value, onChange }: Props) {
           value={active?.description ?? ""}
           onChangeText={updateActive}
           placeholder="Опишите повреждение"
-          placeholderTextColor="#00000040"
+          placeholderTextColor="rgba(0,0,0,0.25)"
           multiline
         />
       </View>

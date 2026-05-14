@@ -4,7 +4,7 @@
 
 export type MediaKey = "salonPhoto" | "bodyPhoto" | "salonVideo" | "bodyVideo";
 
-export type MediaUploadState = Record<MediaKey, boolean>;
+export type MediaUploadState = Record<MediaKey, string | null>;
 
 export type PtsType = "original" | "nonOriginal";
 

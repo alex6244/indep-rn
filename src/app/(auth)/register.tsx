@@ -116,6 +116,7 @@ export default function RegisterScreen() {
         role: "client",
       });
       if (result.success) {
+        router.dismissAll();
         router.replace("/(tabs)/profile");
         return;
       }

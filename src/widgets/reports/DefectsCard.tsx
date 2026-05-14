@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image } from "expo-image";
 import { EntitiesToggle } from "../entitiesToggle/EntitiesToggle";
 import type { Report } from "../../types/report";
 import { colors } from "../../shared/theme/colors";

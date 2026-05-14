@@ -4,7 +4,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 import { ClientProfileSection } from "../../widgets/profile/ClientProfileSection";
 import { PickerProfileSection } from "../../widgets/profile/PickerProfileSection";
-import { styles } from "../../shared/styles/profile.styles";
+import { styles } from "../../widgets/profile/profile.styles";
 import { ScreenStateEmpty } from "../../shared/ui/ScreenStateEmpty";
 import { ScreenStateLoading } from "../../shared/ui/ScreenStateLoading";
 import { clientReportsService } from "../../services/clientReportsService";

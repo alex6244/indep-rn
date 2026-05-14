@@ -20,7 +20,7 @@ export function MileageSection({ value, onChange }: Props) {
           onChangeText={onChange}
           placeholder="000 000 км"
           keyboardType="numeric"
-          placeholderTextColor="#00000040"
+          placeholderTextColor="rgba(0,0,0,0.25)"
         />
       </View>
     </View>

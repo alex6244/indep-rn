@@ -97,7 +97,7 @@ async function getPurchasedReportsImpl(): Promise<Report[]> {
   }
 }
 
-async function getPurchasedReportByIdImpl(id: string): Promise<Report> {
+async function getPurchasedReportByIdImpl(id: string, signal?: AbortSignal): Promise<Report> {
   if (getReportsSource() === "mock") {
     const report = getMockReportById(id);
     if (!report) {
@@ -111,7 +111,7 @@ async function getPurchasedReportByIdImpl(id: string): Promise<Report> {
   }
 
   try {
-    const response = await api.get<ApiReport>(`/reports/${id}`);
+    const response = await api.get<ApiReport>(`/reports/${id}`, { signal });
     const parsed = apiReportSchema.safeParse(response);
     if (!parsed.success) {
       throw new AppError({

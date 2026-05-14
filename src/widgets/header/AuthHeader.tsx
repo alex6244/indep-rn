@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../../contexts/AuthContext";
 import { colors } from "../../shared/theme/colors";
@@ -23,6 +24,7 @@ export function AuthHeader() {
           <Image
             source={require("../../assets/logo.png")}
             style={styles.logoImage}
+            contentFit="contain"
           />
         </View>
         <BurgerButton
@@ -57,6 +59,5 @@ const styles = StyleSheet.create({
   logoImage: {
     width: 120,
     height: 24,
-    resizeMode: "contain",
   },
 });

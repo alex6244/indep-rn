@@ -1,7 +1,20 @@
 import React from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import { Image } from "expo-image";
 import type { Report } from "../../types/report";
 import { colors } from "../../shared/theme/colors";
+
+const CHECK_COLORS: Record<"info" | "ok" | "bad", string> = {
+  info: colors.text.tertiary,
+  ok: colors.status.success,
+  bad: colors.brand.primary,
+};
+
+const CHECK_ICONS: Record<"info" | "ok" | "bad", string> = {
+  info: "ℹ",
+  ok: "✓",
+  bad: "!",
+};
 
 type Props = {
   report: Report;
@@ -44,6 +57,25 @@ export function ReportCarousel({ report }: Props) {
         )}
 
         <Text style={styles.price}>{report.price}</Text>
+
+        {!!report.creditText && (
+          <Text style={styles.credit}>{report.creditText}</Text>
+        )}
+
+        {report.checks && report.checks.length > 0 && (
+          <View style={styles.checksWrap}>
+            {report.checks.map((check, i) => (
+              <View key={i} style={styles.checkRow}>
+                <Text style={[styles.checkIcon, { color: CHECK_COLORS[check.tone] }]}>
+                  {CHECK_ICONS[check.tone]}
+                </Text>
+                <Text style={[styles.checkLabel, { color: CHECK_COLORS[check.tone] }]}>
+                  {check.label}
+                </Text>
+              </View>
+            ))}
+          </View>
+        )}
       </View>
     </View>
   );
@@ -120,6 +152,31 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "900",
     color: colors.text.primary,
+  },
+  credit: {
+    marginTop: 4,
+    fontSize: 13,
+    color: colors.text.secondary,
+  },
+  checksWrap: {
+    marginTop: 12,
+    gap: 6,
+  },
+  checkRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  checkIcon: {
+    fontSize: 13,
+    fontWeight: "700",
+    width: 16,
+    textAlign: "center",
+  },
+  checkLabel: {
+    fontSize: 12,
+    fontWeight: "500",
+    flexShrink: 1,
   },
 });
 

@@ -16,6 +16,8 @@ export function RoleToggle({ value, onChange }: Props) {
       <TouchableOpacity
         style={[styles.option, value === "picker" && styles.optionActive]}
         onPress={() => onChange("picker")}
+        accessibilityRole="tab"
+        accessibilityState={{ selected: value === "picker" }}
       >
         <Text style={[styles.optionText, value === "picker" && styles.optionTextActive]}>
           Я подборщик
@@ -24,6 +26,8 @@ export function RoleToggle({ value, onChange }: Props) {
       <TouchableOpacity
         style={[styles.option, value === "client" && styles.optionActive]}
         onPress={() => onChange("client")}
+        accessibilityRole="tab"
+        accessibilityState={{ selected: value === "client" }}
       >
         <Text style={[styles.optionText, value === "client" && styles.optionTextActive]}>
           Ищу авто

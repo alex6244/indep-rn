@@ -98,6 +98,7 @@ export default function LoginScreen() {
     try {
       const result = await confirmVerification({ email: normalizedEmail, code: trimmedCode });
       if (result.success) {
+        router.dismissAll();
         router.replace("/(tabs)/profile");
         return;
       }

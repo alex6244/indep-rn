@@ -1,5 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { Image } from "expo-image";
 
 import PhotosBg from "../../../assets/addCar/photosBG.svg";
 import AddPhotoIcon from "../../../assets/addCar/addPhoto.svg";
@@ -15,7 +17,7 @@ import {
 
 type MediaKey = "salonPhoto" | "bodyPhoto" | "salonVideo" | "bodyVideo";
 
-export type MediaUploadState = Record<MediaKey, boolean>;
+export type MediaUploadState = Record<MediaKey, string | null>;
 
 type Row = {
   key: MediaKey;
@@ -30,6 +32,8 @@ type Props = {
   value: MediaUploadState;
   onChange: (next: MediaUploadState) => void;
 };
+
+const VIDEO_KINDS: UploadMediaKind[] = ["salon_video", "body_video"];
 
 export function MediaUploadCard({ value, onChange }: Props) {
   const [activeModalKind, setActiveModalKind] = useState<UploadMediaKind | null>(null);
@@ -82,15 +86,56 @@ export function MediaUploadCard({ value, onChange }: Props) {
 
   const closeModal = useCallback(() => setActiveModalKind(null), []);
 
-  const handlePickPress = useCallback(() => {
-    if (activeRow) {
-      onChange({ ...value, [activeRow.key]: true });
+  const isVideoKind = activeModalKind !== null && VIDEO_KINDS.includes(activeModalKind);
+
+  const handlePickPress = useCallback(async () => {
+    if (!activeRow) return;
+
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      closeModal();
+      setNotice("Разрешите доступ к галерее в настройках");
+      return;
     }
+
+    const options: ImagePicker.ImagePickerOptions = isVideoKind
+      ? { mediaTypes: ImagePicker.MediaTypeOptions.Videos, videoMaxDuration: 60 }
+      : { mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.8, allowsEditing: false };
+
+    const result = await ImagePicker.launchImageLibraryAsync(options);
+
     closeModal();
-    setNotice("Подключим выбор фото и видео в следующем обновлении.");
-  }, [activeRow, closeModal, onChange, value]);
+
+    if (!result.canceled) {
+      onChange({ ...value, [activeRow.key]: result.assets[0].uri });
+    }
+  }, [activeRow, closeModal, isVideoKind, onChange, value]);
+
+  const handleCameraPress = useCallback(async () => {
+    if (!activeRow) return;
+
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== "granted") {
+      closeModal();
+      setNotice("Разрешите доступ к камере в настройках");
+      return;
+    }
+
+    const options: ImagePicker.ImagePickerOptions = isVideoKind
+      ? { mediaTypes: ImagePicker.MediaTypeOptions.Videos, videoMaxDuration: 60 }
+      : { mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.8 };
+
+    const result = await ImagePicker.launchCameraAsync(options);
+
+    closeModal();
+
+    if (!result.canceled) {
+      onChange({ ...value, [activeRow.key]: result.assets[0].uri });
+    }
+  }, [activeRow, closeModal, isVideoKind, onChange, value]);
 
   const handleOpenModal = useCallback((kind: UploadMediaKind) => {
+    setNotice(null);
     setActiveModalKind(kind);
   }, []);
 
@@ -106,23 +151,33 @@ export function MediaUploadCard({ value, onChange }: Props) {
 
         <View style={styles.rows}>
           {rows.map((r) => {
-            const added = value[r.key];
+            const uri = value[r.key];
+            const added = uri !== null;
             const bg = added ? r.successColor : r.failColor;
             const text = added ? "Добавлено" : "Добавить";
 
             return (
               <View key={r.key} style={styles.row}>
                 <Text style={styles.rowLabel}>{r.label}</Text>
-                <TouchableOpacity
-                  activeOpacity={0.9}
-                  style={[styles.btn, { backgroundColor: bg }]}
-                  onPress={() => handleOpenModal(r.modalKind)}
-                >
-                  <View style={styles.btnInner}>
-                    {r.icon}
-                    <Text style={styles.btnText}>{text}</Text>
-                  </View>
-                </TouchableOpacity>
+                <View style={styles.rowRight}>
+                  {uri ? (
+                    <Image
+                      source={{ uri }}
+                      style={styles.preview}
+                      contentFit="cover"
+                    />
+                  ) : null}
+                  <TouchableOpacity
+                    activeOpacity={0.9}
+                    style={[styles.btn, { backgroundColor: bg }]}
+                    onPress={() => handleOpenModal(r.modalKind)}
+                  >
+                    <View style={styles.btnInner}>
+                      {r.icon}
+                      <Text style={styles.btnText}>{text}</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
               </View>
             );
           })}
@@ -143,6 +198,7 @@ export function MediaUploadCard({ value, onChange }: Props) {
           ) : undefined
         }
         onPickPress={handlePickPress}
+        onCameraPress={handleCameraPress}
         onClose={closeModal}
       />
     </View>
@@ -186,6 +242,16 @@ const styles = StyleSheet.create({
     color: colors.text.primary,
     width: 150,
   },
+  rowRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  preview: {
+    width: 40,
+    height: 40,
+    borderRadius: 6,
+  },
   btn: {
     minWidth: 132,
     height: 38,
@@ -214,4 +280,3 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
-

@@ -221,14 +221,24 @@ export default function CatalogScreen() {
               onChangeMileageFromText={controller.setMileageFromText}
               mileageToText={controller.mileageToText}
               onChangeMileageToText={controller.setMileageToText}
+              bodyType={controller.bodyType}
+              onChangeBodyType={controller.setBodyType}
+              engineType={controller.engineType}
+              onChangeEngineType={controller.setEngineType}
+              transmissionType={controller.transmissionType}
+              onChangeTransmissionType={controller.setTransmissionType}
+              driveTypeFilter={controller.driveTypeFilter}
+              onChangeDriveTypeFilter={controller.setDriveTypeFilter}
+              powerFromText={controller.powerFromText}
+              onChangePowerFromText={controller.setPowerFromText}
+              powerToText={controller.powerToText}
+              onChangePowerToText={controller.setPowerToText}
               hasDiscount={controller.hasDiscount}
               onToggleHasDiscount={() => controller.setHasDiscount((v) => !v)}
               vatReturn={controller.vatReturn}
               onToggleVatReturn={() => controller.setVatReturn((v) => !v)}
               weeklyOffer={controller.weeklyOffer}
               onToggleWeeklyOffer={() => controller.setWeeklyOffer((v) => !v)}
-              bodyTypes={controller.bodyTypes}
-              onToggleBodyType={controller.toggleBodyType}
               features={controller.features}
               onToggleFeature={controller.toggleFeature}
               filteredCount={controller.filteredCars.length}

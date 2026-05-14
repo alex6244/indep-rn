@@ -1,8 +1,8 @@
 import { StyleSheet } from "react-native";
-import { FONT_FAMILY } from "../theme/fonts";
-import { typography } from "../theme/typography";
-import { shadowStyle } from "../theme/shadow";
-import { colors } from "../theme/colors";
+import { FONT_FAMILY } from "../../shared/theme/fonts";
+import { typography } from "../../shared/theme/typography";
+import { shadowStyle } from "../../shared/theme/shadow";
+import { colors } from "../../shared/theme/colors";
 
 export const styles = StyleSheet.create({
   screen: {
@@ -188,4 +188,3 @@ export const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY.regular,
   },
 });
-

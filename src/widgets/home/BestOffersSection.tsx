@@ -1,5 +1,6 @@
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import FavIcon from "../../assets/icons/favourite.svg";
 import { colors } from "../../shared/theme/colors";
@@ -16,7 +17,7 @@ const offers = [
     subtitle: "2 200 км · 2.0 AT 421 л.с. · Бензин · Полный",
     title: "Mercedes‑Benz GLC AMG 43 AMG II (X254), 2024",
     city: "г. Сочи, ул. Волнова",
-    imageUrl: "https://images.unsplash.com/photo-1493238792000-8113da705763?w=700",
+    image: require("../../assets/auto/images/1.jpg"),
   },
   {
     id: "2",
@@ -24,7 +25,7 @@ const offers = [
     subtitle: "73 000 км · 2.0 AT 249 л.с. · Бензин · Полный",
     title: "BMW X3 G01, 2020",
     city: "г. Москва, ул. Ленина",
-    imageUrl: "https://images.unsplash.com/photo-1542362567-b07e54358753?w=700",
+    image: require("../../assets/auto/images/2.jpg"),
   },
 ];
 
@@ -37,7 +38,7 @@ export function BestOffersSection() {
       <View style={styles.stack}>
         {offers.map((offer) => (
           <AppCard key={offer.id} style={styles.card} padded={false} muted>
-            <Image source={{ uri: offer.imageUrl }} style={styles.image} />
+            <Image source={offer.image} style={styles.image} contentFit="cover" />
             <View style={styles.body}>
               <Text style={styles.price}>{offer.price}</Text>
               <Text style={styles.subtitle}>{offer.subtitle}</Text>

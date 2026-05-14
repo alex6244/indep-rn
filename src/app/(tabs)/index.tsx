@@ -8,8 +8,6 @@ import React, { useState } from "react";
 import {
   ScrollView,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -17,8 +15,8 @@ import Logo from "../../assets/logo.svg";
 import { useAuth } from "../../contexts/AuthContext";
 import { scrollBottomPaddingBelowTabBar } from "../../shared/navigation/tabBarMetrics";
 import { colors } from "../../shared/theme/colors";
-import { radius } from "../../shared/theme/radius";
 import { spacing } from "../../shared/theme/spacing";
+import { AppButton } from "../../shared/ui/AppButton";
 import { BurgerButton } from "../../shared/ui/BurgerButton";
 import type { UserRole } from "../../types/user";
 import { BenefitsRow } from "../../widgets/home/BenefitsRow";
@@ -60,33 +58,27 @@ export default function HomeTab() {
           onOpenBurger={() => setMenuOpen(true)}
           onOpenCatalog={() => router.push("/(tabs)/catalog" as Href)}
         />
+        <BenefitsRow />
+        <RoleToggle value={roleView} onChange={setRoleView} />
         {roleView === "picker" ? (
-          <>
-            <BenefitsRow />
-            <RoleToggle value={roleView} onChange={setRoleView} />
-            <PickerOnboardingSection
-              onPressRegister={() => router.push("/(auth)/register" as Href)}
-            />
-          </>
+          <PickerOnboardingSection
+            onPressRegister={() => router.push("/(auth)/register" as Href)}
+          />
         ) : (
           <>
-            <BenefitsRow />
-            <RoleToggle value={roleView} onChange={setRoleView} />
             <HowItWorksSection />
-            <TouchableOpacity
-              style={styles.catalogCtaButton}
+            <AppButton
+              label="Перейти в каталог авто"
               onPress={() => router.push("/(tabs)/catalog" as Href)}
-              accessibilityRole="button"
-              accessibilityLabel="Перейти в каталог авто"
-            >
-              <Text style={styles.catalogCtaText}>Перейти в каталог авто</Text>
-            </TouchableOpacity>
+              style={styles.catalogCtaButton}
+            />
             <ChecksGridSection />
             <PickedCarsSection />
             <PricingSection />
             <BestOffersSection />
           </>
         )}
+
       </ScrollView>
 
       <BurgerMenu
@@ -118,16 +110,5 @@ const styles = StyleSheet.create({
   },
   catalogCtaButton: {
     marginTop: spacing.lg,
-    borderRadius: radius.md,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.brand.primary,
-    minHeight: 44,
-    paddingHorizontal: spacing.lg,
-  },
-  catalogCtaText: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: colors.text.inverse,
   },
 });

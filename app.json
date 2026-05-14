@@ -46,8 +46,7 @@
       ],
       "expo-secure-store",
       "expo-detox-config-plugin",
-      "@sentry/react-native/expo",
-      "@sentry/react-native"
+      "@sentry/react-native/expo"
     ],
     "experiments": {
       "typedRoutes": true,

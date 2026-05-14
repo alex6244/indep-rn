@@ -20,7 +20,7 @@ export interface Car {
   images: string[];
 
   // Optional fields for catalog filters.
-  bodyType?: "Седан" | "Кроссовер" | "Хэтчбек";
+  bodyType?: string;
   features?: string[];
   paymentType?: "cash" | "credit";
 

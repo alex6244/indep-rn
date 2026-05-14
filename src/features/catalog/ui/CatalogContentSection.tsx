@@ -1,10 +1,11 @@
 import React from "react";
 import type { Car } from "../../../types/car";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 import { InlineMessage } from "../../../shared/ui/InlineMessage";
 import { ScreenStateEmpty } from "../../../shared/ui/ScreenStateEmpty";
 import { ScreenStateError } from "../../../shared/ui/ScreenStateError";
 import { ScreenStateLoading } from "../../../shared/ui/ScreenStateLoading";
+import { AppButton } from "../../../shared/ui/AppButton";
 import { CatalogCarsList } from "./CatalogCarsList";
 import { CatalogFooter } from "./CatalogFooter";
 import { CatalogFiltersBar } from "./CatalogFiltersBar";
@@ -80,14 +81,11 @@ export function CatalogContentSection({
 
   const Footer = cars.length > 0 ? (
     <>
-      <TouchableOpacity
-        style={styles.orderReportBtn}
+      <AppButton
+        label="Заказать отчёт"
         onPress={onOpenCallbackRequest}
-        accessibilityRole="button"
-        accessibilityLabel="Заказать отчёт"
-      >
-        <Text style={styles.orderReportBtnText}>Заказать отчёт</Text>
-      </TouchableOpacity>
+        style={styles.orderReportBtn}
+      />
       <CatalogFooter styles={styles} />
     </>
   ) : null;

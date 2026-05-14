@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from "react";
+import { useCallback, useEffect, useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import type { Car } from "../../../types/car";
 
 const YEAR_MIN = 1880;
@@ -17,7 +17,12 @@ export type CatalogFilterCriteria = {
   yearTo: number | null;
   mileageFrom: number | null;
   mileageTo: number | null;
-  bodyTypes: string[];
+  bodyType: string | null;
+  engineType: string | null;
+  transmissionType: string | null;
+  driveTypeFilter: string | null;
+  powerFrom: number | null;
+  powerTo: number | null;
   features: string[];
   hasDiscount: boolean;
   vatReturn: boolean;
@@ -47,7 +52,18 @@ export type CatalogFiltersController = {
   setMileageFromText: Dispatch<SetStateAction<string>>;
   mileageToText: string;
   setMileageToText: Dispatch<SetStateAction<string>>;
-  bodyTypes: string[];
+  bodyType: string | null;
+  setBodyType: (v: string | null) => void;
+  engineType: string | null;
+  setEngineType: (v: string | null) => void;
+  transmissionType: string | null;
+  setTransmissionType: (v: string | null) => void;
+  driveTypeFilter: string | null;
+  setDriveTypeFilter: (v: string | null) => void;
+  powerFromText: string;
+  setPowerFromText: Dispatch<SetStateAction<string>>;
+  powerToText: string;
+  setPowerToText: Dispatch<SetStateAction<string>>;
   features: string[];
   hasDiscount: boolean;
   setHasDiscount: Dispatch<SetStateAction<boolean>>;
@@ -58,7 +74,6 @@ export type CatalogFiltersController = {
   error: string | null;
   applyFilters: () => boolean;
   resetFilters: () => void;
-  toggleBodyType: (label: string) => void;
   toggleFeature: (label: string) => void;
 };
 
@@ -96,8 +111,25 @@ function matchesCriteria(car: Car, criteria: CatalogFilterCriteria): boolean {
     (criteria.mileageTo == null || car.mileage <= criteria.mileageTo);
 
   const bodyOk =
-    criteria.bodyTypes.length === 0 ||
-    (car.bodyType != null && criteria.bodyTypes.includes(car.bodyType));
+    criteria.bodyType == null ||
+    (car.bodyType != null && car.bodyType === criteria.bodyType);
+
+  const engineOk =
+    criteria.engineType == null ||
+    (car.fuelType != null && car.fuelType === criteria.engineType);
+
+  const transmissionOk =
+    criteria.transmissionType == null ||
+    (car.transmission != null && car.transmission === criteria.transmissionType);
+
+  const driveOk =
+    criteria.driveTypeFilter == null ||
+    (car.driveType != null && car.driveType === criteria.driveTypeFilter);
+
+  const powerOk =
+    (criteria.powerFrom == null || car.power >= criteria.powerFrom) &&
+    (criteria.powerTo == null || car.power <= criteria.powerTo);
+
   const featuresOk =
     criteria.features.length === 0 ||
     (Array.isArray(car.features) && car.features.some((f) => criteria.features.includes(f)));
@@ -117,6 +149,10 @@ function matchesCriteria(car: Car, criteria: CatalogFilterCriteria): boolean {
     yearOk &&
     mileageOk &&
     bodyOk &&
+    engineOk &&
+    transmissionOk &&
+    driveOk &&
+    powerOk &&
     featuresOk &&
     paymentOk &&
     discountOk &&
@@ -138,7 +174,12 @@ export function useCatalogFiltersController(cars: Car[]): CatalogFiltersControll
   const [yearToText, setYearToText] = useState("");
   const [mileageFromText, setMileageFromText] = useState("");
   const [mileageToText, setMileageToText] = useState("");
-  const [bodyTypes, setBodyTypes] = useState<string[]>([]);
+  const [bodyType, setBodyType] = useState<string | null>(null);
+  const [engineType, setEngineType] = useState<string | null>(null);
+  const [transmissionType, setTransmissionType] = useState<string | null>(null);
+  const [driveTypeFilter, setDriveTypeFilter] = useState<string | null>(null);
+  const [powerFromText, setPowerFromText] = useState("");
+  const [powerToText, setPowerToText] = useState("");
   const [features, setFeatures] = useState<string[]>([]);
   const [hasDiscount, setHasDiscount] = useState(false);
   const [vatReturn, setVatReturn] = useState(false);
@@ -149,14 +190,14 @@ export function useCatalogFiltersController(cars: Car[]): CatalogFiltersControll
     setFilteredCars(cars);
   }, [cars]);
 
-  const toggleInArray = (value: string, setArr: Dispatch<SetStateAction<string[]>>) => {
+  const toggleInArray = useCallback((value: string, setArr: Dispatch<SetStateAction<string[]>>) => {
     setArr((prev) => {
       const exists = prev.includes(value);
       return exists ? prev.filter((x) => x !== value) : [...prev, value];
     });
-  };
+  }, []);
 
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     setError(null);
 
     const priceFrom = parseNumberOrNull(priceFromText);
@@ -165,6 +206,8 @@ export function useCatalogFiltersController(cars: Car[]): CatalogFiltersControll
     const yearTo = parseNumberOrNull(yearToText);
     const mileageFrom = parseNumberOrNull(mileageFromText);
     const mileageTo = parseNumberOrNull(mileageToText);
+    const powerFrom = parseNumberOrNull(powerFromText);
+    const powerTo = parseNumberOrNull(powerToText);
 
     if (priceFromText.trim() !== "" && priceFrom == null) {
       setError("Некорректный ввод цены (От).");
@@ -188,6 +231,18 @@ export function useCatalogFiltersController(cars: Car[]): CatalogFiltersControll
     }
     if (mileageToText.trim() !== "" && mileageTo == null) {
       setError("Некорректный ввод пробега (До).");
+      return false;
+    }
+    if (powerFromText.trim() !== "" && powerFrom == null) {
+      setError("Некорректный ввод мощности (От).");
+      return false;
+    }
+    if (powerToText.trim() !== "" && powerTo == null) {
+      setError("Некорректный ввод мощности (До).");
+      return false;
+    }
+    if (powerFrom != null && powerTo != null && powerFrom > powerTo) {
+      setError("Мощность (От) не должна быть больше мощности (До).");
       return false;
     }
 
@@ -223,7 +278,12 @@ export function useCatalogFiltersController(cars: Car[]): CatalogFiltersControll
       yearTo,
       mileageFrom,
       mileageTo,
-      bodyTypes,
+      bodyType,
+      engineType,
+      transmissionType,
+      driveTypeFilter,
+      powerFrom,
+      powerTo,
       features,
       hasDiscount,
       vatReturn,
@@ -233,9 +293,16 @@ export function useCatalogFiltersController(cars: Car[]): CatalogFiltersControll
     const next = cars.filter((car) => matchesCriteria(car, criteria));
     setFilteredCars(next);
     return true;
-  };
+  }, [
+    cars, brandQuery, modelQuery, paymentType,
+    priceFromText, priceToText, yearFromText, yearToText,
+    mileageFromText, mileageToText,
+    bodyType, engineType, transmissionType, driveTypeFilter,
+    powerFromText, powerToText,
+    features, hasDiscount, vatReturn, weeklyOffer,
+  ]);
 
-  const resetFilters = () => {
+  const resetFilters = useCallback(() => {
     setError(null);
     setBrandQuery("");
     setModelQuery("");
@@ -246,13 +313,18 @@ export function useCatalogFiltersController(cars: Car[]): CatalogFiltersControll
     setYearToText("");
     setMileageFromText("");
     setMileageToText("");
-    setBodyTypes([]);
+    setBodyType(null);
+    setEngineType(null);
+    setTransmissionType(null);
+    setDriveTypeFilter(null);
+    setPowerFromText("");
+    setPowerToText("");
     setFeatures([]);
     setHasDiscount(false);
     setVatReturn(false);
     setWeeklyOffer(false);
     setFilteredCars(cars);
-  };
+  }, [cars]);
 
   const displayedCars = useMemo(() => {
     const next = [...filteredCars];
@@ -299,7 +371,18 @@ export function useCatalogFiltersController(cars: Car[]): CatalogFiltersControll
     setMileageFromText,
     mileageToText,
     setMileageToText,
-    bodyTypes,
+    bodyType,
+    setBodyType,
+    engineType,
+    setEngineType,
+    transmissionType,
+    setTransmissionType,
+    driveTypeFilter,
+    setDriveTypeFilter,
+    powerFromText,
+    setPowerFromText,
+    powerToText,
+    setPowerToText,
     features,
     hasDiscount,
     setHasDiscount,
@@ -310,8 +393,7 @@ export function useCatalogFiltersController(cars: Car[]): CatalogFiltersControll
     error,
     applyFilters,
     resetFilters,
-    toggleBodyType: (label: string) => toggleInArray(label, setBodyTypes),
-    toggleFeature: (label: string) => toggleInArray(label, setFeatures),
+    toggleFeature: useCallback((label: string) => toggleInArray(label, setFeatures), [toggleInArray]),
   };
 }
 

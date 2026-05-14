@@ -21,6 +21,7 @@ export type UploadMediaModalProps = {
   secondaryActionLabel?: string;
   icon?: React.ReactNode;
   onPickPress: () => void;
+  onCameraPress?: () => void;
   onClose: () => void;
 };
 
@@ -32,6 +33,7 @@ export function UploadMediaModal({
   secondaryActionLabel = "Закрыть",
   icon,
   onPickPress,
+  onCameraPress,
   onClose,
 }: UploadMediaModalProps) {
   return (
@@ -58,6 +60,12 @@ export function UploadMediaModal({
           <TouchableOpacity activeOpacity={0.9} style={styles.primaryBtn} onPress={onPickPress}>
             <Text style={styles.primaryBtnText}>{primaryActionLabel}</Text>
           </TouchableOpacity>
+
+          {onCameraPress ? (
+            <TouchableOpacity activeOpacity={0.9} style={styles.cameraBtn} onPress={onCameraPress}>
+              <Text style={styles.cameraBtnText}>Снять сейчас</Text>
+            </TouchableOpacity>
+          ) : null}
 
           <TouchableOpacity activeOpacity={0.9} style={styles.secondaryBtn} onPress={onClose}>
             <Text style={styles.secondaryBtnText}>{secondaryActionLabel}</Text>
@@ -150,6 +158,23 @@ const styles = StyleSheet.create({
   },
   primaryBtnText: {
     color: colors.text.inverse,
+    fontSize: 14,
+    fontWeight: "700",
+    fontFamily: FONT_FAMILY.regular,
+  },
+  cameraBtn: {
+    width: "100%",
+    borderRadius: 12,
+    height: 44,
+    backgroundColor: colors.surface.primary,
+    borderWidth: 1.5,
+    borderColor: colors.brand.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 8,
+  },
+  cameraBtnText: {
+    color: colors.brand.primary,
     fontSize: 14,
     fontWeight: "700",
     fontFamily: FONT_FAMILY.regular,

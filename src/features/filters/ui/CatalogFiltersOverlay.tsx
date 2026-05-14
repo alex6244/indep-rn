@@ -3,22 +3,31 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+import { FilterBrandPickerModal } from "./FilterBrandPickerModal";
 import { Path, Svg } from "react-native-svg";
 import { colors } from "../../../shared/theme/colors";
+import { spacing } from "../../../shared/theme/spacing";
+import { radius } from "../../../shared/theme/radius";
+import { typography } from "../../../shared/theme/typography";
+import { AppInput } from "../../../shared/ui/AppInput";
 import { EntitiesToggle } from "../../../widgets/entitiesToggle/EntitiesToggle";
 import { MarkButton } from "./MarkButton";
+import { FilterSelectDropdown } from "./FilterSelectDropdown";
 import { CarSearchFiltersBottomPanel } from "./CarSearchFiltersBottomPanel";
 import { MileageBottomSheet } from "./MileageBottomSheet";
 import { formatMileageRange } from "./mileagePickerUtils";
 import type { PaymentType } from "../../catalog/hooks/useCatalogFiltersController";
 
-const SPACING_MD = 16;
-const RADIUS_SM = 8;
+const SPACING_MD = spacing.md;
 const INPUT_MIN_HEIGHT = 44;
+
+const BODY_TYPE_OPTIONS = ["Седан", "Кроссовер", "Хэтчбек", "Универсал", "Внедорожник", "Купе", "Минивэн", "Пикап"];
+const ENGINE_OPTIONS = ["Бензин", "Дизель", "Гибрид", "Электро", "Газ"];
+const TRANSMISSION_OPTIONS = ["Автомат", "Механика", "Робот", "Вариатор"];
+const DRIVE_OPTIONS = ["Передний", "Задний", "Полный"];
 
 function BackCaretBlack({ width = 18, height = 18 }: { width?: number; height?: number }) {
   return (
@@ -46,6 +55,27 @@ function onlyDigits(s: string): string {
   return String(s ?? "").replace(/\D/g, "");
 }
 
+function SectionHeader({
+  label,
+  onReset,
+  showReset,
+}: {
+  label: string;
+  onReset?: () => void;
+  showReset?: boolean;
+}) {
+  return (
+    <View style={styles.sectionHeader}>
+      <Text style={styles.filterLabel}>{label}</Text>
+      {showReset && onReset && (
+        <TouchableOpacity onPress={onReset} hitSlop={8}>
+          <Text style={styles.resetLink}>Сбросить</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+}
+
 type CatalogFiltersOverlayProps = {
   brandQuery: string;
   onChangeBrandQuery: (v: string) => void;
@@ -71,8 +101,18 @@ type CatalogFiltersOverlayProps = {
   onToggleVatReturn: () => void;
   weeklyOffer: boolean;
   onToggleWeeklyOffer: () => void;
-  bodyTypes: string[];
-  onToggleBodyType: (label: string) => void;
+  bodyType: string | null;
+  onChangeBodyType: (v: string | null) => void;
+  engineType: string | null;
+  onChangeEngineType: (v: string | null) => void;
+  transmissionType: string | null;
+  onChangeTransmissionType: (v: string | null) => void;
+  driveTypeFilter: string | null;
+  onChangeDriveTypeFilter: (v: string | null) => void;
+  powerFromText: string;
+  onChangePowerFromText: (v: string) => void;
+  powerToText: string;
+  onChangePowerToText: (v: string) => void;
   features: string[];
   onToggleFeature: (label: string) => void;
   filteredCount?: number;
@@ -107,8 +147,18 @@ export function CatalogFiltersOverlay({
   onToggleVatReturn,
   weeklyOffer,
   onToggleWeeklyOffer,
-  bodyTypes,
-  onToggleBodyType,
+  bodyType,
+  onChangeBodyType,
+  engineType,
+  onChangeEngineType,
+  transmissionType,
+  onChangeTransmissionType,
+  driveTypeFilter,
+  onChangeDriveTypeFilter,
+  powerFromText,
+  onChangePowerFromText,
+  powerToText,
+  onChangePowerToText,
   features,
   onToggleFeature,
   filteredCount,
@@ -118,9 +168,12 @@ export function CatalogFiltersOverlay({
   onClose,
 }: CatalogFiltersOverlayProps) {
   const [mileageSheetVisible, setMileageSheetVisible] = useState(false);
+  const [brandPickerVisible, setBrandPickerVisible] = useState(false);
 
   const mileageLabel = formatMileageRange(mileageFromText, mileageToText);
   const hasMileageFilter = mileageFromText.trim() !== "" || mileageToText.trim() !== "";
+  const hasYearFilter = yearFromText.trim() !== "" || yearToText.trim() !== "";
+  const hasPowerFilter = powerFromText.trim() !== "" || powerToText.trim() !== "";
 
   return (
     <View style={styles.root}>
@@ -136,24 +189,40 @@ export function CatalogFiltersOverlay({
 
         <Text style={styles.filtersTitle}>Фильтры</Text>
 
+        {/* Автомобиль */}
         <View style={styles.filterBlock}>
           <Text style={styles.filterLabel}>Автомобиль</Text>
-          <TextInput
-            placeholder="Марка"
-            value={brandQuery}
-            onChangeText={onChangeBrandQuery}
-            style={styles.input}
-            placeholderTextColor={colors.text.subtle}
-          />
-          <TextInput
+          <TouchableOpacity
+            style={[styles.brandTrigger, styles.inputWrap]}
+            onPress={() => setBrandPickerVisible(true)}
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel={brandQuery || "Марка"}
+          >
+            <Text style={brandQuery ? styles.brandTriggerTextActive : styles.brandTriggerTextPlaceholder}>
+              {brandQuery || "Марка"}
+            </Text>
+            {brandQuery ? (
+              <TouchableOpacity
+                hitSlop={8}
+                onPress={() => onChangeBrandQuery("")}
+                accessibilityRole="button"
+                accessibilityLabel="Сбросить марку"
+              >
+                <Text style={styles.brandClearBtn}>✕</Text>
+              </TouchableOpacity>
+            ) : (
+              <ChevronRight />
+            )}
+          </TouchableOpacity>
+          <AppInput
             placeholder="Модель"
             value={modelQuery}
             onChangeText={onChangeModelQuery}
-            style={styles.input}
-            placeholderTextColor={colors.text.subtle}
           />
         </View>
 
+        {/* Способ оплаты */}
         <View style={styles.filterBlock}>
           <Text style={styles.filterLabel}>Способ оплаты</Text>
           <EntitiesToggle
@@ -164,50 +233,60 @@ export function CatalogFiltersOverlay({
           />
         </View>
 
+        {/* Цена */}
         <View style={styles.filterBlock}>
           <Text style={styles.filterLabel}>Цена, ₽</Text>
           <View style={styles.inputsRow}>
-            <TextInput
+            <AppInput
               placeholder="От"
               keyboardType="numeric"
               value={priceFromText}
               onChangeText={onChangePriceFromText}
-              style={[styles.input, styles.inputHalf]}
-              placeholderTextColor={colors.text.subtle}
+              containerStyle={styles.inputHalf}
             />
-            <TextInput
+            <AppInput
               placeholder="До"
               keyboardType="numeric"
               value={priceToText}
               onChangeText={onChangePriceToText}
-              style={[styles.input, styles.inputHalf]}
-              placeholderTextColor={colors.text.subtle}
+              containerStyle={styles.inputHalf}
             />
           </View>
         </View>
 
+        {/* Доп. чекбоксы */}
+        <View style={[styles.filterBlock, styles.marksRow]}>
+          <MarkButton label="Со скидками" selected={hasDiscount} onToggle={onToggleHasDiscount} />
+          <MarkButton label="Возврат НДС" selected={vatReturn} onToggle={onToggleVatReturn} />
+          <MarkButton label="Предложение недели" selected={weeklyOffer} onToggle={onToggleWeeklyOffer} />
+        </View>
+
+        {/* Год выпуска */}
         <View style={styles.filterBlock}>
-          <Text style={styles.filterLabel}>Год выпуска</Text>
+          <SectionHeader
+            label="Год выпуска"
+            showReset={hasYearFilter}
+            onReset={() => { onChangeYearFromText(""); onChangeYearToText(""); }}
+          />
           <View style={styles.inputsRow}>
-            <TextInput
-              placeholder="От 2000"
+            <AppInput
+              placeholder="От"
               keyboardType="numeric"
               value={yearFromText}
               onChangeText={(t) => onChangeYearFromText(onlyDigits(t).slice(0, 4))}
-              style={[styles.input, styles.inputHalf]}
-              placeholderTextColor={colors.text.subtle}
+              containerStyle={styles.inputHalf}
             />
-            <TextInput
-              placeholder="До 2026"
+            <AppInput
+              placeholder="До"
               keyboardType="numeric"
               value={yearToText}
               onChangeText={(t) => onChangeYearToText(onlyDigits(t).slice(0, 4))}
-              style={[styles.input, styles.inputHalf]}
-              placeholderTextColor={colors.text.subtle}
+              containerStyle={styles.inputHalf}
             />
           </View>
         </View>
 
+        {/* Пробег */}
         <View style={styles.filterBlock}>
           <Text style={styles.filterLabel}>Пробег, км</Text>
           <TouchableOpacity
@@ -216,41 +295,83 @@ export function CatalogFiltersOverlay({
             accessibilityLabel={`Пробег: ${mileageLabel}. Нажмите для выбора.`}
             accessibilityRole="button"
           >
-            <Text
-              style={[
-                styles.mileageRowText,
-                hasMileageFilter && styles.mileageRowTextActive,
-              ]}
-            >
+            <Text style={[styles.mileageRowText, hasMileageFilter && styles.mileageRowTextActive]}>
               {mileageLabel}
             </Text>
             <ChevronRight />
           </TouchableOpacity>
         </View>
 
-        <View style={styles.filterBlock}>
-          <Text style={styles.filterLabel}></Text>
-          <View style={styles.marksRow}>
-            <MarkButton label="Со скидками" selected={hasDiscount} onToggle={onToggleHasDiscount} />
-            <MarkButton label="Возврат НДС" selected={vatReturn} onToggle={onToggleVatReturn} />
-            <MarkButton label="Предложение недели" selected={weeklyOffer} onToggle={onToggleWeeklyOffer} />
-          </View>
-        </View>
-
+        {/* Кузов — dropdown */}
         <View style={styles.filterBlock}>
           <Text style={styles.filterLabel}>Кузов</Text>
-          <View style={styles.marksRow}>
-            {["Седан", "Кроссовер", "Хэтчбек"].map((m) => (
-              <MarkButton
-                key={m}
-                label={m}
-                selected={bodyTypes.includes(m)}
-                onToggle={() => onToggleBodyType(m)}
-              />
-            ))}
+          <FilterSelectDropdown
+            placeholder="Кузов"
+            options={BODY_TYPE_OPTIONS}
+            value={bodyType}
+            onChange={onChangeBodyType}
+          />
+        </View>
+
+        {/* Двигатель — dropdown */}
+        <View style={styles.filterBlock}>
+          <Text style={styles.filterLabel}>Двигатель</Text>
+          <FilterSelectDropdown
+            placeholder="Двигатель"
+            options={ENGINE_OPTIONS}
+            value={engineType}
+            onChange={onChangeEngineType}
+          />
+        </View>
+
+        {/* Коробка — dropdown */}
+        <View style={styles.filterBlock}>
+          <Text style={styles.filterLabel}>Коробка</Text>
+          <FilterSelectDropdown
+            placeholder="Коробка"
+            options={TRANSMISSION_OPTIONS}
+            value={transmissionType}
+            onChange={onChangeTransmissionType}
+          />
+        </View>
+
+        {/* Привод — dropdown */}
+        <View style={styles.filterBlock}>
+          <Text style={styles.filterLabel}>Привод</Text>
+          <FilterSelectDropdown
+            placeholder="Привод"
+            options={DRIVE_OPTIONS}
+            value={driveTypeFilter}
+            onChange={onChangeDriveTypeFilter}
+          />
+        </View>
+
+        {/* Мощность */}
+        <View style={styles.filterBlock}>
+          <SectionHeader
+            label="Мощность, л.с."
+            showReset={hasPowerFilter}
+            onReset={() => { onChangePowerFromText(""); onChangePowerToText(""); }}
+          />
+          <View style={styles.inputsRow}>
+            <AppInput
+              placeholder="49 л.с."
+              keyboardType="numeric"
+              value={powerFromText}
+              onChangeText={onChangePowerFromText}
+              containerStyle={styles.inputHalf}
+            />
+            <AppInput
+              placeholder="898 л.с."
+              keyboardType="numeric"
+              value={powerToText}
+              onChangeText={onChangePowerToText}
+              containerStyle={styles.inputHalf}
+            />
           </View>
         </View>
 
+        {/* Особенности */}
         <View style={styles.filterBlock}>
           <Text style={styles.filterLabel}>Особенности</Text>
           <View style={styles.marksRow}>
@@ -289,6 +410,14 @@ export function CatalogFiltersOverlay({
         }}
         onClose={() => setMileageSheetVisible(false)}
       />
+
+      <FilterBrandPickerModal
+        visible={brandPickerVisible}
+        value={brandQuery}
+        onChange={onChangeBrandQuery}
+        onClose={() => setBrandPickerVisible(false)}
+        filteredCount={filteredCount}
+      />
     </View>
   );
 }
@@ -306,41 +435,50 @@ const styles = StyleSheet.create({
   backBtn: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 8,
-    marginBottom: 12,
+    paddingVertical: spacing.sm,
+    marginBottom: spacing.md,
   },
   backBtnText: {
+    ...typography.textRegular,
     color: colors.brand.primary,
     fontSize: 14,
     fontWeight: "500",
-    marginLeft: 8,
+    marginLeft: spacing.sm,
   },
   filtersTitle: {
+    ...typography.title,
     fontSize: 20,
     fontWeight: "600",
-    marginBottom: 16,
+    color: colors.text.primary,
+    marginBottom: spacing.lg,
   },
   filterBlock: {
-    marginBottom: SPACING_MD,
+    marginBottom: spacing.lg,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: spacing.sm,
   },
   filterLabel: {
+    ...typography.textRegular,
     fontSize: 12,
     fontWeight: "500",
-    marginBottom: 8,
     color: colors.text.tertiary,
   },
-  input: {
-    borderRadius: RADIUS_SM,
-    backgroundColor: colors.surface.input,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    fontSize: 14,
-    color: colors.text.primary,
-    marginBottom: 8,
+  resetLink: {
+    ...typography.textRegular,
+    fontSize: 12,
+    fontWeight: "500",
+    color: colors.brand.primary,
+  },
+  inputWrap: {
+    marginBottom: spacing.sm,
   },
   inputsRow: {
     flexDirection: "row",
-    gap: 8,
+    gap: spacing.sm,
   },
   inputHalf: {
     flex: 1,
@@ -349,17 +487,45 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
   },
+  brandTrigger: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderRadius: radius.sm,
+    backgroundColor: colors.surface.input,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+    minHeight: INPUT_MIN_HEIGHT,
+  },
+  brandTriggerTextPlaceholder: {
+    ...typography.textRegular,
+    fontSize: 14,
+    color: colors.text.subtle,
+    flex: 1,
+  },
+  brandTriggerTextActive: {
+    ...typography.textRegular,
+    fontSize: 14,
+    color: colors.text.primary,
+    flex: 1,
+  },
+  brandClearBtn: {
+    fontSize: 14,
+    color: colors.text.subtle,
+    paddingLeft: spacing.sm,
+  },
   mileageRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    borderRadius: RADIUS_SM,
+    borderRadius: radius.sm,
     backgroundColor: colors.surface.input,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
     minHeight: INPUT_MIN_HEIGHT,
   },
   mileageRowText: {
+    ...typography.textRegular,
     fontSize: 14,
     color: colors.text.subtle,
   },

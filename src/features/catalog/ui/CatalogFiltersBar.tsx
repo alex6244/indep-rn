@@ -34,7 +34,7 @@ export function CatalogFiltersBar({
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.allFiltersButton} onPress={openFilters}>
-          <Text style={styles.allFiltersText}>Все фильтры</Text>
+          <Text style={styles.allFiltersText}>Фильтры</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>

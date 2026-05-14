@@ -15,7 +15,7 @@ import { ProfileTopBar } from "./ProfileTopBar";
 import { ReportsBanner } from "./ReportsBanner";
 import { useProfileEditFlow } from "./useProfileEditFlow";
 import { scrollBottomPaddingBelowTabBar } from "../../shared/navigation/tabBarMetrics";
-import { styles } from "../../shared/styles/profile.styles";
+import { styles } from "./profile.styles";
 import { InlineMessage } from "../../shared/ui/InlineMessage";
 
 type Props = {

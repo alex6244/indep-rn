@@ -1,7 +1,7 @@
 export const FONT_FAMILY = {
-  regular: "Moderustic-Regular",
+  regular: "Moderustic",
 } as const;
 
 export const FONT_SOURCES = {
-  [FONT_FAMILY.regular]: require("../../assets/fonts/Moderustic/static/Moderustic-Regular.ttf"),
+  [FONT_FAMILY.regular]: require("../../assets/fonts/Moderustic/Moderustic[wght].ttf"),
 } as const;

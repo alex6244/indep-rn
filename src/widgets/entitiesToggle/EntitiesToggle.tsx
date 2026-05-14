@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import type { PaymentType } from '../../features/catalog/hooks/useCatalogFiltersController';
 import { colors } from '../../shared/theme/colors';
 
@@ -47,6 +47,8 @@ export const EntitiesToggle = ({
             }
             setTab('left');
           }}
+          accessibilityRole="tab"
+          accessibilityState={{ selected: activeTab === 'left' }}
         >
           <Text
             style={[
@@ -70,6 +72,8 @@ export const EntitiesToggle = ({
             }
             setTab('right');
           }}
+          accessibilityRole="tab"
+          accessibilityState={{ selected: activeTab === 'right' }}
         >
           <Text
             style={[
@@ -81,18 +85,6 @@ export const EntitiesToggle = ({
           </Text>
         </TouchableOpacity>
       </View>
-
-      {activeTab === 'left' && (
-        <View style={styles.content}>
-          <Text>{leftLabel}</Text>
-        </View>
-      )}
-
-      {activeTab === 'right' && (
-        <View style={styles.content}>
-          <Text>{rightLabel}</Text>
-        </View>
-      )}
     </View>
   );
 };
@@ -112,8 +104,5 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 14,
-  },
-  content: {
-    marginTop: 12,
   },
 });

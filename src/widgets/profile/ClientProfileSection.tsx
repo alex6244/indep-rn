@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { getMainBurgerMenuItems } from "../../shared/config/mainBurgerMenu";
 import { BurgerMenu } from "../../shared/ui/BurgerMenu";
 import { scrollBottomPaddingBelowTabBar } from "../../shared/navigation/tabBarMetrics";
-import { styles } from "../../shared/styles/profile.styles";
+import { styles } from "./profile.styles";
 import { ClientEmptyState } from "./ClientEmptyState";
 import { ClientReportCard } from "./ClientReportCard";
 import { ProfileEditMenu } from "./ProfileEditMenu";
@@ -18,6 +18,7 @@ import { InlineMessage } from "../../shared/ui/InlineMessage";
 import type { Report } from "../../types/report";
 import { ScreenStateError } from "../../shared/ui/ScreenStateError";
 import { ScreenStateLoading } from "../../shared/ui/ScreenStateLoading";
+import { downloadReportPdf } from "../../services/reportPdfService";
 
 type Props = {
   name: string;
@@ -86,8 +87,12 @@ export function ClientProfileSection({
                 key={r.id}
                 report={r}
                 onOpen={() => router.push(`/reports/${r.id}` as Href)}
-                onDownloadPdf={() => {
-                  setInfoMessage("PDF пока недоступен");
+                onDownloadPdf={async () => {
+                  try {
+                    await downloadReportPdf(r);
+                  } catch (e) {
+                    setInfoMessage(e instanceof Error ? e.message : "Не удалось создать PDF.");
+                  }
                 }}
               />
             ))}

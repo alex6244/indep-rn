@@ -1,4 +1,7 @@
-import type { ImageSourcePropType } from "react-native";
+import type { ImageSource } from "expo-image";
+
+/** Accepts both static Metro assets (require → number) and expo-image URI objects. */
+type ReportImageSource = ImageSource | number;
 
 /** Domain report model for UI cards/details. */
 export type Report = {
@@ -7,14 +10,14 @@ export type Report = {
   title: string;
   subtitle: string;
   city: string;
-  imageUrl: ImageSourcePropType;
+  imageUrl: ReportImageSource;
 
-  carouselImages: ImageSourcePropType[];
+  carouselImages: ReportImageSource[];
   photosCountText?: string;
 
   defects: {
-    schemeImageUrl: ImageSourcePropType;
-    photoImageUrls: ImageSourcePropType[];
+    schemeImageUrl: ReportImageSource;
+    photoImageUrls: ReportImageSource[];
     summaryText: string;
   };
 
@@ -50,4 +53,6 @@ export type Report = {
 
   yearText?: string;
   bodyTypeText?: string;
+  creditText?: string;
+  checks?: { label: string; tone: "info" | "ok" | "bad" }[];
 };

@@ -222,17 +222,6 @@ export const catalogStyles = StyleSheet.create({
   orderReportBtn: {
     marginTop: 14,
     marginBottom: 8,
-    backgroundColor: colors.brand.darkAlt,
-    borderRadius: 12,
-    paddingVertical: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  orderReportBtnText: {
-    ...typography.buttonText,
-    color: colors.text.inverse,
-    fontSize: 15,
-    fontWeight: "500",
   },
   footer: {
     marginTop: 24,

@@ -21,10 +21,10 @@ export function usePickerReportCreateController() {
   const initialDraftReport = useMemo<DraftReport>(
     () => ({
       media: {
-        salonPhoto: false,
-        bodyPhoto: true,
-        salonVideo: false,
-        bodyVideo: false,
+        salonPhoto: null,
+        bodyPhoto: null,
+        salonVideo: null,
+        bodyVideo: null,
       },
       generalInfo: {
         "ПТС оригинал": false,

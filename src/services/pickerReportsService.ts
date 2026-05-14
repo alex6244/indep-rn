@@ -36,10 +36,10 @@ const mockSubmittedReports: SubmittedReport[] = [
     createdAt: "2026-01-01T00:00:00.000Z",
     data: {
       media: {
-        salonPhoto: false,
-        bodyPhoto: true,
-        salonVideo: false,
-        bodyVideo: false,
+        salonPhoto: null,
+        bodyPhoto: null,
+        salonVideo: null,
+        bodyVideo: null,
       },
       generalInfo: {},
       pts: {

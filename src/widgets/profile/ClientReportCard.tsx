@@ -1,6 +1,9 @@
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import type { ImageSourcePropType } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image } from "expo-image";
+import type { ImageSource } from "expo-image";
+
+type ClientImageSource = ImageSource | number;
 import { FONT_FAMILY } from "../../shared/theme/fonts";
 import { shadowStyle } from "../../shared/theme/shadow";
 import { colors } from "../../shared/theme/colors";
@@ -13,7 +16,7 @@ type ClientReport = {
   title: string;
   subtitle: string;
   city: string;
-  imageUrl: ImageSourcePropType;
+  imageUrl: ClientImageSource;
 };
 
 type Props = {

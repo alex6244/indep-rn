@@ -1,6 +1,7 @@
 import { type Href, useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFavorites } from "../../../contexts/FavoritesContext";
 import { useProtected } from "../../../hooks/useProtected";

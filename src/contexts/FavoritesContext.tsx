@@ -8,6 +8,8 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { useAuth } from "./AuthContext";
+import { favoritesService } from "../services/favoritesService";
 
 interface FavoritesContextValue {
   favoriteIds: string[];
@@ -25,87 +27,132 @@ const FavoritesContext = createContext<FavoritesContextValue | undefined>(
 
 const STORAGE_KEY = "@favorites";
 
+function readStorage(): Promise<string[]> {
+  return AsyncStorage.getItem(STORAGE_KEY).then((raw) => {
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed.map(String) : [];
+    } catch {
+      return [];
+    }
+  });
+}
+
+function writeStorage(ids: string[]): Promise<void> {
+  return AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+}
+
 export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const { user } = useAuth();
+  const isLoggedIn = !!user;
+
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [favoritesError, setFavoritesError] = useState<string | null>(null);
   const isMountedRef = useRef(true);
   const favoriteIdsRef = useRef<string[]>([]);
-  const persistQueueRef = useRef<Promise<void>>(Promise.resolve());
   const favoriteIdsSet = useMemo(() => new Set(favoriteIds), [favoriteIds]);
 
+  const applyIds = useCallback((ids: string[]) => {
+    favoriteIdsRef.current = ids;
+    if (isMountedRef.current) setFavoriteIds(ids);
+  }, []);
+
+  // Load favorites: API when logged in, AsyncStorage when guest
   useEffect(() => {
+    let active = true;
+    setLoading(true);
+
     const load = async () => {
       try {
-        const raw = await AsyncStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed)) {
-            const normalized = parsed.map(String);
-            favoriteIdsRef.current = normalized;
-            if (!isMountedRef.current) return;
-            setFavoriteIds(normalized);
-          }
+        if (isLoggedIn) {
+          const ids = await favoritesService.getAll();
+          if (!active) return;
+          applyIds(ids);
+          void writeStorage(ids);
+        } else {
+          const ids = await readStorage();
+          if (!active) return;
+          applyIds(ids);
         }
       } catch {
-        // Повреждённые данные — сбрасываем, избранное начнётся с чистого листа
-        await AsyncStorage.removeItem(STORAGE_KEY);
+        if (!active) return;
+        // fallback to local cache on API error
+        const ids = await readStorage();
+        if (!active) return;
+        applyIds(ids);
       } finally {
-        if (!isMountedRef.current) return;
-        setLoading(false);
+        if (active && isMountedRef.current) setLoading(false);
       }
     };
+
     void load();
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
+    return () => { active = false; };
+  }, [isLoggedIn, applyIds]);
+
+  // Clear favorites on logout
+  useEffect(() => {
+    if (!isLoggedIn) {
+      applyIds([]);
+      void AsyncStorage.removeItem(STORAGE_KEY);
+    }
+  }, [isLoggedIn, applyIds]);
 
   const isFavorite = useCallback(
     (id: string) => favoriteIdsSet.has(String(id)),
     [favoriteIdsSet],
   );
 
-  const persistFavoriteUpdate = useCallback((updater: (prev: string[]) => string[]) => {
-    persistQueueRef.current = persistQueueRef.current
-      .then(async () => {
-        const prev = favoriteIdsRef.current;
-        const next = updater(prev);
-        if (next === prev) return;
+  const setFavorite = useCallback(
+    (id: string, value: boolean) => {
+      const sId = String(id);
+      const prev = favoriteIdsRef.current;
+      const alreadyIn = prev.includes(sId);
+      if (value === alreadyIn) return;
 
-        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-        favoriteIdsRef.current = next;
-        if (!isMountedRef.current) return;
-        setFavoriteIds(next);
-      })
-      .catch(() => {
-        if (!isMountedRef.current) return;
-        setFavoritesError("Не удалось сохранить избранное");
-      });
-  }, []);
-
-  const setFavorite = useCallback((id: string, value: boolean) => {
-    const sId = String(id);
-    persistFavoriteUpdate((prev) => {
       const next = value
-        ? prev.includes(sId) ? prev : [...prev, sId]
+        ? [...prev, sId]
         : prev.filter((x) => x !== sId);
-      return next;
-    });
-  }, [persistFavoriteUpdate]);
 
-  const toggleFavorite = useCallback((id: string) => {
-    const sId = String(id);
-    persistFavoriteUpdate((prev) => {
-      const wasInFavorites = prev.includes(sId);
-      const next = wasInFavorites ? prev.filter((x) => x !== sId) : [...prev, sId];
-      return next;
-    });
-  }, [persistFavoriteUpdate]);
+      // Optimistic update
+      applyIds(next);
+
+      if (isLoggedIn) {
+        const call = value
+          ? favoritesService.add(sId)
+          : favoritesService.remove(sId);
+
+        call.catch(() => {
+          // Rollback
+          applyIds(prev);
+          if (isMountedRef.current) setFavoritesError("Не удалось обновить избранное");
+        });
+      } else {
+        void writeStorage(next).catch(() => {
+          applyIds(prev);
+          if (isMountedRef.current) setFavoritesError("Не удалось сохранить избранное");
+        });
+      }
+    },
+    [isLoggedIn, applyIds],
+  );
+
+  const toggleFavorite = useCallback(
+    (id: string) => {
+      const sId = String(id);
+      setFavorite(sId, !favoriteIdsRef.current.includes(sId));
+    },
+    [setFavorite],
+  );
 
   const clearFavoritesError = useCallback(() => setFavoritesError(null), []);
+
+  useEffect(() => {
+    return () => { isMountedRef.current = false; };
+  }, []);
 
   return (
     <FavoritesContext.Provider
@@ -131,4 +178,3 @@ export const useFavorites = () => {
   }
   return ctx;
 };
-

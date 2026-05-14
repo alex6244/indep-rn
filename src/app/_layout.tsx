@@ -9,6 +9,7 @@ import { FavoritesProvider } from "../contexts/FavoritesContext";
 import { ErrorBoundary } from "../shared/ui/ErrorBoundary";
 import { applyProjectFontDefaults } from "../shared/theme/applyFontDefaults";
 import { FONT_SOURCES } from "../shared/theme/fonts";
+import { colors } from "../shared/theme/colors";
 import { initSentryMonitoring } from "../shared/monitoring/sentry";
 
 initSentryMonitoring();
@@ -49,7 +50,7 @@ export default function RootLayout() {
             <Stack
               screenOptions={{
                 headerShown: false,
-                contentStyle: { backgroundColor: "#F7F7F7" },
+                contentStyle: { backgroundColor: colors.surface.neutral },
               }}
             >
               <Stack.Screen name="(tabs)" />
