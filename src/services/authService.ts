@@ -68,14 +68,38 @@ function getRefreshToken(response: unknown): string | null {
   return pickRefreshToken(response);
 }
 
+/** Maps backend user shapes (numeric id, no `login`) into app `User`. */
+export function mapApiUserToDomain(raw: unknown): User | null {
+  if (!raw || typeof raw !== "object") return null;
+  const u = raw as Record<string, unknown>;
+  const email =
+    typeof u.email === "string" && u.email.trim() ? u.email.trim() : "";
+  const id =
+    typeof u.id === "string"
+      ? u.id.trim()
+      : typeof u.id === "number" && Number.isFinite(u.id)
+        ? String(u.id)
+        : "";
+  if (!id || !email) return null;
+  const role: User["role"] = u.role === "picker" ? "picker" : "client";
+  const login =
+    typeof u.login === "string" && u.login.trim()
+      ? u.login.trim()
+      : email;
+  const name =
+    typeof u.name === "string" && u.name.trim()
+      ? u.name.trim()
+      : login;
+  const phone =
+    typeof u.phone === "string" && u.phone.trim() ? u.phone.trim() : undefined;
+  return { id, login, role, name, email, phone };
+}
+
 /** Backend may return only tokens; then we hydrate the user via GET /me. */
 function extractUserFromAuthPayload(res: unknown): User | null {
   if (!res || typeof res !== "object") return null;
   const u = (res as Record<string, unknown>).user;
-  if (u !== null && u !== undefined && typeof u === "object") {
-    return u as User;
-  }
-  return null;
+  return mapApiUserToDomain(u);
 }
 
 function requiresRefreshRotation(): boolean {
@@ -256,7 +280,12 @@ export const authService = {
 
   me: async (): Promise<User> => {
     try {
-      return await api.get<User>("/me");
+      const raw = await api.get<unknown>("/me");
+      const user = mapApiUserToDomain(raw);
+      if (!user) {
+        throw new Error("Profile response did not contain a valid user.");
+      }
+      return user;
     } catch (error) {
       throw mapAuthError(error);
     }

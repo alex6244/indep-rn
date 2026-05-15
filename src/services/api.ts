@@ -452,9 +452,15 @@ export function getTokenExp(token: string): number | null {
   return null;
 }
 
+function isJwtShapedToken(token: string): boolean {
+  return token.split(".").length === 3;
+}
+
 export function isTokenExpired(token: string, leewaySec = 30): boolean {
+  // Opaque tokens (e.g. Laravel Sanctum `api_token`) — no client-side expiry; server returns 401 when invalid.
+  if (!isJwtShapedToken(token)) return false;
   const exp = getTokenExp(token);
-  // Conservative default: malformed/missing exp should not be treated as a valid long-lived token.
+  // JWT-shaped but missing/invalid `exp` — do not send as a long-lived credential.
   if (exp == null) return true;
   const nowSec = Math.floor(Date.now() / 1000);
   return exp <= nowSec + Math.max(0, leewaySec);

@@ -307,6 +307,37 @@ describe("authService contract", () => {
     expect(api.get).not.toHaveBeenCalled();
   });
 
+  it("confirmVerification normalizes Laravel user (numeric id, api_token)", async () => {
+    api.post.mockResolvedValue({
+      message: "Регистрация успешна",
+      is_new_user: true,
+      api_token: "RYux9a8AcVxnOL2vHCfpJoLbFp4dNUMMve0rCFFNDJYvOXOQSjonorEeayow",
+      user: {
+        id: 32,
+        email: "altabagua@yandex.ru",
+        name: "alexx",
+        role: "client",
+        email_verified_at: [],
+      },
+    });
+
+    await expect(
+      authService.confirmVerification({
+        email: "altabagua@yandex.ru",
+        code: "123456",
+      }),
+    ).resolves.toEqual({
+      id: "32",
+      login: "altabagua@yandex.ru",
+      role: "client",
+      name: "alexx",
+      email: "altabagua@yandex.ru",
+    });
+    expect(tokenStorage.set).toHaveBeenCalledWith(
+      "RYux9a8AcVxnOL2vHCfpJoLbFp4dNUMMve0rCFFNDJYvOXOQSjonorEeayow",
+    );
+  });
+
   it("confirmVerification persists backend api_token (single-issue token)", async () => {
     const user = {
       id: "u-api-token",

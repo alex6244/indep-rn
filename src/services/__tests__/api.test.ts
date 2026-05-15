@@ -1,6 +1,7 @@
 import {
   ApiError,
   api,
+  isTokenExpired,
   resetApiBaseUrlCacheForTests,
   setRefreshHandler,
   setUnauthorizedHandler,
@@ -137,6 +138,12 @@ describe("api retry/abort/401 policy", () => {
     });
 
     expect(fetchMock).toHaveBeenCalledTimes(0);
+  });
+
+  it("does not treat opaque api_token as expired (Sanctum-style)", () => {
+    expect(
+      isTokenExpired("RYux9a8AcVxnOL2vHCfpJoLbFp4dNUMMve0rCFFNDJYvOXOQSjonorEeayow"),
+    ).toBe(false);
   });
 
   it("retries GET on network failures", async () => {
