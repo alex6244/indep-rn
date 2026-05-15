@@ -48,8 +48,7 @@
           }
         }
       ],
-      "expo-secure-store",
-      "@sentry/react-native/expo"
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,

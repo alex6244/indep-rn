@@ -15,11 +15,15 @@
         "EXPO_PUBLIC_AUTH_SOURCE": "api",
         "EXPO_PUBLIC_CATALOG_SOURCE": "api",
         "EXPO_PUBLIC_REPORTS_SOURCE": "api",
-        "EXPO_PUBLIC_ALLOW_HTTP_DEV": "false"
+        "EXPO_PUBLIC_ALLOW_HTTP_DEV": "false",
+        "SENTRY_DISABLE_AUTO_UPLOAD": "true"
       }
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "SENTRY_DISABLE_AUTO_UPLOAD": "true"
+      }
     }
   },
   "submit": {
