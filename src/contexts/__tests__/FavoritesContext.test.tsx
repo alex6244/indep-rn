@@ -1,9 +1,56 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import TestRenderer, { act } from "react-test-renderer";
+import { AuthProvider } from "../AuthContext";
 import { FavoritesProvider, useFavorites } from "../FavoritesContext";
 
+jest.mock("../../services/authService", () => ({
+  authService: {
+    me: jest.fn(),
+    login: jest.fn(),
+    register: jest.fn(),
+    requestVerification: jest.fn(),
+    confirmVerification: jest.fn(),
+    logout: jest.fn(),
+  },
+}));
+
+jest.mock("../../services/api", () => ({
+  tokenStorage: {
+    get: jest.fn(),
+    clear: jest.fn(),
+    set: jest.fn(),
+  },
+  refreshTokenStorage: {
+    get: jest.fn(),
+    clear: jest.fn(),
+    set: jest.fn(),
+  },
+  setRefreshHandler: jest.fn(),
+  setUnauthorizedHandler: jest.fn(),
+}));
+
+jest.mock("../../services/favoritesService", () => ({
+  favoritesService: {
+    getAll: jest.fn().mockResolvedValue([]),
+    add: jest.fn().mockResolvedValue(undefined),
+    remove: jest.fn().mockResolvedValue(undefined),
+  },
+}));
+
+const { tokenStorage } = jest.requireMock("../../services/api") as {
+  tokenStorage: { get: jest.Mock; clear: jest.Mock; set: jest.Mock };
+};
+
 type FavoritesSnapshot = ReturnType<typeof useFavorites>;
+
+function TestProviders({ children }: { children: React.ReactNode }) {
+  return (
+    <AuthProvider>
+      <FavoritesProvider>{children}</FavoritesProvider>
+    </AuthProvider>
+  );
+}
 
 function createSnapshotProbe(onSnapshot: (snapshot: FavoritesSnapshot) => void) {
   return function SnapshotProbe() {
@@ -43,6 +90,8 @@ describe("FavoritesContext unmount guards", () => {
   beforeEach(() => {
     latestSnapshot = null;
     jest.clearAllMocks();
+    process.env.EXPO_PUBLIC_AUTH_SOURCE = "mock";
+    tokenStorage.get.mockResolvedValue(null);
     asyncStorageMock.getItem.mockResolvedValue(null);
     asyncStorageMock.setItem.mockResolvedValue(undefined);
     asyncStorageMock.removeItem.mockResolvedValue(undefined);
@@ -59,9 +108,9 @@ describe("FavoritesContext unmount guards", () => {
     let tree: TestRenderer.ReactTestRenderer;
     await act(async () => {
       tree = TestRenderer.create(
-        <FavoritesProvider>
+        <TestProviders>
           <SnapshotProbe />
-        </FavoritesProvider>,
+        </TestProviders>,
       );
     });
 
@@ -88,9 +137,9 @@ describe("FavoritesContext unmount guards", () => {
     let tree: TestRenderer.ReactTestRenderer;
     await act(async () => {
       tree = TestRenderer.create(
-        <FavoritesProvider>
+        <TestProviders>
           <SnapshotProbe />
-        </FavoritesProvider>,
+        </TestProviders>,
       );
     });
     await flushAsync();
