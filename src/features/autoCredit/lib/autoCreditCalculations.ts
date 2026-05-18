@@ -1,5 +1,3 @@
-const ANNUAL_RATE = 0.119;
-
 export function formatRub(value: number): string {
   return `${new Intl.NumberFormat("ru-RU").format(Math.round(value))} ₽`;
 }
@@ -19,10 +17,7 @@ export function calcLoanAmount(carPrice: number, downPaymentPercent: number): nu
 export function calcMonthlyPayment(loanAmount: number, termYears: number): number {
   if (loanAmount <= 0 || termYears <= 0) return 0;
   const months = termYears * 12;
-  const monthlyRate = ANNUAL_RATE / 12;
-  if (monthlyRate === 0) return Math.round(loanAmount / months);
-  const factor = (1 + monthlyRate) ** months;
-  return Math.round((loanAmount * monthlyRate * factor) / (factor - 1));
+  return Math.round(loanAmount / months);
 }
 
 export function formatTermYears(years: number): string {

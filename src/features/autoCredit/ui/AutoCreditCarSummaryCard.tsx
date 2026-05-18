@@ -1,6 +1,15 @@
 import { Image } from "expo-image";
-import React from "react";
-import { ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import React, { useState } from "react";
+import {
+  Modal,
+  Pressable,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import { AppCard } from "../../../shared/ui/AppCard";
 import { colors } from "../../../shared/theme/colors";
 import { radius } from "../../../shared/theme/radius";
@@ -27,21 +36,57 @@ export function AutoCreditCarSummaryCard({
   termYears,
   monthlyPayment,
 }: Props) {
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const imageWidth = width - spacing.lg * 2 - spacing.md * 2;
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   return (
     <AppCard style={styles.card} padded={false}>
+      {lightboxIndex !== null ? (
+        <Modal
+          visible
+          transparent
+          animationType="fade"
+          statusBarTranslucent
+          onRequestClose={() => setLightboxIndex(null)}
+        >
+          <StatusBar hidden />
+          <View style={styles.lightboxBg}>
+            <Image
+              source={{ uri: vehicle.images[lightboxIndex] }}
+              style={{ width, height }}
+              contentFit="contain"
+              accessibilityLabel={`Фото ${lightboxIndex + 1}`}
+            />
+            <Pressable
+              style={styles.lightboxClose}
+              onPress={() => setLightboxIndex(null)}
+              accessibilityRole="button"
+              accessibilityLabel="Закрыть"
+              hitSlop={12}
+            >
+              <Text style={styles.lightboxCloseText}>✕</Text>
+            </Pressable>
+            <View style={styles.lightboxCounter}>
+              <Text style={styles.lightboxCounterText}>
+                {lightboxIndex + 1} / {vehicle.images.length}
+              </Text>
+            </View>
+          </View>
+        </Modal>
+      ) : null}
+
       <View style={styles.galleryWrap}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {vehicle.images.map((uri, index) => (
-            <Image
-              key={`${uri}-${index}`}
-              source={{ uri }}
-              style={[styles.image, { width: imageWidth }]}
-              contentFit="cover"
-              accessibilityLabel={`Фото ${index + 1}`}
-            />
+            <Pressable key={`${uri}-${index}`} onPress={() => setLightboxIndex(index)}>
+              <Image
+                source={{ uri }}
+                style={[styles.image, { width: imageWidth }]}
+                contentFit="cover"
+                accessibilityLabel={`Фото ${index + 1}`}
+              />
+            </Pressable>
           ))}
         </ScrollView>
         {vehicle.images.length > 0 ? (
@@ -103,6 +148,42 @@ function PtsRow({ label, value }: { label: string; value: string }) {
 }
 
 const styles = StyleSheet.create({
+  lightboxBg: {
+    flex: 1,
+    backgroundColor: "#000",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  lightboxClose: {
+    position: "absolute",
+    top: 52,
+    right: spacing.lg,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  lightboxCloseText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  lightboxCounter: {
+    position: "absolute",
+    bottom: 48,
+    alignSelf: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    borderRadius: radius.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 6,
+  },
+  lightboxCounterText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "600",
+  },
   card: {
     overflow: "hidden",
     marginBottom: spacing.xl,

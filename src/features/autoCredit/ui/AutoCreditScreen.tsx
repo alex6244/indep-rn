@@ -1,16 +1,10 @@
 import Slider from "@react-native-community/slider";
 import { useLocalSearchParams, useRouter, type Href } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { cars as mockCars } from "../../../data/cars";
 import BackCaretIcon from "../../../assets/icons/backCaret.svg";
+import { cars as mockCars } from "../../../data/cars";
 import { colors } from "../../../shared/theme/colors";
 import { radius } from "../../../shared/theme/radius";
 import { spacing } from "../../../shared/theme/spacing";
@@ -47,7 +41,9 @@ export function AutoCreditScreen() {
   const [vehicle, setVehicle] = useState<AutoCreditVehicle>(() =>
     mapCarToCreditVehicle(mockCars[0]),
   );
-  const [downPaymentPercent, setDownPaymentPercent] = useState(DEFAULT_DOWN_PAYMENT_PERCENT);
+  const [downPaymentPercent, setDownPaymentPercent] = useState(
+    DEFAULT_DOWN_PAYMENT_PERCENT,
+  );
   const [termYears, setTermYears] = useState(DEFAULT_TERM_YEARS);
 
   useEffect(() => {
@@ -85,11 +81,14 @@ export function AutoCreditScreen() {
     router.push("/(tabs)/catalog" as Href);
   }, [router]);
 
-  const handleSubmit = useCallback(async (_payload: { name: string; phone: string }) => {
-    await new Promise((resolve) => {
-      setTimeout(resolve, 500);
-    });
-  }, []);
+  const handleSubmit = useCallback(
+    async (_payload: { name: string; phone: string }) => {
+      await new Promise((resolve) => {
+        setTimeout(resolve, 500);
+      });
+    },
+    [],
+  );
 
   const snapDownPaymentPercent = useCallback((value: number) => {
     const snapped = DOWN_PAYMENT_PERCENTS.reduce((prev, curr) =>
@@ -111,7 +110,10 @@ export function AutoCreditScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingTop: insets.top + spacing.sm, paddingBottom: insets.bottom + spacing.xxl },
+          {
+            paddingTop: insets.top + spacing.sm,
+            paddingBottom: insets.bottom + spacing.xxl,
+          },
         ]}
         keyboardShouldPersistTaps="handled"
       >
@@ -165,7 +167,9 @@ export function AutoCreditScreen() {
           onSelect={setDownPaymentPercent}
         />
 
-        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>Срок кредита</Text>
+        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>
+          Срок кредита
+        </Text>
         <Text style={styles.sectionValue}>{formatTermYears(termYears)}</Text>
         <Slider
           style={styles.slider}
@@ -189,8 +193,6 @@ export function AutoCreditScreen() {
           />
         </View>
 
-        <AutoCreditContactForm onSubmit={handleSubmit} />
-
         <AutoCreditBanksStrip banks={AUTO_CREDIT_BANKS} />
 
         <AutoCreditCarSummaryCard
@@ -201,6 +203,8 @@ export function AutoCreditScreen() {
           monthlyPayment={monthlyPayment}
         />
 
+        <AutoCreditContactForm onSubmit={handleSubmit} />
+
         <Text style={styles.whyTitle}>Почему мы?</Text>
         {AUTO_CREDIT_WHY_US.map((item) => (
           <AppCard key={item.id} style={styles.whyCard} muted padded>
@@ -208,11 +212,6 @@ export function AutoCreditScreen() {
             <Text style={styles.whyCardText}>{item.text}</Text>
           </AppCard>
         ))}
-
-        <Text style={styles.disclaimer}>
-          Расчёт носит ознакомительный характер. Финальные условия определяет банк после проверки
-          документов.
-        </Text>
       </ScrollView>
     </View>
   );

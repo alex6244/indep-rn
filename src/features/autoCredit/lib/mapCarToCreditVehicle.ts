@@ -13,9 +13,9 @@ export function mapCarToCreditVehicle(car: Car): AutoCreditVehicle {
     oldPrice: car.hasDiscount ? Math.round(car.price * 1.12) : undefined,
     year: car.year,
     images: [...car.images],
-    vin: "Уточняется",
+    vin: "KNA 204**********",
     color: "—",
     engineVolume: `${car.engine} л.`,
-    ptsStatus: "Уточняется",
+    ptsStatus: "Оригинал",
   };
 }
