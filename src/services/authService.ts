@@ -94,6 +94,8 @@ export function normalizeUserRole(value: unknown): UserRole {
   if (
     r === "picker" ||
     r === "pickers" ||
+    r === "realtor" ||
+    r === "realtors" ||
     r === "autopicker" ||
     r === "car_picker" ||
     r === "selector" ||
@@ -102,6 +104,16 @@ export function normalizeUserRole(value: unknown): UserRole {
     return "picker";
   }
   return "client";
+}
+
+/** Backend contract uses `realtor`; app domain uses `picker` for the same role. */
+export function toApiRole(value: unknown): "client" | "realtor" {
+  return normalizeUserRole(value) === "picker" ? "realtor" : "client";
+}
+
+function withApiRolePayload<T extends { role?: string }>(payload: T): T {
+  if (payload.role === undefined) return payload;
+  return { ...payload, role: toApiRole(payload.role) };
 }
 
 function applyRegistrationRoleFromPayload(
@@ -219,7 +231,10 @@ export const authService = {
     payload: VerificationRequestPayload,
   ): Promise<VerificationRequestResponse | void> => {
     try {
-      return await api.post<VerificationRequestResponse>("/auth/request-verification", payload);
+      return await api.post<VerificationRequestResponse>(
+        "/auth/request-verification",
+        withApiRolePayload(payload),
+      );
     } catch (error) {
       throw mapAuthError(error);
     }
@@ -227,7 +242,10 @@ export const authService = {
 
   confirmVerification: async (payload: ConfirmVerificationPayload): Promise<User> => {
     try {
-      const res = await api.post<ApiAuthResponse>("/auth/confirm-verification", payload);
+      const res = await api.post<ApiAuthResponse>(
+        "/auth/confirm-verification",
+        withApiRolePayload(payload),
+      );
       const accessToken = getAccessToken(res);
       if (!accessToken) {
         throw new Error("Confirm verification response did not contain access token.");
@@ -262,7 +280,10 @@ export const authService = {
 
   register: async (data: RegisterPayload): Promise<User> => {
     try {
-      const res = await api.post<ApiAuthResponse>("/auth/register", data);
+      const res = await api.post<ApiAuthResponse>("/auth/register", {
+        ...data,
+        role: toApiRole(data.role),
+      });
       const accessToken = getAccessToken(res);
       if (!accessToken) {
         throw new Error("Auth response did not contain access token.");

@@ -1,4 +1,9 @@
-import { authService, mapApiUserToDomain, normalizeUserRole } from "../authService";
+import {
+  authService,
+  mapApiUserToDomain,
+  normalizeUserRole,
+  toApiRole,
+} from "../authService";
 import { getDefaultAuthErrorMessage } from "../authTypes";
 
 jest.mock("../api", () => {
@@ -260,6 +265,20 @@ describe("authService contract", () => {
     });
   });
 
+  it("requestVerification maps picker domain role to realtor for API", async () => {
+    api.post.mockResolvedValue({ message: "Код отправлен" });
+    await authService.requestVerification({
+      email: "picker@test.com",
+      name: "Picker",
+      role: "picker",
+    });
+    expect(api.post).toHaveBeenCalledWith("/auth/request-verification", {
+      email: "picker@test.com",
+      name: "Picker",
+      role: "realtor",
+    });
+  });
+
   it("confirmVerification stores token and returns user", async () => {
     const user = {
       id: "u5",
@@ -310,7 +329,11 @@ describe("authService contract", () => {
   it("normalizeUserRole maps case and aliases to picker", () => {
     expect(normalizeUserRole("Picker")).toBe("picker");
     expect(normalizeUserRole("PICKER")).toBe("picker");
-    expect(mapApiUserToDomain({ id: 1, email: "a@b.c", role: "Picker" })?.role).toBe(
+    expect(normalizeUserRole("realtor")).toBe("picker");
+    expect(normalizeUserRole("REALTOR")).toBe("picker");
+    expect(toApiRole("picker")).toBe("realtor");
+    expect(toApiRole("client")).toBe("client");
+    expect(mapApiUserToDomain({ id: 1, email: "a@b.c", role: "realtor" })?.role).toBe(
       "picker",
     );
   });
@@ -337,6 +360,27 @@ describe("authService contract", () => {
       email: "picker@test.com",
       role: "picker",
     });
+    expect(api.post).toHaveBeenCalledWith("/auth/confirm-verification", {
+      email: "picker@test.com",
+      code: "123456",
+      role: "realtor",
+    });
+  });
+
+  it("confirmVerification maps realtor from API user to picker domain role", async () => {
+    api.post.mockResolvedValue({
+      token: "t",
+      user: {
+        id: 10,
+        email: "r@test.com",
+        name: "Realtor",
+        role: "realtor",
+      },
+    });
+
+    await expect(
+      authService.confirmVerification({ email: "r@test.com", code: "123456" }),
+    ).resolves.toMatchObject({ role: "picker" });
   });
 
   it("confirmVerification normalizes Laravel user (numeric id, api_token)", async () => {
