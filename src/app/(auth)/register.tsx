@@ -21,11 +21,14 @@ import { AppInput } from "../../shared/ui/AppInput";
 import { getUserErrorMessage } from "../../shared/errors/getUserErrorMessage";
 import { formatResendCountdown, maskEmail, sanitizeOtpCode } from "../../shared/utils/maskEmail";
 import { AuthHeader } from "../../widgets/header/AuthHeader";
+import { RoleToggle } from "../../widgets/home/RoleToggle";
+import type { UserRole } from "../../types/user";
 import { isEmailValid, normalizeEmail } from "../../shared/validation/authValidation";
 
 export default function RegisterScreen() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [role, setRole] = useState<UserRole>("client");
   const [code, setCode] = useState("");
   const [step, setStep] = useState<"request" | "confirm">("request");
   const [resendSeconds, setResendSeconds] = useState(0);
@@ -66,7 +69,7 @@ export default function RegisterScreen() {
       const result = await requestVerification({
         email: normalizedEmail,
         name: trimmedName,
-        role: "client",
+        role,
       });
       if (result.success) {
         setStep("confirm");
@@ -84,7 +87,7 @@ export default function RegisterScreen() {
     } finally {
       setLoading(false);
     }
-  }, [authError, email, name, requestVerification]);
+  }, [authError, email, name, requestVerification, role]);
 
   const handleConfirmCode = useCallback(async () => {
     if (submittingCodeRef.current) return;
@@ -113,7 +116,7 @@ export default function RegisterScreen() {
         email: normalizedEmail,
         code: trimmedCode,
         name: trimmedName,
-        role: "client",
+        role,
       });
       if (result.success) {
         router.dismissAll();
@@ -127,7 +130,7 @@ export default function RegisterScreen() {
       setLoading(false);
       submittingCodeRef.current = false;
     }
-  }, [authError, code, confirmVerification, email, name]);
+  }, [authError, code, confirmVerification, email, name, role]);
 
   useEffect(() => {
     if (step !== "confirm") return;
@@ -169,8 +172,15 @@ export default function RegisterScreen() {
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.formCard}>
-            <Text style={styles.title}>Подтверждение по e-mail</Text>
+            <Text style={styles.title}>Регистрация</Text>
             {message ? <InlineMessage tone={message.tone} message={message.text} /> : null}
+
+            {step === "request" ? (
+              <View style={styles.roleSection}>
+                <Text style={styles.roleLabel}>Кто вы?</Text>
+                <RoleToggle value={role} onChange={setRole} />
+              </View>
+            ) : null}
 
             <View style={styles.inputGroup}>
               <AppInput
@@ -290,6 +300,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: colors.text.primary,
     marginBottom: spacing.xs,
+  },
+  roleSection: {
+    gap: spacing.xs,
+  },
+  roleLabel: {
+    ...typography.textRegular,
+    fontSize: 14,
+    fontWeight: "600",
+    color: colors.text.primary,
   },
   inputGroup: {
     gap: spacing.xs,

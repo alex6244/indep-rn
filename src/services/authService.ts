@@ -1,5 +1,5 @@
 import { ApiError, api, tokenStorage, refreshTokenStorage } from "./api";
-import type { User } from "../types/user";
+import type { User, UserRole } from "../types/user";
 import {
   type AuthCredentials,
   type AuthError,
@@ -68,6 +68,54 @@ function getRefreshToken(response: unknown): string | null {
   return pickRefreshToken(response);
 }
 
+function pickRoleField(u: Record<string, unknown>): unknown {
+  if (u.role !== undefined) return u.role;
+  if (u.user_role !== undefined) return u.user_role;
+  if (u.userRole !== undefined) return u.userRole;
+  if (Array.isArray(u.roles) && u.roles.length > 0) return u.roles[0];
+  return undefined;
+}
+
+/** Normalizes API role strings (case, nested objects, legacy aliases). */
+export function normalizeUserRole(value: unknown): UserRole {
+  if (value === null || value === undefined) return "client";
+  if (Array.isArray(value) && value.length > 0) {
+    return normalizeUserRole(value[0]);
+  }
+  if (typeof value === "object") {
+    const o = value as Record<string, unknown>;
+    for (const key of ["slug", "name", "code", "value", "type"] as const) {
+      if (typeof o[key] === "string") return normalizeUserRole(o[key]);
+    }
+    return "client";
+  }
+  if (typeof value !== "string") return "client";
+  const r = value.trim().toLowerCase();
+  if (
+    r === "picker" ||
+    r === "pickers" ||
+    r === "autopicker" ||
+    r === "car_picker" ||
+    r === "selector" ||
+    r === "подборщик"
+  ) {
+    return "picker";
+  }
+  return "client";
+}
+
+function applyRegistrationRoleFromPayload(
+  user: User,
+  payload: ConfirmVerificationPayload,
+): User {
+  if (!payload.role) return user;
+  const intended = normalizeUserRole(payload.role);
+  if (intended === "picker" && user.role !== "picker") {
+    return { ...user, role: "picker" };
+  }
+  return user;
+}
+
 /** Maps backend user shapes (numeric id, no `login`) into app `User`. */
 export function mapApiUserToDomain(raw: unknown): User | null {
   if (!raw || typeof raw !== "object") return null;
@@ -81,7 +129,7 @@ export function mapApiUserToDomain(raw: unknown): User | null {
         ? String(u.id)
         : "";
   if (!id || !email) return null;
-  const role: User["role"] = u.role === "picker" ? "picker" : "client";
+  const role = normalizeUserRole(pickRoleField(u));
   const login =
     typeof u.login === "string" && u.login.trim()
       ? u.login.trim()
@@ -188,7 +236,8 @@ export const authService = {
       const refreshToken = getRefreshToken(res);
       if (refreshToken) await refreshTokenStorage.set(refreshToken);
       const userFromPayload = extractUserFromAuthPayload(res);
-      return userFromPayload ?? (await authService.me());
+      const user = userFromPayload ?? (await authService.me());
+      return applyRegistrationRoleFromPayload(user, payload);
     } catch (error) {
       throw mapAuthError(error);
     }

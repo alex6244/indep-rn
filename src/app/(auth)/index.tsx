@@ -60,7 +60,7 @@ export default function LoginScreen() {
 
     setLoading(true);
     try {
-      const result = await requestVerification({ email: normalizedEmail, role: "client" });
+      const result = await requestVerification({ email: normalizedEmail });
       if (result.success) {
         setStep("confirm");
         setResendSeconds(60);

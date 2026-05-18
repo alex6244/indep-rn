@@ -1,4 +1,4 @@
-import { authService } from "../authService";
+import { authService, mapApiUserToDomain, normalizeUserRole } from "../authService";
 import { getDefaultAuthErrorMessage } from "../authTypes";
 
 jest.mock("../api", () => {
@@ -305,6 +305,38 @@ describe("authService contract", () => {
     expect(tokenStorage.set).toHaveBeenCalledWith("snake-access");
     expect(refreshTokenStorage.set).toHaveBeenCalledWith("snake-refresh");
     expect(api.get).not.toHaveBeenCalled();
+  });
+
+  it("normalizeUserRole maps case and aliases to picker", () => {
+    expect(normalizeUserRole("Picker")).toBe("picker");
+    expect(normalizeUserRole("PICKER")).toBe("picker");
+    expect(mapApiUserToDomain({ id: 1, email: "a@b.c", role: "Picker" })?.role).toBe(
+      "picker",
+    );
+  });
+
+  it("confirmVerification applies picker role from payload when API user is client", async () => {
+    api.post.mockResolvedValue({
+      api_token: "picker-token",
+      user: {
+        id: 9,
+        email: "picker@test.com",
+        name: "Picker User",
+        role: "client",
+      },
+    });
+
+    await expect(
+      authService.confirmVerification({
+        email: "picker@test.com",
+        code: "123456",
+        role: "picker",
+      }),
+    ).resolves.toMatchObject({
+      id: "9",
+      email: "picker@test.com",
+      role: "picker",
+    });
   });
 
   it("confirmVerification normalizes Laravel user (numeric id, api_token)", async () => {
