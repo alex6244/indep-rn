@@ -6,6 +6,7 @@ import CooperationIcon from "../../assets/icons/burger/ads.svg";
 import FavIcon from "../../assets/icons/burger/favourites.svg";
 import LogoutIcon from "../../assets/icons/burger/logout.svg";
 import SelectionIcon from "../../assets/icons/burger/selection.svg";
+import AutoCreditIcon from "../../assets/mainpage/services/2.svg";
 import type { BurgerMenuItem } from "../ui/BurgerMenu";
 import { colors } from "../theme/colors";
 
@@ -22,6 +23,12 @@ export function getMainBurgerMenuItems(): BurgerMenuItem[] {
       label: "Подбор авто",
       href: "/selection" as Href,
       Icon: SelectionIcon,
+    },
+    {
+      key: "auto-credit",
+      label: "Автокредит",
+      href: "/auto-credit" as Href,
+      Icon: AutoCreditIcon,
     },
     {
       key: "coop",
