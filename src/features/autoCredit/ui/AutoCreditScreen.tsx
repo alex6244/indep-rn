@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BackCaretIcon from "../../../assets/icons/backCaret.svg";
 import { cars as mockCars } from "../../../data/cars";
 import { colors } from "../../../shared/theme/colors";
+import { acText } from "./autoCredit.styles";
 import { radius } from "../../../shared/theme/radius";
 import { spacing } from "../../../shared/theme/spacing";
 import { AppCard } from "../../../shared/ui/AppCard";
@@ -233,11 +234,13 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   backLabel: {
+    ...acText,
     fontSize: 16,
     fontWeight: "600",
     color: colors.brand.primary,
   },
   pageTitle: {
+    ...acText,
     fontSize: 26,
     lineHeight: 30,
     fontWeight: "700",
@@ -245,6 +248,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   sectionLabel: {
+    ...acText,
     fontSize: 16,
     fontWeight: "700",
     color: colors.text.primary,
@@ -254,6 +258,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
   },
   sectionValue: {
+    ...acText,
     fontSize: 18,
     fontWeight: "600",
     color: colors.text.primary,
@@ -273,16 +278,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   carPickerTitle: {
+    ...acText,
     fontSize: 16,
     fontWeight: "700",
     color: colors.text.primary,
     marginBottom: 4,
   },
   carPickerSubtitle: {
+    ...acText,
     fontSize: 13,
     color: colors.text.secondary,
   },
   carPickerAction: {
+    ...acText,
     fontSize: 14,
     fontWeight: "600",
     color: colors.brand.primary,
@@ -296,6 +304,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   whyTitle: {
+    ...acText,
     fontSize: 22,
     fontWeight: "700",
     color: colors.text.primary,
@@ -305,17 +314,20 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   whyCardTitle: {
+    ...acText,
     fontSize: 15,
     fontWeight: "700",
     color: colors.text.primary,
     marginBottom: spacing.sm,
   },
   whyCardText: {
+    ...acText,
     fontSize: 14,
     lineHeight: 20,
     color: colors.text.secondary,
   },
   disclaimer: {
+    ...acText,
     fontSize: 12,
     lineHeight: 17,
     color: colors.text.muted,

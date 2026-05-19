@@ -1,6 +1,7 @@
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { colors } from "../../../shared/theme/colors";
+import { acText } from "./autoCredit.styles";
 import { radius } from "../../../shared/theme/radius";
 import { spacing } from "../../../shared/theme/spacing";
 import type { AutoCreditBank } from "./autoCredit.content";
@@ -45,6 +46,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.sm,
   },
   fallbackLabel: {
+    ...acText,
     fontSize: 12,
     fontWeight: "700",
     color: colors.text.secondary,

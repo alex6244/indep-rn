@@ -1,6 +1,7 @@
 import React from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { colors } from "../../../shared/theme/colors";
+import { acText } from "./autoCredit.styles";
 import { radius } from "../../../shared/theme/radius";
 import { spacing } from "../../../shared/theme/spacing";
 
@@ -59,6 +60,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.brand.primary,
   },
   chipText: {
+    ...acText,
     fontSize: 14,
     fontWeight: "600",
     color: colors.text.primary,

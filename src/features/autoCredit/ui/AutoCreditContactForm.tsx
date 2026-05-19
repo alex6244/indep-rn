@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { AppButton } from "../../../shared/ui/AppButton";
 import { colors } from "../../../shared/theme/colors";
+import { acText } from "./autoCredit.styles";
 import { radius } from "../../../shared/theme/radius";
 import { spacing } from "../../../shared/theme/spacing";
 
@@ -155,17 +156,20 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   blockTitle: {
+    ...acText,
     fontSize: 18,
     fontWeight: "700",
     color: colors.text.primary,
     marginBottom: spacing.md,
   },
   label: {
+    ...acText,
     fontSize: 14,
     color: colors.text.secondary,
     marginBottom: spacing.sm,
   },
   input: {
+    ...acText,
     backgroundColor: colors.control.inputBg,
     borderRadius: radius.md,
     paddingHorizontal: 14,
@@ -179,6 +183,7 @@ const styles = StyleSheet.create({
     borderColor: colors.brand.primary,
   },
   errorText: {
+    ...acText,
     color: colors.brand.primary,
     fontSize: 13,
     marginBottom: spacing.sm,
@@ -205,12 +210,14 @@ const styles = StyleSheet.create({
     borderColor: colors.brand.primary,
   },
   checkmark: {
+    ...acText,
     color: colors.text.inverse,
     fontSize: 14,
     fontWeight: "700",
     lineHeight: 16,
   },
   consentText: {
+    ...acText,
     flex: 1,
     fontSize: 14,
     lineHeight: 20,
@@ -220,12 +227,14 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   successTitle: {
+    ...acText,
     fontSize: 18,
     fontWeight: "700",
     color: colors.text.primary,
     marginBottom: spacing.sm,
   },
   successText: {
+    ...acText,
     fontSize: 15,
     lineHeight: 21,
     color: colors.text.secondary,

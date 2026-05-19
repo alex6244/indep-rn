@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { AppCard } from "../../../shared/ui/AppCard";
 import { colors } from "../../../shared/theme/colors";
+import { acText } from "./autoCredit.styles";
 import { radius } from "../../../shared/theme/radius";
 import { spacing } from "../../../shared/theme/spacing";
 import {
@@ -166,6 +167,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   lightboxCloseText: {
+    ...acText,
     color: "#fff",
     fontSize: 16,
     fontWeight: "700",
@@ -180,6 +182,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   lightboxCounterText: {
+    ...acText,
     color: "#fff",
     fontSize: 14,
     fontWeight: "600",
@@ -206,6 +209,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   photoBadgeText: {
+    ...acText,
     color: colors.text.inverse,
     fontSize: 12,
     fontWeight: "600",
@@ -214,6 +218,7 @@ const styles = StyleSheet.create({
     padding: spacing.md,
   },
   creditFrom: {
+    ...acText,
     fontSize: 15,
     fontWeight: "700",
     color: colors.brand.primary,
@@ -226,11 +231,13 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   price: {
+    ...acText,
     fontSize: 22,
     fontWeight: "700",
     color: colors.text.primary,
   },
   oldPrice: {
+    ...acText,
     fontSize: 15,
     color: colors.text.muted,
     textDecorationLine: "line-through",
@@ -248,21 +255,25 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   metricLabel: {
+    ...acText,
     fontSize: 12,
     color: colors.text.secondary,
     marginBottom: 4,
   },
   metricValue: {
+    ...acText,
     fontSize: 15,
     fontWeight: "600",
     color: colors.text.primary,
   },
   metricValueAccent: {
+    ...acText,
     fontSize: 17,
     fontWeight: "700",
     color: colors.text.primary,
   },
   ptsTitle: {
+    ...acText,
     fontSize: 16,
     fontWeight: "700",
     color: colors.text.primary,
@@ -277,11 +288,13 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   ptsLabel: {
+    ...acText,
     fontSize: 14,
     color: colors.text.secondary,
     flex: 1,
   },
   ptsValue: {
+    ...acText,
     fontSize: 14,
     fontWeight: "600",
     color: colors.text.primary,
