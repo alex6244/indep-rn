@@ -7,9 +7,15 @@ type Props = {
   reports: Report[];
   onOpenReport: (id: string) => void;
   onPdfUnavailable?: () => void;
+  showPdfDownload?: boolean;
 };
 
-export function ReportsList({ reports, onOpenReport, onPdfUnavailable }: Props) {
+export function ReportsList({
+  reports,
+  onOpenReport,
+  onPdfUnavailable,
+  showPdfDownload = true,
+}: Props) {
   return (
     <View>
       {reports.map((r) => (
@@ -17,6 +23,7 @@ export function ReportsList({ reports, onOpenReport, onPdfUnavailable }: Props) 
           key={r.id}
           report={r}
           onOpen={() => onOpenReport(r.id)}
+          showPdfDownload={showPdfDownload}
           onDownloadPdf={() => {
             onPdfUnavailable?.();
           }}

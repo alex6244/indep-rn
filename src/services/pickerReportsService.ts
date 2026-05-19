@@ -1,8 +1,12 @@
-import { api } from "./api";
+import { api, classifyApiError } from "./api";
 import type { DraftReport } from "../types/draftReport";
+import type { Report } from "../types/report";
 import type { SubmittedReport } from "../types/submittedReport";
+import { mapApiReportToReport } from "./clientReportsService";
+import { mapSubmittedReportToReport } from "./mapSubmittedReportToReport";
 import { getReportsSource, mapReportsApiError } from "./reportServiceShared";
 import { AppError } from "../shared/errors/appError";
+import { apiReportSchema, apiReportsListSchema } from "./schemas/reportSchemas";
 
 type ApiSubmittedReport = {
   id: string;
@@ -25,6 +29,40 @@ function mapReportServiceError(error: unknown): string {
     notFound: "Отчёт не найден.",
     fallback: "Не удалось выполнить операцию с отчётом. Попробуйте ещё раз.",
   });
+}
+
+function mapPickerReportsListError(error: unknown): string {
+  return mapReportsApiError(error, {
+    notFound: "Отчёты не найдены.",
+    fallback: "Не удалось загрузить отчёты. Попробуйте ещё раз.",
+  });
+}
+
+function mapPickerReportsErrorKind(error: unknown): AppError["kind"] {
+  const code = classifyApiError(error);
+  if (code === "network" || code === "timeout" || code === "aborted") return "network";
+  if (code === "unauthorized") return "unauthorized";
+  if (code === "not_found") return "not_found";
+  if (code === "server_error") return "server";
+  return "unknown";
+}
+
+function isSubmittedReportShape(item: unknown): item is ApiSubmittedReport {
+  if (!item || typeof item !== "object") return false;
+  const o = item as Record<string, unknown>;
+  return typeof o.id === "string" && o.data !== null && typeof o.data === "object";
+}
+
+function mapResponseItemToReport(item: unknown): Report | null {
+  if (!item || typeof item !== "object") return null;
+  const parsedReport = apiReportSchema.safeParse(item);
+  if (parsedReport.success) {
+    return mapApiReportToReport(parsedReport.data);
+  }
+  if (isSubmittedReportShape(item)) {
+    return mapSubmittedReportToReport(mapApiSubmittedReportToDomainSubmittedReport(item));
+  }
+  return null;
 }
 
 const mockSubmittedReports: SubmittedReport[] = [
@@ -132,14 +170,74 @@ async function getMySubmittedReportsImpl(): Promise<SubmittedReport[]> {
   }
 
   try {
-    const response = await api.get<ApiSubmittedReport[]>("/reports/my");
-    return response.map(mapApiSubmittedReportToDomainSubmittedReport);
+    const response = await api.get<unknown>("/reports/my");
+    if (!Array.isArray(response)) return [];
+    return response.filter(isSubmittedReportShape).map(mapApiSubmittedReportToDomainSubmittedReport);
   } catch (error) {
     throw new AppError({
-      kind: "unknown",
+      kind: mapPickerReportsErrorKind(error),
+      message: mapPickerReportsListError(error),
+      cause: error,
+      context: { service: "pickerReportsService", action: "getMySubmittedReports" },
+    });
+  }
+}
+
+async function getMyReportsForDisplayImpl(): Promise<Report[]> {
+  if (getReportsSource() === "mock") {
+    return mockSubmittedReports.map(mapSubmittedReportToReport);
+  }
+
+  try {
+    const response = await api.get<unknown>("/reports/my");
+    const parsedList = apiReportsListSchema.safeParse(response);
+    if (parsedList.success) {
+      return parsedList.data.map(mapApiReportToReport);
+    }
+    if (!Array.isArray(response)) return [];
+    return response
+      .map(mapResponseItemToReport)
+      .filter((report): report is Report => report !== null);
+  } catch (error) {
+    if (error instanceof AppError) throw error;
+    throw new AppError({
+      kind: mapPickerReportsErrorKind(error),
+      message: mapPickerReportsListError(error),
+      cause: error,
+      context: { service: "pickerReportsService", action: "getMyReportsForDisplay" },
+    });
+  }
+}
+
+async function getReportForDisplayByIdImpl(id: string, signal?: AbortSignal): Promise<Report> {
+  if (getReportsSource() === "mock") {
+    const submitted = mockSubmittedReports.find((item) => item.id === id);
+    if (!submitted) {
+      throw new AppError({
+        kind: "not_found",
+        message: "Отчёт не найден.",
+        context: { id, service: "pickerReportsService", action: "getReportForDisplayById" },
+      });
+    }
+    return mapSubmittedReportToReport(submitted);
+  }
+
+  try {
+    const response = await api.get<unknown>(`/reports/${id}`, { signal });
+    const mapped = mapResponseItemToReport(response);
+    if (mapped) return mapped;
+    throw new AppError({
+      kind: "not_found",
+      message: "Отчёт не найден.",
+      context: { id, service: "pickerReportsService", action: "getReportForDisplayById" },
+    });
+  } catch (error) {
+    if (error instanceof AppError) throw error;
+    throw new AppError({
+      kind: mapPickerReportsErrorKind(error),
       message: mapReportServiceError(error),
       cause: error,
-      context: { service: "reportService", action: "getMy" },
+      context: { id, service: "pickerReportsService", action: "getReportForDisplayById" },
     });
   }
 }
@@ -149,6 +247,8 @@ export const pickerReportsService = {
   submit: submitImpl,
   getSubmittedReportById: getSubmittedByIdImpl,
   getMySubmittedReports: getMySubmittedReportsImpl,
+  getMyReportsForDisplay: getMyReportsForDisplayImpl,
+  getReportForDisplayById: getReportForDisplayByIdImpl,
 
   /** @deprecated Use getSubmittedReportById for clearer submitted-report intent. */
   getSubmittedById: getSubmittedByIdImpl,

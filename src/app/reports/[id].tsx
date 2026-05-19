@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useLocalSearchParams, useRouter, type Href } from "expo-router";
 import type { Report } from "../../types/report";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useAuth } from "../../contexts/AuthContext";
 import { ReportsBreadcrumb } from "../../widgets/reports/ReportsBreadcrumb";
 import { ReportDetailsActions } from "../../widgets/reports/ReportDetailsActions";
 import { ReportCarousel } from "../../widgets/reports/ReportCarousel";
@@ -17,11 +18,14 @@ import { CostEstimationCard } from "../../widgets/reports/CostEstimationCard";
 import { ScreenStateError } from "../../shared/ui/ScreenStateError";
 import { ScreenStateLoading } from "../../shared/ui/ScreenStateLoading";
 import { clientReportsService } from "../../services/clientReportsService";
+import { pickerReportsService } from "../../services/pickerReportsService";
 import { colors } from "../../shared/theme/colors";
 import { spacing } from "../../shared/theme/spacing";
 
 export default function ReportDetailsRoute() {
   const router = useRouter();
+  const { user } = useAuth();
+  const isPicker = user?.role === "picker";
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const insets = useSafeAreaInsets();
   const rawId = params.id;
@@ -30,29 +34,37 @@ export default function ReportDetailsRoute() {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
-  const loadReport = React.useCallback(async (signal: AbortSignal): Promise<void> => {
-    if (!id) {
-      setReport(null);
-      setError("Отчёт не найден.");
-      setLoading(false);
-      return;
-    }
+  const listBreadcrumb = isPicker ? "Мои отчёты" : "Купленные отчёты";
 
-    setLoading(true);
-    setError(null);
-    try {
-      const nextReport = await clientReportsService.getPurchasedReportById(id, signal);
-      if (signal.aborted) return;
-      setReport(nextReport);
-    } catch (e) {
-      if (signal.aborted) return;
-      const message = e instanceof Error ? e.message : "Не удалось загрузить отчёт. Попробуйте ещё раз.";
-      setError(message);
-      setReport(null);
-    } finally {
-      if (!signal.aborted) setLoading(false);
-    }
-  }, [id]);
+  const loadReport = React.useCallback(
+    async (signal: AbortSignal): Promise<void> => {
+      if (!id) {
+        setReport(null);
+        setError("Отчёт не найден.");
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+      try {
+        const nextReport = isPicker
+          ? await pickerReportsService.getReportForDisplayById(id, signal)
+          : await clientReportsService.getPurchasedReportById(id, signal);
+        if (signal.aborted) return;
+        setReport(nextReport);
+      } catch (e) {
+        if (signal.aborted) return;
+        const message =
+          e instanceof Error ? e.message : "Не удалось загрузить отчёт. Попробуйте ещё раз.";
+        setError(message);
+        setReport(null);
+      } finally {
+        if (!signal.aborted) setLoading(false);
+      }
+    },
+    [id, isPicker],
+  );
 
   React.useEffect(() => {
     const controller = new AbortController();
@@ -93,7 +105,7 @@ export default function ReportDetailsRoute() {
     return (
       <View style={styles.screen}>
         <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 16 }]}>
-          <ReportsBreadcrumb active="Купленные отчёты" />
+          <ReportsBreadcrumb active={listBreadcrumb} />
           <Text style={styles.notFoundTitle}>Отчёт не найден</Text>
           <Text style={styles.notFoundText}>
             Возможно, ссылка устарела или отчёт ещё не доступен.
@@ -135,7 +147,11 @@ export default function ReportDetailsRoute() {
         <PenaltiesCard report={report} />
         <CostEstimationCard report={report} />
 
-        <ReportDetailsActions reportId={report.id} report={report} />
+        <ReportDetailsActions
+          reportId={report.id}
+          report={report}
+          showPdfDownload={!isPicker}
+        />
       </ScrollView>
     </View>
   );
@@ -177,4 +193,3 @@ const styles = StyleSheet.create({
     color: colors.brand.primary,
   },
 });
-

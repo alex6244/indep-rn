@@ -23,9 +23,15 @@ type Props = {
   report: ClientReport;
   onOpen: () => void;
   onDownloadPdf: () => void;
+  showPdfDownload?: boolean;
 };
 
-export function ClientReportCard({ report, onOpen, onDownloadPdf }: Props) {
+export function ClientReportCard({
+  report,
+  onOpen,
+  onDownloadPdf,
+  showPdfDownload = true,
+}: Props) {
   return (
     <View style={styles.card}>
       <Image source={report.imageUrl} style={styles.image} />
@@ -42,9 +48,11 @@ export function ClientReportCard({ report, onOpen, onDownloadPdf }: Props) {
         </TouchableOpacity>
         <View style={styles.footerRow}>
           <Text style={styles.city}>{report.city}</Text>
-          <TouchableOpacity onPress={onDownloadPdf}>
-            <Text style={styles.pdfLink}>Скачать отчёт PDF</Text>
-          </TouchableOpacity>
+          {showPdfDownload ? (
+            <TouchableOpacity onPress={onDownloadPdf}>
+              <Text style={styles.pdfLink}>Скачать отчёт PDF</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
       </View>
     </View>

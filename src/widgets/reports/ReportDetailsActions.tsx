@@ -9,9 +9,14 @@ import { downloadReportPdf } from "../../services/reportPdfService";
 type Props = {
   reportId: string;
   report?: Report;
+  showPdfDownload?: boolean;
 };
 
-export function ReportDetailsActions({ reportId: _reportId, report }: Props) {
+export function ReportDetailsActions({
+  reportId: _reportId,
+  report,
+  showPdfDownload = true,
+}: Props) {
   const [notice, setNotice] = React.useState<string | null>(null);
   const [pdfLoading, setPdfLoading] = React.useState(false);
 
@@ -30,6 +35,10 @@ export function ReportDetailsActions({ reportId: _reportId, report }: Props) {
       setPdfLoading(false);
     }
   };
+
+  if (!showPdfDownload) {
+    return null;
+  }
 
   return (
     <View style={styles.wrap}>

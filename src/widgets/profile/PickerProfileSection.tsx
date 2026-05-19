@@ -1,8 +1,7 @@
 import { type Href, useRouter } from "expo-router";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Image } from "expo-image";
 import { getMainBurgerMenuItems } from "../../shared/config/mainBurgerMenu";
 import { BurgerMenu } from "../../shared/ui/BurgerMenu";
 import { BalanceModal } from "./BalanceModal";
@@ -17,6 +16,12 @@ import { useProfileEditFlow } from "./useProfileEditFlow";
 import { scrollBottomPaddingBelowTabBar } from "../../shared/navigation/tabBarMetrics";
 import { styles } from "./profile.styles";
 import { InlineMessage } from "../../shared/ui/InlineMessage";
+import { ScreenStateError } from "../../shared/ui/ScreenStateError";
+import { ScreenStateLoading } from "../../shared/ui/ScreenStateLoading";
+import { ClientReportCard } from "./ClientReportCard";
+import { PickerReportsEmptyState } from "./PickerReportsEmptyState";
+import { pickerReportsService } from "../../services/pickerReportsService";
+import type { Report } from "../../types/report";
 
 type Props = {
   initials: string;
@@ -31,20 +36,44 @@ export function PickerProfileSection({ initials, name, phone, onLogout }: Props)
   const [menuOpen, setMenuOpen] = useState(false);
   const [balanceModalOpen, setBalanceModalOpen] = useState(false);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
+  const [reports, setReports] = useState<Report[]>([]);
+  const [reportsLoading, setReportsLoading] = useState(true);
+  const [reportsError, setReportsError] = useState<string | null>(null);
   const editFlow = useProfileEditFlow(onLogout, router);
-  const pickerReportId = "1";
 
   const stats = useMemo(
     () => ({
-      published: 120,
+      published: reports.length,
       balance: 2000,
       reportsAvailable: 4,
       reportsUsed: 6,
       reportsTotal: 10,
       expiresAt: "08.09.2027",
     }),
-    [],
+    [reports.length],
   );
+
+  const loadReports = useCallback(async () => {
+    setReportsLoading(true);
+    setReportsError(null);
+    try {
+      const next = await pickerReportsService.getMyReportsForDisplay();
+      setReports(next);
+    } catch (e) {
+      setReports([]);
+      setReportsError(e instanceof Error ? e.message : "Не удалось загрузить отчёты.");
+    } finally {
+      setReportsLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    void loadReports();
+  }, [loadReports]);
+
+  const openCreateReport = useCallback(() => {
+    router.push("/selection" as Href);
+  }, [router]);
 
   return (
     <View style={styles.pickerScreen}>
@@ -87,36 +116,37 @@ export function PickerProfileSection({ initials, name, phone, onLogout }: Props)
         />
 
         <Text style={styles.sectionTitle}>Мои отчёты</Text>
-        <View style={styles.reportCard}>
-          <View style={styles.reportImageWrap}>
-            <Image
-              source={require("../../assets/cars1.jpg")}
-              style={styles.reportImagePlaceholder}
-              contentFit="cover"
+
+        {reportsLoading ? (
+          <ScreenStateLoading message="Загружаем отчёты..." />
+        ) : reportsError ? (
+          <ScreenStateError
+            title="Не удалось загрузить отчёты"
+            message={reportsError}
+            onRetry={() => {
+              void loadReports();
+            }}
+          />
+        ) : reports.length === 0 ? (
+          <PickerReportsEmptyState onCreateReport={openCreateReport} />
+        ) : (
+          reports.map((r) => (
+            <ClientReportCard
+              key={r.id}
+              report={r}
+              showPdfDownload={false}
+              onOpen={() => router.push(`/reports/${r.id}` as Href)}
+              onDownloadPdf={() => undefined}
             />
-            <View style={styles.mileageBadge}>
-              <Text style={styles.mileageBadgeText}>200 000 км</Text>
-            </View>
-          </View>
-          <View style={styles.reportBody}>
-            <Text style={styles.reportPrice}>67 000 000 ₽</Text>
-            <Text style={styles.reportSub} numberOfLines={2}>
-              Mercedes‑Benz GLC AMG 43 AMG II (X254), 2024
-            </Text>
-            <TouchableOpacity
-              style={styles.openButton}
-              onPress={() => router.push(`/reports/${pickerReportId}` as Href)}
-            >
-              <Text style={styles.openButtonText}>Открыть</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+          ))
+        )}
       </ScrollView>
 
       <TouchableOpacity
         style={styles.fab}
-        onPress={() => router.push("/selection" as Href)}
+        onPress={openCreateReport}
         accessibilityRole="button"
+        accessibilityLabel="Создать отчёт"
       >
         <Text style={styles.fabPlus}>＋</Text>
       </TouchableOpacity>
