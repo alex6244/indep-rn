@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { RadioIcon } from "./internal/RadioIcon";
 import { colors } from "../../../shared/theme/colors";
+import { PR_TYPO } from "./pickerReport.styles";
 
 export type CommercialUsageState = {
   taxiPermission: boolean; // такси
@@ -81,18 +82,14 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: colors.text.primary,
+    ...PR_TYPO.sectionTitle,
     marginBottom: 12,
   },
   question: {
     marginBottom: 16,
   },
   questionLabel: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: colors.text.primary,
+    ...PR_TYPO.fieldLabel,
     marginBottom: 8,
   },
   radioRow: {
@@ -104,15 +101,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
   },
-  radioText: {
-    color: colors.text.tertiary,
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  radioTextActive: {
-    color: colors.brand.primary,
-    fontSize: 14,
-    fontWeight: "800",
-  },
+  radioText: PR_TYPO.radio,
+  radioTextActive: PR_TYPO.radioActive,
 });
 

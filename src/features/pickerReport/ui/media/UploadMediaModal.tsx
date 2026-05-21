@@ -9,7 +9,7 @@ import {
 } from "react-native";
 
 import CloseIcon from "../../../../assets/icons/close.svg";
-import { FONT_FAMILY } from "../../../../shared/theme/fonts";
+import { PR_TYPO } from "../pickerReport.styles";
 import { shadowStyle } from "../../../../shared/theme/shadow";
 import { colors } from "../../../../shared/theme/colors";
 
@@ -132,17 +132,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface.placeholder,
   },
   title: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: colors.text.primary,
+    ...PR_TYPO.sectionTitle,
     textAlign: "center",
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 13,
-    lineHeight: 18,
-    fontWeight: "600",
-    color: colors.text.tertiary,
+    ...PR_TYPO.confirmSubtitle,
     textAlign: "center",
     marginBottom: 14,
     paddingHorizontal: 4,
@@ -157,10 +152,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   primaryBtnText: {
-    color: colors.text.inverse,
-    fontSize: 14,
-    fontWeight: "700",
-    fontFamily: FONT_FAMILY.regular,
+    ...PR_TYPO.buttonSmall,
   },
   cameraBtn: {
     width: "100%",
@@ -174,10 +166,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   cameraBtnText: {
-    color: colors.brand.primary,
-    fontSize: 14,
-    fontWeight: "700",
-    fontFamily: FONT_FAMILY.regular,
+    ...PR_TYPO.link,
   },
   secondaryBtn: {
     width: "100%",
@@ -188,9 +177,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   secondaryBtnText: {
-    color: colors.text.primary,
-    fontSize: 14,
-    fontWeight: "600",
-    fontFamily: FONT_FAMILY.regular,
+    ...PR_TYPO.body,
   },
 });

@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import DropdownIcon from "../../../assets/icons/dropdown.svg";
 import { colors } from "../../../shared/theme/colors";
+import { PR_TYPO } from "./pickerReport.styles";
 
 export type PtsType = "original" | "nonOriginal";
 
@@ -147,7 +148,7 @@ export function PtsForm({ value, onChange }: Props) {
           />
           <Radio
             checked={value.ptsType === "nonOriginal"}
-            label="Неоригинал"
+            label="Дубликат"
             onPress={() => onChange({ ...value, ptsType: "nonOriginal" })}
           />
         </View>
@@ -181,39 +182,33 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: colors.text.primary,
+    ...PR_TYPO.sectionTitle,
     marginBottom: 12,
   },
   field: {
     marginBottom: 12,
   },
   label: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: colors.text.primary,
+    ...PR_TYPO.fieldLabel,
     marginBottom: 6,
   },
   input: {
+    ...PR_TYPO.input,
     height: 46,
     borderRadius: 10,
     backgroundColor: colors.surface.neutral,
     paddingHorizontal: 14,
-    color: colors.text.primary,
-    fontSize: 14,
   },
   dropdownWrap: {
     position: "relative",
   },
   dropdownInput: {
+    ...PR_TYPO.input,
     height: 46,
     borderRadius: 10,
     backgroundColor: colors.surface.neutral,
     paddingHorizontal: 14,
     paddingRight: 32,
-    color: colors.text.primary,
-    fontSize: 14,
   },
   dropdownIconWrap: {
     position: "absolute",
@@ -249,15 +244,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     backgroundColor: colors.brand.primary,
   },
-  radioLabel: {
-    fontSize: 14,
-    color: colors.text.tertiary,
-    fontWeight: "600",
-  },
-  radioLabelActive: {
-    fontSize: 14,
-    color: colors.brand.primary,
-    fontWeight: "700",
-  },
+  radioLabel: PR_TYPO.radio,
+  radioLabelActive: PR_TYPO.radioActive,
 });
 

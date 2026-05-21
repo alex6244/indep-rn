@@ -11,6 +11,7 @@ import type { CommercialUsageState } from "../CommercialUsageForm";
 import type { MediaUploadState } from "../MediaUploadCard";
 import type { PtsFormState } from "../PtsForm";
 import type { OwnerDraft } from "../OwnersForm";
+import { validateAllOwnersDates } from "../../../../shared/validation/formatDdMmYyyy";
 
 export function usePickerReportCreateController() {
   const router = useRouter();
@@ -116,6 +117,15 @@ export function usePickerReportCreateController() {
   }, []);
 
   const saveDraftAndContinue = useCallback(async () => {
+    const ownersDateError = validateAllOwnersDates(draftReport.owners);
+    if (ownersDateError) {
+      setNotice({
+        tone: "error",
+        message: ownersDateError.message,
+      });
+      return;
+    }
+
     try {
       await AsyncStorage.setItem(
         PICKER_REPORT_DRAFT_STORAGE_KEY,

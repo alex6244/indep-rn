@@ -35,7 +35,7 @@ export function ConfirmStatusSection({
 
   const pts = draftReport.pts;
   const ptsText =
-    (pts.ptsType === "original" ? "Оригинал" : "Неоригинал") +
+    (pts.ptsType === "original" ? "Оригинал" : "Дубликат") +
     (pts.hasElectronicPts ? " + электронный ПТС" : "");
 
   const commercial = draftReport.commercialUsage;

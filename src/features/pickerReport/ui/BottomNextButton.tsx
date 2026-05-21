@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { colors } from "../../../shared/theme/colors";
+import { PR_TYPO } from "./pickerReport.styles";
 
 type Props = {
   onPress: () => void;
@@ -35,10 +36,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingTop: 16,
   },
-  text: {
-    color: colors.text.inverse,
-    fontSize: 16,
-    fontWeight: "600",
-  },
+  text: PR_TYPO.button,
 });
 

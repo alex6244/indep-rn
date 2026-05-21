@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import type { Report } from "../../types/report";
 import { colors } from "../../shared/theme/colors";
+import { typography } from "../../shared/theme/typography";
 
 type Props = {
   report: Report;
@@ -69,8 +70,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   title: {
+    ...typography.title,
     fontSize: 16,
-    fontWeight: "900",
     color: colors.text.primary,
   },
   badge: {
@@ -79,13 +80,13 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   badgeText: {
+    ...typography.title,
     fontSize: 11,
-    fontWeight: "700",
+    fontWeight: "600",
   },
   emptyText: {
-    fontSize: 12,
+    ...typography.caption,
     color: colors.text.tertiary,
-    fontWeight: "600",
   },
   items: {
     gap: 14,
@@ -104,19 +105,19 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   amount: {
+    ...typography.title,
     color: colors.brand.primary,
     fontSize: 13,
-    fontWeight: "900",
+    fontWeight: "600",
   },
   date: {
+    ...typography.caption,
     color: colors.text.tertiary,
-    fontSize: 12,
-    fontWeight: "600",
   },
   desc: {
+    ...typography.caption,
     color: colors.text.primary,
-    fontSize: 12,
     lineHeight: 18,
-    fontWeight: "600",
+    fontWeight: "400",
   },
 });

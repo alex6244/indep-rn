@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import type { Report } from "../../types/report";
 import { colors } from "../../shared/theme/colors";
+import { typography } from "../../shared/theme/typography";
 
 type Props = {
   report: Report;
@@ -28,16 +29,15 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
+    ...typography.title,
     fontSize: 16,
-    fontWeight: "900",
     color: colors.text.primary,
     marginBottom: 10,
   },
   text: {
-    fontSize: 12,
+    ...typography.caption,
     color: colors.text.tertiary,
     lineHeight: 18,
-    fontWeight: "600",
   },
   rangeWrap: {
     marginTop: 12,
@@ -46,9 +46,10 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   range: {
+    ...typography.title,
     color: colors.text.primary,
     fontSize: 12,
-    fontWeight: "800",
+    fontWeight: "600",
   },
 });
 

@@ -1,6 +1,7 @@
 import { StyleSheet } from "react-native";
 import { shadowStyle } from "../../../../shared/theme/shadow";
 import { colors } from "../../../../shared/theme/colors";
+import { PR_TYPO } from "../pickerReport.styles";
 
 export const styles = StyleSheet.create({
   screen: {
@@ -20,18 +21,13 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
   title: {
-    fontSize: 22,
-    fontWeight: "900",
-    color: colors.text.primary,
+    ...PR_TYPO.confirmTitle,
     marginTop: 8,
     marginHorizontal: 16,
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 13,
-    color: colors.text.tertiary,
-    fontWeight: "600",
-    lineHeight: 18,
+    ...PR_TYPO.confirmSubtitle,
     marginHorizontal: 16,
     marginBottom: 14,
   },
@@ -43,9 +39,7 @@ export const styles = StyleSheet.create({
     padding: 16,
   },
   cardTitle: {
-    fontSize: 18,
-    fontWeight: "900",
-    color: colors.text.primary,
+    ...PR_TYPO.cardTitle,
     marginBottom: 12,
   },
   defectsTabs: {
@@ -64,14 +58,8 @@ export const styles = StyleSheet.create({
   defectsTabBtnActive: {
     backgroundColor: colors.brand.primary,
   },
-  defectsTabText: {
-    fontSize: 14,
-    fontWeight: "800",
-    color: colors.text.tertiary,
-  },
-  defectsTabTextActive: {
-    color: colors.text.inverse,
-  },
+  defectsTabText: PR_TYPO.tab,
+  defectsTabTextActive: PR_TYPO.tabActive,
   defectsPreview: {},
   schemePreview: {
     borderRadius: 14,
@@ -87,9 +75,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   photosPreviewText: {
-    fontSize: 12,
-    color: colors.text.tertiary,
-    fontWeight: "700",
+    ...PR_TYPO.caption,
     textAlign: "center",
   },
   checkList: {
@@ -100,10 +86,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
   },
-  checkText: {
-    fontSize: 14,
-    fontWeight: "700",
-  },
+  checkText: PR_TYPO.body,
   checkTextOk: {
     color: colors.text.primary,
   },
@@ -127,16 +110,13 @@ export const styles = StyleSheet.create({
     gap: 12,
   },
   ptsLabel: {
+    ...PR_TYPO.value,
     flex: 1,
-    color: colors.text.primary,
-    fontSize: 13,
-    fontWeight: "700",
+    fontWeight: "500",
   },
   ptsValue: {
+    ...PR_TYPO.value,
     flex: 1,
-    color: colors.text.primary,
-    fontSize: 13,
-    fontWeight: "800",
     textAlign: "right",
   },
   simpleRow: {
@@ -146,31 +126,21 @@ export const styles = StyleSheet.create({
     gap: 12,
   },
   simpleLabel: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: colors.text.subtle,
+    ...PR_TYPO.rowLabel,
     flex: 1,
   },
   simpleValue: {
-    fontSize: 14,
-    fontWeight: "800",
-    color: colors.text.primary,
+    ...PR_TYPO.rowValue,
     textAlign: "right",
   },
   ownerGroup: {
     marginBottom: 10,
   },
   ownerLabel: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: colors.text.primary,
+    ...PR_TYPO.fieldLabel,
     marginBottom: 6,
   },
-  ownerValue: {
-    fontSize: 13,
-    fontWeight: "800",
-    color: colors.text.tertiary,
-  },
+  ownerValue: PR_TYPO.valueMuted,
   cardHeaderRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -189,10 +159,7 @@ export const styles = StyleSheet.create({
   badgeBad: {
     backgroundColor: colors.status.warningBg,
   },
-  badgeText: {
-    fontSize: 11,
-    fontWeight: "800",
-  },
+  badgeText: PR_TYPO.badge,
   badgeTextOk: {
     color: colors.status.success,
   },
@@ -222,16 +189,8 @@ export const styles = StyleSheet.create({
   confirmBtn: {
     backgroundColor: colors.brand.primary,
   },
-  bottomBtnTextEdit: {
-    color: colors.text.inverse,
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  bottomBtnTextConfirm: {
-    color: colors.text.inverse,
-    fontSize: 16,
-    fontWeight: "700",
-  },
+  bottomBtnTextEdit: PR_TYPO.button,
+  bottomBtnTextConfirm: PR_TYPO.button,
   vinModalBackdrop: {
     flex: 1,
     backgroundColor: colors.overlay.backdrop,
@@ -243,7 +202,6 @@ export const styles = StyleSheet.create({
     borderRadius: 18,
     padding: 16,
     ...(shadowStyle({
-      // Shadow raw values are kept intentionally for platform-specific shadow rendering.
       boxShadow: "0px 10px 16px rgba(0,0,0,0.12)",
       shadowColor: colors.overlay.shadow,
       shadowOpacity: 0.12,
@@ -254,16 +212,11 @@ export const styles = StyleSheet.create({
     elevation: 6,
   },
   vinModalTitle: {
-    fontSize: 16,
-    fontWeight: "900",
-    color: colors.text.primary,
+    ...PR_TYPO.modalTitle,
     marginBottom: 10,
   },
   vinModalSubtitle: {
-    fontSize: 13,
-    lineHeight: 18,
-    color: colors.text.tertiary,
-    fontWeight: "700",
+    ...PR_TYPO.modalBody,
     marginBottom: 14,
   },
   vinModalButton: {
@@ -272,23 +225,16 @@ export const styles = StyleSheet.create({
     paddingVertical: 12,
     alignItems: "center",
   },
-  vinModalButtonText: {
-    color: colors.text.inverse,
-    fontWeight: "800",
-    fontSize: 14,
-  },
+  vinModalButtonText: PR_TYPO.buttonSmall,
   loadingScreen: {
     justifyContent: "center",
     alignItems: "center",
     gap: 12,
   },
-  loadingText: {
-    fontSize: 16,
-    color: colors.text.tertiary,
-  },
+  loadingText: PR_TYPO.bodyMuted,
   centerText: {
+    ...PR_TYPO.body,
     padding: 16,
     color: colors.text.tertiary,
-    fontWeight: "700",
   },
 });

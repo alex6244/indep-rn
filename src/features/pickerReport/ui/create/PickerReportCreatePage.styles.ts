@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { colors } from "../../../../shared/theme/colors";
+import { PR_TYPO } from "../pickerReport.styles";
 
 export const styles = StyleSheet.create({
   screen: {
@@ -24,15 +25,12 @@ export const styles = StyleSheet.create({
     padding: 16,
   },
   noticeTitle: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...PR_TYPO.sectionTitle,
     marginBottom: 10,
-    color: colors.text.primary,
     textAlign: "center",
   },
   noticeText: {
-    fontSize: 14,
-    color: colors.text.tertiary,
+    ...PR_TYPO.bodyMuted,
     textAlign: "center",
     lineHeight: 20,
     marginBottom: 20,
@@ -44,10 +42,6 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: "center",
   },
-  primaryBtnText: {
-    color: colors.text.inverse,
-    fontSize: 14,
-    fontWeight: "700",
-  },
+  primaryBtnText: PR_TYPO.buttonSmall,
 });
 

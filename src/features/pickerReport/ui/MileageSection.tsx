@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { colors } from "../../../shared/theme/colors";
+import { PR_TYPO } from "./pickerReport.styles";
 
 type Props = {
   value: string;
@@ -36,25 +37,20 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...PR_TYPO.sectionTitle,
     marginBottom: 12,
-    color: colors.text.primary,
   },
   field: {},
   label: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: colors.text.primary,
+    ...PR_TYPO.bodyMuted,
     marginBottom: 8,
   },
   input: {
+    ...PR_TYPO.input,
     height: 46,
     borderRadius: 10,
     backgroundColor: colors.surface.neutral,
     paddingHorizontal: 14,
-    color: colors.text.primary,
-    fontSize: 14,
   },
 });
 

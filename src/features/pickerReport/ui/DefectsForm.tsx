@@ -10,6 +10,7 @@ import {
 import SchemeSvg from "../../../assets/auto/scheme.svg";
 import OrangePlusIcon from "../../../assets/icons/orange-plus.svg";
 import { colors } from "../../../shared/theme/colors";
+import { PR_TYPO } from "./pickerReport.styles";
 
 export type DefectsMode = "scheme" | "photos";
 
@@ -136,9 +137,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: colors.text.primary,
+    ...PR_TYPO.sectionTitle,
     marginBottom: 12,
   },
   schemeWrap: {
@@ -160,9 +159,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   photosPlaceholderText: {
-    fontSize: 12,
-    color: colors.text.tertiary,
-    fontWeight: "700",
+    ...PR_TYPO.caption,
+    textAlign: "center",
   },
   divider: {
     height: 1,
@@ -176,9 +174,8 @@ const styles = StyleSheet.create({
     minHeight: 72,
   },
   descriptionInput: {
+    ...PR_TYPO.input,
     minHeight: 42,
-    fontSize: 14,
-    color: colors.text.primary,
   },
   addDamageBtn: {
     marginTop: 12,
@@ -191,11 +188,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 8,
   },
-  addDamageText: {
-    fontSize: 14,
-    color: colors.brand.primary,
-    fontWeight: "800",
-  },
+  addDamageText: PR_TYPO.link,
   tabsRow: {
     flexDirection: "row",
     gap: 10,
@@ -212,15 +205,8 @@ const styles = StyleSheet.create({
   tabBtnInactive: {
     backgroundColor: colors.surface.neutral,
   },
-  tabText: {
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  tabTextActive: {
-    color: colors.text.inverse,
-  },
-  tabTextInactive: {
-    color: colors.text.tertiary,
-  },
+  tabText: PR_TYPO.tab,
+  tabTextActive: PR_TYPO.tabActive,
+  tabTextInactive: PR_TYPO.tab,
 });
 

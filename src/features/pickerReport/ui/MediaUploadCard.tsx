@@ -6,7 +6,7 @@ import { Image } from "expo-image";
 import PhotosBg from "../../../assets/addCar/photosBG.svg";
 import AddPhotoIcon from "../../../assets/addCar/addPhoto.svg";
 import AddVideoIcon from "../../../assets/addCar/addVideo.svg";
-import { FONT_FAMILY } from "../../../shared/theme/fonts";
+import { PR_TYPO } from "./pickerReport.styles";
 import { colors } from "../../../shared/theme/colors";
 import { InlineMessage } from "../../../shared/ui/InlineMessage";
 import { UploadMediaModal } from "./media/UploadMediaModal";
@@ -225,10 +225,8 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   title: {
-    fontSize: 18,
-    fontWeight: "700",
+    ...PR_TYPO.sectionTitle,
     marginBottom: 12,
-    color: colors.text.primary,
   },
   rows: {},
   row: {
@@ -238,8 +236,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   rowLabel: {
-    fontSize: 14,
-    color: colors.text.primary,
+    ...PR_TYPO.body,
     width: 150,
   },
   rowRight: {
@@ -265,12 +262,7 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingHorizontal: 12,
   },
-  btnText: {
-    color: colors.text.inverse,
-    fontSize: 14,
-    fontWeight: "600",
-    fontFamily: FONT_FAMILY.regular,
-  },
+  btnText: PR_TYPO.buttonSmall,
   modalIconWrap: {
     width: 52,
     height: 52,

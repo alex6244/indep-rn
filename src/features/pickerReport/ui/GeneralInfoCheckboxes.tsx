@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import CheckIcon from "../../../assets/icons/badges/check.svg";
 import { colors } from "../../../shared/theme/colors";
+import { PR_TYPO } from "./pickerReport.styles";
 
 type Props = {
   value: Record<string, boolean>;
@@ -63,9 +64,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: colors.text.primary,
+    ...PR_TYPO.sectionTitle,
     marginBottom: 12,
   },
   row: {
@@ -85,8 +84,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface.primary,
   },
   label: {
-    fontSize: 14,
-    color: colors.text.primary,
+    ...PR_TYPO.body,
     flex: 1,
   },
 });
