@@ -11,7 +11,10 @@ import { scrollBottomPaddingBelowTabBar } from "../../../shared/navigation/tabBa
 import { getMainBurgerMenuItems, MainBurgerMenuFooter } from "../../../shared/config/mainBurgerMenu";
 import { BurgerMenu } from "../../../shared/ui/BurgerMenu";
 import { CatalogSortDropdown } from "./CatalogSortDropdown";
-import { CatalogFiltersOverlay } from "../../filters/ui/CatalogFiltersOverlay";
+import {
+  buildCatalogFiltersOverlayProps,
+  CatalogFiltersOverlay,
+} from "../../filters/ui/CatalogFiltersOverlay";
 import { catalogStyles as styles } from "./Catalog.styles";
 import { CatalogHeaderSection } from "./CatalogHeaderSection";
 import { CatalogContentSection } from "./CatalogContentSection";
@@ -203,49 +206,7 @@ export default function CatalogScreen() {
           <TouchableOpacity style={styles.filtersBackdrop} activeOpacity={1} onPress={closeFilters} />
           <Animated.View style={[styles.filtersPanel, { transform: [{ translateX: filtersX }] }]}>
             <CatalogFiltersOverlay
-              brandQuery={controller.brandQuery}
-              onChangeBrandQuery={controller.setBrandQuery}
-              modelQuery={controller.modelQuery}
-              onChangeModelQuery={controller.setModelQuery}
-              paymentType={controller.paymentType}
-              onChangePaymentType={controller.setPaymentType}
-              priceFromText={controller.priceFromText}
-              onChangePriceFromText={controller.setPriceFromText}
-              priceToText={controller.priceToText}
-              onChangePriceToText={controller.setPriceToText}
-              yearFromText={controller.yearFromText}
-              onChangeYearFromText={controller.setYearFromText}
-              yearToText={controller.yearToText}
-              onChangeYearToText={controller.setYearToText}
-              mileageFromText={controller.mileageFromText}
-              onChangeMileageFromText={controller.setMileageFromText}
-              mileageToText={controller.mileageToText}
-              onChangeMileageToText={controller.setMileageToText}
-              bodyType={controller.bodyType}
-              onChangeBodyType={controller.setBodyType}
-              engineType={controller.engineType}
-              onChangeEngineType={controller.setEngineType}
-              transmissionType={controller.transmissionType}
-              onChangeTransmissionType={controller.setTransmissionType}
-              driveTypeFilter={controller.driveTypeFilter}
-              onChangeDriveTypeFilter={controller.setDriveTypeFilter}
-              powerFromText={controller.powerFromText}
-              onChangePowerFromText={controller.setPowerFromText}
-              powerToText={controller.powerToText}
-              onChangePowerToText={controller.setPowerToText}
-              hasDiscount={controller.hasDiscount}
-              onToggleHasDiscount={() => controller.setHasDiscount((v) => !v)}
-              vatReturn={controller.vatReturn}
-              onToggleVatReturn={() => controller.setVatReturn((v) => !v)}
-              weeklyOffer={controller.weeklyOffer}
-              onToggleWeeklyOffer={() => controller.setWeeklyOffer((v) => !v)}
-              features={controller.features}
-              onToggleFeature={controller.toggleFeature}
-              filteredCount={controller.filteredCars.length}
-              error={controller.error}
-              onReset={controller.resetFilters}
-              onApply={controller.applyFilters}
-              onClose={closeFilters}
+              {...buildCatalogFiltersOverlayProps(controller, closeFilters)}
             />
           </Animated.View>
         </View>
