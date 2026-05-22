@@ -20,7 +20,6 @@
     "start:api": "npm run start:catalog:api",
     "start:tunnel:mock": "npm run start:tunnel:catalog:mock",
     "start:tunnel:api": "npm run start:tunnel:catalog:api",
-    "reset-project": "node ./scripts/reset-project.js",
     "run:android": "expo run:android",
     "run:ios": "expo run:ios",
     "android": "npm run run:android",

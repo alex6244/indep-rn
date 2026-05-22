@@ -27,16 +27,6 @@ You can start developing by editing the files inside `src/app`. This project use
 
 For navigation details (Expo Router groups and start route) see `ROUTING.md`.
 
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory.
-
 ## Learn more
 
 To learn more about developing your project with Expo, look at the following resources:

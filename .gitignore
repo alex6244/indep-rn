@@ -43,3 +43,11 @@ app-example
 /android
 
 .env
+
+# IDE / accidental files
+.idea/
+npx
+main.git
+figma_*.json
+figma_nav.svg
+figma_nav_nodes.json
