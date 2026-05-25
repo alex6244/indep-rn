@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
+import { type Href, useRouter } from "expo-router";
 import FavIcon from "../../assets/icons/favourite.svg";
 import { colors } from "../../shared/theme/colors";
 import { radius } from "../../shared/theme/radius";
@@ -29,7 +29,11 @@ const offers = [
   },
 ];
 
-export function BestOffersSection() {
+type Props = {
+  onBuyReport?: () => void;
+};
+
+export function BestOffersSection({ onBuyReport }: Props) {
   const router = useRouter();
 
   return (
@@ -47,7 +51,7 @@ export function BestOffersSection() {
                 <AppButton
                   label="Купить отчёт"
                   style={styles.buyButton}
-                  onPress={() => router.push("/reports")}
+                  onPress={onBuyReport ?? (() => router.push("/reports" as Href))}
                 />
                 <TouchableOpacity style={styles.favButton}>
                   <FavIcon width={18} height={18} />

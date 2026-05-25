@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { type Href, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Animated, Dimensions, TouchableOpacity, View } from "react-native";
 import type { View as RNView } from "react-native";
@@ -19,6 +19,8 @@ import { catalogStyles as styles } from "./Catalog.styles";
 import { CatalogHeaderSection } from "./CatalogHeaderSection";
 import { CatalogContentSection } from "./CatalogContentSection";
 import { CatalogCallbackRequestModal } from "./CatalogCallbackRequestModal";
+import { ReportsPackageSelectModal } from "../../../widgets/reports/ReportsPackageSelectModal";
+import { useReportsPackagePurchaseModal } from "../../../widgets/reports/useReportsPackagePurchaseModal";
 import { carService } from "../../../services/carService";
 import { createRequestVersionTracker } from "../../../shared/async/requestVersion";
 
@@ -47,6 +49,7 @@ export default function CatalogScreen() {
   const [sortAnchor, setSortAnchor] = useState<SortAnchor | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [callbackModalOpen, setCallbackModalOpen] = useState(false);
+  const reportsPackageModal = useReportsPackagePurchaseModal();
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
   const [dataError, setDataError] = useState<string | null>(null);
@@ -165,6 +168,12 @@ export default function CatalogScreen() {
   const handleCloseBurger = useCallback(() => {
     setMenuOpen(false);
   }, []);
+  const handleOpenCar = useCallback(
+    (carId: string) => {
+      router.push(`/auto/${carId}` as Href);
+    },
+    [router],
+  );
 
   return (
     <View style={styles.root}>
@@ -183,6 +192,9 @@ export default function CatalogScreen() {
         setFavorite={setFavorite}
         onRetry={handleRetry}
         onOpenCallbackRequest={handleOpenCallbackRequest}
+        onBuyReport={reportsPackageModal.open}
+        onPressCar={handleOpenCar}
+        activeFiltersCount={controller.activeFiltersCount}
         favoritesError={favoritesError}
         sortButtonRef={sortButtonRef}
         toggleSort={toggleSort}
@@ -216,6 +228,11 @@ export default function CatalogScreen() {
         visible={callbackModalOpen}
         onClose={handleCloseCallbackModal}
         onSubmit={handleCallbackSubmit}
+      />
+
+      <ReportsPackageSelectModal
+        visible={reportsPackageModal.visible}
+        onClose={reportsPackageModal.close}
       />
 
       <BurgerMenu

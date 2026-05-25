@@ -1,4 +1,5 @@
-import React, { useMemo } from "react";
+import { BlurView } from "expo-blur";
+import React from "react";
 import {
   Modal,
   Pressable,
@@ -12,87 +13,74 @@ import CloseIcon from "../../assets/icons/close.svg";
 import { shadowStyle } from "../../shared/theme/shadow";
 import { colors } from "../../shared/theme/colors";
 import { spacing } from "../../shared/theme/spacing";
-
-type PackageOption = {
-  count: number;
-  priceRub: number;
-  durationText: string;
-};
+import { typography } from "../../shared/theme/typography";
+import {
+  formatReportsPackageCountLabel,
+  formatReportsPackagePrice,
+  REPORTS_PACKAGE_MODAL_TITLE,
+  REPORTS_PACKAGE_OPTIONS,
+} from "./reportsPackage.data";
 
 export type ReportsPackageSelectModalProps = {
   visible: boolean;
-  selectedCount: number;
-  onSelect: (count: number) => void;
   onClose: () => void;
 };
 
-const formatRub = (value: number) => `${new Intl.NumberFormat("ru-RU").format(value)} ₽`;
-
-export function ReportsPackageSelectModal({
-  visible,
-  selectedCount,
-  onSelect,
-  onClose,
-}: ReportsPackageSelectModalProps) {
-  const options: PackageOption[] = useMemo(
-    () => [
-      { count: 1, priceRub: 550, durationText: "действует 1 месяц" },
-      { count: 5, priceRub: 2000, durationText: "действует 1 месяц" },
-      { count: 10, priceRub: 4000, durationText: "действует 1 год" },
-    ],
-    [],
-  );
-
+export function ReportsPackageSelectModal({ visible, onClose }: ReportsPackageSelectModalProps) {
   return (
-    <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
-      <Pressable style={styles.backdrop} onPress={onClose} />
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      statusBarTranslucent
+      onRequestClose={onClose}
+    >
+      <View style={styles.root}>
+        <BlurView intensity={32} tint="dark" style={StyleSheet.absoluteFillObject} />
+        <Pressable style={styles.backdropTap} onPress={onClose} accessibilityLabel="Закрыть" />
 
-      <View style={styles.center}>
-        <View style={[styles.card, { pointerEvents: "box-none" }]}>
-          <TouchableOpacity
-            accessibilityRole="button"
-            accessibilityLabel="Закрыть"
-            style={styles.closeBtn}
-            onPress={onClose}
-          >
-            <CloseIcon width={12} height={12} />
-          </TouchableOpacity>
+        <View style={styles.center} pointerEvents="box-none">
+          <View style={styles.card}>
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel="Закрыть"
+              style={styles.closeBtn}
+              onPress={onClose}
+              hitSlop={12}
+            >
+              <CloseIcon width={12} height={12} />
+            </TouchableOpacity>
 
-          <View style={styles.list}>
-            {options.map((opt, idx) => {
-              const active = opt.count === selectedCount;
-              return (
-                <TouchableOpacity
-                  key={opt.count}
-                  style={[styles.row, idx !== options.length - 1 && styles.rowDivider]}
-                  activeOpacity={0.9}
-                  onPress={() => onSelect(opt.count)}
+            <Text style={styles.title}>{REPORTS_PACKAGE_MODAL_TITLE}</Text>
+            <Text style={styles.subtitle}>{REPORTS_PACKAGE_MODAL_TITLE}</Text>
+
+            <View style={styles.list}>
+              {REPORTS_PACKAGE_OPTIONS.map((option, index) => (
+                <View
+                  key={option.id}
+                  style={[styles.row, index < REPORTS_PACKAGE_OPTIONS.length - 1 && styles.rowDivider]}
                 >
-                  <View style={styles.left}>
-                    <Text style={[styles.countText, active && styles.countTextActive]}>
-                      {opt.count} отчет{opt.count === 1 ? "" : opt.count >= 2 && opt.count <= 4 ? "а" : "ов"}
+                  <View style={styles.rowText}>
+                    <Text style={styles.countText}>
+                      {formatReportsPackageCountLabel(option.count)}
                     </Text>
-                    <Text style={styles.durationText}>{opt.durationText}</Text>
+                    <Text style={styles.durationText}>{option.durationText}</Text>
                   </View>
 
-                  <View
-                    style={[
-                      styles.pricePill,
-                      active ? styles.pricePillActive : styles.pricePillInactive,
-                    ]}
+                  <TouchableOpacity
+                    style={styles.priceBtn}
+                    activeOpacity={0.85}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Купить пакет: ${formatReportsPackageCountLabel(option.count)}, ${formatReportsPackagePrice(option.priceRub)}`}
+                    onPress={() => {
+                      /* Оплата подключится с backend — пока только UI. */
+                    }}
                   >
-                    <Text
-                      style={[
-                        styles.priceText,
-                        active ? styles.priceTextActive : styles.priceTextInactive,
-                      ]}
-                    >
-                      {formatRub(opt.priceRub)}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
+                    <Text style={styles.priceBtnText}>{formatReportsPackagePrice(option.priceRub)}</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
           </View>
         </View>
       </View>
@@ -101,9 +89,11 @@ export function ReportsPackageSelectModal({
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
+  root: {
+    flex: 1,
+  },
+  backdropTap: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.overlay.backdrop,
   },
   center: {
     flex: 1,
@@ -113,87 +103,98 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface.primary,
     borderRadius: 20,
-    paddingTop: 18,
-    paddingBottom: 10,
-    paddingHorizontal: 18,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.sm,
+    paddingHorizontal: spacing.lg,
     overflow: "hidden",
     ...(shadowStyle({
-      // Shadow raw values are kept intentionally for platform-specific shadow rendering.
-      boxShadow: "0px 10px 18px rgba(0,0,0,0.12)",
+      boxShadow: "0px 10px 24px rgba(0,0,0,0.14)",
       shadowColor: colors.text.primary,
-      shadowOpacity: 0.12,
-      shadowRadius: 18,
+      shadowOpacity: 0.14,
+      shadowRadius: 20,
       shadowOffset: { width: 0, height: 10 },
-      elevation: 10,
+      elevation: 12,
     }) as object),
-    elevation: 10,
   },
   closeBtn: {
     position: "absolute",
     top: 12,
     right: 12,
-    width: 44,
-    minHeight: 44,
-    borderRadius: 14,
+    width: 36,
+    height: 36,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
     zIndex: 2,
     backgroundColor: colors.overlay.soft,
   },
+  title: {
+    ...typography.title,
+    fontSize: 17,
+    lineHeight: 22,
+    fontWeight: "700",
+    color: colors.text.primary,
+    textAlign: "center",
+    paddingHorizontal: spacing.xl,
+    marginBottom: spacing.sm,
+  },
+  subtitle: {
+    ...typography.textRegular,
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "500",
+    color: colors.text.muted,
+    textAlign: "center",
+    paddingHorizontal: spacing.md,
+    marginBottom: spacing.md,
+  },
   list: {
-    marginTop: 6,
+    marginTop: spacing.xs,
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 16,
-    paddingHorizontal: 6,
+    paddingVertical: spacing.md,
+    gap: spacing.md,
   },
   rowDivider: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.surface.placeholder,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border.subtle,
   },
-  left: {
+  rowText: {
     flex: 1,
-    paddingRight: 12,
+    minWidth: 0,
   },
   countText: {
+    ...typography.title,
     fontSize: 18,
+    lineHeight: 22,
     fontWeight: "700",
     color: colors.text.primary,
   },
-  countTextActive: {
-    color: colors.brand.primary,
-  },
   durationText: {
+    ...typography.textRegular,
     marginTop: 4,
     fontSize: 13,
-    fontWeight: "600",
-    color: colors.text.tertiary,
+    lineHeight: 17,
+    fontWeight: "500",
+    color: colors.text.muted,
   },
-  pricePill: {
-    width: 110,
-    borderRadius: 999,
+  priceBtn: {
+    minWidth: 108,
     paddingVertical: 14,
+    paddingHorizontal: spacing.md,
+    borderRadius: 14,
+    backgroundColor: colors.brand.primary,
     alignItems: "center",
     justifyContent: "center",
   },
-  pricePillActive: {
-    backgroundColor: colors.brand.primary,
-  },
-  pricePillInactive: {
-    backgroundColor: colors.surface.disabled,
-  },
-  priceText: {
-    fontSize: 18,
-    fontWeight: "800",
-  },
-  priceTextActive: {
+  priceBtnText: {
+    ...typography.title,
+    fontSize: 17,
+    lineHeight: 20,
+    fontWeight: "700",
     color: colors.text.inverse,
   },
-  priceTextInactive: {
-    color: colors.text.primary,
-  },
 });
-

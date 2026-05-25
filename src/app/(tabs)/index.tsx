@@ -28,12 +28,15 @@ import { PickerOnboardingSection } from "../../widgets/home/PickerOnboardingSect
 import { PricingSection } from "../../widgets/home/PricingSection";
 import { RoleToggle } from "../../widgets/home/RoleToggle";
 import { WelcomeHero } from "../../widgets/home/WelcomeHero";
+import { ReportsPackageSelectModal } from "../../widgets/reports/ReportsPackageSelectModal";
+import { useReportsPackagePurchaseModal } from "../../widgets/reports/useReportsPackagePurchaseModal";
 
 export default function HomeTab() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const reportsPackageModal = useReportsPackagePurchaseModal();
   const [roleView, setRoleView] = useState<UserRole>(
     user?.role === "picker" ? "picker" : "client",
   );
@@ -75,7 +78,7 @@ export default function HomeTab() {
             <ChecksGridSection />
             <PickedCarsSection />
             <PricingSection />
-            <BestOffersSection />
+            <BestOffersSection onBuyReport={reportsPackageModal.open} />
           </>
         )}
 
@@ -86,6 +89,11 @@ export default function HomeTab() {
         onClose={() => setMenuOpen(false)}
         items={getMainBurgerMenuItems()}
         footer={<MainBurgerMenuFooter onLogout={logout} />}
+      />
+
+      <ReportsPackageSelectModal
+        visible={reportsPackageModal.visible}
+        onClose={reportsPackageModal.close}
       />
     </View>
   );

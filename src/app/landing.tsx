@@ -8,18 +8,19 @@ import {
 } from "react-native";
 import Logo from "../assets/logo.svg";
 import { useProtected } from "../hooks/useProtected";
-import { InlineMessage } from "../shared/ui/InlineMessage";
 import { landingStyles } from "../shared/styles/landing.styles";
 import { LandingBenefitsSection } from "../widgets/home/landing/LandingBenefitsSection";
 import { LandingHeroSection } from "../widgets/home/landing/LandingHeroSection";
 import { LandingPricingSection } from "../widgets/home/landing/LandingPricingSection";
 import { LandingStepsSection } from "../widgets/home/landing/LandingStepsSection";
+import { ReportsPackageSelectModal } from "../widgets/reports/ReportsPackageSelectModal";
+import { useReportsPackagePurchaseModal } from "../widgets/reports/useReportsPackagePurchaseModal";
 
 /** Legacy full-page marketing layout (formerly root `/`). Open via `/landing`. */
 export default function LandingPage() {
   const router = useRouter();
   const { user, checkAuth } = useProtected();
-  const [infoMessage, setInfoMessage] = React.useState<string | null>(null);
+  const reportsPackageModal = useReportsPackagePurchaseModal();
 
   return (
     <View style={landingStyles.screen}>
@@ -61,11 +62,6 @@ export default function LandingPage() {
       </View>
 
       <ScrollView contentContainerStyle={landingStyles.scrollContent}>
-        {infoMessage ? (
-          <View style={{ paddingHorizontal: 16, marginTop: 12 }}>
-            <InlineMessage tone="info" message={infoMessage} />
-          </View>
-        ) : null}
         <LandingHeroSection
           styles={landingStyles}
           onOpenCatalog={() => router.push("/(tabs)/catalog" as Href)}
@@ -78,7 +74,7 @@ export default function LandingPage() {
           onOpenCatalog={() => router.push("/(tabs)/catalog" as Href)}
           onBuyReport={() => {
             if (!checkAuth()) return;
-            setInfoMessage("Оплата и выдача отчёта появятся позже.");
+            reportsPackageModal.open();
           }}
         />
 
@@ -86,6 +82,11 @@ export default function LandingPage() {
             "Как выглядит результат подбора", "Стоимость услуг" и т.д.
             — по тому же принципу: View + Text + Image + ScrollView */}
       </ScrollView>
+
+      <ReportsPackageSelectModal
+        visible={reportsPackageModal.visible}
+        onClose={reportsPackageModal.close}
+      />
     </View>
   );
 }

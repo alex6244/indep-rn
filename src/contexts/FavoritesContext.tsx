@@ -53,6 +53,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(true);
   const [favoritesError, setFavoritesError] = useState<string | null>(null);
   const isMountedRef = useRef(true);
+  const wasLoggedInRef = useRef(false);
   const favoriteIdsRef = useRef<string[]>([]);
   const favoriteIdsSet = useMemo(() => new Set(favoriteIds), [favoriteIds]);
 
@@ -93,12 +94,13 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => { active = false; };
   }, [isLoggedIn, applyIds]);
 
-  // Clear favorites on logout
+  // Clear favorites only when user logs out (not for guests on first load)
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (wasLoggedInRef.current && !isLoggedIn) {
       applyIds([]);
       void AsyncStorage.removeItem(STORAGE_KEY);
     }
+    wasLoggedInRef.current = isLoggedIn;
   }, [isLoggedIn, applyIds]);
 
   const isFavorite = useCallback(

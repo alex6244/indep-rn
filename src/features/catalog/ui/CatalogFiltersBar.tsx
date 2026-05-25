@@ -12,6 +12,8 @@ type CatalogFiltersBarProps = {
   sortButtonRef: React.RefObject<SortButtonRef | null>;
   toggleSort: () => void;
   openFilters: () => void;
+  carsCount: number;
+  activeFiltersCount: number;
   styles: CatalogStyles;
 };
 
@@ -19,11 +21,16 @@ export function CatalogFiltersBar({
   sortButtonRef,
   toggleSort,
   openFilters,
+  carsCount,
+  activeFiltersCount,
   styles,
 }: CatalogFiltersBarProps) {
   return (
     <View style={styles.filtersBar}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <Text style={styles.resultsCount}>
+        {carsCount} {carsCount === 1 ? "авто" : carsCount < 5 ? "авто" : "авто"}
+      </Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filtersScroll}>
         <TouchableOpacity
           ref={sortButtonRef}
           style={styles.sortButton}
@@ -35,6 +42,11 @@ export function CatalogFiltersBar({
 
         <TouchableOpacity style={styles.allFiltersButton} onPress={openFilters}>
           <Text style={styles.allFiltersText}>Фильтры</Text>
+          {activeFiltersCount > 0 ? (
+            <View style={styles.filtersBadge}>
+              <Text style={styles.filtersBadgeText}>{activeFiltersCount}</Text>
+            </View>
+          ) : null}
         </TouchableOpacity>
       </ScrollView>
     </View>

@@ -22,6 +22,7 @@ type CatalogContentSectionProps = {
   setFavorite: (carId: string, next: boolean) => void;
   onRetry: () => void;
   onOpenCallbackRequest: () => void;
+  onBuyReport?: () => void;
   favoritesError?: string | null;
   sortButtonRef: React.RefObject<
     (View & {
@@ -30,6 +31,8 @@ type CatalogContentSectionProps = {
   >;
   toggleSort: () => void;
   openFilters: () => void;
+  onPressCar: (carId: string) => void;
+  activeFiltersCount: number;
   contentPadBottom: number;
 };
 
@@ -43,10 +46,13 @@ export function CatalogContentSection({
   setFavorite,
   onRetry,
   onOpenCallbackRequest,
+  onBuyReport,
   favoritesError,
   sortButtonRef,
   toggleSort,
   openFilters,
+  onPressCar,
+  activeFiltersCount,
   contentPadBottom,
 }: CatalogContentSectionProps) {
   const Header = (
@@ -57,6 +63,8 @@ export function CatalogContentSection({
         sortButtonRef={sortButtonRef}
         toggleSort={toggleSort}
         openFilters={openFilters}
+        carsCount={cars.length}
+        activeFiltersCount={activeFiltersCount}
       />
       <Text style={styles.sectionTitle}>Лучшие предложения</Text>
     </>
@@ -95,6 +103,8 @@ export function CatalogContentSection({
       displayedCars={cars}
       isFavorite={isFavorite}
       setFavorite={setFavorite}
+      onBuyReport={onBuyReport}
+      onPressCar={onPressCar}
       styles={styles}
       ListHeaderComponent={Header}
       ListEmptyComponent={EmptyState}

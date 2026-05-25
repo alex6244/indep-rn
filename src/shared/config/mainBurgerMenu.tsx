@@ -2,7 +2,6 @@ import { useRouter, type Href } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import AboutIcon from "../../assets/icons/burger/about.svg";
-import CooperationIcon from "../../assets/icons/burger/ads.svg";
 import FavIcon from "../../assets/icons/burger/favourites.svg";
 import LogoutIcon from "../../assets/icons/burger/logout.svg";
 import SelectionIcon from "../../assets/icons/burger/selection.svg";
@@ -29,12 +28,6 @@ export function getMainBurgerMenuItems(): BurgerMenuItem[] {
       label: "Автокредит",
       href: "/auto-credit" as Href,
       Icon: AutoCreditIcon,
-    },
-    {
-      key: "coop",
-      label: "Сотрудничество",
-      href: "/cooperation" as Href,
-      Icon: CooperationIcon,
     },
     {
       key: "about",

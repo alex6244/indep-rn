@@ -1,7 +1,15 @@
 import Slider from "@react-native-community/slider";
 import { useLocalSearchParams, useRouter, type Href } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BackCaretIcon from "../../../assets/icons/backCaret.svg";
 import { cars as mockCars } from "../../../data/cars";
@@ -9,6 +17,7 @@ import { colors } from "../../../shared/theme/colors";
 import { acText } from "./autoCredit.styles";
 import { radius } from "../../../shared/theme/radius";
 import { spacing } from "../../../shared/theme/spacing";
+import { AppButton } from "../../../shared/ui/AppButton";
 import { AppCard } from "../../../shared/ui/AppCard";
 import {
   calcDownPayment,
@@ -105,19 +114,34 @@ export function AutoCreditScreen() {
     setTermYears(snapped);
   }, []);
 
+  const scrollRef = React.useRef<ScrollView>(null);
+  const formSectionY = React.useRef(0);
+
+  const scrollToForm = useCallback(() => {
+    scrollRef.current?.scrollTo({ y: Math.max(0, formSectionY.current - spacing.lg), animated: true });
+  }, []);
+
+  const stickyBarPadding = insets.bottom + spacing.sm;
+
   return (
     <View style={styles.screen}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={[
-          styles.scrollContent,
-          {
-            paddingTop: insets.top + spacing.sm,
-            paddingBottom: insets.bottom + spacing.xxl,
-          },
-        ]}
-        keyboardShouldPersistTaps="handled"
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={insets.top}
       >
+        <ScrollView
+          ref={scrollRef}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={[
+            styles.scrollContent,
+            {
+              paddingTop: insets.top + spacing.sm,
+              paddingBottom: stickyBarPadding + 72,
+            },
+          ]}
+          keyboardShouldPersistTaps="handled"
+        >
         <Pressable
           style={styles.backRow}
           onPress={handleBack}
@@ -204,7 +228,13 @@ export function AutoCreditScreen() {
           monthlyPayment={monthlyPayment}
         />
 
-        <AutoCreditContactForm onSubmit={handleSubmit} />
+        <View
+          onLayout={(event) => {
+            formSectionY.current = event.nativeEvent.layout.y;
+          }}
+        >
+          <AutoCreditContactForm onSubmit={handleSubmit} />
+        </View>
 
         <Text style={styles.whyTitle}>Почему мы?</Text>
         {AUTO_CREDIT_WHY_US.map((item) => (
@@ -213,7 +243,16 @@ export function AutoCreditScreen() {
             <Text style={styles.whyCardText}>{item.text}</Text>
           </AppCard>
         ))}
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+
+      <View style={[styles.stickyBar, { paddingBottom: stickyBarPadding }]}>
+        <View style={styles.stickyTextWrap}>
+          <Text style={styles.stickyLabel}>Платёж от</Text>
+          <Text style={styles.stickyAmount}>{formatRub(monthlyPayment)} / мес</Text>
+        </View>
+        <AppButton label="Оставить заявку" onPress={scrollToForm} style={styles.stickyBtn} />
+      </View>
     </View>
   );
 }
@@ -222,6 +261,41 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: colors.surface.neutral,
+  },
+  flex: {
+    flex: 1,
+  },
+  stickyBar: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.sm,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.border.subtle,
+    backgroundColor: colors.surface.primary,
+  },
+  stickyTextWrap: {
+    flex: 1,
+    minWidth: 0,
+  },
+  stickyLabel: {
+    ...acText,
+    fontSize: 12,
+    color: colors.text.muted,
+  },
+  stickyAmount: {
+    ...acText,
+    fontSize: 17,
+    fontWeight: "700",
+    color: colors.text.primary,
+  },
+  stickyBtn: {
+    minWidth: 148,
   },
   scrollContent: {
     paddingHorizontal: spacing.lg,

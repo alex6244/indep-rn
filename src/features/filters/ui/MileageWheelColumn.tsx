@@ -1,3 +1,4 @@
+import * as Haptics from "expo-haptics";
 import React, { useCallback, useEffect, useRef } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { colors } from "../../../shared/theme/colors";
@@ -56,6 +57,9 @@ export function MileageWheelColumn({ label, selectedIndex, onIndexChange }: Prop
         0,
         Math.min(MILEAGE_VALUES.length - 1, Math.round(y / WHEEL_ITEM_H)),
       );
+      if (idx !== prevIndex.current) {
+        void Haptics.selectionAsync();
+      }
       prevIndex.current = idx;
       onIndexChange(idx);
     },

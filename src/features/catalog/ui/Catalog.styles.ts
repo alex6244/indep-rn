@@ -22,6 +22,31 @@ export const catalogStyles = StyleSheet.create({
   },
   filtersBar: {
     marginBottom: 16,
+    gap: 8,
+  },
+  resultsCount: {
+    ...typography.textRegular,
+    fontSize: 13,
+    fontWeight: "600",
+    color: colors.text.tertiary,
+  },
+  filtersScroll: {
+    flexGrow: 0,
+  },
+  filtersBadge: {
+    marginLeft: 6,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    paddingHorizontal: 5,
+    backgroundColor: colors.text.inverse,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  filtersBadgeText: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: colors.brand.primary,
   },
   sortButton: {
     width: 40,
@@ -83,6 +108,8 @@ export const catalogStyles = StyleSheet.create({
     backgroundColor: colors.surface.placeholder,
   },
   allFiltersButton: {
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 12,
@@ -131,9 +158,26 @@ export const catalogStyles = StyleSheet.create({
     }) || {}),
     elevation: 4,
   },
-  carImagesScroll: {
+  carGalleryWrap: {
+    position: "relative",
     marginBottom: 12,
+  },
+  carImagesScroll: {
     marginHorizontal: -2,
+  },
+  photoBadge: {
+    position: "absolute",
+    right: 10,
+    bottom: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10,
+    backgroundColor: "rgba(0,0,0,0.55)",
+  },
+  photoBadgeText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: colors.text.inverse,
   },
   carImagesScrollContent: {
     paddingRight: 4,

@@ -75,6 +75,7 @@ export type CatalogFiltersController = {
   applyFilters: () => boolean;
   resetFilters: () => void;
   toggleFeature: (label: string) => void;
+  activeFiltersCount: number;
 };
 
 function parseNumberOrNull(text: string): number | null {
@@ -326,6 +327,46 @@ export function useCatalogFiltersController(cars: Car[]): CatalogFiltersControll
     setFilteredCars(cars);
   }, [cars]);
 
+  const activeFiltersCount = useMemo(() => {
+    let count = 0;
+    if (brandQuery.trim()) count += 1;
+    if (modelQuery.trim()) count += 1;
+    if (paymentType) count += 1;
+    if (priceFromText.trim() || priceToText.trim()) count += 1;
+    if (yearFromText.trim() || yearToText.trim()) count += 1;
+    if (mileageFromText.trim() || mileageToText.trim()) count += 1;
+    if (bodyType) count += 1;
+    if (engineType) count += 1;
+    if (transmissionType) count += 1;
+    if (driveTypeFilter) count += 1;
+    if (powerFromText.trim() || powerToText.trim()) count += 1;
+    if (features.length > 0) count += 1;
+    if (hasDiscount) count += 1;
+    if (vatReturn) count += 1;
+    if (weeklyOffer) count += 1;
+    return count;
+  }, [
+    brandQuery,
+    modelQuery,
+    paymentType,
+    priceFromText,
+    priceToText,
+    yearFromText,
+    yearToText,
+    mileageFromText,
+    mileageToText,
+    bodyType,
+    engineType,
+    transmissionType,
+    driveTypeFilter,
+    powerFromText,
+    powerToText,
+    features.length,
+    hasDiscount,
+    vatReturn,
+    weeklyOffer,
+  ]);
+
   const displayedCars = useMemo(() => {
     const next = [...filteredCars];
     if (!sortOption) return next;
@@ -394,6 +435,7 @@ export function useCatalogFiltersController(cars: Car[]): CatalogFiltersControll
     applyFilters,
     resetFilters,
     toggleFeature: useCallback((label: string) => toggleInArray(label, setFeatures), [toggleInArray]),
+    activeFiltersCount,
   };
 }
 

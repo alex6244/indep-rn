@@ -19,6 +19,9 @@ import type { Report } from "../../types/report";
 import { ScreenStateError } from "../../shared/ui/ScreenStateError";
 import { ScreenStateLoading } from "../../shared/ui/ScreenStateLoading";
 import { downloadReportPdf } from "../../services/reportPdfService";
+import { ReportsBanner } from "./ReportsBanner";
+import { ReportsPackageSelectModal } from "../reports/ReportsPackageSelectModal";
+import { useReportsPackagePurchaseModal } from "../reports/useReportsPackagePurchaseModal";
 
 type Props = {
   name: string;
@@ -43,6 +46,7 @@ export function ClientProfileSection({
   const insets = useSafeAreaInsets();
   const [menuOpen, setMenuOpen] = useState(false);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
+  const reportsPackageModal = useReportsPackagePurchaseModal();
   const editFlow = useProfileEditFlow(onLogout, router);
 
   const hasReports = reports.length > 0;
@@ -70,6 +74,15 @@ export function ClientProfileSection({
           onOpenFavorites={() => router.push("/(tabs)/favorites" as Href)}
           onOpenBest={() => router.push("/(tabs)/catalog" as Href)}
         />
+
+        <ReportsBanner
+          reportsUsed={0}
+          reportsTotal={1}
+          reportsAvailable={1}
+          expiresAt="01.06.2026"
+          onPress={reportsPackageModal.open}
+        />
+
         <Text style={styles.sectionTitle}>Мои отчёты</Text>
 
         {loading ? (
@@ -116,6 +129,11 @@ export function ClientProfileSection({
             }}
           />
         }
+      />
+
+      <ReportsPackageSelectModal
+        visible={reportsPackageModal.visible}
+        onClose={reportsPackageModal.close}
       />
 
       <ProfileEditMenu

@@ -10,7 +10,6 @@ import { colors } from "../../../shared/theme/colors";
 import { radius } from "../../../shared/theme/radius";
 import { spacing } from "../../../shared/theme/spacing";
 import { AppButton } from "../../../shared/ui/AppButton";
-import { InlineMessage } from "../../../shared/ui/InlineMessage";
 import { ScreenStateEmpty } from "../../../shared/ui/ScreenStateEmpty";
 import { ScreenStateError } from "../../../shared/ui/ScreenStateError";
 import { ScreenStateLoading } from "../../../shared/ui/ScreenStateLoading";
@@ -18,6 +17,8 @@ import { type Car } from "../../../types/car";
 import { Header } from "../../../widgets/header/Header";
 import { carService } from "../../../services/carService";
 import { FavoriteButton } from "../../favorites/ui/FavoriteButton";
+import { ReportsPackageSelectModal } from "../../../widgets/reports/ReportsPackageSelectModal";
+import { useReportsPackagePurchaseModal } from "../../../widgets/reports/useReportsPackagePurchaseModal";
 
 const ruPriceFormat = new Intl.NumberFormat("ru-RU");
 
@@ -49,7 +50,8 @@ export default function AutoScreen() {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [notFound, setNotFound] = React.useState(false);
-  const [infoMessage, setInfoMessage] = React.useState<string | null>(null);
+  const reportsPackageModal = useReportsPackagePurchaseModal();
+  const [photoIndex, setPhotoIndex] = React.useState(0);
   const requestVersionRef = React.useRef(0);
   const mountedRef = React.useRef(true);
 
@@ -99,8 +101,14 @@ export default function AutoScreen() {
 
   const handleBuyReport = React.useCallback(() => {
     if (!checkAuth({ redirectTo: "/(auth)" as Href })) return;
-    setInfoMessage("Покупка отчёта станет доступна после подключения платежного backend-сценария.");
-  }, [checkAuth]);
+    setInfoMessage(null);
+    reportsPackageModal.open();
+  }, [checkAuth, reportsPackageModal]);
+
+  const handleOpenCredit = React.useCallback(() => {
+    if (!car) return;
+    router.push({ pathname: "/auto-credit", params: { carId: String(car.id) } } as Href);
+  }, [car, router]);
 
   const handleFavoriteChange = React.useCallback(
     (next: boolean) => {
@@ -115,12 +123,6 @@ export default function AutoScreen() {
       <Header title={car?.title ?? "Автомобиль"} rightAction="none" />
 
       <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + spacing.md }]}>
-        {infoMessage ? (
-          <View style={styles.noticeWrap}>
-            <InlineMessage tone="info" message={infoMessage} />
-          </View>
-        ) : null}
-
         {loading ? (
           <ScreenStateLoading message="Загружаем карточку автомобиля..." />
         ) : error ? (
@@ -141,24 +143,39 @@ export default function AutoScreen() {
         ) : (
           <View style={styles.cardWrap}>
             {Array.isArray(car.images) && car.images.length > 0 ? (
-              <ScrollView
-                horizontal
-                nestedScrollEnabled
-                showsHorizontalScrollIndicator={false}
-                style={styles.imagesRow}
-              >
-                {car.images.map((uri, index) => (
-                  <Image
-                    key={`${car.id}_${uri}_${index}`}
-                    source={{ uri }}
-                    style={[
-                      styles.image,
-                      index === car.images.length - 1 && styles.imageLast,
-                    ]}
-                    accessibilityLabel={`Фото ${index + 1} из ${car.images.length}`}
-                  />
-                ))}
-              </ScrollView>
+              <View style={styles.galleryWrap}>
+                <ScrollView
+                  horizontal
+                  nestedScrollEnabled
+                  showsHorizontalScrollIndicator={false}
+                  style={styles.imagesRow}
+                  onScroll={(event) => {
+                    const width = 280 + spacing.sm;
+                    const index = Math.round(event.nativeEvent.contentOffset.x / width);
+                    setPhotoIndex(Math.max(0, Math.min(index, car.images.length - 1)));
+                  }}
+                  scrollEventThrottle={16}
+                >
+                  {car.images.map((uri, index) => (
+                    <Image
+                      key={`${car.id}_${uri}_${index}`}
+                      source={{ uri }}
+                      style={[
+                        styles.image,
+                        index === car.images.length - 1 && styles.imageLast,
+                      ]}
+                      accessibilityLabel={`Фото ${index + 1} из ${car.images.length}`}
+                    />
+                  ))}
+                </ScrollView>
+                {car.images.length > 1 ? (
+                  <View style={styles.photoBadge}>
+                    <Text style={styles.photoBadgeText}>
+                      {photoIndex + 1}/{car.images.length}
+                    </Text>
+                  </View>
+                ) : null}
+              </View>
             ) : (
               <View style={styles.imageFallback}>
                 <Text style={styles.imageFallbackText}>Фотографии автомобиля пока не добавлены</Text>
@@ -169,6 +186,8 @@ export default function AutoScreen() {
             <Text style={styles.subtitle}>{buildSpecsLine(car)}</Text>
             <Text style={styles.price}>{ruPriceFormat.format(car.price)} ₽</Text>
             <Text style={styles.address}>{car.address}</Text>
+
+            <AppButton label="Рассчитать в кредит" onPress={handleOpenCredit} style={styles.creditButton} />
 
             <View style={styles.actions}>
               <AppButton label="Купить отчёт" onPress={handleBuyReport} style={styles.buyButton} />
@@ -182,6 +201,11 @@ export default function AutoScreen() {
           </View>
         )}
       </ScrollView>
+
+      <ReportsPackageSelectModal
+        visible={reportsPackageModal.visible}
+        onClose={reportsPackageModal.close}
+      />
     </View>
   );
 }
@@ -195,15 +219,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingBottom: 48,
   },
-  noticeWrap: {
-    marginBottom: spacing.md,
-  },
   cardWrap: {
     gap: 10,
   },
+  galleryWrap: {
+    position: "relative",
+    marginBottom: spacing.xs,
+  },
   imagesRow: {
     flexGrow: 0,
-    marginBottom: spacing.xs,
+  },
+  photoBadge: {
+    position: "absolute",
+    right: 10,
+    bottom: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10,
+    backgroundColor: "rgba(0,0,0,0.55)",
+  },
+  photoBadgeText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: colors.text.inverse,
   },
   image: {
     width: 280,
@@ -246,6 +284,9 @@ const styles = StyleSheet.create({
   address: {
     fontSize: 14,
     color: colors.text.tertiary,
+  },
+  creditButton: {
+    marginTop: spacing.sm,
   },
   actions: {
     flexDirection: "row",

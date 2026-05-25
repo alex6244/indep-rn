@@ -12,6 +12,8 @@ import { ProfileQuickActions } from "./ProfileQuickActions";
 import { ProfileStats } from "./ProfileStats";
 import { ProfileTopBar } from "./ProfileTopBar";
 import { ReportsBanner } from "./ReportsBanner";
+import { ReportsPackageSelectModal } from "../reports/ReportsPackageSelectModal";
+import { useReportsPackagePurchaseModal } from "../reports/useReportsPackagePurchaseModal";
 import { useProfileEditFlow } from "./useProfileEditFlow";
 import { scrollBottomPaddingBelowTabBar } from "../../shared/navigation/tabBarMetrics";
 import { styles } from "./profile.styles";
@@ -35,6 +37,7 @@ export function PickerProfileSection({ initials, name, phone, onLogout }: Props)
   const insets = useSafeAreaInsets();
   const [menuOpen, setMenuOpen] = useState(false);
   const [balanceModalOpen, setBalanceModalOpen] = useState(false);
+  const reportsPackageModal = useReportsPackagePurchaseModal();
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
   const [reports, setReports] = useState<Report[]>([]);
   const [reportsLoading, setReportsLoading] = useState(true);
@@ -106,7 +109,7 @@ export function PickerProfileSection({ initials, name, phone, onLogout }: Props)
           reportsTotal={stats.reportsTotal}
           reportsAvailable={stats.reportsAvailable}
           expiresAt={stats.expiresAt}
-          onPress={() => router.push("/reports" as Href)}
+          onPress={reportsPackageModal.open}
         />
 
         <ProfileQuickActions
@@ -177,6 +180,11 @@ export function PickerProfileSection({ initials, name, phone, onLogout }: Props)
         onCloseDeleteConfirm={() => editFlow.setConfirmDeleteOpen(false)}
         onConfirmDelete={editFlow.handleDeleteConfirm}
         onCloseDeleted={editFlow.handleCloseDeleted}
+      />
+
+      <ReportsPackageSelectModal
+        visible={reportsPackageModal.visible}
+        onClose={reportsPackageModal.close}
       />
 
       <BalanceModal
