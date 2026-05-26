@@ -1,10 +1,11 @@
 import { Platform } from "react-native";
+import { figmaNavBar } from "../theme/figma.generated";
 
 /**
  * Tab bar sizing utilities.
- * Must match actual tab bar layout in `app/(tabs)/_layout.tsx`.
+ * Must match Figma «Навигационная панель» and `(tabs)/_layout.tsx`.
  */
-export const TAB_BAR_INNER_HEIGHT = 72;
+export const TAB_BAR_INNER_HEIGHT = figmaNavBar.height;
 
 export function tabBarSafeAreaBottom(insetsBottom: number) {
   return Math.max(insetsBottom, Platform.OS === "ios" ? 10 : 8);

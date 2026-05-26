@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ReportsIcon from "../../assets/profile/reports.svg";
-import WalletIcon from "../../assets/profile/wallet.svg";
+import { ProfileWalletIcon } from "./ProfileWalletIcon";
 import {
   PROFILE_STAT_CARD_RADIUS,
   PROFILE_STATS_ROW_GAP,
@@ -14,7 +14,6 @@ const WALLET_W = 51.21;
 const WALLET_H = 59.24;
 const WALLET_LEFT = 103.23;
 const WALLET_TOP = -5.45;
-const WALLET_ROTATE = "32.32deg";
 
 type Props = {
   published: number;
@@ -52,7 +51,11 @@ export function ProfileStats({
               style={styles.publishedIcon}
             />
             <Text
-              style={[styles.statValue, walletS < 1 && styles.statValueCompact]}
+              style={[
+                styles.statValue,
+                styles.statValueRight,
+                walletS < 1 && styles.statValueCompact,
+              ]}
             >
               {published}
             </Text>
@@ -66,15 +69,19 @@ export function ProfileStats({
           accessibilityRole="button"
         >
           <Text style={styles.statLabel}>Ваш баланс</Text>
-          <Text
-            style={[
-              styles.statValueBalance,
-              walletS < 1 && styles.statValueCompact,
-            ]}
-            numberOfLines={1}
-          >
-            {balanceLabel}
-          </Text>
+
+          <View style={styles.balanceBottom}>
+            <Text
+              style={[
+                styles.statValueBalance,
+                walletS < 1 && styles.statValueCompact,
+              ]}
+              numberOfLines={1}
+            >
+              {balanceLabel}
+            </Text>
+          </View>
+
           <View
             style={[
               styles.walletWrap,
@@ -83,11 +90,11 @@ export function ProfileStats({
                 top: walletTop,
                 width: walletW,
                 height: walletH,
-                pointerEvents: "none",
               },
             ]}
+            pointerEvents="none"
           >
-            <WalletIcon width={walletW} height={walletH} />
+            <ProfileWalletIcon width={walletW} height={walletH} />
           </View>
         </TouchableOpacity>
       </View>
@@ -132,6 +139,7 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     position: "relative",
     overflow: "visible",
+    justifyContent: "space-between",
     ...(shadowStyle({
       boxShadow: "0px 4px 10px rgba(0,0,0,0.04)",
       shadowColor: colors.text.primary,
@@ -145,7 +153,12 @@ const styles = StyleSheet.create({
   publishedRow: {
     flexDirection: "row",
     alignItems: "flex-end",
-    gap: 4,
+    justifyContent: "space-between",
+    flex: 1,
+  },
+  statValueRight: {
+    marginLeft: "auto",
+    textAlign: "right",
   },
   publishedIcon: {
     opacity: 0.95,
@@ -157,22 +170,30 @@ const styles = StyleSheet.create({
   },
   statValue: {
     fontSize: 20,
-    fontWeight: "800",
+    lineHeight: 24,
+    fontWeight: "500",
     color: colors.text.primary,
     marginBottom: 2,
   },
+  balanceBottom: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "flex-start",
+    paddingRight: 4,
+    zIndex: 1,
+  },
   statValueBalance: {
-    marginTop: 6,
     fontSize: 20,
-    fontWeight: "800",
+    lineHeight: 24,
+    fontWeight: "500",
     color: colors.text.primary,
-    maxWidth: "55%",
+    maxWidth: "68%",
   },
   statValueCompact: {
     fontSize: 17,
   },
   walletWrap: {
     position: "absolute",
-    transform: [{ rotate: WALLET_ROTATE }],
+    zIndex: 2,
   },
 });

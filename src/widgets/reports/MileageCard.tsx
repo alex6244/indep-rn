@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: "800",
+    fontWeight: "700",
     color: colors.text.primary,
     marginBottom: 10,
   },
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 13,
     color: colors.text.primary,
-    fontWeight: "800",
+    fontWeight: "700",
     textAlign: "right",
   },
 });

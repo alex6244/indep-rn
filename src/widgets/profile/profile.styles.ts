@@ -1,6 +1,5 @@
 import { StyleSheet } from "react-native";
-import { FONT_FAMILY } from "../../shared/theme/fonts";
-import { typography } from "../../shared/theme/typography";
+import { figmaText } from "../../shared/theme/typography";
 import { shadowStyle } from "../../shared/theme/shadow";
 import { colors } from "../../shared/theme/colors";
 
@@ -18,9 +17,8 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   centerText: {
-    ...typography.textRegular,
+    ...figmaText.body,
     marginTop: 12,
-    fontSize: 14,
     color: colors.text.dim,
   },
   card: {
@@ -43,20 +41,18 @@ export const styles = StyleSheet.create({
     marginBottom: 8,
   },
   cardTitle: {
-    ...typography.title,
-    fontSize: 22,
-    fontWeight: "700",
+    ...figmaText.screenTitle,
     color: colors.text.primary,
     textAlign: "center",
     marginTop: 4,
   },
   cardSubtitle: {
-    ...typography.textRegular,
-    fontSize: 13,
+    ...figmaText.value,
+    fontWeight: "400",
+    lineHeight: 18,
     color: colors.text.dim,
     textAlign: "center",
     marginTop: 8,
-    lineHeight: 18,
   },
   primaryButton: {
     marginTop: 20,
@@ -67,10 +63,9 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   primaryButtonText: {
-    color: colors.text.inverse,
-    fontSize: 16,
+    ...figmaText.bodyLargeMedium,
     fontWeight: "600",
-    fontFamily: FONT_FAMILY.regular,
+    color: colors.text.inverse,
   },
   secondaryButton: {
     marginTop: 10,
@@ -83,10 +78,9 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.surface.screen,
   },
   secondaryButtonText: {
-    color: colors.brand.primary,
-    fontSize: 16,
+    ...figmaText.bodyLargeMedium,
     fontWeight: "600",
-    fontFamily: FONT_FAMILY.regular,
+    color: colors.brand.primary,
   },
   pickerScreen: {
     flex: 1,
@@ -96,11 +90,9 @@ export const styles = StyleSheet.create({
     paddingTop: 10,
   },
   sectionTitle: {
-    ...typography.title,
+    ...figmaText.subtitle,
     marginTop: 18,
     marginHorizontal: 16,
-    fontSize: 18,
-    fontWeight: "800",
     color: colors.text.primary,
   },
   reportCard: {
@@ -128,24 +120,20 @@ export const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   mileageBadgeText: {
-    color: colors.text.inverse,
-    fontSize: 10,
+    ...figmaText.tabLabel,
     fontWeight: "600",
-    fontFamily: FONT_FAMILY.regular,
+    color: colors.text.inverse,
   },
   reportBody: {
     padding: 14,
     gap: 6,
   },
   reportPrice: {
-    ...typography.title,
-    fontSize: 18,
-    fontWeight: "800",
+    ...figmaText.subtitle,
     color: colors.text.primary,
   },
   reportSub: {
-    ...typography.textRegular,
-    fontSize: 12,
+    ...figmaText.caption,
     color: colors.text.faint,
   },
   openButton: {
@@ -156,10 +144,8 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   openButtonText: {
+    ...figmaText.bodyBold,
     color: colors.text.inverse,
-    fontWeight: "700",
-    fontSize: 14,
-    fontFamily: FONT_FAMILY.regular,
   },
   fab: {
     position: "absolute",
@@ -167,10 +153,6 @@ export const styles = StyleSheet.create({
     bottom: 96,
     width: 56,
     height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.brand.primary,
-    alignItems: "center",
-    justifyContent: "center",
     ...(shadowStyle({
       boxShadow: "0px 8px 12px rgba(0,0,0,0.15)",
       shadowColor: colors.overlay.shadow,
@@ -180,11 +162,8 @@ export const styles = StyleSheet.create({
       elevation: 6,
     }) as object),
   },
-  fabPlus: {
-    color: colors.text.inverse,
-    fontSize: 30,
-    fontWeight: "700",
-    marginTop: -2,
-    fontFamily: FONT_FAMILY.regular,
+  fabIcon: {
+    width: 56,
+    height: 56,
   },
 });

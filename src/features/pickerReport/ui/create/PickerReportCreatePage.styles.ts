@@ -7,17 +7,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.surface.screen,
   },
-  topBar: {
-    paddingHorizontal: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: colors.surface.primary,
-    borderRadius: 0,
-  },
-  content: {
-    paddingTop: 10,
-  },
+  content: {},
   center: {
     flex: 1,
     backgroundColor: colors.surface.screen,

@@ -34,9 +34,19 @@ To learn more about developing your project with Expo, look at the following res
 - [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
 - [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
+## Figma
+
+Design sync with the **Indep/Лизинг** file: see [`docs/FIGMA.md`](docs/FIGMA.md).
+
+```bash
+npm run figma:build   # from design/figma/raw/*.json
+npm run figma:sync    # pull + build + drift check (needs FIGMA_* in .env)
+```
+
 ## Theme Colors
 
 - Use `src/shared/theme/colors.ts` as the single source of truth for UI colors.
+- Figma-extracted values live in `src/shared/theme/figma.generated.ts` (regenerate with `figma:build`).
 - Prefer semantic tokens (`colors.surface.card`, `colors.text.primary`, `colors.brand.primary`) over raw `#hex` values.
 - Add new colors only when a semantic token does not already fit.
 - Keep raw colors out of components; the only acceptable exceptions are explicit platform shadow presets where React Native APIs require inline shadow values.

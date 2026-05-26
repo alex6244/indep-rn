@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   price: {
     marginTop: 12,
     fontSize: 18,
-    fontWeight: "900",
+    fontWeight: "700",
     color: colors.text.primary,
   },
   credit: {

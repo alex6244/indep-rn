@@ -10,9 +10,9 @@ import { ClientEmptyState } from "./ClientEmptyState";
 import { ClientReportCard } from "./ClientReportCard";
 import { ProfileEditMenu } from "./ProfileEditMenu";
 import { ProfileIdentityCard } from "./ProfileIdentityCard";
+import { ProfileTopBar } from "./ProfileTopBar";
 import { ProfileLogoutRow } from "./ProfileLogoutRow";
 import { ProfileQuickActions } from "./ProfileQuickActions";
-import { ProfileTopBar } from "./ProfileTopBar";
 import { useProfileEditFlow } from "./useProfileEditFlow";
 import { InlineMessage } from "../../shared/ui/InlineMessage";
 import type { Report } from "../../types/report";
@@ -53,7 +53,10 @@ export function ClientProfileSection({
 
   return (
     <View style={styles.pickerScreen}>
-      <ProfileTopBar onOpenBurger={() => setMenuOpen(true)} />
+      <ProfileTopBar
+        topPadding={insets.top + 6}
+        onOpenBurger={() => setMenuOpen(true)}
+      />
 
       <ScrollView
         contentContainerStyle={[
@@ -69,18 +72,18 @@ export function ClientProfileSection({
           phone={phone}
           onOpenEdit={() => editFlow.setEditMenuOpen(true)}
         />
-        <ProfileQuickActions
-          variant="client"
-          onOpenFavorites={() => router.push("/(tabs)/favorites" as Href)}
-          onOpenBest={() => router.push("/(tabs)/catalog" as Href)}
-        />
 
         <ReportsBanner
           reportsUsed={0}
           reportsTotal={1}
           reportsAvailable={1}
-          expiresAt="01.06.2026"
           onPress={reportsPackageModal.open}
+        />
+
+        <ProfileQuickActions
+          variant="client"
+          onOpenFavorites={() => router.push("/(tabs)/favorites" as Href)}
+          onOpenBest={() => router.push("/(tabs)/catalog" as Href)}
         />
 
         <Text style={styles.sectionTitle}>Мои отчёты</Text>

@@ -7,7 +7,6 @@ import { CreateCommercialUsageSection } from "./create/CreateCommercialUsageSect
 import { CreateDefectsSection } from "./create/CreateDefectsSection";
 import { CreateFooterActions } from "./create/CreateFooterActions";
 import { CreateGeneralInfoSection } from "./create/CreateGeneralInfoSection";
-import { CreateHeader } from "./create/CreateHeader";
 import { CreateLegalCleanlinessSection } from "./create/CreateLegalCleanlinessSection";
 import { CreateMileageSection } from "./create/CreateMileageSection";
 import { CreateMediaSection } from "./create/CreateMediaSection";
@@ -36,12 +35,13 @@ export function PickerReportCreatePage() {
 
   return (
     <View style={styles.screen}>
-      <CreateHeader topPadding={insets.top + 6} />
-
       <ScrollView
         contentContainerStyle={[
           styles.content,
-          { paddingBottom: insets.bottom + 140 },
+          {
+            paddingTop: insets.top + 4,
+            paddingBottom: insets.bottom + 140,
+          },
         ]}
         showsVerticalScrollIndicator={false}
       >

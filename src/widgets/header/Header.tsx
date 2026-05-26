@@ -8,6 +8,7 @@ import {
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Logo from "../../assets/logo.svg";
+import { figmaText } from "../../shared/theme/typography";
 import FavNavIcon from "../../assets/icons/burger/favourites.svg";
 import { useAuth } from "../../contexts/AuthContext";
 import {
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   title: {
-    fontSize: 18,
+    ...figmaText.subtitle,
     fontWeight: "600",
   },
   right: {

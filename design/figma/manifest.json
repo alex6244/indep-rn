@@ -1,0 +1,28 @@
+{
+  "fileKey": "qcewqqrs8iRjohWoFPMynp",
+  "fileUrl": "https://www.figma.com/design/qcewqqrs8iRjohWoFPMynp/Indep-%D0%9B%D0%B8%D0%B7%D0%B8%D0%BD%D0%B3-%D0%94%D0%B0%D0%BB%D0%BC%D0%B0%D1%82%D0%B8%D0%BD",
+  "fileName": "Indep/Лизинг/Далматин",
+  "nodes": {
+    "navBar": {
+      "id": "612:1715",
+      "name": "Навигационная панель",
+      "rawFile": "nav-bar.nodes.json",
+      "code": [
+        "src/app/(tabs)/_layout.tsx",
+        "src/shared/navigation/tabBarMetrics.ts"
+      ]
+    },
+    "profileStatCard": {
+      "id": null,
+      "name": "Profile stat cards",
+      "manual": true,
+      "code": ["src/widgets/profile/profileStatCardMetrics.ts"]
+    },
+    "pickerReportTypography": {
+      "id": null,
+      "name": "Picker report screens",
+      "manual": true,
+      "code": ["src/features/pickerReport/ui/pickerReport.styles.ts"]
+    }
+  }
+}

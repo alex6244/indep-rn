@@ -1,11 +1,9 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
 
 import PhotosBg from "../../../assets/addCar/photosBG.svg";
-import AddPhotoIcon from "../../../assets/addCar/addPhoto.svg";
-import AddVideoIcon from "../../../assets/addCar/addVideo.svg";
 import { PR_TYPO } from "./pickerReport.styles";
 import { colors } from "../../../shared/theme/colors";
 import { InlineMessage } from "../../../shared/ui/InlineMessage";
@@ -23,9 +21,6 @@ type Row = {
   key: MediaKey;
   modalKind: UploadMediaKind;
   label: string;
-  icon: React.ReactNode;
-  successColor: string;
-  failColor: string;
 };
 
 type Props = {
@@ -35,44 +30,44 @@ type Props = {
 
 const VIDEO_KINDS: UploadMediaKind[] = ["salon_video", "body_video"];
 
+/** Figma `photosBG.svg` viewBox. */
+const PHOTOS_BG_WIDTH = 335;
+const PHOTOS_BG_HEIGHT = 295;
+const CARD_MARGIN_H = 16;
+const CARD_PADDING_H = 16;
+/**
+ * Y-offset for title + rows — lower rays of the burst in `photosBG.svg`
+ * (viewBox y ≈ 155–200 of 295).
+ */
+const CONTENT_TOP_RATIO = 0.53;
+const ROW_BLOCK_ESTIMATE = 230;
+
 export function MediaUploadCard({ value, onChange }: Props) {
+  const { width: windowWidth } = useWindowDimensions();
   const [activeModalKind, setActiveModalKind] = useState<UploadMediaKind | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
+  const illustrationHeight = useMemo(() => {
+    const cardWidth = windowWidth - CARD_MARGIN_H * 2;
+    return Math.round(cardWidth * (PHOTOS_BG_HEIGHT / PHOTOS_BG_WIDTH));
+  }, [windowWidth]);
+
+  const contentTop = useMemo(
+    () => Math.round(illustrationHeight * CONTENT_TOP_RATIO),
+    [illustrationHeight],
+  );
+
+  const sectionMinHeight = useMemo(
+    () => Math.max(illustrationHeight, contentTop + ROW_BLOCK_ESTIMATE),
+    [contentTop, illustrationHeight],
+  );
+
   const rows: Row[] = useMemo(
     () => [
-      {
-        key: "salonPhoto",
-        modalKind: "salon_photo",
-        label: "Фото салона",
-        icon: <AddPhotoIcon width={16} height={16} />,
-        successColor: colors.status.successStrong,
-        failColor: colors.brand.primary,
-      },
-      {
-        key: "bodyPhoto",
-        modalKind: "body_photo",
-        label: "Фото кузова",
-        icon: <AddPhotoIcon width={16} height={16} />,
-        successColor: colors.status.successStrong,
-        failColor: colors.status.successStrong,
-      },
-      {
-        key: "salonVideo",
-        modalKind: "salon_video",
-        label: "Видео салона",
-        icon: <AddVideoIcon width={16} height={16} />,
-        successColor: colors.status.successStrong,
-        failColor: colors.brand.primary,
-      },
-      {
-        key: "bodyVideo",
-        modalKind: "body_video",
-        label: "Видео кузова",
-        icon: <AddVideoIcon width={16} height={16} />,
-        successColor: colors.status.successStrong,
-        failColor: colors.brand.primary,
-      },
+      { key: "salonPhoto", modalKind: "salon_photo", label: "Фото салона" },
+      { key: "bodyPhoto", modalKind: "body_photo", label: "Фото кузова" },
+      { key: "salonVideo", modalKind: "salon_video", label: "Видео салона" },
+      { key: "bodyVideo", modalKind: "body_video", label: "Видео кузова" },
     ],
     [],
   );
@@ -141,19 +136,24 @@ export function MediaUploadCard({ value, onChange }: Props) {
 
   return (
     <View style={styles.section}>
-      <View style={[styles.illustrationWrap, { pointerEvents: "none" }]}>
-        <PhotosBg width="100%" height="100%" />
-      </View>
+      <View style={[styles.cardInner, { minHeight: sectionMinHeight }]}>
+        <View style={[styles.heroLayer, { height: illustrationHeight }]}>
+          <PhotosBg
+            width="100%"
+            height={illustrationHeight}
+            preserveAspectRatio="xMidYMid meet"
+          />
+        </View>
 
-      <View style={styles.content}>
-        <Text style={styles.title}>Добавьте фото авто</Text>
-        {notice ? <InlineMessage tone="info" message={notice} /> : null}
+        <View style={[styles.contentLayer, { top: contentTop }]}>
+          <Text style={styles.title}>Добавьте фото авто</Text>
 
-        <View style={styles.rows}>
+          {notice ? <InlineMessage tone="info" message={notice} /> : null}
+
           {rows.map((r) => {
             const uri = value[r.key];
             const added = uri !== null;
-            const bg = added ? r.successColor : r.failColor;
+            const bg = added ? colors.status.successStrong : colors.brand.primary;
             const text = added ? "Добавлено" : "Добавить";
 
             return (
@@ -172,10 +172,7 @@ export function MediaUploadCard({ value, onChange }: Props) {
                     style={[styles.btn, { backgroundColor: bg }]}
                     onPress={() => handleOpenModal(r.modalKind)}
                   >
-                    <View style={styles.btnInner}>
-                      {r.icon}
-                      <Text style={styles.btnText}>{text}</Text>
-                    </View>
+                    <Text style={styles.btnText}>{text}</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -190,13 +187,6 @@ export function MediaUploadCard({ value, onChange }: Props) {
         subtitle={modalConfig?.subtitle}
         primaryActionLabel={modalConfig?.primaryActionLabel}
         secondaryActionLabel={modalConfig?.secondaryActionLabel}
-        icon={
-          activeRow ? (
-            <View style={styles.modalIconWrap}>
-              {activeRow.icon}
-            </View>
-          ) : undefined
-        }
         onPickPress={handlePickPress}
         onCameraPress={handleCameraPress}
         onClose={closeModal}
@@ -209,66 +199,64 @@ const styles = StyleSheet.create({
   section: {
     backgroundColor: colors.surface.card,
     borderRadius: 18,
-    marginHorizontal: 16,
+    marginHorizontal: CARD_MARGIN_H,
     marginBottom: 16,
-    paddingTop: 8,
     overflow: "hidden",
   },
-  illustrationWrap: {
-    height: 160,
-    marginHorizontal: 8,
-    marginTop: 2,
+  cardInner: {
+    position: "relative",
+    paddingBottom: 16,
+    backgroundColor: colors.surface.card,
   },
-  content: {
-    paddingHorizontal: 16,
-    paddingTop: 4,
-    paddingBottom: 12,
+  heroLayer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    overflow: "hidden",
+  },
+  contentLayer: {
+    position: "absolute",
+    left: CARD_PADDING_H,
+    right: CARD_PADDING_H,
+    zIndex: 2,
   },
   title: {
     ...PR_TYPO.sectionTitle,
-    marginBottom: 12,
+    marginBottom: 14,
   },
-  rows: {},
   row: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 10,
+    marginBottom: 12,
   },
   rowLabel: {
     ...PR_TYPO.body,
-    width: 150,
+    flex: 1,
+    marginRight: 8,
   },
   rowRight: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+    flexShrink: 0,
   },
   preview: {
     width: 40,
     height: 40,
-    borderRadius: 6,
+    borderRadius: 8,
   },
   btn: {
-    minWidth: 132,
-    height: 38,
-    borderRadius: 12,
+    minWidth: 124,
+    height: 40,
+    paddingHorizontal: 20,
+    borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
   },
-  btnInner: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 12,
-  },
-  btnText: PR_TYPO.buttonSmall,
-  modalIconWrap: {
-    width: 52,
-    height: 52,
-    borderRadius: 14,
-    backgroundColor: colors.surface.primary,
-    alignItems: "center",
-    justifyContent: "center",
+  btnText: {
+    ...PR_TYPO.buttonSmall,
+    color: colors.text.inverse,
   },
 });

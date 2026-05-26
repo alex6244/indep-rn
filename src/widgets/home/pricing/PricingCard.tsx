@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   },
   price: {
     fontSize: 34,
-    fontWeight: "800",
+    fontWeight: "700",
     color: colors.text.primary,
   },
   button: {

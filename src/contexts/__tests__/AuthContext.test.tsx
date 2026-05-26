@@ -253,6 +253,37 @@ describe("AuthContext restore/logout flow", () => {
     expect(latestSnapshot?.user).toBeNull();
   });
 
+  it("clears user session when logout API throws", async () => {
+    process.env.EXPO_PUBLIC_AUTH_SOURCE = "api";
+    const user = sampleUser();
+    authService.login.mockResolvedValue(user);
+    authService.logout.mockRejectedValue(new Error("HTTP 500"));
+
+    const SnapshotProbe = createSnapshotProbe((snapshot) => {
+      latestSnapshot = snapshot;
+    });
+
+    await act(async () => {
+      TestRenderer.create(
+        <AuthProvider>
+          <SnapshotProbe />
+        </AuthProvider>,
+      );
+    });
+
+    await flushAsync();
+    await act(async () => {
+      await latestSnapshot?.login({ email: user.email, password: "123456" });
+    });
+
+    await act(async () => {
+      await latestSnapshot?.logout();
+    });
+
+    expect(latestSnapshot?.user).toBeNull();
+    expect(latestSnapshot?.authError).toBeNull();
+  });
+
   it("clears refresh token in unauthorized handler", async () => {
     process.env.EXPO_PUBLIC_AUTH_SOURCE = "api";
     const user = sampleUser();
@@ -317,6 +348,38 @@ describe("AuthContext restore/logout flow", () => {
 
     expect(authService.login).not.toHaveBeenCalled();
     expect(latestSnapshot?.user?.email).toBe("client@test.com");
+  });
+
+  it("mock confirmVerification respects name and picker role from registration", async () => {
+    process.env.EXPO_PUBLIC_AUTH_SOURCE = "mock";
+
+    const SnapshotProbe = createSnapshotProbe((snapshot) => {
+      latestSnapshot = snapshot;
+    });
+
+    await act(async () => {
+      TestRenderer.create(
+        <AuthProvider>
+          <SnapshotProbe />
+        </AuthProvider>,
+      );
+    });
+
+    await flushAsync();
+    await act(async () => {
+      const result = await latestSnapshot?.confirmVerification({
+        email: "newpicker@test.com",
+        code: "123456",
+        name: "Иван Подборщик",
+        role: "picker",
+      });
+      expect(result).toEqual({ success: true });
+    });
+
+    expect(authService.confirmVerification).not.toHaveBeenCalled();
+    expect(latestSnapshot?.user?.email).toBe("newpicker@test.com");
+    expect(latestSnapshot?.user?.role).toBe("picker");
+    expect(latestSnapshot?.user?.name).toBe("Иван Подборщик");
   });
 
   it("does not restore expired mock session and clears storage", async () => {

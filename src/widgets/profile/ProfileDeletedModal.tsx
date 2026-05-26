@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
   title: {
     textAlign: "center",
     fontSize: 20,
-    fontWeight: "800",
+    fontWeight: "700",
     color: colors.text.primary,
   },
   illustrationWrap: {

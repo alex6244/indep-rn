@@ -48,6 +48,11 @@ app-example
 .idea/
 npx
 main.git
+
+# Figma: large API dumps (use npm run figma:pull → design/figma/raw/)
+design/figma/raw/*.json
+!design/figma/raw/.gitkeep
+# Legacy root exports (do not re-add)
 figma_*.json
 figma_nav.svg
 figma_nav_nodes.json

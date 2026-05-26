@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { typography } from "../../../shared/theme/typography";
+import { figmaText, typography } from "../../../shared/theme/typography";
 import { shadowStyle } from "../../../shared/theme/shadow";
 import { colors } from "../../../shared/theme/colors";
 
@@ -16,8 +16,7 @@ export const catalogStyles = StyleSheet.create({
     marginBottom: 12,
   },
   breadcrumbText: {
-    ...typography.caption,
-    fontSize: 12,
+    ...figmaText.caption,
     color: colors.text.subtle,
   },
   filtersBar: {
@@ -25,9 +24,7 @@ export const catalogStyles = StyleSheet.create({
     gap: 8,
   },
   resultsCount: {
-    ...typography.textRegular,
-    fontSize: 13,
-    fontWeight: "600",
+    ...figmaText.value,
     color: colors.text.tertiary,
   },
   filtersScroll: {

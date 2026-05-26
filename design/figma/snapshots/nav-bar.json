@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-05-26T08:34:40.055Z",
+  "navBar": {
+    "nodeId": "612:1715",
+    "name": "Навигационная панель",
+    "height": 78,
+    "paddingHorizontal": 20,
+    "paddingTop": 8,
+    "paddingBottom": 8,
+    "itemSpacing": 32,
+    "tabItemSize": 62,
+    "tabIconSize": 40,
+    "tabLabelGap": 2,
+    "labelFontSize": 10,
+    "labelLineHeight": 12,
+    "labelFontFamily": "Moderustic",
+    "backgroundColor": "#F7F7F7",
+    "inactiveColor": "#A0A0A0"
+  },
+  "colors": {
+    "navBarBackground": "#F7F7F7",
+    "navBarInactive": "#A0A0A0"
+  }
+}

@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   },
   price: {
     fontSize: 20,
-    fontWeight: "800",
+    fontWeight: "700",
     color: colors.text.primary,
   },
   subtitle: {

@@ -60,14 +60,14 @@ const styles = StyleSheet.create({
   },
   card: {
     flex: 1,
-    minHeight: 72,
+    minHeight: 62,
     borderRadius: radius.md,
     overflow: "hidden",
     backgroundColor: colors.surface.primary,
   },
   bestCardInner: {
     flex: 1,
-    minHeight: 72,
+    minHeight: 62,
     paddingHorizontal: spacing.md,
     paddingTop: spacing.sm,
     paddingBottom: spacing.md,
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   bestText: {
     fontSize: 12,
     color: colors.text.muted,
-    fontWeight: "600",
+    fontWeight: "400",
     lineHeight: 16,
     maxWidth: "78%",
   },

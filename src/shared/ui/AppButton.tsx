@@ -11,7 +11,7 @@ import {
 import { colors } from "../theme/colors";
 import { radius } from "../theme/radius";
 import { spacing } from "../theme/spacing";
-import { typography } from "../theme/typography";
+import { figmaText } from "../theme/typography";
 
 type AppButtonVariant = "primary" | "secondary";
 
@@ -80,9 +80,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.control.buttonSecondaryBg,
   },
   textBase: {
-    ...typography.buttonText,
-    fontSize: 16,
-    lineHeight: 20,
+    ...figmaText.bodyLargeMedium,
     fontWeight: "600",
   },
   textPrimary: {

@@ -73,13 +73,11 @@ export default function ProfileTab() {
     );
   }
 
-  const initials = getInitials(user.name || user.login);
   const isPicker = user.role === "picker";
 
   if (isPicker) {
     return (
       <PickerProfileSection
-        initials={initials}
         phone={user.phone}
         name={user.name || user.login}
         onLogout={logout}
@@ -102,12 +100,3 @@ export default function ProfileTab() {
   );
 }
 
-function getInitials(name: string): string {
-  const parts = name.trim().split(" ").filter(Boolean);
-  if (parts.length === 0) return "U";
-  if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
-  return (
-    parts[0].charAt(0).toUpperCase() +
-    parts[parts.length - 1].charAt(0).toUpperCase()
-  );
-}

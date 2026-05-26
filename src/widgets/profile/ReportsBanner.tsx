@@ -10,6 +10,7 @@ import MicroBanner from "../../assets/profile/microbanner.svg";
 import { colors } from "../../shared/theme/colors";
 import { radius } from "../../shared/theme/radius";
 import { spacing } from "../../shared/theme/spacing";
+import { figmaText } from "../../shared/theme/typography";
 
 /** Пропорции microbanner.svg (viewBox 335×95). */
 const BANNER_ASPECT_W = 335;
@@ -17,11 +18,15 @@ const BANNER_ASPECT_H = 95;
 const MARGIN_H = 16;
 const MIN_BANNER_HEIGHT = 72;
 
+/** Приглушённый белый на красном фоне баннера. */
+const BANNER_TEXT_MUTED = "rgba(255, 255, 255, 0.72)";
+const BANNER_TEXT_EMPHASIS = "rgba(255, 255, 255, 0.92)";
+
 type Props = {
   reportsUsed: number;
   reportsTotal: number;
   reportsAvailable: number;
-  expiresAt: string;
+  expiresAt?: string;
   onPress: () => void;
 };
 
@@ -53,15 +58,17 @@ export function ReportsBanner({
         preserveAspectRatio="xMidYMid slice"
       />
       <View style={styles.microContent}>
-        <Text style={styles.microText1} numberOfLines={3}>
+        <Text style={styles.microTextMuted} numberOfLines={3}>
           Вы использовали {reportsUsed} из {reportsTotal} отчётов.
         </Text>
-        <Text style={styles.microText2} numberOfLines={2}>
+        <Text style={styles.microTextEmphasis} numberOfLines={2}>
           Доступно: {reportsAvailable} отчёта
         </Text>
-        <Text style={styles.microText3} numberOfLines={2}>
-          Пакет истекает {expiresAt}
-        </Text>
+        {expiresAt ? (
+          <Text style={styles.microTextMuted} numberOfLines={2}>
+            Пакет истекает {expiresAt}
+          </Text>
+        ) : null}
       </View>
     </TouchableOpacity>
   );
@@ -86,22 +93,13 @@ const styles = StyleSheet.create({
     maxWidth: "66%",
     paddingRight: 4,
   },
-  microText1: {
-    color: "rgba(255,255,255,0.9)",
-    fontSize: 11,
-    lineHeight: 14,
-    fontWeight: "600",
+  microTextMuted: {
+    ...figmaText.caption,
+    fontWeight: "400",
+    color: BANNER_TEXT_MUTED,
   },
-  microText2: {
-    color: colors.text.inverse,
-    fontSize: 18,
-    lineHeight: 22,
-    fontWeight: "800",
-  },
-  microText3: {
-    color: "rgba(255,255,255,0.9)",
-    fontSize: 11,
-    lineHeight: 14,
-    fontWeight: "600",
+  microTextEmphasis: {
+    ...figmaText.subtitle,
+    color: BANNER_TEXT_EMPHASIS,
   },
 });

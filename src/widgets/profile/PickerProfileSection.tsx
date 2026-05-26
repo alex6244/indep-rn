@@ -1,16 +1,17 @@
 import { type Href, useRouter } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
+import { Image } from "expo-image";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { getMainBurgerMenuItems } from "../../shared/config/mainBurgerMenu";
 import { BurgerMenu } from "../../shared/ui/BurgerMenu";
 import { BalanceModal } from "./BalanceModal";
 import { ProfileIdentityCard } from "./ProfileIdentityCard";
+import { ProfileTopBar } from "./ProfileTopBar";
 import { ProfileEditMenu } from "./ProfileEditMenu";
 import { ProfileLogoutRow } from "./ProfileLogoutRow";
 import { ProfileQuickActions } from "./ProfileQuickActions";
 import { ProfileStats } from "./ProfileStats";
-import { ProfileTopBar } from "./ProfileTopBar";
 import { ReportsBanner } from "./ReportsBanner";
 import { ReportsPackageSelectModal } from "../reports/ReportsPackageSelectModal";
 import { useReportsPackagePurchaseModal } from "../reports/useReportsPackagePurchaseModal";
@@ -25,14 +26,15 @@ import { PickerReportsEmptyState } from "./PickerReportsEmptyState";
 import { pickerReportsService } from "../../services/pickerReportsService";
 import type { Report } from "../../types/report";
 
+const addReportFabIcon = require("../../assets/profile/add-report-fab.png");
+
 type Props = {
-  initials: string;
   name: string;
   phone?: string;
   onLogout: () => Promise<void>;
 };
 
-export function PickerProfileSection({ initials, name, phone, onLogout }: Props) {
+export function PickerProfileSection({ name, phone, onLogout }: Props) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -46,14 +48,15 @@ export function PickerProfileSection({ initials, name, phone, onLogout }: Props)
 
   const stats = useMemo(
     () => ({
-      published: reports.length,
+      /** TODO: заменить на API опубликованных объявлений */
+      publishedAds: 120,
       balance: 2000,
       reportsAvailable: 4,
       reportsUsed: 6,
       reportsTotal: 10,
       expiresAt: "08.09.2027",
     }),
-    [reports.length],
+    [],
   );
 
   const loadReports = useCallback(async () => {
@@ -80,7 +83,10 @@ export function PickerProfileSection({ initials, name, phone, onLogout }: Props)
 
   return (
     <View style={styles.pickerScreen}>
-      <ProfileTopBar onOpenBurger={() => setMenuOpen(true)} />
+      <ProfileTopBar
+        topPadding={insets.top + 6}
+        onOpenBurger={() => setMenuOpen(true)}
+      />
 
       <ScrollView
         contentContainerStyle={[
@@ -94,12 +100,11 @@ export function PickerProfileSection({ initials, name, phone, onLogout }: Props)
         <ProfileIdentityCard
           name={name}
           phone={phone}
-          initials={initials}
           onOpenEdit={() => editFlow.setEditMenuOpen(true)}
         />
 
         <ProfileStats
-          published={stats.published}
+          published={stats.publishedAds}
           balanceLabel={formatRub(stats.balance)}
           onPressBalance={() => setBalanceModalOpen(true)}
         />
@@ -148,10 +153,16 @@ export function PickerProfileSection({ initials, name, phone, onLogout }: Props)
       <TouchableOpacity
         style={styles.fab}
         onPress={openCreateReport}
+        activeOpacity={0.88}
         accessibilityRole="button"
         accessibilityLabel="Создать отчёт"
       >
-        <Text style={styles.fabPlus}>＋</Text>
+        <Image
+          source={addReportFabIcon}
+          style={styles.fabIcon}
+          contentFit="contain"
+          accessibilityIgnoresInvertColors
+        />
       </TouchableOpacity>
 
       <BurgerMenu

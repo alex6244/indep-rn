@@ -13,11 +13,11 @@ import CloseIcon from "../../assets/icons/close.svg";
 import { shadowStyle } from "../../shared/theme/shadow";
 import { colors } from "../../shared/theme/colors";
 import { spacing } from "../../shared/theme/spacing";
-import { typography } from "../../shared/theme/typography";
+import { figmaText } from "../../shared/theme/typography";
 import {
   formatReportsPackageCountLabel,
   formatReportsPackagePrice,
-  REPORTS_PACKAGE_MODAL_TITLE,
+  REPORTS_PACKAGE_MODAL_INTRO,
   REPORTS_PACKAGE_OPTIONS,
 } from "./reportsPackage.data";
 
@@ -51,8 +51,7 @@ export function ReportsPackageSelectModal({ visible, onClose }: ReportsPackageSe
               <CloseIcon width={12} height={12} />
             </TouchableOpacity>
 
-            <Text style={styles.title}>{REPORTS_PACKAGE_MODAL_TITLE}</Text>
-            <Text style={styles.subtitle}>{REPORTS_PACKAGE_MODAL_TITLE}</Text>
+            <Text style={styles.intro}>{REPORTS_PACKAGE_MODAL_INTRO}</Text>
 
             <View style={styles.list}>
               {REPORTS_PACKAGE_OPTIONS.map((option, index) => (
@@ -128,22 +127,10 @@ const styles = StyleSheet.create({
     zIndex: 2,
     backgroundColor: colors.overlay.soft,
   },
-  title: {
-    ...typography.title,
-    fontSize: 17,
-    lineHeight: 22,
-    fontWeight: "700",
-    color: colors.text.primary,
-    textAlign: "center",
-    paddingHorizontal: spacing.xl,
-    marginBottom: spacing.sm,
-  },
-  subtitle: {
-    ...typography.textRegular,
-    fontSize: 13,
-    lineHeight: 18,
-    fontWeight: "500",
-    color: colors.text.muted,
+  /** Вводный текст — обычный, серый. */
+  intro: {
+    ...figmaText.body,
+    color: colors.text.tertiary,
     textAlign: "center",
     paddingHorizontal: spacing.md,
     marginBottom: spacing.md,
@@ -166,20 +153,16 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0,
   },
+  /** Название пакета — жирный, тёмно-серый. */
   countText: {
-    ...typography.title,
-    fontSize: 18,
-    lineHeight: 22,
+    ...figmaText.subtitle,
     fontWeight: "700",
-    color: colors.text.primary,
+    color: colors.text.secondary,
   },
   durationText: {
-    ...typography.textRegular,
+    ...figmaText.body,
     marginTop: 4,
-    fontSize: 13,
-    lineHeight: 17,
-    fontWeight: "500",
-    color: colors.text.muted,
+    color: colors.text.tertiary,
   },
   priceBtn: {
     minWidth: 108,
@@ -190,11 +173,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  /** Цена на кнопке — жирная, белая. */
   priceBtnText: {
-    ...typography.title,
-    fontSize: 17,
-    lineHeight: 20,
-    fontWeight: "700",
+    ...figmaText.bodyLargeBold,
     color: colors.text.inverse,
   },
 });

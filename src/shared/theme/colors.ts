@@ -54,7 +54,8 @@ export const colors = {
   },
   icon: {
     placeholder: "#EEE",
-    muted: "#9A9A9A",
+    /** Figma nav bar inactive icon/label — figma:build → figmaColors.navBarInactive */
+    muted: "#A0A0A0",
   },
   control: {
     buttonPrimaryBg: "#DB4431",

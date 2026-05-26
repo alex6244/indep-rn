@@ -11,7 +11,7 @@ export const REPORTS_PACKAGE_OPTIONS: ReportsPackageOption[] = [
   { id: "10", count: 10, priceRub: 4000, durationText: "действует 1 год" },
 ];
 
-export const REPORTS_PACKAGE_MODAL_TITLE =
+export const REPORTS_PACKAGE_MODAL_INTRO =
   "Выберите удобный пакет и получите доступ к отчётам сразу после оплаты";
 
 const ruPriceFormat = new Intl.NumberFormat("ru-RU");

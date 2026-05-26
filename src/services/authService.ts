@@ -301,9 +301,10 @@ export const authService = {
   logout: async (): Promise<void> => {
     try {
       await api.post("/auth/logout", {});
-    } finally {
-      await Promise.all([tokenStorage.clear(), refreshTokenStorage.clear()]);
+    } catch {
+      // Local session must clear even when POST /auth/logout fails (5xx, network, etc.).
     }
+    await Promise.all([tokenStorage.clear(), refreshTokenStorage.clear()]);
   },
 
   /**

@@ -30,6 +30,11 @@
     "lint": "expo lint src e2e",
     "typecheck": "tsc --noEmit",
     "test": "jest",
+    "figma:pull": "node scripts/figma/pull.mjs",
+    "figma:build": "node scripts/figma/build-tokens.mjs",
+    "figma:sync": "npm run figma:pull && npm run figma:build && npm run figma:check",
+    "figma:check": "node scripts/figma/check-drift.mjs",
+    "figma:fonts": "node scripts/figma/list-fonts.mjs",
     "detox:build:android": "detox build -c android.emu.debug",
     "detox:test:android": "detox test -c android.emu.debug",
     "detox:test:android:headless": "detox test -c android.emu.debug --headless"

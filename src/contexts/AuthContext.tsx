@@ -24,7 +24,7 @@ import {
   getDefaultAuthErrorMessage,
   type RegisterPayload,
 } from "../services/authTypes";
-import type { User } from "../types/user";
+import type { User, UserRole } from "../types/user";
 
 type AuthSource = "mock" | "api";
 
@@ -90,6 +90,10 @@ function getMockTokenTtlMs(): number {
     DEFAULT_MOCK_TOKEN_TTL_MS,
   );
   return parsed > 0 ? parsed : DEFAULT_MOCK_TOKEN_TTL_MS;
+}
+
+function resolveMockUserRole(role?: string): UserRole {
+  return role === "picker" ? "picker" : "client";
 }
 
 function normalizeAuthError(error: unknown): AuthError {
@@ -251,8 +255,8 @@ function createMockAuthGateway(): AuthGateway {
         : {
             id: Date.now().toString(),
             login: trimmedEmail,
-            role: "client",
-            name: trimmedEmail.split("@")[0] || "Пользователь",
+            role: resolveMockUserRole(payload.role),
+            name: payload.name?.trim() || trimmedEmail.split("@")[0] || "Пользователь",
             phone: "",
             email: trimmedEmail,
           };
@@ -415,9 +419,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const logout: AuthContextType["logout"] = async () => {
-    await gateway.logout();
-    setUser(null);
-    setAuthError(null);
+    try {
+      await gateway.logout();
+    } catch {
+      // Always sign out locally even if server logout fails.
+    } finally {
+      setUser(null);
+      setAuthError(null);
+    }
   };
 
   return (

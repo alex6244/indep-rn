@@ -2,6 +2,7 @@ import { Tabs } from "expo-router";
 import React from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Callpin from "../../assets/icons/mobilemenu/callpin2.svg";
 import Catalogpin from "../../assets/icons/mobilemenu/catalogpin2.svg";
 import Homepin from "../../assets/icons/mobilemenu/homepin2.svg";
 import Profilepin from "../../assets/icons/mobilemenu/profilepin2.svg";
@@ -10,12 +11,14 @@ import {
   tabBarTotalHeight,
 } from "../../shared/navigation/tabBarMetrics";
 import { colors } from "../../shared/theme/colors";
+import { figmaNavBar } from "../../shared/theme/figma.generated";
+import { figmaTabBar } from "../../shared/theme/figma";
 
-const ACTIVE = colors.brand.primary;
-const INACTIVE = colors.icon.muted;
-const NAV_BG = colors.surface.primary;
-/** Натуральный размер ассетов с подписью внутри SVG. */
-const TAB_ICON_SIZE = 62;
+const ACTIVE = figmaTabBar.activeTint;
+const INACTIVE = figmaTabBar.inactiveTint;
+const NAV_BG = figmaTabBar.backgroundColor;
+/** Натуральный размер ассетов с подписью внутри SVG (Figma tab item 62×62). */
+const TAB_ICON_SIZE = figmaNavBar.tabItemSize;
 
 type SvgTabIconProps = {
   Icon: React.ComponentType<{ width: number; height: number; color?: string }>;
@@ -60,8 +63,8 @@ export default function TabLayout() {
           boxShadow: "none",
           height: barHeight,
           paddingBottom: bottomInset,
-          paddingTop: 4,
-          paddingHorizontal: 2,
+          paddingTop: figmaNavBar.paddingTop,
+          paddingHorizontal: figmaNavBar.paddingHorizontal,
         },
         tabBarItemStyle: {
           flex: 1,
@@ -93,7 +96,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="calls"
         options={{
-          href: null,
+          title: "Позвонить",
+          tabBarIcon: ({ color, focused }) => (
+            <SvgTabIcon Icon={Callpin} color={color} focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
