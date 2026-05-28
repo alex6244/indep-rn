@@ -1,31 +1,25 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ReportsIcon from "../../assets/profile/reports.svg";
 import { ProfileWalletIcon } from "./ProfileWalletIcon";
 import {
-  PROFILE_STAT_CARD_RADIUS,
   PROFILE_STATS_ROW_GAP,
   PROFILE_STATS_ROW_PAD_H,
   useProfileStatCardSize,
 } from "./profileStatCardMetrics";
-import { colors } from "../../shared/theme/colors";
-import { shadowStyle } from "../../shared/theme/shadow";
+import { profileStatCardStyles as cardStyles } from "./profileStatCardStyles";
 
-const profileStatCardShadow = shadowStyle({
-  boxShadow: "0px 4px 10px rgba(0,0,0,0.04)",
-  shadowColor: colors.text.primary,
-  shadowOpacity: 0.04,
-  shadowRadius: 10,
-  shadowOffset: { width: 0, height: 4 },
-  elevation: 2,
-}) as object;
+/** Figma wallet (162×97 card) + 50% как Best в quick-actions. */
+const WALLET_FIGMA = {
+  width: 51.21,
+  height: 59.24,
+  right: -10,
+  top: -10,
+  sizeScale: 1.5,
+} as const;
 
-/** Figma wallet + ~50% как у Best на quick-actions. */
-const WALLET_BASE_W = 51.21;
-const WALLET_BASE_H = 59.24;
-const WALLET_SIZE_SCALE = 1.5;
-const WALLET_RIGHT = -10;
-const WALLET_TOP = -10;
+const PUBLISHED_ICON_BASE = 44;
+const BALANCE_TEXT_PAD_BASE = 52;
 
 type Props = {
   published: number;
@@ -39,32 +33,40 @@ export function ProfileStats({
   onPressBalance,
 }: Props) {
   const { cardW, cardH, cardScale } = useProfileStatCardSize();
+  const isCompact = cardScale < 1;
 
-  const walletRight = WALLET_RIGHT * cardScale;
-  const walletTop = WALLET_TOP * cardScale;
-  const walletW = WALLET_BASE_W * WALLET_SIZE_SCALE * cardScale;
-  const walletH = WALLET_BASE_H * WALLET_SIZE_SCALE * cardScale;
+  const layout = useMemo(
+    () => ({
+      walletW: WALLET_FIGMA.width * WALLET_FIGMA.sizeScale * cardScale,
+      walletH: WALLET_FIGMA.height * WALLET_FIGMA.sizeScale * cardScale,
+      walletRight: WALLET_FIGMA.right * cardScale,
+      walletTop: WALLET_FIGMA.top * cardScale,
+      iconSize: Math.round(PUBLISHED_ICON_BASE * cardScale),
+      balancePaddingRight: Math.round(BALANCE_TEXT_PAD_BASE * cardScale),
+    }),
+    [cardScale],
+  );
 
-  const iconSize = Math.round(44 * cardScale);
+  const cardSizeStyle = { width: cardW, height: cardH };
 
   return (
     <View style={styles.statsRow}>
       <View style={styles.statsInner}>
-        <View style={[styles.statCard, { width: cardW, height: cardH }]}>
-          <Text style={styles.statLabel} numberOfLines={2}>
+        <View style={[cardStyles.card, cardSizeStyle]}>
+          <Text style={cardStyles.label} numberOfLines={2}>
             Опубликовано объявлений
           </Text>
           <View style={styles.publishedRow}>
             <ReportsIcon
-              width={iconSize}
-              height={iconSize}
+              width={layout.iconSize}
+              height={layout.iconSize}
               style={styles.publishedIcon}
             />
             <Text
               style={[
-                styles.statValue,
+                cardStyles.value,
                 styles.statValueRight,
-                cardScale < 1 && styles.statValueCompact,
+                isCompact && cardStyles.valueCompact,
               ]}
             >
               {published}
@@ -73,24 +75,20 @@ export function ProfileStats({
         </View>
 
         <TouchableOpacity
-          style={[styles.statCard, styles.statCardBalance, { width: cardW, height: cardH }]}
+          style={[cardStyles.card, cardStyles.cardBalance, cardSizeStyle]}
           onPress={onPressBalance}
           activeOpacity={0.86}
           accessibilityRole="button"
+          accessibilityLabel="Ваш баланс"
         >
-          <Text style={styles.statLabel}>Ваш баланс</Text>
+          <Text style={cardStyles.label}>Ваш баланс</Text>
 
-          <View
-            style={[
-              styles.balanceBottom,
-              { paddingRight: Math.round(52 * cardScale) },
-            ]}
-          >
+          <View style={[styles.balanceBottom, { paddingRight: layout.balancePaddingRight }]}>
             <Text
               style={[
-                styles.statValue,
-                styles.statValueFullWidth,
-                cardScale < 1 && styles.statValueCompact,
+                cardStyles.value,
+                cardStyles.valueFullWidth,
+                isCompact && cardStyles.valueCompact,
               ]}
               numberOfLines={1}
               adjustsFontSizeToFit
@@ -104,15 +102,15 @@ export function ProfileStats({
             style={[
               styles.walletWrap,
               {
-                right: walletRight,
-                top: walletTop,
-                width: walletW,
-                height: walletH,
+                right: layout.walletRight,
+                top: layout.walletTop,
+                width: layout.walletW,
+                height: layout.walletH,
               },
             ]}
             pointerEvents="none"
           >
-            <ProfileWalletIcon width={walletW} height={walletH} />
+            <ProfileWalletIcon width={layout.walletW} height={layout.walletH} />
           </View>
         </TouchableOpacity>
       </View>
@@ -131,20 +129,6 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     gap: PROFILE_STATS_ROW_GAP,
   },
-  statCard: {
-    borderRadius: PROFILE_STAT_CARD_RADIUS,
-    backgroundColor: colors.surface.primary,
-    paddingHorizontal: 10,
-    paddingTop: 8,
-    paddingBottom: 8,
-    justifyContent: "space-between",
-    overflow: "hidden",
-    ...profileStatCardShadow,
-    elevation: 2,
-  },
-  statCardBalance: {
-    position: "relative",
-  },
   publishedRow: {
     flexDirection: "row",
     alignItems: "flex-end",
@@ -158,31 +142,12 @@ const styles = StyleSheet.create({
   publishedIcon: {
     opacity: 0.95,
   },
-  statLabel: {
-    fontSize: 10,
-    lineHeight: 13,
-    color: colors.text.muted,
-  },
-  statValue: {
-    fontSize: 20,
-    lineHeight: 24,
-    fontWeight: "500",
-    color: colors.text.primary,
-    marginBottom: 2,
-  },
   balanceBottom: {
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "flex-start",
     paddingRight: 4,
     zIndex: 1,
-  },
-  statValueFullWidth: {
-    width: "100%",
-    marginBottom: 0,
-  },
-  statValueCompact: {
-    fontSize: 17,
   },
   walletWrap: {
     position: "absolute",

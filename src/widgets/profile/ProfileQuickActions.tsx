@@ -9,17 +9,16 @@ import { spacing } from "../../shared/theme/spacing";
 const BEST_ICON_WIDTH = Math.round(58 * 1.5);
 const BEST_ICON_HEIGHT = Math.round(48 * 1.5);
 
+const BEST_OFFERS_LINE_1 = "Лучшие предложения";
+const BEST_OFFERS_LINE_2 = "на авто";
+const BEST_OFFERS_A11Y = `${BEST_OFFERS_LINE_1} ${BEST_OFFERS_LINE_2}`;
+
 type Props = {
   onOpenFavorites: () => void;
   onOpenBest: () => void;
-  variant?: "picker" | "client";
 };
 
-export function ProfileQuickActions({
-  onOpenFavorites,
-  onOpenBest,
-  variant: _variant = "client",
-}: Props) {
+export function ProfileQuickActions({ onOpenFavorites, onOpenBest }: Props) {
   return (
     <View style={styles.quickRow}>
       <TouchableOpacity
@@ -39,19 +38,19 @@ export function ProfileQuickActions({
         style={[styles.card, styles.bestCard]}
         onPress={onOpenBest}
         accessibilityRole="button"
-        accessibilityLabel="Лучшие предложения на авто"
+        accessibilityLabel={BEST_OFFERS_A11Y}
       >
-        <View style={[styles.bestCardInner, { pointerEvents: "none" }]}>
+        <View style={styles.bestCardInner} pointerEvents="none">
           <View style={styles.bestTextBlock}>
             <Text
-              style={styles.bestTextTitle}
+              style={styles.bestText}
               numberOfLines={1}
               adjustsFontSizeToFit
               minimumFontScale={0.72}
             >
-              Лучшие предложения
+              {BEST_OFFERS_LINE_1}
             </Text>
-            <Text style={styles.bestText}>на авто</Text>
+            <Text style={styles.bestText}>{BEST_OFFERS_LINE_2}</Text>
           </View>
           <View style={styles.bestIconCorner}>
             <BestIcon width={BEST_ICON_WIDTH} height={BEST_ICON_HEIGHT} />
@@ -92,12 +91,6 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   bestText: {
-    fontSize: 12,
-    color: colors.text.muted,
-    fontWeight: "400",
-    lineHeight: 16,
-  },
-  bestTextTitle: {
     fontSize: 12,
     color: colors.text.muted,
     fontWeight: "400",

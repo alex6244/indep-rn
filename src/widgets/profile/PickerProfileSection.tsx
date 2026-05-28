@@ -118,7 +118,6 @@ export function PickerProfileSection({ name, phone, onLogout }: Props) {
         />
 
         <ProfileQuickActions
-          variant="picker"
           onOpenFavorites={() => router.push("/(tabs)/favorites" as Href)}
           onOpenBest={() => router.push("/(tabs)/catalog" as Href)}
         />

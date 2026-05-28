@@ -11,7 +11,14 @@ export const PROFILE_STAT_CARD_RADIUS = 12;
 const NATURAL_ROW_WIDTH =
   PROFILE_STAT_CARD_WIDTH * 2 + PROFILE_STATS_ROW_GAP;
 
-export function useProfileStatCardSize() {
+export type ProfileStatCardSize = {
+  cardW: number;
+  cardH: number;
+  /** Scale vs Figma 162×97 when the row is narrower than the design. */
+  cardScale: number;
+};
+
+export function useProfileStatCardSize(): ProfileStatCardSize {
   const { width: windowWidth } = useWindowDimensions();
 
   return useMemo(() => {
