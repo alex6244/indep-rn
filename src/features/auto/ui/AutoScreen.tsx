@@ -50,6 +50,7 @@ export default function AutoScreen() {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [notFound, setNotFound] = React.useState(false);
+  const [_infoMessage, setInfoMessage] = React.useState<string | null>(null);
   const reportsPackageModal = useReportsPackagePurchaseModal();
   const [photoIndex, setPhotoIndex] = React.useState(0);
   const requestVersionRef = React.useRef(0);

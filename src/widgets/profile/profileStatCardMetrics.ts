@@ -21,7 +21,7 @@ export function useProfileStatCardSize() {
       return {
         cardW: PROFILE_STAT_CARD_WIDTH,
         cardH: PROFILE_STAT_CARD_HEIGHT,
-        walletS: 1,
+        cardScale: 1,
       };
     }
 
@@ -30,7 +30,7 @@ export function useProfileStatCardSize() {
     return {
       cardW: w,
       cardH: PROFILE_STAT_CARD_HEIGHT * s,
-      walletS: s,
+      cardScale: s,
     };
   }, [windowWidth]);
 }

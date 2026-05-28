@@ -12,6 +12,7 @@ import {
   DD_MM_YYYY_MAX_LENGTH,
   DD_MM_YYYY_PLACEHOLDER,
   formatDdMmYyyyInput,
+  type OwnerDateField,
   validateOwnerDates,
 } from "../../../shared/validation/formatDdMmYyyy";
 import { PR_TYPO } from "./pickerReport.styles";

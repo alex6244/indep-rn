@@ -6,6 +6,9 @@ import { colors } from "../../shared/theme/colors";
 import { radius } from "../../shared/theme/radius";
 import { spacing } from "../../shared/theme/spacing";
 
+const BEST_ICON_WIDTH = Math.round(58 * 1.5);
+const BEST_ICON_HEIGHT = Math.round(48 * 1.5);
+
 type Props = {
   onOpenFavorites: () => void;
   onOpenBest: () => void;
@@ -33,17 +36,25 @@ export function ProfileQuickActions({
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.card}
+        style={[styles.card, styles.bestCard]}
         onPress={onOpenBest}
         accessibilityRole="button"
         accessibilityLabel="Лучшие предложения на авто"
       >
         <View style={[styles.bestCardInner, { pointerEvents: "none" }]}>
-          <Text style={styles.bestText} numberOfLines={3}>
-            Лучшие предложения на авто
-          </Text>
+          <View style={styles.bestTextBlock}>
+            <Text
+              style={styles.bestTextTitle}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.72}
+            >
+              Лучшие предложения
+            </Text>
+            <Text style={styles.bestText}>на авто</Text>
+          </View>
           <View style={styles.bestIconCorner}>
-            <BestIcon width={58} height={48} />
+            <BestIcon width={BEST_ICON_WIDTH} height={BEST_ICON_HEIGHT} />
           </View>
         </View>
       </TouchableOpacity>
@@ -65,26 +76,37 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: colors.surface.primary,
   },
+  bestCard: {
+    minHeight: 76,
+  },
   bestCardInner: {
     flex: 1,
-    minHeight: 62,
-    paddingHorizontal: spacing.md,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.md,
-    paddingRight: spacing.sm,
+    minHeight: 76,
     position: "relative",
-    justifyContent: "flex-start",
+  },
+  bestTextBlock: {
+    position: "absolute",
+    left: spacing.md,
+    top: spacing.sm,
+    right: 28,
+    zIndex: 1,
   },
   bestText: {
     fontSize: 12,
     color: colors.text.muted,
     fontWeight: "400",
     lineHeight: 16,
-    maxWidth: "78%",
+  },
+  bestTextTitle: {
+    fontSize: 12,
+    color: colors.text.muted,
+    fontWeight: "400",
+    lineHeight: 16,
+    width: "100%",
   },
   bestIconCorner: {
     position: "absolute",
-    right: 4,
-    bottom: 6,
+    right: 2,
+    bottom: -16,
   },
 });

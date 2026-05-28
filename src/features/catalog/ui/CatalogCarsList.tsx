@@ -37,6 +37,7 @@ type CatalogCarsListProps = {
   isFavorite: (carId: string) => boolean;
   setFavorite: (carId: string, next: boolean) => void;
   onBuyReport?: () => void;
+  onPressCar?: (carId: string) => void;
   styles: CatalogStyles;
   ListHeaderComponent?: React.ComponentType<unknown> | React.ReactElement | null;
   ListFooterComponent?: React.ComponentType<unknown> | React.ReactElement | null;

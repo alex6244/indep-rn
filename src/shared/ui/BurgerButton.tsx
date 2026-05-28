@@ -1,14 +1,16 @@
 import React from "react";
+import { Image } from "expo-image";
 import {
   StyleSheet,
   TouchableOpacity,
+  type StyleProp,
   type TouchableOpacityProps,
-  View,
+  type ImageStyle,
 } from "react-native";
-import { colors } from "../theme/colors";
 
-const LINE_WIDTH = 22;
-const ICON_HEIGHT = 14;
+const BURGER_MENU_ICON = require("../../assets/icons/burger-menu.png");
+
+const ICON_SIZE = 28;
 
 export type BurgerButtonProps = Omit<
   TouchableOpacityProps,
@@ -16,12 +18,15 @@ export type BurgerButtonProps = Omit<
 > & {
   accessibilityLabel?: string;
   onPress: NonNullable<TouchableOpacityProps["onPress"]>;
+  /** Override icon dimensions (default 28×28). */
+  iconStyle?: StyleProp<ImageStyle>;
 };
 
-/** Единый триггер бургер-меню: зона 40×40, три линии как в Figma / WelcomeHero. */
+/** Единый триггер бургер-меню: зона 40×40, иконка из assets/icons/burger-menu.png */
 export function BurgerButton({
   onPress,
   style,
+  iconStyle,
   accessibilityLabel = "Открыть меню",
   ...rest
 }: BurgerButtonProps) {
@@ -33,11 +38,12 @@ export function BurgerButton({
       onPress={onPress}
       {...rest}
     >
-      <View style={styles.lines}>
-        <View style={styles.line} />
-        <View style={styles.line} />
-        <View style={styles.line} />
-      </View>
+      <Image
+        source={BURGER_MENU_ICON}
+        style={[styles.icon, iconStyle]}
+        contentFit="contain"
+        accessibilityIgnoresInvertColors
+      />
     </TouchableOpacity>
   );
 }
@@ -50,15 +56,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  lines: {
-    width: LINE_WIDTH,
-    height: ICON_HEIGHT,
-    justifyContent: "space-between",
-  },
-  line: {
-    width: LINE_WIDTH,
-    height: 2,
-    borderRadius: 2,
-    backgroundColor: colors.brand.primary,
+  icon: {
+    width: ICON_SIZE,
+    height: ICON_SIZE,
   },
 });
