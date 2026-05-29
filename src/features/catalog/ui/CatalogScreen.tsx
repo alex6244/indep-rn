@@ -5,7 +5,7 @@ import type { View as RNView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useFavorites } from "../../../contexts/FavoritesContext";
-import type { Car } from "../../../types/car";
+import { useCatalogCars } from "../hooks/useCatalogCars";
 import { useCatalogFiltersController, type SortOption } from "../hooks/useCatalogFiltersController";
 import { scrollBottomPaddingBelowTabBar } from "../../../shared/navigation/tabBarMetrics";
 import { getMainBurgerMenuItems, MainBurgerMenuFooter } from "../../../shared/config/mainBurgerMenu";
@@ -21,8 +21,6 @@ import { CatalogContentSection } from "./CatalogContentSection";
 import { CatalogCallbackRequestModal } from "./CatalogCallbackRequestModal";
 import { ReportsPackageSelectModal } from "../../../widgets/reports/ReportsPackageSelectModal";
 import { useReportsPackagePurchaseModal } from "../../../widgets/reports/useReportsPackagePurchaseModal";
-import { carService } from "../../../services/carService";
-import { createRequestVersionTracker } from "../../../shared/async/requestVersion";
 
 type SortAnchor = {
   x: number;
@@ -50,39 +48,10 @@ export default function CatalogScreen() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [callbackModalOpen, setCallbackModalOpen] = useState(false);
   const reportsPackageModal = useReportsPackagePurchaseModal();
-  const [cars, setCars] = useState<Car[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [dataError, setDataError] = useState<string | null>(null);
-  const loadRequestTrackerRef = useRef(createRequestVersionTracker());
+  const { cars, loading, error: dataError, reload: reloadCars } = useCatalogCars();
   const sortButtonRef = useRef<MeasureInWindowRef | null>(null);
   const filtersX = useRef<Animated.Value>(new Animated.Value(-SCREEN_WIDTH)).current;
   const controller = useCatalogFiltersController(cars);
-
-  const loadCars = useCallback(async (signal?: AbortSignal): Promise<void> => {
-    const requestId = loadRequestTrackerRef.current.next();
-    setLoading(true);
-    setDataError(null);
-    try {
-      const fetchedCars = await carService.getAll(undefined, signal);
-      if (signal?.aborted || !loadRequestTrackerRef.current.isActive(requestId)) return;
-      setCars(Array.isArray(fetchedCars) ? fetchedCars : []);
-    } catch (error) {
-      if (signal?.aborted || !loadRequestTrackerRef.current.isActive(requestId)) return;
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Не удалось загрузить каталог. Проверьте подключение и попробуйте снова.";
-      setDataError(message);
-    } finally {
-      if (!signal?.aborted && loadRequestTrackerRef.current.isActive(requestId)) setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    const abortController = new AbortController();
-    void loadCars(abortController.signal);
-    return () => abortController.abort();
-  }, [loadCars]);
 
   useEffect(() => {
     return () => {
@@ -131,11 +100,11 @@ export default function CatalogScreen() {
 
   const handleRetry = useCallback((): void => {
     if (dataError) {
-      void loadCars();
+      void reloadCars();
       return;
     }
     resetFilters();
-  }, [dataError, loadCars, resetFilters]);
+  }, [dataError, reloadCars, resetFilters]);
 
   const handleCallbackSubmit = useCallback(async (_payload: { name: string; phone: string }) => {
     // Placeholder for future backend integration.

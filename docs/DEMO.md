@@ -1,6 +1,29 @@
-# Demo checklist (boss presentation)
+# Демо для босса (2–3 минуты)
 
-## `.env` (local, not committed)
+Показать **рабочий сценарий**: вход по SMS — **живой API**, каталог и отчёты — **mock** (пока бэк не отдал все эндпоинты).
+
+## Быстрый запуск (рекомендуется)
+
+Один раз перед показом:
+
+```bash
+npm install
+npm run start:demo
+```
+
+Скрипт `start:demo` сам выставляет все переменные для демо (не нужен `.env`).
+
+Показ с телефона босса в той же Wi‑Fi сети:
+
+```bash
+npm run start:tunnel:demo
+```
+
+Откройте QR в Expo Go.
+
+## Альтернатива: файл `.env`
+
+Скопируйте `.env.example` → `.env` и проверьте:
 
 ```env
 EXPO_PUBLIC_API_URL=https://indep.su/api/v1.0
@@ -10,28 +33,47 @@ EXPO_PUBLIC_REPORTS_SOURCE=mock
 EXPO_PUBLIC_ALLOW_HTTP_DEV=false
 ```
 
-Start:
+Запуск:
 
 ```bash
-npm run start:catalog:mock
-# or: npx expo start  (after .env is set)
+npx expo start
 ```
 
-## 2–3 min script
+> Не используйте только `npm run start:catalog:mock` — он меняет **только** каталог. Для демо нужны ещё `AUTH_SOURCE=api` и URL API.
 
-1. Register / login (live API).
-2. Catalog → filter → tap a car card → car details.
-3. Heart icon → burger menu → **Избранное** → same car listed.
-4. **Рассчитать в кредит** → adjust sliders → submit form → «Заявка отправлена».
-5. Profile → reports banner / **Купить отчёт** → package modal (550 / 2000 / 4000 ₽).
+## Сценарий на встрече (что нажимать и что сказать)
 
-## Avoid on demo
+| # | Действие | Что сказать боссу (кратко) |
+|---|----------|----------------------------|
+| 1 | Регистрация или вход по SMS | «Пользователь заходит по номеру телефона, как в проде.» |
+| 2 | Главная → **Перейти в каталог** (или таб «Каталог») → фильтр → тап по карточке | «Каталог с фильтрами, карточка авто с деталями.» |
+| 3 | Сердечко на авто → бургер → **Избранное** | «Избранное сохраняется в профиле.» |
+| 4 | На карточке авто → **Рассчитать в кредит** → слайдеры → отправить | «Заявка на кредит уходит, пользователь видит подтверждение.» |
+| 5 | Профиль → баннер отчётов / **Купить отчёт** | «Покупка пакета отчётов — модалка с тарифами.» |
 
-- Calls tab (hidden from tab bar).
-- Cooperation menu item (removed from burger menu).
-- Do not enable `EXPO_PUBLIC_CATALOG_SOURCE=api` until `GET /cars` works.
+**Профиль подборщика:** отдельный сценарий — статистика, баланс, отчёты; для клиентского демо достаточно таблицы выше.
 
-## Fallback
+Перед встречей **один раз** пройдите шаги 1–5 сами и убедитесь, что нет красных экранов.
 
-- Pre-login test account ready.
-- Second phone number for registration if first fails.
+## Чего не показывать
+
+- Таб **Звонки** (скрыт).
+- Пункт **Сотрудничество** в бургер-меню (убран).
+- Не включать `EXPO_PUBLIC_CATALOG_SOURCE=api`, пока на бэке не работает `GET /cars`.
+
+## Если что-то сломалось
+
+| Проблема | Что сделать |
+|----------|-------------|
+| SMS / вход не приходит | Запасной номер для регистрации; или тестовый аккаунт, уже залогиненный |
+| Пустой каталог | Проверить `CATALOG_SOURCE=mock` и перезапуск `npm run start:demo` |
+| «API URL not configured» | Запускать `start:demo`, не голый `expo start` без `.env` |
+
+## Когда бэк догонит
+
+По мере готовности эндпоинтов меняйте в `.env` или в `eas.json`:
+
+- `EXPO_PUBLIC_CATALOG_SOURCE=api` — когда живой каталог.
+- `EXPO_PUBLIC_REPORTS_SOURCE=api` — когда отчёты и оплата на API.
+
+После каждого переключения — тот же сценарий 1–5 на staging/production сборке.
