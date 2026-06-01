@@ -32,6 +32,8 @@
     "lint": "expo lint src e2e",
     "typecheck": "tsc --noEmit",
     "test": "jest",
+    "ai-api:install": "npm install --prefix ai-api",
+    "ai-api:dev": "npm run dev --prefix ai-api",
     "figma:pull": "node scripts/figma/pull.mjs",
     "figma:build": "node scripts/figma/build-tokens.mjs",
     "figma:sync": "npm run figma:pull && npm run figma:build && npm run figma:check",

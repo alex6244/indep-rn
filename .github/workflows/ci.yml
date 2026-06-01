@@ -54,3 +54,9 @@ jobs:
 
       - name: Run tests
         run: npm test -- --ci
+
+      - name: Install ai-api dependencies
+        run: npm install --prefix ai-api
+
+      - name: Typecheck ai-api
+        run: npm run typecheck --prefix ai-api

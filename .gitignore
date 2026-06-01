@@ -33,6 +33,11 @@ yarn-error.*
 # local env files
 .env*.local
 
+# AI backend (ai-api/)
+ai-api/.env
+ai-api/node_modules/
+ai-api/dist/
+
 # typescript
 *.tsbuildinfo
 

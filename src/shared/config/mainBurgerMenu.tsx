@@ -6,6 +6,7 @@ import FavIcon from "../../assets/icons/burger/favourites.svg";
 import LogoutIcon from "../../assets/icons/burger/logout.svg";
 import SelectionIcon from "../../assets/icons/burger/selection.svg";
 import AutoCreditIcon from "../../assets/mainpage/services/2.svg";
+import { AiPickerMenuIcon } from "../../features/aiPicker/ui/AiPickerMenuIcon";
 import type { BurgerMenuItem } from "../ui/BurgerMenu";
 import { colors } from "../theme/colors";
 
@@ -16,6 +17,12 @@ export function getMainBurgerMenuItems(): BurgerMenuItem[] {
       label: "Избранное",
       href: "/(tabs)/favorites" as Href,
       Icon: FavIcon,
+    },
+    {
+      key: "ai-picker",
+      label: "Подбор новых авто с ИИ",
+      href: "/ai-picker" as Href,
+      Icon: AiPickerMenuIcon,
     },
     {
       key: "selection",

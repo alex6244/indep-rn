@@ -1,0 +1,2482 @@
+[
+  {
+    "id": 1,
+    "mark_name": "LADA",
+    "model_name": "Niva",
+    "full_name": "LADA Niva Legend 3 дв.",
+    "preview": "https://indep.su/resources/bodies/7480e7438e4c1c3bfc2c69e25aec30b4bc39167d.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 949000,
+    "price_old": 1099000
+  },
+  {
+    "id": 2,
+    "mark_name": "LADA",
+    "model_name": "Granta",
+    "full_name": "LADA Granta Седан",
+    "preview": "https://indep.su/resources/bodies/c7a1354f2ba6ee3203c5b2ef2d8fb3f87a617e1c.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 649900,
+    "price_old": 770900
+  },
+  {
+    "id": 3,
+    "mark_name": "LADA",
+    "model_name": "Granta",
+    "full_name": "LADA Granta Лифтбек",
+    "preview": "https://indep.su/resources/bodies/65edc8edb56dfa0540b9c6a7247325490cb0fedd.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 896000,
+    "price_old": 1017000
+  },
+  {
+    "id": 4,
+    "mark_name": "LADA",
+    "model_name": "Vesta",
+    "full_name": "LADA Vesta Седан",
+    "preview": "https://indep.su/resources/bodies/06a50c38a6d71771c3379febc62522f4c221f763.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1185000,
+    "price_old": 1581000
+  },
+  {
+    "id": 5,
+    "mark_name": "LADA",
+    "model_name": "Vesta",
+    "full_name": "LADA Vesta Cross",
+    "preview": "https://indep.su/resources/bodies/5cf9dd3d53b0b36d1d09a37f0a1725dd1048f862.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1249000,
+    "price_old": 1818000
+  },
+  {
+    "id": 7,
+    "mark_name": "LADA",
+    "model_name": "Vesta",
+    "full_name": "LADA Vesta SW Cross",
+    "preview": "https://indep.su/resources/bodies/c042a666378ea7d196de64da85bb3d1f9e3258d9.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1149000,
+    "price_old": 1938000
+  },
+  {
+    "id": 8,
+    "mark_name": "LADA",
+    "model_name": "Vesta",
+    "full_name": "LADA Vesta Sportline",
+    "preview": "https://indep.su/resources/bodies/276f031f3e27950a831a541d6c468f8458f530fb.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1673000,
+    "price_old": 2325000
+  },
+  {
+    "id": 9,
+    "mark_name": "LADA",
+    "model_name": "Vesta",
+    "full_name": "LADA Vesta SW Sportline",
+    "preview": "https://indep.su/resources/bodies/b09bb4a39da55a513a5cf48bed1be3630b87fef1.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1843000,
+    "price_old": 2495000
+  },
+  {
+    "id": 10,
+    "mark_name": "LADA",
+    "model_name": "Granta",
+    "full_name": "LADA Granta Cross",
+    "preview": "https://indep.su/resources/bodies/bc6b659a6d84582bf6b0bb884399872ac2c794e7.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 975000,
+    "price_old": 1196000
+  },
+  {
+    "id": 11,
+    "mark_name": "LADA",
+    "model_name": "Granta",
+    "full_name": "LADA Granta Active Cross",
+    "preview": "https://indep.su/resources/bodies/661fcb57723a0121f99238c4d5ca1d11397964b6.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 985000,
+    "price_old": 1206000
+  },
+  {
+    "id": 12,
+    "mark_name": "LADA",
+    "model_name": "Granta",
+    "full_name": "LADA Granta Sportline Седан",
+    "preview": "https://indep.su/resources/bodies/5264efcd5c63e4735ad322b581129555f8cfe195.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1041000,
+    "price_old": 1369000
+  },
+  {
+    "id": 13,
+    "mark_name": "LADA",
+    "model_name": "Granta",
+    "full_name": "LADA Granta Sportline Лифтбек",
+    "preview": "https://indep.su/resources/bodies/3c1166d1eb73ecb875e195c94de41f622f7c2416.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1081000,
+    "price_old": 1409000
+  },
+  {
+    "id": 14,
+    "mark_name": "LADA",
+    "model_name": "Granta",
+    "full_name": "LADA Granta Sport Седан",
+    "preview": "https://indep.su/resources/bodies/f3bbfde108d79096bef8c0b853eaa0e567f109af.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1193000,
+    "price_old": 1521000
+  },
+  {
+    "id": 15,
+    "mark_name": "LADA",
+    "model_name": "Granta",
+    "full_name": "LADA Granta Sport Лифтбек",
+    "preview": "https://indep.su/resources/bodies/5052a4f2a1870e5d1a759414b4660f23177094ab.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1233000,
+    "price_old": 1561000
+  },
+  {
+    "id": 16,
+    "mark_name": "LADA",
+    "model_name": "Iskra",
+    "full_name": "LADA Iskra",
+    "preview": "https://indep.su/resources/bodies/ed2612ba6a21cce967c195283538791786d380b0.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1049000,
+    "price_old": 1277000
+  },
+  {
+    "id": 17,
+    "mark_name": "LADA",
+    "model_name": "Iskra",
+    "full_name": "LADA Iskra SW",
+    "preview": "https://indep.su/resources/bodies/a3cd033f884aa6e630e9513c81af5aff5a92bb44.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1299000,
+    "price_old": 1527000
+  },
+  {
+    "id": 18,
+    "mark_name": "LADA",
+    "model_name": "Iskra",
+    "full_name": "LADA Iskra SW Cross",
+    "preview": "https://indep.su/resources/bodies/f769c1e83ed41eef0930b20e076af9d421448564.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1329000,
+    "price_old": 1657000
+  },
+  {
+    "id": 19,
+    "mark_name": "LADA",
+    "model_name": "Largus",
+    "full_name": "LADA Largus Универсал",
+    "preview": "https://indep.su/resources/bodies/3aac0f14a994f0e2c55ab8f2d8d379b6cd87bc7e.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1239000,
+    "price_old": 1587000
+  },
+  {
+    "id": 20,
+    "mark_name": "LADA",
+    "model_name": "Largus",
+    "full_name": "LADA Largus Cross",
+    "preview": "https://indep.su/resources/bodies/7bdd3102fa8ace164fb7841ea342be5b903bedd5.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1449000,
+    "price_old": 1815000
+  },
+  {
+    "id": 21,
+    "mark_name": "LADA",
+    "model_name": "Largus",
+    "full_name": "LADA Largus Универсал CNG",
+    "preview": "https://indep.su/resources/bodies/0c4e5c72c8d2094f7317a25310faea88c0d7164a.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1825000,
+    "price_old": 2152000
+  },
+  {
+    "id": 22,
+    "mark_name": "LADA",
+    "model_name": "Largus",
+    "full_name": "LADA Largus Фургон",
+    "preview": "https://indep.su/resources/bodies/4fcd34daaaa9b2efba347cfca87a6bd0bae087be.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1470000,
+    "price_old": 1597000
+  },
+  {
+    "id": 23,
+    "mark_name": "LADA",
+    "model_name": "Largus",
+    "full_name": "LADA Largus Фургон CNG",
+    "preview": "https://indep.su/resources/bodies/3b95b70ba81ecf659c7292e0c87582bb283c6446.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1780000,
+    "price_old": 2107000
+  },
+  {
+    "id": 24,
+    "mark_name": "LADA",
+    "model_name": "Niva",
+    "full_name": "LADA Niva Legend Bronto",
+    "preview": "https://indep.su/resources/bodies/fafc4103244167c2515c9dc0da24cf0d8f81e920.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1290000,
+    "price_old": 1517000
+  },
+  {
+    "id": 25,
+    "mark_name": "LADA",
+    "model_name": "Niva",
+    "full_name": "LADA Niva Sport",
+    "preview": "https://indep.su/resources/bodies/4fdaeb13c5f6e2ebdd760bb94b64efef8293279e.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1399000,
+    "price_old": 1752000
+  },
+  {
+    "id": 26,
+    "mark_name": "LADA",
+    "model_name": "Niva",
+    "full_name": "LADA Niva Travel",
+    "preview": "https://indep.su/resources/bodies/397cea1ea6c55199c263425a84e83b882ae5e9f4.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 934000,
+    "price_old": 1343000
+  },
+  {
+    "id": 27,
+    "mark_name": "LADA",
+    "model_name": "Aura",
+    "full_name": "LADA Aura",
+    "preview": "https://indep.su/resources/bodies/e1219eaa96f7a95f9c26913d1f42671d7105d2a1.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 2399000,
+    "price_old": 2269000
+  },
+  {
+    "id": 28,
+    "mark_name": "KIA",
+    "model_name": "Picanto",
+    "full_name": "KIA Picanto",
+    "preview": "https://indep.su/resources/bodies/a569e8c9befeaa67e4614b5cdc71410f7556fb04.webp",
+    "mark_logo": "https://indep.su/resources/marks/615c2d8aedfc89764015e1690f8305e183403a49.png",
+    "price_new": 1089000,
+    "price_old": 2200000
+  },
+  {
+    "id": 29,
+    "mark_name": "KIA",
+    "model_name": "Ceed",
+    "full_name": "KIA Ceed",
+    "preview": "https://indep.su/resources/bodies/4a5a57be45b54a6fcb3008691d8d509b0fbb572e.webp",
+    "mark_logo": "https://indep.su/resources/marks/615c2d8aedfc89764015e1690f8305e183403a49.png",
+    "price_new": 1349000,
+    "price_old": 2514000
+  },
+  {
+    "id": 30,
+    "mark_name": "KIA",
+    "model_name": "Ceed",
+    "full_name": "KIA Ceed SW",
+    "preview": "https://indep.su/resources/bodies/6a8ba3d4541b65cf2d5f3ffbb73ac368f2cfd2ba.webp",
+    "mark_logo": "https://indep.su/resources/marks/615c2d8aedfc89764015e1690f8305e183403a49.png",
+    "price_new": 1449000,
+    "price_old": 2514000
+  },
+  {
+    "id": 32,
+    "mark_name": "KIA",
+    "model_name": "Cerato",
+    "full_name": "KIA Cerato",
+    "preview": "https://indep.su/resources/bodies/73cfad4d735bc3bfe617803bf163cef6ade19809.webp",
+    "mark_logo": "https://indep.su/resources/marks/615c2d8aedfc89764015e1690f8305e183403a49.png",
+    "price_new": 850000,
+    "price_old": 2289000
+  },
+  {
+    "id": 33,
+    "mark_name": "HAVAL",
+    "model_name": "M6",
+    "full_name": "HAVAL M6",
+    "preview": "https://indep.su/resources/bodies/5ca701fcb4e48363126c7cc939ad7e40395ccfd3.webp",
+    "mark_logo": "https://indep.su/resources/marks/238788bad2c61ad596a5d11649eef890a01f6a2f.png",
+    "price_new": 1299000,
+    "price_old": 2049000
+  },
+  {
+    "id": 35,
+    "mark_name": "KIA",
+    "model_name": "K5",
+    "full_name": "KIA K5",
+    "preview": "https://indep.su/resources/bodies/45eb7cb91a6e4fa233b9b1b2873d95da26aa9ce2.webp",
+    "mark_logo": "https://indep.su/resources/marks/615c2d8aedfc89764015e1690f8305e183403a49.png",
+    "price_new": 2434900,
+    "price_old": 4790000
+  },
+  {
+    "id": 36,
+    "mark_name": "KIA",
+    "model_name": "Soul",
+    "full_name": "KIA Soul",
+    "preview": "https://indep.su/resources/bodies/be68a14b40f70e4f724fa3da8a5761d1917a399c.webp",
+    "mark_logo": "https://indep.su/resources/marks/615c2d8aedfc89764015e1690f8305e183403a49.png",
+    "price_new": 1149000,
+    "price_old": 2234000
+  },
+  {
+    "id": 37,
+    "mark_name": "HAVAL",
+    "model_name": "Jolion",
+    "full_name": "HAVAL Jolion",
+    "preview": "https://indep.su/resources/bodies/96847d7b1b9db5e8f26f0a888912431192d317d6.webp",
+    "mark_logo": "https://indep.su/resources/marks/238788bad2c61ad596a5d11649eef890a01f6a2f.png",
+    "price_new": 1199000,
+    "price_old": 2049000
+  },
+  {
+    "id": 38,
+    "mark_name": "KIA",
+    "model_name": "Seltos",
+    "full_name": "KIA Seltos",
+    "preview": "https://indep.su/resources/bodies/8d812b253101a7f5f923e52e5ddd8b95dff70826.webp",
+    "mark_logo": "https://indep.su/resources/marks/615c2d8aedfc89764015e1690f8305e183403a49.png",
+    "price_new": 790000,
+    "price_old": 2174000
+  },
+  {
+    "id": 39,
+    "mark_name": "KIA",
+    "model_name": "Sportage New",
+    "full_name": "KIA Sportage New",
+    "preview": "https://indep.su/resources/bodies/6a4fe16cd6c86cbc3ef64f17a1a9191b0e0fb01c.webp",
+    "mark_logo": "https://indep.su/resources/marks/615c2d8aedfc89764015e1690f8305e183403a49.png",
+    "price_new": 1499000,
+    "price_old": 4349000
+  },
+  {
+    "id": 40,
+    "mark_name": "KIA",
+    "model_name": "Sorento",
+    "full_name": "KIA Sorento",
+    "preview": "https://indep.su/resources/bodies/2f037f59a03b376e8a6c6f3505354c0aa123f661.webp",
+    "mark_logo": "https://indep.su/resources/marks/615c2d8aedfc89764015e1690f8305e183403a49.png",
+    "price_new": 1621000,
+    "price_old": 4489000
+  },
+  {
+    "id": 41,
+    "mark_name": "BAIC",
+    "model_name": "U5 Plus",
+    "full_name": "BAIC U5 Plus",
+    "preview": "https://indep.su/resources/bodies/64cc021f3aced87cac564bb17d0a3f6b54cfffda.webp",
+    "mark_logo": "https://indep.su/resources/marks/2e66b1bae3a98e96bbc18b2409d66278d6bc390e.png",
+    "price_new": 899000,
+    "price_old": 2260000
+  },
+  {
+    "id": 42,
+    "mark_name": "BAIC",
+    "model_name": "X35",
+    "full_name": "BAIC X35",
+    "preview": "https://indep.su/resources/bodies/cfbfd1a8a7d3b67206cdb15dd42b465e901ab8b8.webp",
+    "mark_logo": "https://indep.su/resources/marks/2e66b1bae3a98e96bbc18b2409d66278d6bc390e.png",
+    "price_new": 890000,
+    "price_old": 1449000
+  },
+  {
+    "id": 43,
+    "mark_name": "BAIC",
+    "model_name": "X55",
+    "full_name": "BAIC X55",
+    "preview": "https://indep.su/resources/bodies/465ac2e5ad6bc92dcd8edbc915b651d083210495.webp",
+    "mark_logo": "https://indep.su/resources/marks/2e66b1bae3a98e96bbc18b2409d66278d6bc390e.png",
+    "price_new": 1390000,
+    "price_old": 2600000
+  },
+  {
+    "id": 44,
+    "mark_name": "BAIC",
+    "model_name": "X7",
+    "full_name": "BAIC X7",
+    "preview": "https://indep.su/resources/bodies/5c5478e7db137620b4ac9801d96540f442ac0e82.webp",
+    "mark_logo": "https://indep.su/resources/marks/2e66b1bae3a98e96bbc18b2409d66278d6bc390e.png",
+    "price_new": 1440000,
+    "price_old": 1940000
+  },
+  {
+    "id": 45,
+    "mark_name": "BAIC",
+    "model_name": "X75",
+    "full_name": "BAIC X75",
+    "preview": "https://indep.su/resources/bodies/5c0f676994364e2215e9d0b8bcdf58dc9ac2fb46.webp",
+    "mark_logo": "https://indep.su/resources/marks/2e66b1bae3a98e96bbc18b2409d66278d6bc390e.png",
+    "price_new": 1790000,
+    "price_old": 2300000
+  },
+  {
+    "id": 46,
+    "mark_name": "BAIC",
+    "model_name": "BJ40",
+    "full_name": "BAIC BJ40",
+    "preview": "https://indep.su/resources/bodies/b4d25618279f5481497c6f0b06276faf107c4bb9.webp",
+    "mark_logo": "https://indep.su/resources/marks/2e66b1bae3a98e96bbc18b2409d66278d6bc390e.png",
+    "price_new": 2265000,
+    "price_old": 3225000
+  },
+  {
+    "id": 47,
+    "mark_name": "KAIYI",
+    "model_name": "E5",
+    "full_name": "KAIYI E5",
+    "preview": "https://indep.su/resources/bodies/6ac59feb860b8f67e96a925707f2d76b6677af40.webp",
+    "mark_logo": "https://indep.su/resources/marks/7d52964c1a205238e8fe11ab2626a2387e2150f2.png",
+    "price_new": 799000,
+    "price_old": 1649000
+  },
+  {
+    "id": 48,
+    "mark_name": "KAIYI",
+    "model_name": "X3",
+    "full_name": "KAIYI X3",
+    "preview": "https://indep.su/resources/bodies/48af2e4cf1983ae4a02938570e35c84aa1afa2a6.webp",
+    "mark_logo": "https://indep.su/resources/marks/7d52964c1a205238e8fe11ab2626a2387e2150f2.png",
+    "price_new": 799000,
+    "price_old": 1649000
+  },
+  {
+    "id": 49,
+    "mark_name": "KAIYI",
+    "model_name": "X3 Pro",
+    "full_name": "KAIYI X3 Pro",
+    "preview": "https://indep.su/resources/bodies/9e515bc7e5ee1c229a6954b82186dcbd5ccc75ae.webp",
+    "mark_logo": "https://indep.su/resources/marks/7d52964c1a205238e8fe11ab2626a2387e2150f2.png",
+    "price_new": 949000,
+    "price_old": 1799000
+  },
+  {
+    "id": 50,
+    "mark_name": "KAIYI",
+    "model_name": "X7 Kunlun",
+    "full_name": "KAIYI X7 Kunlun",
+    "preview": "https://indep.su/resources/bodies/320b74152b11144077c263e11129900e288f0e77.webp",
+    "mark_logo": "https://indep.su/resources/marks/7d52964c1a205238e8fe11ab2626a2387e2150f2.png",
+    "price_new": 1649000,
+    "price_old": 2590000
+  },
+  {
+    "id": 51,
+    "mark_name": "SOUEAST",
+    "model_name": "S07",
+    "full_name": "SOUEAST S07",
+    "preview": "https://indep.su/resources/bodies/12d757cca3dd3713d593fcc80e4d303ca0b1176e.webp",
+    "mark_logo": "https://indep.su/resources/marks/8b6cd449bcf13a96cbf7b4bce55285795a94bb2d.png",
+    "price_new": 1899000,
+    "price_old": 3399000
+  },
+  {
+    "id": 52,
+    "mark_name": "SOUEAST",
+    "model_name": "S09",
+    "full_name": "SOUEAST S09",
+    "preview": "https://indep.su/resources/bodies/48467ee753bbb75cf8046f58ae05cde6267af1a0.webp",
+    "mark_logo": "https://indep.su/resources/marks/8b6cd449bcf13a96cbf7b4bce55285795a94bb2d.png",
+    "price_new": 2199000,
+    "price_old": 3899000
+  },
+  {
+    "id": 53,
+    "mark_name": "HAVAL",
+    "model_name": "F7x",
+    "full_name": "HAVAL F7x",
+    "preview": "https://indep.su/resources/bodies/1b2b60d71f2c8994841ec78fc5f8116d291d1381.webp",
+    "mark_logo": "https://indep.su/resources/marks/238788bad2c61ad596a5d11649eef890a01f6a2f.png",
+    "price_new": 2349000,
+    "price_old": 3599000
+  },
+  {
+    "id": 54,
+    "mark_name": "SWM",
+    "model_name": "G01",
+    "full_name": "SWM G01",
+    "preview": "https://indep.su/resources/bodies/0d74c54dc9cba8ad96700a51b29c403c3941c721.webp",
+    "mark_logo": "https://indep.su/resources/marks/b5d6b989320cd4c47ba13f034eb58e43bcd45559.png",
+    "price_new": 990000,
+    "price_old": 2018600
+  },
+  {
+    "id": 55,
+    "mark_name": "SWM",
+    "model_name": "G01F",
+    "full_name": "SWM G01F",
+    "preview": "https://indep.su/resources/bodies/6c20db4fb3269184d1314dcc1bc8b160aaad5ef1.webp",
+    "mark_logo": "https://indep.su/resources/marks/b5d6b989320cd4c47ba13f034eb58e43bcd45559.png",
+    "price_new": 1119000,
+    "price_old": 2367000
+  },
+  {
+    "id": 56,
+    "mark_name": "SWM",
+    "model_name": "G05 Pro",
+    "full_name": "SWM G05 Pro",
+    "preview": "https://indep.su/resources/bodies/02538bedea1d196c94c418d7828fe9de94b76833.webp",
+    "mark_logo": "https://indep.su/resources/marks/b5d6b989320cd4c47ba13f034eb58e43bcd45559.png",
+    "price_new": 1249000,
+    "price_old": 2235900
+  },
+  {
+    "id": 57,
+    "mark_name": "LIVAN",
+    "model_name": "S6PRO",
+    "full_name": "LIVAN S6PRO",
+    "preview": "https://indep.su/resources/bodies/796b029ac6689031993c167762335f3b6857650f.webp",
+    "mark_logo": "https://indep.su/resources/marks/d0fe22d8b0700ac14d9778bd9e1f13b179f3c410.png",
+    "price_new": 1099000,
+    "price_old": 2084000
+  },
+  {
+    "id": 58,
+    "mark_name": "LIVAN",
+    "model_name": "X3PRO",
+    "full_name": "LIVAN X3PRO",
+    "preview": "https://indep.su/resources/bodies/0695e57613c2a485e053fe48ed6c4df511f9889e.webp",
+    "mark_logo": "https://indep.su/resources/marks/d0fe22d8b0700ac14d9778bd9e1f13b179f3c410.png",
+    "price_new": 1049000,
+    "price_old": 2069000
+  },
+  {
+    "id": 59,
+    "mark_name": "LIVAN",
+    "model_name": "X6PRO",
+    "full_name": "LIVAN X6PRO",
+    "preview": "https://indep.su/resources/bodies/3d4ac1830bf9bcfb82798b2ca980156c2b45d58e.webp",
+    "mark_logo": "https://indep.su/resources/marks/d0fe22d8b0700ac14d9778bd9e1f13b179f3c410.png",
+    "price_new": 1119000,
+    "price_old": 2344000
+  },
+  {
+    "id": 60,
+    "mark_name": "DONGFENG",
+    "model_name": "580",
+    "full_name": "DONGFENG 580",
+    "preview": "https://indep.su/resources/bodies/4f27d3ce7fdadcb305d93e1ac4fd80a0058cc112.webp",
+    "mark_logo": "https://indep.su/resources/marks/5d568a378315f79d4a9c14ebc864553430a58a4c.png",
+    "price_new": 1149000,
+    "price_old": 1899000
+  },
+  {
+    "id": 61,
+    "mark_name": "DONGFENG",
+    "model_name": "DFSK 500",
+    "full_name": "DONGFENG DFSK 500",
+    "preview": "https://indep.su/resources/bodies/53d2266e0ecaba2a128bd68808b5d8a7d5f63723.webp",
+    "mark_logo": "https://indep.su/resources/marks/5d568a378315f79d4a9c14ebc864553430a58a4c.png",
+    "price_new": 1099000,
+    "price_old": 1899000
+  },
+  {
+    "id": 62,
+    "mark_name": "DONGFENG",
+    "model_name": "DFSK IX5",
+    "full_name": "DONGFENG DFSK IX5",
+    "preview": "https://indep.su/resources/bodies/06b756ddf0bb014b5e10761e6130de91069135bb.webp",
+    "mark_logo": "https://indep.su/resources/marks/5d568a378315f79d4a9c14ebc864553430a58a4c.png",
+    "price_new": 1390000,
+    "price_old": 1990000
+  },
+  {
+    "id": 63,
+    "mark_name": "DONGFENG",
+    "model_name": "DFSK IX7",
+    "full_name": "DONGFENG DFSK IX7",
+    "preview": "https://indep.su/resources/bodies/9d904a23fdfea39f04682655d9cd05ab54553f20.webp",
+    "mark_logo": "https://indep.su/resources/marks/5d568a378315f79d4a9c14ebc864553430a58a4c.png",
+    "price_new": 2490000,
+    "price_old": 2990000
+  },
+  {
+    "id": 64,
+    "mark_name": "DONGFENG",
+    "model_name": "DF6",
+    "full_name": "DONGFENG DF6",
+    "preview": "https://indep.su/resources/bodies/f759be0c328b3f45a8230f8b538a3ec8e74b776e.webp",
+    "mark_logo": "https://indep.su/resources/marks/5d568a378315f79d4a9c14ebc864553430a58a4c.png",
+    "price_new": 1799000,
+    "price_old": 2490000
+  },
+  {
+    "id": 65,
+    "mark_name": "DONGFENG",
+    "model_name": "Shine Max",
+    "full_name": "DONGFENG Shine Max",
+    "preview": "https://indep.su/resources/bodies/fbe9f62092bb88bae6160e4a9e13b758f7dc77c9.webp",
+    "mark_logo": "https://indep.su/resources/marks/5d568a378315f79d4a9c14ebc864553430a58a4c.png",
+    "price_new": 1299000,
+    "price_old": 2199000
+  },
+  {
+    "id": 66,
+    "mark_name": "DONGFENG",
+    "model_name": "MAGE",
+    "full_name": "DONGFENG MAGE",
+    "preview": "https://indep.su/resources/bodies/fd19e1be510cf5888ba7f2570041f89de062853a.webp",
+    "mark_logo": "https://indep.su/resources/marks/5d568a378315f79d4a9c14ebc864553430a58a4c.png",
+    "price_new": 2250000,
+    "price_old": 2899000
+  },
+  {
+    "id": 67,
+    "mark_name": "DONGFENG",
+    "model_name": "HUGE",
+    "full_name": "DONGFENG HUGE",
+    "preview": "https://indep.su/resources/bodies/782564cd838c2a3f81be7b6ef0b126e44a81e5b6.webp",
+    "mark_logo": "https://indep.su/resources/marks/5d568a378315f79d4a9c14ebc864553430a58a4c.png",
+    "price_new": 2399000,
+    "price_old": 3039900
+  },
+  {
+    "id": 68,
+    "mark_name": "HAVAL",
+    "model_name": "F7",
+    "full_name": "HAVAL F7",
+    "preview": "https://indep.su/resources/bodies/acc91f6a58dab5ff914d6d684167886ddc5398a1.webp",
+    "mark_logo": "https://indep.su/resources/marks/238788bad2c61ad596a5d11649eef890a01f6a2f.png",
+    "price_new": 1699000,
+    "price_old": 2899000
+  },
+  {
+    "id": 69,
+    "mark_name": "HAVAL",
+    "model_name": "Dargo",
+    "full_name": "HAVAL Dargo",
+    "preview": "https://indep.su/resources/bodies/4e4af7e74ecf14d138ac78627e02654f813af628.webp",
+    "mark_logo": "https://indep.su/resources/marks/238788bad2c61ad596a5d11649eef890a01f6a2f.png",
+    "price_new": 1990000,
+    "price_old": 3199000
+  },
+  {
+    "id": 70,
+    "mark_name": "HAVAL",
+    "model_name": "Dargo X",
+    "full_name": "HAVAL Dargo X",
+    "preview": "https://indep.su/resources/bodies/8d4930a7f28bf19b3af1dbe1b792b651a0820131.webp",
+    "mark_logo": "https://indep.su/resources/marks/238788bad2c61ad596a5d11649eef890a01f6a2f.png",
+    "price_new": 2240000,
+    "price_old": 3499000
+  },
+  {
+    "id": 71,
+    "mark_name": "HAVAL",
+    "model_name": "Poer",
+    "full_name": "HAVAL Poer",
+    "preview": "https://indep.su/resources/bodies/5dd32c09a49fba72c54d3ffe2126a4bfffdb6b91.webp",
+    "mark_logo": "https://indep.su/resources/marks/238788bad2c61ad596a5d11649eef890a01f6a2f.png",
+    "price_new": 2549000,
+    "price_old": 3549000
+  },
+  {
+    "id": 72,
+    "mark_name": "HAVAL",
+    "model_name": "H3",
+    "full_name": "HAVAL H3",
+    "preview": "https://indep.su/resources/bodies/8253f2c31d6eb49262eb6e727ca6c75333772797.webp",
+    "mark_logo": "https://indep.su/resources/marks/238788bad2c61ad596a5d11649eef890a01f6a2f.png",
+    "price_new": 1829000,
+    "price_old": 2699000
+  },
+  {
+    "id": 73,
+    "mark_name": "HAVAL",
+    "model_name": "H5",
+    "full_name": "HAVAL H5",
+    "preview": "https://indep.su/resources/bodies/e93a8c967499eea0b5a253e86936b20fa0e29c42.webp",
+    "mark_logo": "https://indep.su/resources/marks/238788bad2c61ad596a5d11649eef890a01f6a2f.png",
+    "price_new": 2809000,
+    "price_old": 3799000
+  },
+  {
+    "id": 74,
+    "mark_name": "BELGEE",
+    "model_name": "X50",
+    "full_name": "BELGEE X50",
+    "preview": "https://indep.su/resources/bodies/2ba4cb36ea959ade30db0a75428f2e1a304d7e59.webp",
+    "mark_logo": "https://indep.su/resources/marks/4bb6d4ef1ffd77d586ccedc89dc1cd61a737cb9b.png",
+    "price_new": 1419000,
+    "price_old": 2479990
+  },
+  {
+    "id": 75,
+    "mark_name": "BELGEE",
+    "model_name": "Х70",
+    "full_name": "BELGEE Х70",
+    "preview": "https://indep.su/resources/bodies/144313d25a8a11cc3ce56f28c7b76c18051993be.webp",
+    "mark_logo": "https://indep.su/resources/marks/4bb6d4ef1ffd77d586ccedc89dc1cd61a737cb9b.png",
+    "price_new": 1749000,
+    "price_old": 2825990
+  },
+  {
+    "id": 76,
+    "mark_name": "HAVAL",
+    "model_name": "H7",
+    "full_name": "HAVAL H7",
+    "preview": "https://indep.su/resources/bodies/32fa3df23baad27d188f8df0a5fb82f703eedda9.webp",
+    "mark_logo": "https://indep.su/resources/marks/238788bad2c61ad596a5d11649eef890a01f6a2f.png",
+    "price_new": 2499000,
+    "price_old": 3849000
+  },
+  {
+    "id": 77,
+    "mark_name": "HAVAL",
+    "model_name": "H9",
+    "full_name": "HAVAL H9",
+    "preview": "https://indep.su/resources/bodies/c27e5c74b5b85e11ce26d0a3d3325c786f4a46d2.webp",
+    "mark_logo": "https://indep.su/resources/marks/238788bad2c61ad596a5d11649eef890a01f6a2f.png",
+    "price_new": 3790000,
+    "price_old": 4799000
+  },
+  {
+    "id": 79,
+    "mark_name": "LADA",
+    "model_name": "Vesta",
+    "full_name": "LADA Vesta SW",
+    "preview": "https://indep.su/resources/bodies/4eafe5d4e72b1119d6ca30ee3eabc6a9f9d00244.webp",
+    "mark_logo": "https://indep.su/resources/marks/64afc7fbef9b090ef314e3cd55603986a72a21c8.png",
+    "price_new": 1049000,
+    "price_old": 1711000
+  },
+  {
+    "id": 82,
+    "mark_name": "SOLARIS",
+    "model_name": "HC",
+    "full_name": "SOLARIS HC",
+    "preview": "https://indep.su/resources/bodies/7497dd927df3eca979b7f0fb6eb64ad1b860f71b.webp",
+    "mark_logo": "https://indep.su/resources/marks/8815e392550b9829f3f86d852062167c0c79bb2a.png",
+    "price_new": 796000,
+    "price_old": 2430000
+  },
+  {
+    "id": 83,
+    "mark_name": "SOLARIS",
+    "model_name": "KRX",
+    "full_name": "SOLARIS KRX",
+    "preview": "https://indep.su/resources/bodies/5aad8cc0fdabcb426c3dbc5d7b7106e1ed67fffc.webp",
+    "mark_logo": "https://indep.su/resources/marks/8815e392550b9829f3f86d852062167c0c79bb2a.png",
+    "price_new": 976000,
+    "price_old": 2335000
+  },
+  {
+    "id": 84,
+    "mark_name": "SOLARIS",
+    "model_name": "KRS",
+    "full_name": "SOLARIS KRS",
+    "preview": "https://indep.su/resources/bodies/ca73e602b8c2a764bfd2b5e5ebe0d39ad7a50aad.webp",
+    "mark_logo": "https://indep.su/resources/marks/8815e392550b9829f3f86d852062167c0c79bb2a.png",
+    "price_new": 859000,
+    "price_old": 2355000
+  },
+  {
+    "id": 85,
+    "mark_name": "SOLARIS",
+    "model_name": "HS",
+    "full_name": "SOLARIS HS",
+    "preview": "https://indep.su/resources/bodies/6d28ae33493009371008affd5797903062680add.webp",
+    "mark_logo": "https://indep.su/resources/marks/8815e392550b9829f3f86d852062167c0c79bb2a.png",
+    "price_new": 1292000,
+    "price_old": 2440000
+  },
+  {
+    "id": 86,
+    "mark_name": "GAC",
+    "model_name": "GS4",
+    "full_name": "GAC GS4",
+    "preview": "https://indep.su/resources/bodies/db7e00de985dfba470c6b5e36c1e977f9b36f4c4.webp",
+    "mark_logo": "https://indep.su/resources/marks/6faf4d4b5ba2812429c31629e616224b37e0b7e2.png",
+    "price_new": 2199000,
+    "price_old": 3199000
+  },
+  {
+    "id": 87,
+    "mark_name": "GAC",
+    "model_name": "EMPOW",
+    "full_name": "GAC EMPOW",
+    "preview": "https://indep.su/resources/bodies/e76d9b208d46bbae81817e9e3093236c141cd78a.webp",
+    "mark_logo": "https://indep.su/resources/marks/6faf4d4b5ba2812429c31629e616224b37e0b7e2.png",
+    "price_new": 2199000,
+    "price_old": 3099000
+  },
+  {
+    "id": 88,
+    "mark_name": "GAC",
+    "model_name": "GS3",
+    "full_name": "GAC GS3",
+    "preview": "https://indep.su/resources/bodies/4fed239f80651353efcc321838145ccdac79f8c9.webp",
+    "mark_logo": "https://indep.su/resources/marks/6faf4d4b5ba2812429c31629e616224b37e0b7e2.png",
+    "price_new": 1199000,
+    "price_old": 2449000
+  },
+  {
+    "id": 89,
+    "mark_name": "GAC",
+    "model_name": "GS8",
+    "full_name": "GAC GS8",
+    "preview": "https://indep.su/resources/bodies/b3e8446c3c9ad2b32b7db8630bdd507f3dcc56ee.webp",
+    "mark_logo": "https://indep.su/resources/marks/6faf4d4b5ba2812429c31629e616224b37e0b7e2.png",
+    "price_new": 2690000,
+    "price_old": 3899000
+  },
+  {
+    "id": 90,
+    "mark_name": "BESTUNE",
+    "model_name": "T55",
+    "full_name": "BESTUNE T55",
+    "preview": "https://indep.su/resources/bodies/fc02b9c379a153b002747b01531f4a8029465f5b.webp",
+    "mark_logo": "https://indep.su/resources/marks/e25e3f0322cb3f4b103b6acacf37ffbc7428cdb8.png",
+    "price_new": 1911000,
+    "price_old": 1740000
+  },
+  {
+    "id": 91,
+    "mark_name": "BESTUNE",
+    "model_name": "B70",
+    "full_name": "BESTUNE B70",
+    "preview": "https://indep.su/resources/bodies/4f8c3750cfbec2fee749e692e494a26536c6ba6d.webp",
+    "mark_logo": "https://indep.su/resources/marks/e25e3f0322cb3f4b103b6acacf37ffbc7428cdb8.png",
+    "price_new": 1874000,
+    "price_old": 2374000
+  },
+  {
+    "id": 92,
+    "mark_name": "OTING",
+    "model_name": "Паладин",
+    "full_name": "OTING Паладин",
+    "preview": "https://indep.su/resources/bodies/02fc50ff6159280b3fd8e56bb17f632de85701aa.webp",
+    "mark_logo": "https://indep.su/resources/marks/2fae1f2a6da280b7e2b2c4e29dd5aa9134c88b8b.png",
+    "price_new": 2599000,
+    "price_old": 3860000
+  },
+  {
+    "id": 93,
+    "mark_name": "OTING",
+    "model_name": "Palasso",
+    "full_name": "OTING Palasso",
+    "preview": "https://indep.su/resources/bodies/45e9f96583344171dbb930cc020b6c9251553d16.webp",
+    "mark_logo": "https://indep.su/resources/marks/2fae1f2a6da280b7e2b2c4e29dd5aa9134c88b8b.png",
+    "price_new": 2890000,
+    "price_old": 3910000
+  },
+  {
+    "id": 94,
+    "mark_name": "BESTUNE",
+    "model_name": "T77",
+    "full_name": "BESTUNE T77",
+    "preview": "https://indep.su/resources/bodies/76b95a8afc1ee315ef5bbef86ce02482a02ed6a1.webp",
+    "mark_logo": "https://indep.su/resources/marks/e25e3f0322cb3f4b103b6acacf37ffbc7428cdb8.png",
+    "price_new": 1424000,
+    "price_old": 1924000
+  },
+  {
+    "id": 96,
+    "mark_name": "BESTUNE",
+    "model_name": "B70 New",
+    "full_name": "BESTUNE B70 New",
+    "preview": "https://indep.su/resources/bodies/f7acd025a33901eebdeee982d91d5c8ddfd05bff.webp",
+    "mark_logo": "https://indep.su/resources/marks/e25e3f0322cb3f4b103b6acacf37ffbc7428cdb8.png",
+    "price_new": 1999990,
+    "price_old": 2844000
+  },
+  {
+    "id": 97,
+    "mark_name": "GEELY",
+    "model_name": "Monjaro",
+    "full_name": "GEELY Monjaro",
+    "preview": "https://indep.su/resources/bodies/97c0762a97029e34cf0ec44189de33c4c9fd330d.webp",
+    "mark_logo": "https://indep.su/resources/marks/cd761993f27cdb18ee345166730aac0f50e599be.png",
+    "price_new": 3099000,
+    "price_old": 4599990
+  },
+  {
+    "id": 98,
+    "mark_name": "CHERY",
+    "model_name": "Tiggo 4",
+    "full_name": "CHERY Tiggo 4",
+    "preview": "https://indep.su/resources/bodies/fa6d4a57975a16a98354d2f104e3ec471cc9891d.webp",
+    "mark_logo": "https://indep.su/resources/marks/793648bd85278a98a985b2600f82f0217e6433e6.png",
+    "price_new": 1399000,
+    "price_old": 2039000
+  },
+  {
+    "id": 99,
+    "mark_name": "GEELY",
+    "model_name": "Atlas",
+    "full_name": "GEELY Atlas",
+    "preview": "https://indep.su/resources/bodies/71cffef3413dbca859c91b05961e2012ce88d581.webp",
+    "mark_logo": "https://indep.su/resources/marks/cd761993f27cdb18ee345166730aac0f50e599be.png",
+    "price_new": 1490000,
+    "price_old": 3449990
+  },
+  {
+    "id": 100,
+    "mark_name": "GEELY",
+    "model_name": "Coolray",
+    "full_name": "GEELY Coolray",
+    "preview": "https://indep.su/resources/bodies/53975b678037f1fd7539d9efb4f2707ea000e923.webp",
+    "mark_logo": "https://indep.su/resources/marks/cd761993f27cdb18ee345166730aac0f50e599be.png",
+    "price_new": 850000,
+    "price_old": 2394000
+  },
+  {
+    "id": 101,
+    "mark_name": "GEELY",
+    "model_name": "Okavango",
+    "full_name": "GEELY Okavango",
+    "preview": "https://indep.su/resources/bodies/52a2230930f371b95c5f8a2c52d909b4e45a0672.webp",
+    "mark_logo": "https://indep.su/resources/marks/cd761993f27cdb18ee345166730aac0f50e599be.png",
+    "price_new": 1854000,
+    "price_old": 3692990
+  },
+  {
+    "id": 102,
+    "mark_name": "GEELY",
+    "model_name": "Cityray",
+    "full_name": "GEELY Cityray",
+    "preview": "https://indep.su/resources/bodies/15e57a08811ab5f558d47fd8feafe9db7d666145.webp",
+    "mark_logo": "https://indep.su/resources/marks/cd761993f27cdb18ee345166730aac0f50e599be.png",
+    "price_new": 1499000,
+    "price_old": 2849990
+  },
+  {
+    "id": 103,
+    "mark_name": "GEELY",
+    "model_name": "Preface",
+    "full_name": "GEELY Preface",
+    "preview": "https://indep.su/resources/bodies/827304a83bc93ab800dbf9d167d31cfed4ba3ee1.webp",
+    "mark_logo": "https://indep.su/resources/marks/cd761993f27cdb18ee345166730aac0f50e599be.png",
+    "price_new": 1990000,
+    "price_old": 3329990
+  },
+  {
+    "id": 104,
+    "mark_name": "CHERY",
+    "model_name": "Tiggo 4 Pro",
+    "full_name": "CHERY Tiggo 4 Pro",
+    "preview": "https://indep.su/resources/bodies/bba8946f722bc16217e9420e98119d5a9020ed13.webp",
+    "mark_logo": "https://indep.su/resources/marks/793648bd85278a98a985b2600f82f0217e6433e6.png",
+    "price_new": 1199000,
+    "price_old": 2100000
+  },
+  {
+    "id": 105,
+    "mark_name": "BESTUNE",
+    "model_name": "T90",
+    "full_name": "BESTUNE T90",
+    "preview": "https://indep.su/resources/bodies/4a1abafafa0eb464ec8bf38fa987a7caea016d05.webp",
+    "mark_logo": "https://indep.su/resources/marks/e25e3f0322cb3f4b103b6acacf37ffbc7428cdb8.png",
+    "price_new": 2279990,
+    "price_old": 3132000
+  },
+  {
+    "id": 106,
+    "mark_name": "GEELY",
+    "model_name": "Emgrand",
+    "full_name": "GEELY Emgrand",
+    "preview": "https://indep.su/resources/bodies/ecaea095cf7ddeaa6f5ba3fd4d6fb9b9ee1a02a4.webp",
+    "mark_logo": "https://indep.su/resources/marks/cd761993f27cdb18ee345166730aac0f50e599be.png",
+    "price_new": 1119900,
+    "price_old": 2179990
+  },
+  {
+    "id": 107,
+    "mark_name": "CHERY",
+    "model_name": "Tiggo 7L",
+    "full_name": "CHERY Tiggo 7L",
+    "preview": "https://indep.su/resources/bodies/84a70a7d4dbe7327cf298fe6b8e816eec7b785ab.webp",
+    "mark_logo": "https://indep.su/resources/marks/793648bd85278a98a985b2600f82f0217e6433e6.png",
+    "price_new": 1549000,
+    "price_old": 2735000
+  },
+  {
+    "id": 109,
+    "mark_name": "GEELY",
+    "model_name": "EX5",
+    "full_name": "GEELY EX5",
+    "preview": "https://indep.su/resources/bodies/6e8f0122cbddb57b07fe2b80756f1560fe1a80a2.webp",
+    "mark_logo": "https://indep.su/resources/marks/cd761993f27cdb18ee345166730aac0f50e599be.png",
+    "price_new": 3099990,
+    "price_old": 4169990
+  },
+  {
+    "id": 110,
+    "mark_name": "CHANGAN",
+    "model_name": "Alsvin",
+    "full_name": "CHANGAN Alsvin",
+    "preview": "https://indep.su/resources/bodies/ec977f514c04a9198283ca9695780e25dcb03b5e.webp",
+    "mark_logo": "https://indep.su/resources/marks/e381058d0fa06fa4c4117e83dc0c26df91aa1a81.png",
+    "price_new": 1090000,
+    "price_old": 1889900
+  },
+  {
+    "id": 111,
+    "mark_name": "CHERY",
+    "model_name": "Tiggo 7 Pro Max",
+    "full_name": "CHERY Tiggo 7 Pro Max",
+    "preview": "https://indep.su/resources/bodies/a32c19ad8cf5bf4d8bec98fc13f03a1cc6b593cc.webp",
+    "mark_logo": "https://indep.su/resources/marks/793648bd85278a98a985b2600f82f0217e6433e6.png",
+    "price_new": 1099000,
+    "price_old": 2610000
+  },
+  {
+    "id": 112,
+    "mark_name": "CHANGAN",
+    "model_name": "Eado Plus",
+    "full_name": "CHANGAN Eado Plus",
+    "preview": "https://indep.su/resources/bodies/89728e56f730478189cf9c857b5282376673b105.webp",
+    "mark_logo": "https://indep.su/resources/marks/e381058d0fa06fa4c4117e83dc0c26df91aa1a81.png",
+    "price_new": 1349000,
+    "price_old": 2489900
+  },
+  {
+    "id": 113,
+    "mark_name": "CHERY",
+    "model_name": "Tiggo 7 Pro PLUG-IN HYBRID",
+    "full_name": "CHERY Tiggo 7 Pro PLUG-IN HYBRID",
+    "preview": "https://indep.su/resources/bodies/2e2dbc45f9716ca56e0d26dece06873f43c67bb3.webp",
+    "mark_logo": "https://indep.su/resources/marks/793648bd85278a98a985b2600f82f0217e6433e6.png",
+    "price_new": 2999000,
+    "price_old": 4000000
+  },
+  {
+    "id": 114,
+    "mark_name": "CHANGAN",
+    "model_name": "Lamore",
+    "full_name": "CHANGAN Lamore",
+    "preview": "https://indep.su/resources/bodies/86a6b773837c4d3011beecfc167b31da4dff9f7b.webp",
+    "mark_logo": "https://indep.su/resources/marks/e381058d0fa06fa4c4117e83dc0c26df91aa1a81.png",
+    "price_new": 1869000,
+    "price_old": 2929900
+  },
+  {
+    "id": 116,
+    "mark_name": "CHANGAN",
+    "model_name": "CS35 Plus",
+    "full_name": "CHANGAN CS35 Plus",
+    "preview": "https://indep.su/resources/bodies/7df59797623a13670407a27bcbcbf1ca070a3d27.webp",
+    "mark_logo": "https://indep.su/resources/marks/e381058d0fa06fa4c4117e83dc0c26df91aa1a81.png",
+    "price_new": 1249000,
+    "price_old": 2779900
+  },
+  {
+    "id": 117,
+    "mark_name": "CHERY",
+    "model_name": "Tiggo 8 Pro Max",
+    "full_name": "CHERY Tiggo 8 Pro Max",
+    "preview": "https://indep.su/resources/bodies/0791de8a8b0310e673b4295ad120fd02d1f892df.webp",
+    "mark_logo": "https://indep.su/resources/marks/793648bd85278a98a985b2600f82f0217e6433e6.png",
+    "price_new": 1859000,
+    "price_old": 3240000
+  },
+  {
+    "id": 118,
+    "mark_name": "CHERY",
+    "model_name": "Tiggo 8 Pro PLUG-IN HYBRID",
+    "full_name": "CHERY Tiggo 8 Pro PLUG-IN HYBRID",
+    "preview": "https://indep.su/resources/bodies/8fa2843e4ddd126a02f2b338d6a3cb2a57c46389.webp",
+    "mark_logo": "https://indep.su/resources/marks/793648bd85278a98a985b2600f82f0217e6433e6.png",
+    "price_new": 3985000,
+    "price_old": 4850000
+  },
+  {
+    "id": 119,
+    "mark_name": "CHERY",
+    "model_name": "Tiggo 9",
+    "full_name": "CHERY Tiggo 9",
+    "preview": "https://indep.su/resources/bodies/42ef7de5d8b7d535bd1f7ce7c8fab09b3764b86a.webp",
+    "mark_logo": "https://indep.su/resources/marks/793648bd85278a98a985b2600f82f0217e6433e6.png",
+    "price_new": 3649000,
+    "price_old": 3850000
+  },
+  {
+    "id": 120,
+    "mark_name": "CHERY",
+    "model_name": "Arrizo 8",
+    "full_name": "CHERY Arrizo 8",
+    "preview": "https://indep.su/resources/bodies/b3cc70fc34c755bf93b585fe65ca342aa81a13b0.webp",
+    "mark_logo": "https://indep.su/resources/marks/793648bd85278a98a985b2600f82f0217e6433e6.png",
+    "price_new": 1299000,
+    "price_old": 2890000
+  },
+  {
+    "id": 121,
+    "mark_name": "CHANGAN",
+    "model_name": "UNI-S / CS55 Plus",
+    "full_name": "CHANGAN UNI-S / CS55 Plus",
+    "preview": "https://indep.su/resources/bodies/58aabb9d9b7da8adb68c94c15e0a1533dac4d789.webp",
+    "mark_logo": "https://indep.su/resources/marks/e381058d0fa06fa4c4117e83dc0c26df91aa1a81.png",
+    "price_new": 1999900,
+    "price_old": 3049900
+  },
+  {
+    "id": 122,
+    "mark_name": "CHANGAN",
+    "model_name": "CS75 Plus",
+    "full_name": "CHANGAN CS75 Plus",
+    "preview": "https://indep.su/resources/bodies/7424eda57641c9ee02ffdce8e67efe4ff5c64fc3.webp",
+    "mark_logo": "https://indep.su/resources/marks/e381058d0fa06fa4c4117e83dc0c26df91aa1a81.png",
+    "price_new": 2360000,
+    "price_old": 3819900
+  },
+  {
+    "id": 123,
+    "mark_name": "CHANGAN",
+    "model_name": "CS95",
+    "full_name": "CHANGAN CS95",
+    "preview": "https://indep.su/resources/bodies/0b22dc0bd42df7c22020b64423fb8bc9fcb546c7.webp",
+    "mark_logo": "https://indep.su/resources/marks/e381058d0fa06fa4c4117e83dc0c26df91aa1a81.png",
+    "price_new": 2809000,
+    "price_old": 4629900
+  },
+  {
+    "id": 124,
+    "mark_name": "CHANGAN",
+    "model_name": "UNI-T",
+    "full_name": "CHANGAN UNI-T",
+    "preview": "https://indep.su/resources/bodies/25a032c68f9bc25cc7d1d764f147878656c39cb1.webp",
+    "mark_logo": "https://indep.su/resources/marks/e381058d0fa06fa4c4117e83dc0c26df91aa1a81.png",
+    "price_new": 2049000,
+    "price_old": 3239900
+  },
+  {
+    "id": 125,
+    "mark_name": "CHANGAN",
+    "model_name": "UNI-V",
+    "full_name": "CHANGAN UNI-V",
+    "preview": "https://indep.su/resources/bodies/4366e9aa73b6e72a53e9495fbb5eb24e6f0f1f8b.webp",
+    "mark_logo": "https://indep.su/resources/marks/e381058d0fa06fa4c4117e83dc0c26df91aa1a81.png",
+    "price_new": 1809000,
+    "price_old": 3279900
+  },
+  {
+    "id": 126,
+    "mark_name": "CHANGAN",
+    "model_name": "UNI-K",
+    "full_name": "CHANGAN UNI-K",
+    "preview": "https://indep.su/resources/bodies/fb73616e8e7dfe99aa8a274a7c61f69d1b346ec7.webp",
+    "mark_logo": "https://indep.su/resources/marks/e381058d0fa06fa4c4117e83dc0c26df91aa1a81.png",
+    "price_new": 2349000,
+    "price_old": 4209900
+  },
+  {
+    "id": 127,
+    "mark_name": "CHANGAN",
+    "model_name": "Hunter Plus",
+    "full_name": "CHANGAN Hunter Plus",
+    "preview": "https://indep.su/resources/bodies/6160faf5a7cf4ca6aaba0f372ef797130b7fa8c3.webp",
+    "mark_logo": "https://indep.su/resources/marks/e381058d0fa06fa4c4117e83dc0c26df91aa1a81.png",
+    "price_new": 2829000,
+    "price_old": 3969900
+  },
+  {
+    "id": 128,
+    "mark_name": "PEUGEOT",
+    "model_name": "4008",
+    "full_name": "PEUGEOT 4008",
+    "preview": "https://indep.su/resources/bodies/1134a60b88e005c2788fc7769d634b3a3a002fe2.webp",
+    "mark_logo": "https://indep.su/resources/marks/443acb1c06a87635ebe19c0c03def15b8c9bc0e1.png",
+    "price_new": 3299000,
+    "price_old": 3899000
+  },
+  {
+    "id": 129,
+    "mark_name": "JAC",
+    "model_name": "J7",
+    "full_name": "JAC J7",
+    "preview": "https://indep.su/resources/bodies/596f6d1f7593b32d9e428f3a8011ee4f24d7526f.webp",
+    "mark_logo": "https://indep.su/resources/marks/8fe5729dc900702b968f832fc2480a872bc7ec76.png",
+    "price_new": 1049000,
+    "price_old": 2195000
+  },
+  {
+    "id": 130,
+    "mark_name": "PEUGEOT",
+    "model_name": "5008",
+    "full_name": "PEUGEOT 5008",
+    "preview": "https://indep.su/resources/bodies/c3dbfeee85c7b8d502b2be085d9134b413ee2f41.webp",
+    "mark_logo": "https://indep.su/resources/marks/443acb1c06a87635ebe19c0c03def15b8c9bc0e1.png",
+    "price_new": 3499000,
+    "price_old": 4799000
+  },
+  {
+    "id": 131,
+    "mark_name": "PEUGEOT",
+    "model_name": "408X",
+    "full_name": "PEUGEOT 408X",
+    "preview": "https://indep.su/resources/bodies/83449eb9739308533a05e61e76140a64b46bc514.webp",
+    "mark_logo": "https://indep.su/resources/marks/443acb1c06a87635ebe19c0c03def15b8c9bc0e1.png",
+    "price_new": 3959000,
+    "price_old": 4699000
+  },
+  {
+    "id": 132,
+    "mark_name": "JAC",
+    "model_name": "JS3",
+    "full_name": "JAC JS3",
+    "preview": "https://indep.su/resources/bodies/e4a6f839322f0598884035c2065bab9d0971b4a5.webp",
+    "mark_logo": "https://indep.su/resources/marks/8fe5729dc900702b968f832fc2480a872bc7ec76.png",
+    "price_new": 1099000,
+    "price_old": 1929000
+  },
+  {
+    "id": 133,
+    "mark_name": "JAC",
+    "model_name": "JS6",
+    "full_name": "JAC JS6",
+    "preview": "https://indep.su/resources/bodies/a5458d19cf53945694a03310d5e5d631c9e5c530.webp",
+    "mark_logo": "https://indep.su/resources/marks/8fe5729dc900702b968f832fc2480a872bc7ec76.png",
+    "price_new": 1499000,
+    "price_old": 2449000
+  },
+  {
+    "id": 134,
+    "mark_name": "JAC",
+    "model_name": "T9",
+    "full_name": "JAC T9",
+    "preview": "https://indep.su/resources/bodies/035e1464a4e9f2cb40f50ef9205588107b1d5946.webp",
+    "mark_logo": "https://indep.su/resources/marks/8fe5729dc900702b968f832fc2480a872bc7ec76.png",
+    "price_new": 2749000,
+    "price_old": 3719000
+  },
+  {
+    "id": 135,
+    "mark_name": "JAC",
+    "model_name": "T8 Pro",
+    "full_name": "JAC T8 Pro",
+    "preview": "https://indep.su/resources/bodies/af08dcad5b23f54c41d670e7d368fb9c550abcbe.webp",
+    "mark_logo": "https://indep.su/resources/marks/8fe5729dc900702b968f832fc2480a872bc7ec76.png",
+    "price_new": 2319000,
+    "price_old": 3344000
+  },
+  {
+    "id": 136,
+    "mark_name": "JAECOO",
+    "model_name": "J7",
+    "full_name": "JAECOO J7",
+    "preview": "https://indep.su/resources/bodies/e678943d0e532ac51500cf4956e6b8ae23cfb7e1.webp",
+    "mark_logo": "https://indep.su/resources/marks/4ff333003498e242f8537a8504b1bc5b25efb1ea.png",
+    "price_new": 1890900,
+    "price_old": 3019000
+  },
+  {
+    "id": 137,
+    "mark_name": "JAECOO",
+    "model_name": "J8",
+    "full_name": "JAECOO J8",
+    "preview": "https://indep.su/resources/bodies/f29cd0d5945754f54cc07febc59dda3298278c71.webp",
+    "mark_logo": "https://indep.su/resources/marks/4ff333003498e242f8537a8504b1bc5b25efb1ea.png",
+    "price_new": 3079000,
+    "price_old": 4619000
+  },
+  {
+    "id": 138,
+    "mark_name": "JETTA",
+    "model_name": "VS5",
+    "full_name": "JETTA VS5",
+    "preview": "https://indep.su/resources/bodies/892bd43a77d692f7c09665c6c869b5df8bd79fb0.webp",
+    "mark_logo": "https://indep.su/resources/marks/052d87aca8b00dd09a21309f71a63df527fce470.png",
+    "price_new": 1190000,
+    "price_old": 3000000
+  },
+  {
+    "id": 139,
+    "mark_name": "JETTA",
+    "model_name": "VA3",
+    "full_name": "JETTA VA3",
+    "preview": "https://indep.su/resources/bodies/82dd7921210914cc6fcbf81d00270958eaccb636.webp",
+    "mark_logo": "https://indep.su/resources/marks/052d87aca8b00dd09a21309f71a63df527fce470.png",
+    "price_new": 990000,
+    "price_old": 1928000
+  },
+  {
+    "id": 140,
+    "mark_name": "JETTA",
+    "model_name": "VS7",
+    "full_name": "JETTA VS7",
+    "preview": "https://indep.su/resources/bodies/038ff7f5899e86ced4906cee6d593cb8ba733c02.webp",
+    "mark_logo": "https://indep.su/resources/marks/052d87aca8b00dd09a21309f71a63df527fce470.png",
+    "price_new": 1349000,
+    "price_old": 3367000
+  },
+  {
+    "id": 141,
+    "mark_name": "CITROËN",
+    "model_name": "C5 AIRCROSS",
+    "full_name": "CITROËN C5 AIRCROSS",
+    "preview": "https://indep.su/resources/bodies/120018335ae5960d08c2f4ba728fdced22013749.webp",
+    "mark_logo": "https://indep.su/resources/marks/3fa53f1a44f7e79ffab3a8a370f676e6623ecc8a.png",
+    "price_new": 3199000,
+    "price_old": 4099000
+  },
+  {
+    "id": 142,
+    "mark_name": "CITROËN",
+    "model_name": "C5 X",
+    "full_name": "CITROËN C5 X",
+    "preview": "https://indep.su/resources/bodies/f4b49a496ebdc7caccc0f59bf60e75908c5abb78.webp",
+    "mark_logo": "https://indep.su/resources/marks/3fa53f1a44f7e79ffab3a8a370f676e6623ecc8a.png",
+    "price_new": 3599000,
+    "price_old": 4399000
+  },
+  {
+    "id": 143,
+    "mark_name": "JETOUR",
+    "model_name": "T1",
+    "full_name": "JETOUR T1",
+    "preview": "https://indep.su/resources/bodies/a40775295ca56710d319470a5da4b5e1bd4a32e8.webp",
+    "mark_logo": "https://indep.su/resources/marks/a70250497c28702686c7de85579d0d9e5082b0b1.png",
+    "price_new": 2870000,
+    "price_old": 3999900
+  },
+  {
+    "id": 145,
+    "mark_name": "JETOUR",
+    "model_name": "T2",
+    "full_name": "JETOUR T2",
+    "preview": "https://indep.su/resources/bodies/4d9c6012368415fdb70ac7b4e4b877ec3febfd0d.webp",
+    "mark_logo": "https://indep.su/resources/marks/a70250497c28702686c7de85579d0d9e5082b0b1.png",
+    "price_new": 2499000,
+    "price_old": 4159000
+  },
+  {
+    "id": 146,
+    "mark_name": "JETOUR",
+    "model_name": "Dashing",
+    "full_name": "JETOUR Dashing",
+    "preview": "https://indep.su/resources/bodies/19c994e09d080cfcc9208d9a41cbfe4d6fd5ab06.webp",
+    "mark_logo": "https://indep.su/resources/marks/a70250497c28702686c7de85579d0d9e5082b0b1.png",
+    "price_new": 1290900,
+    "price_old": 2489900
+  },
+  {
+    "id": 147,
+    "mark_name": "JETOUR",
+    "model_name": "X50",
+    "full_name": "JETOUR X50",
+    "preview": "https://indep.su/resources/bodies/8a2cd32055669d853e5b8e7badd4999139050bc3.webp",
+    "mark_logo": "https://indep.su/resources/marks/a70250497c28702686c7de85579d0d9e5082b0b1.png",
+    "price_new": 1090000,
+    "price_old": 1990000
+  },
+  {
+    "id": 148,
+    "mark_name": "JETOUR",
+    "model_name": "X70",
+    "full_name": "JETOUR X70",
+    "preview": "https://indep.su/resources/bodies/1d485eac68c195788d3c4e912c2124b451dc960f.webp",
+    "mark_logo": "https://indep.su/resources/marks/a70250497c28702686c7de85579d0d9e5082b0b1.png",
+    "price_new": 1790000,
+    "price_old": 2649000
+  },
+  {
+    "id": 149,
+    "mark_name": "JETOUR",
+    "model_name": "X70 PLUS",
+    "full_name": "JETOUR X70 PLUS",
+    "preview": "https://indep.su/resources/bodies/b3bd506dbda71a0a0066a6ca5c5102751009d66d.webp",
+    "mark_logo": "https://indep.su/resources/marks/a70250497c28702686c7de85579d0d9e5082b0b1.png",
+    "price_new": 1590900,
+    "price_old": 3099000
+  },
+  {
+    "id": 150,
+    "mark_name": "JETOUR",
+    "model_name": "X90 Plus",
+    "full_name": "JETOUR X90 Plus",
+    "preview": "https://indep.su/resources/bodies/9d4504abc4b0c06fd1880ec8fb92d95c6b0d3974.webp",
+    "mark_logo": "https://indep.su/resources/marks/a70250497c28702686c7de85579d0d9e5082b0b1.png",
+    "price_new": 2449000,
+    "price_old": 3479900
+  },
+  {
+    "id": 152,
+    "mark_name": "EVOLUTE",
+    "model_name": "i-SKY",
+    "full_name": "EVOLUTE i-SKY",
+    "preview": "https://indep.su/resources/bodies/20013deaa41abfdeb9d8defb3b0eec71d9d9f60c.webp",
+    "mark_logo": "https://indep.su/resources/marks/e3d78264ddb660a3170c23d7ffd7d7002224946c.png",
+    "price_new": 2815000,
+    "price_old": 3280000
+  },
+  {
+    "id": 155,
+    "mark_name": "EVOLUTE",
+    "model_name": "i-JET",
+    "full_name": "EVOLUTE i-JET",
+    "preview": "https://indep.su/resources/bodies/78a3bca9c3225d406938e0c945d300cfd0c95b75.webp",
+    "mark_logo": "https://indep.su/resources/marks/e3d78264ddb660a3170c23d7ffd7d7002224946c.png",
+    "price_new": 4775000,
+    "price_old": 5275000
+  },
+  {
+    "id": 156,
+    "mark_name": "EVOLUTE",
+    "model_name": "i-VAN",
+    "full_name": "EVOLUTE i-VAN",
+    "preview": "https://indep.su/resources/bodies/81bc3c8744e171dfb9ba004aae832e44904a0f68.webp",
+    "mark_logo": "https://indep.su/resources/marks/e3d78264ddb660a3170c23d7ffd7d7002224946c.png",
+    "price_new": 3420000,
+    "price_old": 3920000
+  },
+  {
+    "id": 157,
+    "mark_name": "XCITE",
+    "model_name": "X-cross 7",
+    "full_name": "XCITE X-cross 7",
+    "preview": "https://indep.su/resources/bodies/0728c714f347d95e5b57284573b2638b1cef6829.webp",
+    "mark_logo": "https://indep.su/resources/marks/5b36359a1486711cbb68145bfe33697aad191a41.svg",
+    "price_new": 1699000,
+    "price_old": 2549000
+  },
+  {
+    "id": 158,
+    "mark_name": "GAC",
+    "model_name": "GS8 New",
+    "full_name": "GAC GS8 New",
+    "preview": "https://indep.su/resources/bodies/da1d968f04c6ae261d97da58b9b8a716daf63362.webp",
+    "mark_logo": "https://indep.su/resources/marks/6faf4d4b5ba2812429c31629e616224b37e0b7e2.png",
+    "price_new": 3199000,
+    "price_old": 4399000
+  },
+  {
+    "id": 159,
+    "mark_name": "GAC",
+    "model_name": "M8",
+    "full_name": "GAC M8",
+    "preview": "https://indep.su/resources/bodies/43f4d49b5eca6153a9811c542830e470465a34ad.webp",
+    "mark_logo": "https://indep.su/resources/marks/6faf4d4b5ba2812429c31629e616224b37e0b7e2.png",
+    "price_new": 4199999,
+    "price_old": 5499999
+  },
+  {
+    "id": 160,
+    "mark_name": "BAIC",
+    "model_name": "BJ60",
+    "full_name": "BAIC BJ60",
+    "preview": "https://indep.su/resources/bodies/ac143e0fecd00691c402c1b3dd58e0551cce3915.webp",
+    "mark_logo": "https://indep.su/resources/marks/2e66b1bae3a98e96bbc18b2409d66278d6bc390e.png",
+    "price_new": 4300000,
+    "price_old": 5890000
+  },
+  {
+    "id": 161,
+    "mark_name": "JAC",
+    "model_name": "T8",
+    "full_name": "JAC T8",
+    "preview": "https://indep.su/resources/bodies/6ddc246423c9ca16fbcad1d6ff92599613622c96.webp",
+    "mark_logo": "https://indep.su/resources/marks/8fe5729dc900702b968f832fc2480a872bc7ec76.png",
+    "price_new": 2099000,
+    "price_old": 3119000
+  },
+  {
+    "id": 162,
+    "mark_name": "JAECOO",
+    "model_name": "J7 LE",
+    "full_name": "JAECOO J7 LE",
+    "preview": "https://indep.su/resources/bodies/d26b04be63958897f2bcfce0056c28ac6c97b9eb.webp",
+    "mark_logo": "https://indep.su/resources/marks/4ff333003498e242f8537a8504b1bc5b25efb1ea.png",
+    "price_new": 2059900,
+    "price_old": 2759900
+  },
+  {
+    "id": 163,
+    "mark_name": "XCITE",
+    "model_name": "X-cross 8",
+    "full_name": "XCITE X-cross 8",
+    "preview": "https://indep.su/resources/bodies/5fa7a531f2e616fd5d522e4c9febc294797635ed.webp",
+    "mark_logo": "https://indep.su/resources/marks/5b36359a1486711cbb68145bfe33697aad191a41.svg",
+    "price_new": 2199000,
+    "price_old": 3059000
+  },
+  {
+    "id": 164,
+    "mark_name": "EXEED",
+    "model_name": "LX",
+    "full_name": "EXEED LX",
+    "preview": "https://indep.su/resources/bodies/9554fab1b90e259d99b6bfecf73ba6186877c0e8.webp",
+    "mark_logo": "https://indep.su/resources/marks/634bbf8fc7ff97f551350e6a6ac34b1162594f3c.png",
+    "price_new": 1799000,
+    "price_old": 2850000
+  },
+  {
+    "id": 165,
+    "mark_name": "EXEED",
+    "model_name": "TXL",
+    "full_name": "EXEED TXL",
+    "preview": "https://indep.su/resources/bodies/69d51483d2bcbf7529270cbd64a8b4496f18b4e6.webp",
+    "mark_logo": "https://indep.su/resources/marks/634bbf8fc7ff97f551350e6a6ac34b1162594f3c.png",
+    "price_new": 2480000,
+    "price_old": 3680000
+  },
+  {
+    "id": 166,
+    "mark_name": "EXEED",
+    "model_name": "RX",
+    "full_name": "EXEED RX",
+    "preview": "https://indep.su/resources/bodies/1180ce77c495c730612a5405397167854d80494a.webp",
+    "mark_logo": "https://indep.su/resources/marks/634bbf8fc7ff97f551350e6a6ac34b1162594f3c.png",
+    "price_new": 3250000,
+    "price_old": 4900000
+  },
+  {
+    "id": 167,
+    "mark_name": "EXEED",
+    "model_name": "VX",
+    "full_name": "EXEED VX",
+    "preview": "https://indep.su/resources/bodies/12c3355d5fc82c1da41aad4cf8c3a77a8f3ca864.webp",
+    "mark_logo": "https://indep.su/resources/marks/634bbf8fc7ff97f551350e6a6ac34b1162594f3c.png",
+    "price_new": 3490000,
+    "price_old": 5530000
+  },
+  {
+    "id": 168,
+    "mark_name": "HYUNDAI",
+    "model_name": "Solaris",
+    "full_name": "HYUNDAI Solaris",
+    "preview": "https://indep.su/resources/bodies/4d01de9d27277f348a07168308fbe2bd90f98329.webp",
+    "mark_logo": "https://indep.su/resources/marks/7068afaecc17bb3e4edd59ef5dcbf8ea8d34bb2f.png",
+    "price_new": 899000,
+    "price_old": 1909000
+  },
+  {
+    "id": 169,
+    "mark_name": "HYUNDAI",
+    "model_name": "Creta II",
+    "full_name": "HYUNDAI Creta II",
+    "preview": "https://indep.su/resources/bodies/76ba7ffb7949824049b695ddd6a9f1f20730b594.webp",
+    "mark_logo": "https://indep.su/resources/marks/7068afaecc17bb3e4edd59ef5dcbf8ea8d34bb2f.png",
+    "price_new": 864000,
+    "price_old": 2059000
+  },
+  {
+    "id": 170,
+    "mark_name": "HYUNDAI",
+    "model_name": "Tucson",
+    "full_name": "HYUNDAI Tucson",
+    "preview": "https://indep.su/resources/bodies/130c9d6beff339da053794f780d9fed684d56121.webp",
+    "mark_logo": "https://indep.su/resources/marks/7068afaecc17bb3e4edd59ef5dcbf8ea8d34bb2f.png",
+    "price_new": 1649000,
+    "price_old": 3390000
+  },
+  {
+    "id": 171,
+    "mark_name": "HYUNDAI",
+    "model_name": "TUCSON N Line",
+    "full_name": "HYUNDAI TUCSON N Line",
+    "preview": "https://indep.su/resources/bodies/72fb107470490fb6495003f660d234cc1fac1f85.webp",
+    "mark_logo": "https://indep.su/resources/marks/7068afaecc17bb3e4edd59ef5dcbf8ea8d34bb2f.png",
+    "price_new": 1979000,
+    "price_old": 4273000
+  },
+  {
+    "id": 178,
+    "mark_name": "KNEWSTAR",
+    "model_name": "001",
+    "full_name": "KNEWSTAR 001",
+    "preview": "https://indep.su/resources/bodies/0f9c625f3d29e86f9f0d12bfa90f9692c7216528.webp",
+    "mark_logo": "https://indep.su/resources/marks/8d879e59de9f297a67bad388b98e1f2b6933b3ac.png",
+    "price_new": 3162990,
+    "price_old": 4229990
+  },
+  {
+    "id": 179,
+    "mark_name": "OMODA",
+    "model_name": "S5",
+    "full_name": "OMODA S5",
+    "preview": "https://indep.su/resources/bodies/a4708ff7fbf127b377adf3b95bcbc5861e58f766.webp",
+    "mark_logo": "https://indep.su/resources/marks/499489f16a1a4c314351d7fbd884b61f4cadb323.png",
+    "price_new": 1029900,
+    "price_old": 2129900
+  },
+  {
+    "id": 180,
+    "mark_name": "OMODA",
+    "model_name": "S5 GT",
+    "full_name": "OMODA S5 GT",
+    "preview": "https://indep.su/resources/bodies/5623d3ef4d3b4d5f2c0cac34da77665bf5b7f9bc.webp",
+    "mark_logo": "https://indep.su/resources/marks/499489f16a1a4c314351d7fbd884b61f4cadb323.png",
+    "price_new": 1879900,
+    "price_old": 2479900
+  },
+  {
+    "id": 181,
+    "mark_name": "OMODA",
+    "model_name": "C5",
+    "full_name": "OMODA C5",
+    "preview": "https://indep.su/resources/bodies/26b0bbd0dae1a98458b9d3800a96290650a57972.webp",
+    "mark_logo": "https://indep.su/resources/marks/499489f16a1a4c314351d7fbd884b61f4cadb323.png",
+    "price_new": 1379900,
+    "price_old": 2479000
+  },
+  {
+    "id": 182,
+    "mark_name": "OMODA",
+    "model_name": "C7",
+    "full_name": "OMODA C7",
+    "preview": "https://indep.su/resources/bodies/79d89e7beb57945ced194708ad69d298e0912d87.webp",
+    "mark_logo": "https://indep.su/resources/marks/499489f16a1a4c314351d7fbd884b61f4cadb323.png",
+    "price_new": 2109900,
+    "price_old": 2939000
+  },
+  {
+    "id": 187,
+    "mark_name": "МОСКВИЧ",
+    "model_name": "3",
+    "full_name": "МОСКВИЧ 3",
+    "preview": "https://indep.su/resources/bodies/51095245508eee666317d7d9b2da1900dfcfe7ee.webp",
+    "mark_logo": "https://indep.su/resources/marks/a4cea7741604d40069e1f126d08c837d1ccf878d.png",
+    "price_new": 1319000,
+    "price_old": 1952000
+  },
+  {
+    "id": 188,
+    "mark_name": "МОСКВИЧ",
+    "model_name": "3е",
+    "full_name": "МОСКВИЧ 3е",
+    "preview": "https://indep.su/resources/bodies/89f6a96c481a4d77b1a1093ad2ac0bb3856ca083.webp",
+    "mark_logo": "https://indep.su/resources/marks/a4cea7741604d40069e1f126d08c837d1ccf878d.png",
+    "price_new": 3200000,
+    "price_old": 4169000
+  },
+  {
+    "id": 189,
+    "mark_name": "МОСКВИЧ",
+    "model_name": "6",
+    "full_name": "МОСКВИЧ 6",
+    "preview": "https://indep.su/resources/bodies/8071b39a9fe918ceb02c7bd4800f715ce137a9d9.webp",
+    "mark_logo": "https://indep.su/resources/marks/a4cea7741604d40069e1f126d08c837d1ccf878d.png",
+    "price_new": 1899000,
+    "price_old": 2424000
+  },
+  {
+    "id": 190,
+    "mark_name": "МОСКВИЧ",
+    "model_name": "8",
+    "full_name": "МОСКВИЧ 8",
+    "preview": "https://indep.su/resources/bodies/7cdd4796242f0a6318f1df8914988fe7889986e8.webp",
+    "mark_logo": "https://indep.su/resources/marks/a4cea7741604d40069e1f126d08c837d1ccf878d.png",
+    "price_new": 2480000,
+    "price_old": 3125000
+  },
+  {
+    "id": 191,
+    "mark_name": "УАЗ",
+    "model_name": "Хантер",
+    "full_name": "УАЗ Хантер",
+    "preview": "https://indep.su/resources/bodies/6c9bc50276ff5c9027addd9e26f1148e579aab9a.webp",
+    "mark_logo": "https://indep.su/resources/marks/0c9d09d2771a50cb88c305ff0f84e8ac3da2257c.png",
+    "price_new": 1445000,
+    "price_old": 1720000
+  },
+  {
+    "id": 192,
+    "mark_name": "УАЗ",
+    "model_name": "Хантер Экспедиция",
+    "full_name": "УАЗ Хантер Экспедиция",
+    "preview": "https://indep.su/resources/bodies/9085418bc3a74214a934295f96785222a631d4be.webp",
+    "mark_logo": "https://indep.su/resources/marks/0c9d09d2771a50cb88c305ff0f84e8ac3da2257c.png",
+    "price_new": 1755000,
+    "price_old": 2035000
+  },
+  {
+    "id": 193,
+    "mark_name": "УАЗ",
+    "model_name": "Патриот",
+    "full_name": "УАЗ Патриот",
+    "preview": "https://indep.su/resources/bodies/9efd1c018d2154cf91addbdaa9a7181a5c18a7c7.webp",
+    "mark_logo": "https://indep.su/resources/marks/0c9d09d2771a50cb88c305ff0f84e8ac3da2257c.png",
+    "price_new": 1499000,
+    "price_old": 1925000
+  },
+  {
+    "id": 194,
+    "mark_name": "УАЗ",
+    "model_name": "Пикап",
+    "full_name": "УАЗ Пикап",
+    "preview": "https://indep.su/resources/bodies/d2ca4ab18b4cd9c44e2f14cc0aa06f49042f5dd5.webp",
+    "mark_logo": "https://indep.su/resources/marks/0c9d09d2771a50cb88c305ff0f84e8ac3da2257c.png",
+    "price_new": 1499000,
+    "price_old": 1950000
+  },
+  {
+    "id": 195,
+    "mark_name": "RENAULT",
+    "model_name": "Logan",
+    "full_name": "RENAULT Logan",
+    "preview": "https://indep.su/resources/bodies/36765c47d7c6b6b01be12174284dc3bee9a293b6.webp",
+    "mark_logo": "https://indep.su/resources/marks/66f5de80df5f0c2f3ed09ea97f1edf051c45f12a.png",
+    "price_new": 949000,
+    "price_old": 1849000
+  },
+  {
+    "id": 196,
+    "mark_name": "RENAULT",
+    "model_name": "Logan Stepway",
+    "full_name": "RENAULT Logan Stepway",
+    "preview": "https://indep.su/resources/bodies/88c179aea52b5d961c5de23fc3a9466069d7613e.webp",
+    "mark_logo": "https://indep.su/resources/marks/66f5de80df5f0c2f3ed09ea97f1edf051c45f12a.png",
+    "price_new": 1019000,
+    "price_old": 1949000
+  },
+  {
+    "id": 197,
+    "mark_name": "RENAULT",
+    "model_name": "Sandero",
+    "full_name": "RENAULT Sandero",
+    "preview": "https://indep.su/resources/bodies/db2272eb72753c958fffbd01ba5462711bdfec03.webp",
+    "mark_logo": "https://indep.su/resources/marks/66f5de80df5f0c2f3ed09ea97f1edf051c45f12a.png",
+    "price_new": 989000,
+    "price_old": 1849000
+  },
+  {
+    "id": 198,
+    "mark_name": "RENAULT",
+    "model_name": "Sandero Stepway",
+    "full_name": "RENAULT Sandero Stepway",
+    "preview": "https://indep.su/resources/bodies/7ebe047b9f76c8af1bab1d16c01aa6ef15f7d986.webp",
+    "mark_logo": "https://indep.su/resources/marks/66f5de80df5f0c2f3ed09ea97f1edf051c45f12a.png",
+    "price_new": 1049000,
+    "price_old": 1949000
+  },
+  {
+    "id": 199,
+    "mark_name": "RENAULT",
+    "model_name": "Kaptur",
+    "full_name": "RENAULT Kaptur",
+    "preview": "https://indep.su/resources/bodies/c4d950d175eb1ef68fef54c34eef2b427fbd8a7b.webp",
+    "mark_logo": "https://indep.su/resources/marks/66f5de80df5f0c2f3ed09ea97f1edf051c45f12a.png",
+    "price_new": 1349000,
+    "price_old": 2024000
+  },
+  {
+    "id": 200,
+    "mark_name": "RENAULT",
+    "model_name": "Arkana",
+    "full_name": "RENAULT Arkana",
+    "preview": "https://indep.su/resources/bodies/2695d4863b11049b21402a109b800fdf8a4420f9.webp",
+    "mark_logo": "https://indep.su/resources/marks/66f5de80df5f0c2f3ed09ea97f1edf051c45f12a.png",
+    "price_new": 1190000,
+    "price_old": 2249000
+  },
+  {
+    "id": 201,
+    "mark_name": "RENAULT",
+    "model_name": "Duster",
+    "full_name": "RENAULT Duster",
+    "preview": "https://indep.su/resources/bodies/df592eae4e7c084c7153d785b052cfffbc09cf3c.webp",
+    "mark_logo": "https://indep.su/resources/marks/66f5de80df5f0c2f3ed09ea97f1edf051c45f12a.png",
+    "price_new": 1049000,
+    "price_old": 2118000
+  },
+  {
+    "id": 202,
+    "mark_name": "NISSAN",
+    "model_name": "Qashqai",
+    "full_name": "NISSAN Qashqai",
+    "preview": "https://indep.su/resources/bodies/d32132b527fe831f23e8881a2e3c8dcafeb7cb99.webp",
+    "mark_logo": "https://indep.su/resources/marks/aa06df248387f6d2c9db6683b4a4be4450afbf7f.png",
+    "price_new": 1499000,
+    "price_old": 2990000
+  },
+  {
+    "id": 203,
+    "mark_name": "NISSAN",
+    "model_name": "X-Trail",
+    "full_name": "NISSAN X-Trail",
+    "preview": "https://indep.su/resources/bodies/0a46d9ef713de03f379320547156d89dd08f9d7e.webp",
+    "mark_logo": "https://indep.su/resources/marks/aa06df248387f6d2c9db6683b4a4be4450afbf7f.png",
+    "price_new": 1590000,
+    "price_old": 3180000
+  },
+  {
+    "id": 204,
+    "mark_name": "NISSAN",
+    "model_name": "Terrano",
+    "full_name": "NISSAN Terrano",
+    "preview": "https://indep.su/resources/bodies/7e4d89f8f97e4615f515a0e9d07a71b272fa0d98.webp",
+    "mark_logo": "https://indep.su/resources/marks/aa06df248387f6d2c9db6683b4a4be4450afbf7f.png",
+    "price_new": 1049000,
+    "price_old": 2049000
+  },
+  {
+    "id": 205,
+    "mark_name": "HAVAL",
+    "model_name": "Poer New",
+    "full_name": "HAVAL Poer New",
+    "preview": "https://indep.su/resources/bodies/c0361d4088057b7ccde3af6f7d81dc12ca61fa6f.webp",
+    "mark_logo": "https://indep.su/resources/marks/238788bad2c61ad596a5d11649eef890a01f6a2f.png",
+    "price_new": 2799000,
+    "price_old": 3699000
+  },
+  {
+    "id": 211,
+    "mark_name": "KIA",
+    "model_name": "Rio",
+    "full_name": "KIA Rio",
+    "preview": "https://indep.su/resources/bodies/020520140662c553369b70e1ef8fa1a291b9cea8.webp",
+    "mark_logo": "https://indep.su/resources/marks/615c2d8aedfc89764015e1690f8305e183403a49.png",
+    "price_new": 1049000,
+    "price_old": 1934000
+  },
+  {
+    "id": 212,
+    "mark_name": "KIA",
+    "model_name": "Rio X",
+    "full_name": "KIA Rio X",
+    "preview": "https://indep.su/resources/bodies/61fab63038aaf674321541e0a73ff226d42072ce.webp",
+    "mark_logo": "https://indep.su/resources/marks/615c2d8aedfc89764015e1690f8305e183403a49.png",
+    "price_new": 899000,
+    "price_old": 2169000
+  },
+  {
+    "id": 213,
+    "mark_name": "KIA",
+    "model_name": "Rio X-Line",
+    "full_name": "KIA Rio X-Line",
+    "preview": "https://indep.su/resources/bodies/58f94305bab1442901302407035bd05021daad2d.webp",
+    "mark_logo": "https://indep.su/resources/marks/615c2d8aedfc89764015e1690f8305e183403a49.png",
+    "price_new": 690000,
+    "price_old": 1774000
+  },
+  {
+    "id": 214,
+    "mark_name": "HYUNDAI",
+    "model_name": "Creta I",
+    "full_name": "HYUNDAI Creta I",
+    "preview": "https://indep.su/resources/bodies/c9231e56e4deed67b002dd399fc7cb1b044beca8.webp",
+    "mark_logo": "https://indep.su/resources/marks/7068afaecc17bb3e4edd59ef5dcbf8ea8d34bb2f.png",
+    "price_new": 754000,
+    "price_old": 1949000
+  },
+  {
+    "id": 215,
+    "mark_name": "SKODA",
+    "model_name": "Rapid",
+    "full_name": "SKODA Rapid",
+    "preview": "https://indep.su/resources/bodies/bdf1c51dcec3b87737c45ab470055124a3429b3d.webp",
+    "mark_logo": "https://indep.su/resources/marks/ceb530221dc8a3bb2c8937bafa0c652340220dda.png",
+    "price_new": 979000,
+    "price_old": 2102000
+  },
+  {
+    "id": 216,
+    "mark_name": "SKODA",
+    "model_name": "Octavia",
+    "full_name": "SKODA Octavia",
+    "preview": "https://indep.su/resources/bodies/112114920c26689a4ef040e70f127af52702746f.webp",
+    "mark_logo": "https://indep.su/resources/marks/ceb530221dc8a3bb2c8937bafa0c652340220dda.png",
+    "price_new": 1899000,
+    "price_old": 3116000
+  },
+  {
+    "id": 217,
+    "mark_name": "SKODA",
+    "model_name": "Karoq",
+    "full_name": "SKODA Karoq",
+    "preview": "https://indep.su/resources/bodies/ff6b83597f97af5b2db7329918cd0d54dd4d573a.webp",
+    "mark_logo": "https://indep.su/resources/marks/ceb530221dc8a3bb2c8937bafa0c652340220dda.png",
+    "price_new": 1499000,
+    "price_old": 2916000
+  },
+  {
+    "id": 218,
+    "mark_name": "SKODA",
+    "model_name": "Kodiaq",
+    "full_name": "SKODA Kodiaq",
+    "preview": "https://indep.su/resources/bodies/9de50d543d149ae7539bfb9052aa3040db5b1484.webp",
+    "mark_logo": "https://indep.su/resources/marks/ceb530221dc8a3bb2c8937bafa0c652340220dda.png",
+    "price_new": 2749000,
+    "price_old": 4549000
+  },
+  {
+    "id": 219,
+    "mark_name": "EVOLUTE",
+    "model_name": "i⁠-⁠SPACE New",
+    "full_name": "EVOLUTE i⁠-⁠SPACE New",
+    "preview": "https://indep.su/resources/bodies/4a4c6f63cfdd90ef08ee129a15c516edd5705e42.webp",
+    "mark_logo": "https://indep.su/resources/marks/e3d78264ddb660a3170c23d7ffd7d7002224946c.png",
+    "price_new": 2290000,
+    "price_old": 3485000
+  },
+  {
+    "id": 220,
+    "mark_name": "TOYOTA",
+    "model_name": "Corolla",
+    "full_name": "TOYOTA Corolla",
+    "preview": "https://indep.su/resources/bodies/36edc1790002d2744ce25e66a5eb568f4cd30563.webp",
+    "mark_logo": "https://indep.su/resources/marks/a0518da507b4d4a9ec1821cff20a98369b66e82c.png",
+    "price_new": 1967000,
+    "price_old": 2267000
+  },
+  {
+    "id": 221,
+    "mark_name": "TOYOTA",
+    "model_name": "Camry",
+    "full_name": "TOYOTA Camry",
+    "preview": "https://indep.su/resources/bodies/ddd194fc2d76b946c9ca7d509198c093a40eccae.webp",
+    "mark_logo": "https://indep.su/resources/marks/a0518da507b4d4a9ec1821cff20a98369b66e82c.png",
+    "price_new": 2940000,
+    "price_old": 3190000
+  },
+  {
+    "id": 222,
+    "mark_name": "TOYOTA",
+    "model_name": "RAV4",
+    "full_name": "TOYOTA RAV4",
+    "preview": "https://indep.su/resources/bodies/b7e6b8c7348696ffbabfecb9dd706b817304bbb9.webp",
+    "mark_logo": "https://indep.su/resources/marks/a0518da507b4d4a9ec1821cff20a98369b66e82c.png",
+    "price_new": 3799000,
+    "price_old": 4229000
+  },
+  {
+    "id": 229,
+    "mark_name": "EONIX",
+    "model_name": "City M2",
+    "full_name": "EONIX City M2",
+    "preview": "https://indep.su/resources/bodies/7758db759d78bcc0dab2da1889ffd793a273d444.webp",
+    "mark_logo": "https://indep.su/resources/marks/58d4592f3abd7bf9fc557ad1d71104bf0e7d1986.png",
+    "price_new": 629000,
+    "price_old": 840000
+  },
+  {
+    "id": 230,
+    "mark_name": "HAVAL",
+    "model_name": "Kingkong Poer",
+    "full_name": "HAVAL Kingkong Poer",
+    "preview": "https://indep.su/resources/bodies/05297506eefb1d0a9a7167195f0b76ab3a3d834d.webp",
+    "mark_logo": "https://indep.su/resources/marks/238788bad2c61ad596a5d11649eef890a01f6a2f.png",
+    "price_new": 2799000,
+    "price_old": 3299000
+  },
+  {
+    "id": 231,
+    "mark_name": "BELGEE",
+    "model_name": "X70 New",
+    "full_name": "BELGEE X70 New",
+    "preview": "https://indep.su/resources/bodies/412b3f2160c43f00bf28a045b13e45b750d18202.webp",
+    "mark_logo": "https://indep.su/resources/marks/4bb6d4ef1ffd77d586ccedc89dc1cd61a737cb9b.png",
+    "price_new": 2075990,
+    "price_old": 2579990
+  },
+  {
+    "id": 232,
+    "mark_name": "BELGEE",
+    "model_name": "S50",
+    "full_name": "BELGEE S50",
+    "preview": "https://indep.su/resources/bodies/dad23b636ed191a928d8ad2064b55922acafd0ff.webp",
+    "mark_logo": "https://indep.su/resources/marks/4bb6d4ef1ffd77d586ccedc89dc1cd61a737cb9b.png",
+    "price_new": 1449990,
+    "price_old": 1899990
+  },
+  {
+    "id": 236,
+    "mark_name": "TENET",
+    "model_name": "T4",
+    "full_name": "TENET T4",
+    "preview": "https://indep.su/resources/bodies/1047a467792aa1f0ba369b97e4fd574653267e11.webp",
+    "mark_logo": "https://indep.su/resources/marks/524f032bf030c8ba34b3ca879b4ecbf58b1434fb.png",
+    "price_new": 1599000,
+    "price_old": 2119000
+  },
+  {
+    "id": 237,
+    "mark_name": "TENET",
+    "model_name": "T7",
+    "full_name": "TENET T7",
+    "preview": "https://indep.su/resources/bodies/84588f5d3cf4b1e6127464cc8167e88ac4a42586.webp",
+    "mark_logo": "https://indep.su/resources/marks/524f032bf030c8ba34b3ca879b4ecbf58b1434fb.png",
+    "price_new": 2129000,
+    "price_old": 2735000
+  },
+  {
+    "id": 238,
+    "mark_name": "TENET",
+    "model_name": "T8",
+    "full_name": "TENET T8",
+    "preview": "https://indep.su/resources/bodies/0db138ff5fa8b6f64abba539cfb4492db8f9b7ad.webp",
+    "mark_logo": "https://indep.su/resources/marks/524f032bf030c8ba34b3ca879b4ecbf58b1434fb.png",
+    "price_new": 2839000,
+    "price_old": 3630000
+  },
+  {
+    "id": 239,
+    "mark_name": "RAVON",
+    "model_name": "R2",
+    "full_name": "RAVON R2",
+    "preview": "https://indep.su/resources/bodies/1b97c15005b6fbb19aac14d1039ace5c67ed15e5.webp",
+    "mark_logo": "https://indep.su/resources/marks/efef005c99e577c8232b5893ffb38408c915d50e.png",
+    "price_new": 1049000,
+    "price_old": 1083000
+  },
+  {
+    "id": 240,
+    "mark_name": "RAVON",
+    "model_name": "R4",
+    "full_name": "RAVON R4",
+    "preview": "https://indep.su/resources/bodies/d3249eed1a2696fdc0625d19efcdab95ecea3240.webp",
+    "mark_logo": "https://indep.su/resources/marks/efef005c99e577c8232b5893ffb38408c915d50e.png",
+    "price_new": 1059000,
+    "price_old": 1251000
+  },
+  {
+    "id": 241,
+    "mark_name": "RAVON",
+    "model_name": "Nexia R3",
+    "full_name": "RAVON Nexia R3",
+    "preview": "https://indep.su/resources/bodies/94e3891799d26f7e59c498f66bce26ef7b013491.webp",
+    "mark_logo": "https://indep.su/resources/marks/efef005c99e577c8232b5893ffb38408c915d50e.png",
+    "price_new": 1219000,
+    "price_old": 1425000
+  },
+  {
+    "id": 242,
+    "mark_name": "RAVON",
+    "model_name": "Gentra",
+    "full_name": "RAVON Gentra",
+    "preview": "https://indep.su/resources/bodies/f1ebae1aa38165e83f0d6463c5b75d96061613b5.webp",
+    "mark_logo": "https://indep.su/resources/marks/efef005c99e577c8232b5893ffb38408c915d50e.png",
+    "price_new": 1299000,
+    "price_old": 1417000
+  },
+  {
+    "id": 247,
+    "mark_name": "VOYAH",
+    "model_name": "Free",
+    "full_name": "VOYAH Free",
+    "preview": "https://indep.su/resources/bodies/e1c840933cb6beca3e966affba4e62b20194b3e1.webp",
+    "mark_logo": "https://indep.su/resources/marks/4514370265753d76f88f2a3078c2c9b704b4b5e9.png",
+    "price_new": 5790000,
+    "price_old": 6590000
+  },
+  {
+    "id": 248,
+    "mark_name": "VOYAH",
+    "model_name": "Passion",
+    "full_name": "VOYAH Passion",
+    "preview": "https://indep.su/resources/bodies/57b22ebeb7f091dc2b2f361f227d71711ce2e017.webp",
+    "mark_logo": "https://indep.su/resources/marks/4514370265753d76f88f2a3078c2c9b704b4b5e9.png",
+    "price_new": 4790000,
+    "price_old": 5590000
+  },
+  {
+    "id": 249,
+    "mark_name": "VOYAH",
+    "model_name": "Dream",
+    "full_name": "VOYAH Dream",
+    "preview": "https://indep.su/resources/bodies/507afb932d21e5fecbfcc1d3bee87910bcd0de1b.webp",
+    "mark_logo": "https://indep.su/resources/marks/4514370265753d76f88f2a3078c2c9b704b4b5e9.png",
+    "price_new": 10090000,
+    "price_old": 10890000
+  },
+  {
+    "id": 250,
+    "mark_name": "УАЗ",
+    "model_name": "СГР Экспедиция",
+    "full_name": "УАЗ СГР Экспедиция",
+    "preview": "https://indep.su/resources/bodies/751543daf3e2e952499eda65eae957b3a83da5cd.webp",
+    "mark_logo": "https://indep.su/resources/marks/0c9d09d2771a50cb88c305ff0f84e8ac3da2257c.png",
+    "price_new": 1860000,
+    "price_old": 1891000
+  },
+  {
+    "id": 251,
+    "mark_name": "УАЗ",
+    "model_name": "СГР",
+    "full_name": "УАЗ СГР Автобус",
+    "preview": "https://indep.su/resources/bodies/2c5cd36f5a68dd50dd249dcc4a7ef7e72cb5bfc9.webp",
+    "mark_logo": "https://indep.su/resources/marks/0c9d09d2771a50cb88c305ff0f84e8ac3da2257c.png",
+    "price_new": 1655000,
+    "price_old": 1682600
+  },
+  {
+    "id": 252,
+    "mark_name": "УАЗ",
+    "model_name": "СГР",
+    "full_name": "УАЗ СГР Комби",
+    "preview": "https://indep.su/resources/bodies/7ad17bcb4871c8e356ede8c48aa031977b8ef0c0.webp",
+    "mark_logo": "https://indep.su/resources/marks/0c9d09d2771a50cb88c305ff0f84e8ac3da2257c.png",
+    "price_new": 1585000,
+    "price_old": 1660000
+  },
+  {
+    "id": 253,
+    "mark_name": "УАЗ",
+    "model_name": "СГР",
+    "full_name": "УАЗ СГР Фургон",
+    "preview": "https://indep.su/resources/bodies/35521fd5ee759e1e5e57af89a4ce1672c19d2958.webp",
+    "mark_logo": "https://indep.su/resources/marks/0c9d09d2771a50cb88c305ff0f84e8ac3da2257c.png",
+    "price_new": 1590000,
+    "price_old": 1665000
+  },
+  {
+    "id": 254,
+    "mark_name": "УАЗ",
+    "model_name": "СГР",
+    "full_name": "УАЗ СГР Бортовой",
+    "preview": "https://indep.su/resources/bodies/5998093b6502acaad5f992003648ac4c29d56160.webp",
+    "mark_logo": "https://indep.su/resources/marks/0c9d09d2771a50cb88c305ff0f84e8ac3da2257c.png",
+    "price_new": 1565000,
+    "price_old": 1640000
+  },
+  {
+    "id": 255,
+    "mark_name": "EVOLUTE",
+    "model_name": "i‑JOY New",
+    "full_name": "EVOLUTE i‑JOY New",
+    "preview": "https://indep.su/resources/bodies/1bd29625bb186647b24263c044c9e5a5158b68e2.webp",
+    "mark_logo": "https://indep.su/resources/marks/e3d78264ddb660a3170c23d7ffd7d7002224946c.png",
+    "price_new": 2715000,
+    "price_old": 2775000
+  },
+  {
+    "id": 256,
+    "mark_name": "HYUNDAI",
+    "model_name": "Elantra",
+    "full_name": "HYUNDAI Elantra",
+    "preview": "https://indep.su/resources/bodies/6cfd51842a4d58ef65192b6eaf0923e25189485d.webp",
+    "mark_logo": "https://indep.su/resources/marks/7068afaecc17bb3e4edd59ef5dcbf8ea8d34bb2f.png",
+    "price_new": 2479000,
+    "price_old": 2479000
+  },
+  {
+    "id": 257,
+    "mark_name": "HYUNDAI",
+    "model_name": "Sonata",
+    "full_name": "HYUNDAI Sonata",
+    "preview": "https://indep.su/resources/bodies/b47049ffebc451230b3024a972ef18d7d5656da9.webp",
+    "mark_logo": "https://indep.su/resources/marks/7068afaecc17bb3e4edd59ef5dcbf8ea8d34bb2f.png",
+    "price_new": 2769000,
+    "price_old": 2769000
+  },
+  {
+    "id": 258,
+    "mark_name": "HYUNDAI",
+    "model_name": "Sonata New",
+    "full_name": "HYUNDAI Sonata New",
+    "preview": "https://indep.su/resources/bodies/998d7aed4b04690bdeefe61427e526667d3ed615.webp",
+    "mark_logo": "https://indep.su/resources/marks/7068afaecc17bb3e4edd59ef5dcbf8ea8d34bb2f.png",
+    "price_new": 3689000,
+    "price_old": 3689000
+  },
+  {
+    "id": 259,
+    "mark_name": "HYUNDAI",
+    "model_name": "Santa Fe",
+    "full_name": "HYUNDAI Santa Fe",
+    "preview": "https://indep.su/resources/bodies/c7034b014e2ec4c9134447bd63b70d60389601d3.webp",
+    "mark_logo": "https://indep.su/resources/marks/7068afaecc17bb3e4edd59ef5dcbf8ea8d34bb2f.png",
+    "price_new": 3969000,
+    "price_old": 3799000
+  },
+  {
+    "id": 260,
+    "mark_name": "HYUNDAI",
+    "model_name": "Santa Fe New",
+    "full_name": "HYUNDAI Santa Fe New",
+    "preview": "https://indep.su/resources/bodies/e68dc65d653fd893e79feb66ed436ec95b7cc473.webp",
+    "mark_logo": "https://indep.su/resources/marks/7068afaecc17bb3e4edd59ef5dcbf8ea8d34bb2f.png",
+    "price_new": 5699000,
+    "price_old": 5699000
+  },
+  {
+    "id": 261,
+    "mark_name": "HYUNDAI",
+    "model_name": "Palisade",
+    "full_name": "HYUNDAI Palisade",
+    "preview": "https://indep.su/resources/bodies/0be1048e6bc3dfa528080a8d1b848609b34c5282.webp",
+    "mark_logo": "https://indep.su/resources/marks/7068afaecc17bb3e4edd59ef5dcbf8ea8d34bb2f.png",
+    "price_new": 7490000,
+    "price_old": 7490000
+  },
+  {
+    "id": 262,
+    "mark_name": "HYUNDAI",
+    "model_name": "Staria",
+    "full_name": "HYUNDAI Staria",
+    "preview": "https://indep.su/resources/bodies/734a307e81151a56cbc2522938d49c7f524d2a53.webp",
+    "mark_logo": "https://indep.su/resources/marks/7068afaecc17bb3e4edd59ef5dcbf8ea8d34bb2f.png",
+    "price_new": 7240000,
+    "price_old": 7240000
+  },
+  {
+    "id": 263,
+    "mark_name": "CHANGAN",
+    "model_name": "UNI-L",
+    "full_name": "CHANGAN UNI-L",
+    "preview": "https://indep.su/resources/bodies/9c6c5e6b492e7d7613b51f771144cfa0716e12bd.webp",
+    "mark_logo": "https://indep.su/resources/marks/e381058d0fa06fa4c4117e83dc0c26df91aa1a81.png",
+    "price_new": 2929900,
+    "price_old": 2929900
+  },
+  {
+    "id": 264,
+    "mark_name": "УАЗ",
+    "model_name": "Профи",
+    "full_name": "УАЗ Профи Одинарная кабина",
+    "preview": "https://indep.su/resources/bodies/b678a72964d96e096d6698e8f9d4b5e2d1714e7d.webp",
+    "mark_logo": "https://indep.su/resources/marks/0c9d09d2771a50cb88c305ff0f84e8ac3da2257c.png",
+    "price_new": 1931700,
+    "price_old": 1990000
+  },
+  {
+    "id": 265,
+    "mark_name": "УАЗ",
+    "model_name": "Профи",
+    "full_name": "УАЗ Профи Двойная кабина",
+    "preview": "https://indep.su/resources/bodies/c090bbd43a384758c0c01e97a1cb3a4bbf72502e.webp",
+    "mark_logo": "https://indep.su/resources/marks/0c9d09d2771a50cb88c305ff0f84e8ac3da2257c.png",
+    "price_new": 1977400,
+    "price_old": 2035000
+  },
+  {
+    "id": 266,
+    "mark_name": "УАЗ",
+    "model_name": "Профи",
+    "full_name": "УАЗ Профи Фургон",
+    "preview": "https://indep.su/resources/bodies/b7a67de553710b8565c9188b6c63518760ff2835.webp",
+    "mark_logo": "https://indep.su/resources/marks/0c9d09d2771a50cb88c305ff0f84e8ac3da2257c.png",
+    "price_new": 2099400,
+    "price_old": 2160000
+  },
+  {
+    "id": 267,
+    "mark_name": "GEELY",
+    "model_name": "EX5 EM-i",
+    "full_name": "GEELY EX5 EM-i",
+    "preview": "https://indep.su/resources/bodies/fe2851c6e756f1b0591bc941d6a48e3d785a7fa2.webp",
+    "mark_logo": "https://indep.su/resources/marks/cd761993f27cdb18ee345166730aac0f50e599be.png",
+    "price_new": 3669990,
+    "price_old": 3669990
+  },
+  {
+    "id": 268,
+    "mark_name": "EONIX",
+    "model_name": "Profi Pickup",
+    "full_name": "EONIX Profi Pickup",
+    "preview": "https://indep.su/resources/bodies/85b7dfa930906b4eedc71fe66a473ab7ae019530.webp",
+    "mark_logo": "https://indep.su/resources/marks/58d4592f3abd7bf9fc557ad1d71104bf0e7d1986.png",
+    "price_new": 890000,
+    "price_old": 890000
+  },
+  {
+    "id": 269,
+    "mark_name": "EONIX",
+    "model_name": "Profi Cargo",
+    "full_name": "EONIX Profi Cargo",
+    "preview": "https://indep.su/resources/bodies/88613aaa418a3352cda8a397c404b92322dd94ab.webp",
+    "mark_logo": "https://indep.su/resources/marks/58d4592f3abd7bf9fc557ad1d71104bf0e7d1986.png",
+    "price_new": 990000,
+    "price_old": 990000
+  },
+  {
+    "id": 270,
+    "mark_name": "SUZUKI",
+    "model_name": "Grand Vitara",
+    "full_name": "SUZUKI Grand Vitara",
+    "preview": "https://indep.su/resources/bodies/d4dcab32678f857106a2eae84dde7bd6dbbd7b0e.webp",
+    "mark_logo": "https://indep.su/resources/marks/70b364a792bf36e8030984cf1f2d0284cd44caff.png",
+    "price_new": 3550000,
+    "price_old": 3499000
+  },
+  {
+    "id": 271,
+    "mark_name": "SUZUKI",
+    "model_name": "Jimny",
+    "full_name": "SUZUKI Jimny",
+    "preview": "https://indep.su/resources/bodies/94be3bd06c0e90885b5645662b4867b7d378743e.webp",
+    "mark_logo": "https://indep.su/resources/marks/70b364a792bf36e8030984cf1f2d0284cd44caff.png",
+    "price_new": 2450000,
+    "price_old": 3190000
+  },
+  {
+    "id": 272,
+    "mark_name": "SUZUKI",
+    "model_name": "Jimny",
+    "full_name": "SUZUKI Jimny",
+    "preview": "https://indep.su/resources/bodies/dac448c954608781914de77632b4d8b430b22fa4.webp",
+    "mark_logo": "https://indep.su/resources/marks/70b364a792bf36e8030984cf1f2d0284cd44caff.png",
+    "price_new": 3050000,
+    "price_old": 3350000
+  },
+  {
+    "id": 273,
+    "mark_name": "SUZUKI",
+    "model_name": "Baleno",
+    "full_name": "SUZUKI Baleno",
+    "preview": "https://indep.su/resources/bodies/9ccfc23dc89c9a5976c3d239c19b02d6f61d2650.webp",
+    "mark_logo": "https://indep.su/resources/marks/70b364a792bf36e8030984cf1f2d0284cd44caff.png",
+    "price_new": 2000000,
+    "price_old": 2599000
+  },
+  {
+    "id": 274,
+    "mark_name": "SUZUKI",
+    "model_name": "Ciaz",
+    "full_name": "SUZUKI Ciaz",
+    "preview": "https://indep.su/resources/bodies/23cb7ca0935eea1da23a36857f9d950b1f830356.webp",
+    "mark_logo": "https://indep.su/resources/marks/70b364a792bf36e8030984cf1f2d0284cd44caff.png",
+    "price_new": 1800000,
+    "price_old": 2499000
+  },
+  {
+    "id": 275,
+    "mark_name": "SUZUKI",
+    "model_name": "Swift",
+    "full_name": "SUZUKI Swift",
+    "preview": "https://indep.su/resources/bodies/68d8fc2acbd2c804077f7373982428372f8b23da.webp",
+    "mark_logo": "https://indep.su/resources/marks/70b364a792bf36e8030984cf1f2d0284cd44caff.png",
+    "price_new": 1800000,
+    "price_old": 2499000
+  },
+  {
+    "id": 276,
+    "mark_name": "KIA",
+    "model_name": "Carnival",
+    "full_name": "KIA Carnival",
+    "preview": "https://indep.su/resources/bodies/3122922beee8e5cf1d01faab75d2f166ffe72c2d.webp",
+    "mark_logo": "https://indep.su/resources/marks/615c2d8aedfc89764015e1690f8305e183403a49.png",
+    "price_new": 5290000,
+    "price_old": 5290000
+  },
+  {
+    "id": 277,
+    "mark_name": "KIA",
+    "model_name": "Carnival New",
+    "full_name": "KIA Carnival New",
+    "preview": "https://indep.su/resources/bodies/09753229f2695fefad0fdc186c42183f2dc3a805.webp",
+    "mark_logo": "https://indep.su/resources/marks/615c2d8aedfc89764015e1690f8305e183403a49.png",
+    "price_new": 6383460,
+    "price_old": 6383460
+  },
+  {
+    "id": 278,
+    "mark_name": "JAC",
+    "model_name": "RF8",
+    "full_name": "JAC RF8",
+    "preview": "https://indep.su/resources/bodies/cc63136d86f67565d8e270c755bd4571ef9c8a0c.webp",
+    "mark_logo": "https://indep.su/resources/marks/8fe5729dc900702b968f832fc2480a872bc7ec76.png",
+    "price_new": 5074000,
+    "price_old": 5074000
+  },
+  {
+    "id": 279,
+    "mark_name": "JAECOO",
+    "model_name": "J7 New",
+    "full_name": "JAECOO J7 New",
+    "preview": "https://indep.su/resources/bodies/b18c867eabbec0da9089356da903dd5912d7dfc0.webp",
+    "mark_logo": "https://indep.su/resources/marks/4ff333003498e242f8537a8504b1bc5b25efb1ea.png",
+    "price_new": 3259000,
+    "price_old": 3259000
+  },
+  {
+    "id": 280,
+    "mark_name": "TOYOTA",
+    "model_name": "Camry New",
+    "full_name": "TOYOTA Camry New",
+    "preview": "https://indep.su/resources/bodies/f93d12d96be48ee5676b4be75f59ee1124606041.webp",
+    "mark_logo": "https://indep.su/resources/marks/a0518da507b4d4a9ec1821cff20a98369b66e82c.png",
+    "price_new": 4460000,
+    "price_old": 4460000
+  },
+  {
+    "id": 281,
+    "mark_name": "KIA",
+    "model_name": "Sportage",
+    "full_name": "KIA Sportage",
+    "preview": "https://indep.su/resources/bodies/551e6d4ab642f8335948296a3dc6bd3db301f860.webp",
+    "mark_logo": "https://indep.su/resources/marks/615c2d8aedfc89764015e1690f8305e183403a49.png",
+    "price_new": 3194000,
+    "price_old": 3194000
+  },
+  {
+    "id": 282,
+    "mark_name": "KIA",
+    "model_name": "Seltos New",
+    "full_name": "KIA Seltos New",
+    "preview": "https://indep.su/resources/bodies/3f3d03f2435b958e8e5c9918973578df5725d6db.webp",
+    "mark_logo": "https://indep.su/resources/marks/615c2d8aedfc89764015e1690f8305e183403a49.png",
+    "price_new": 2310000,
+    "price_old": 2349000
+  },
+  {
+    "id": 283,
+    "mark_name": "EVOLUTE",
+    "model_name": "i-SPACE 4x4",
+    "full_name": "EVOLUTE i-SPACE 4x4",
+    "preview": "https://indep.su/resources/bodies/c7b69a783ab90e99a9c98423770af7fb8e685d87.webp",
+    "mark_logo": "https://indep.su/resources/marks/e3d78264ddb660a3170c23d7ffd7d7002224946c.png",
+    "price_new": 3790000,
+    "price_old": 3790000
+  },
+  {
+    "id": 284,
+    "mark_name": "CHANGAN",
+    "model_name": "CS75 Plus New",
+    "full_name": "CHANGAN CS75 Plus New",
+    "preview": "https://indep.su/resources/bodies/f319d9a4d2f508b802a5687126ac35a573538da1.webp",
+    "mark_logo": "https://indep.su/resources/marks/e381058d0fa06fa4c4117e83dc0c26df91aa1a81.png",
+    "price_new": 4189900,
+    "price_old": 4189900
+  },
+  {
+    "id": 285,
+    "mark_name": "CHANGAN",
+    "model_name": "CS35 MAX",
+    "full_name": "CHANGAN CS35 MAX",
+    "preview": "https://indep.su/resources/bodies/a85b8d4236474a29caed17a4a9cdf2a53f2a5a9a.webp",
+    "mark_logo": "https://indep.su/resources/marks/e381058d0fa06fa4c4117e83dc0c26df91aa1a81.png",
+    "price_new": 2599900,
+    "price_old": 2599900
+  },
+  {
+    "id": 286,
+    "mark_name": "SOLLERS",
+    "model_name": "SP7",
+    "full_name": "SOLLERS SP7",
+    "preview": "https://indep.su/resources/bodies/a4983b84e40c4f478b7b22c034d2e2a6f3cc9ae7.png",
+    "mark_logo": "https://indep.su/resources/marks/cf9b208363994b90c871ae18e9bed155360ae9a1.png",
+    "price_new": 5075000,
+    "price_old": 5075000
+  },
+  {
+    "id": 287,
+    "mark_name": "SOLLERS",
+    "model_name": "SF1",
+    "full_name": "SOLLERS SF1",
+    "preview": "https://indep.su/resources/bodies/9e903fddd29d1f1c0eecc830d81c5afc0fb8bba8.png",
+    "mark_logo": "https://indep.su/resources/marks/cf9b208363994b90c871ae18e9bed155360ae9a1.png",
+    "price_new": 2250000,
+    "price_old": 2250000
+  },
+  {
+    "id": 289,
+    "mark_name": "JMC",
+    "model_name": "Vigus Work 1",
+    "full_name": "JMC Vigus Work 1",
+    "preview": "https://indep.su/resources/bodies/445ca47d8b1ad4742fe43b3eb9fab3dd2deec772.png",
+    "mark_logo": "https://indep.su/resources/marks/7b04746a4bc355aad4549fcc629e3bd3e8558aca.png",
+    "price_new": 2100000,
+    "price_old": 2100000
+  },
+  {
+    "id": 290,
+    "mark_name": "JMC",
+    "model_name": "Vigus 2",
+    "full_name": "JMC Vigus 2",
+    "preview": "https://indep.su/resources/bodies/1b712d884f98a29c6950a3468f00c84e466eed71.png",
+    "mark_logo": "https://indep.su/resources/marks/7b04746a4bc355aad4549fcc629e3bd3e8558aca.png",
+    "price_new": 2300000,
+    "price_old": 2300000
+  }
+]
