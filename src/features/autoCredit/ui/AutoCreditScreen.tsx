@@ -14,7 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BackCaretIcon from "../../../assets/icons/backCaret.svg";
 import { cars as mockCars } from "../../../data/cars";
 import { colors } from "../../../shared/theme/colors";
-import { acText } from "./autoCredit.styles";
+import { acText, acTitle } from "./autoCredit.styles";
 import { radius } from "../../../shared/theme/radius";
 import { spacing } from "../../../shared/theme/spacing";
 import { AppButton } from "../../../shared/ui/AppButton";
@@ -229,6 +229,7 @@ export function AutoCreditScreen() {
         />
 
         <View
+          style={styles.formSection}
           onLayout={(event) => {
             formSectionY.current = event.nativeEvent.layout.y;
           }}
@@ -236,13 +237,15 @@ export function AutoCreditScreen() {
           <AutoCreditContactForm onSubmit={handleSubmit} />
         </View>
 
-        <Text style={styles.whyTitle}>Почему мы?</Text>
-        {AUTO_CREDIT_WHY_US.map((item) => (
-          <AppCard key={item.id} style={styles.whyCard} muted padded>
-            <Text style={styles.whyCardTitle}>{item.title}</Text>
-            <Text style={styles.whyCardText}>{item.text}</Text>
-          </AppCard>
-        ))}
+        <View style={styles.whySection}>
+          <Text style={styles.whyTitle}>Почему мы?</Text>
+          {AUTO_CREDIT_WHY_US.map((item) => (
+            <AppCard key={item.id} style={styles.whyCard} muted padded>
+              <Text style={styles.whyCardTitle}>{item.title}</Text>
+              <Text style={styles.whyCardText}>{item.text}</Text>
+            </AppCard>
+          ))}
+        </View>
         </ScrollView>
       </KeyboardAvoidingView>
 
@@ -289,9 +292,8 @@ const styles = StyleSheet.create({
     color: colors.text.muted,
   },
   stickyAmount: {
-    ...acText,
+    ...acTitle,
     fontSize: 17,
-    fontWeight: "700",
     color: colors.text.primary,
   },
   stickyBtn: {
@@ -310,21 +312,18 @@ const styles = StyleSheet.create({
   backLabel: {
     ...acText,
     fontSize: 16,
-    fontWeight: "600",
     color: colors.brand.primary,
   },
   pageTitle: {
-    ...acText,
+    ...acTitle,
     fontSize: 26,
     lineHeight: 30,
-    fontWeight: "700",
     color: colors.text.primary,
     marginBottom: spacing.xl,
   },
   sectionLabel: {
-    ...acText,
+    ...acTitle,
     fontSize: 16,
-    fontWeight: "700",
     color: colors.text.primary,
     marginBottom: spacing.sm,
   },
@@ -334,7 +333,6 @@ const styles = StyleSheet.create({
   sectionValue: {
     ...acText,
     fontSize: 18,
-    fontWeight: "600",
     color: colors.text.primary,
     marginBottom: spacing.sm,
   },
@@ -352,9 +350,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   carPickerTitle: {
-    ...acText,
+    ...acTitle,
     fontSize: 16,
-    fontWeight: "700",
     color: colors.text.primary,
     marginBottom: 4,
   },
@@ -366,7 +363,6 @@ const styles = StyleSheet.create({
   carPickerAction: {
     ...acText,
     fontSize: 14,
-    fontWeight: "600",
     color: colors.brand.primary,
   },
   slider: {
@@ -377,20 +373,28 @@ const styles = StyleSheet.create({
   termChipsWrap: {
     marginBottom: spacing.lg,
   },
+  formSection: {
+    marginBottom: spacing.xxl,
+    zIndex: 0,
+  },
+  whySection: {
+    paddingTop: spacing.md,
+    zIndex: 1,
+  },
   whyTitle: {
-    ...acText,
+    ...acTitle,
     fontSize: 22,
-    fontWeight: "700",
+    lineHeight: 30,
     color: colors.text.primary,
     marginBottom: spacing.md,
+    includeFontPadding: false,
   },
   whyCard: {
     marginBottom: spacing.md,
   },
   whyCardTitle: {
-    ...acText,
+    ...acTitle,
     fontSize: 15,
-    fontWeight: "700",
     color: colors.text.primary,
     marginBottom: spacing.sm,
   },

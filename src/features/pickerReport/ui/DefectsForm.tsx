@@ -10,6 +10,7 @@ import {
 import SchemeSvg from "../../../assets/auto/scheme.svg";
 import OrangePlusIcon from "../../../assets/icons/orange-plus.svg";
 import { colors } from "../../../shared/theme/colors";
+import { DamagePhotosUploadCard } from "./DamagePhotosUploadCard";
 import { PR_TYPO } from "./pickerReport.styles";
 
 export type DefectsMode = "scheme" | "photos";
@@ -17,6 +18,7 @@ export type DefectsMode = "scheme" | "photos";
 export type DamageDraft = {
   id: string;
   description: string;
+  photoUri: string | null;
 };
 
 export type DefectsState = {
@@ -62,10 +64,18 @@ export function DefectsForm({ value, onChange }: Props) {
     onChange({ ...value, damages: nextDamages });
   };
 
+  const updateDamagePhoto = (damageId: string, photoUri: string | null) => {
+    const nextDamages = value.damages.map((d) =>
+      d.id === damageId ? { ...d, photoUri } : d,
+    );
+    onChange({ ...value, damages: nextDamages });
+  };
+
   const addDamage = () => {
     const newDamage: DamageDraft = {
       id: `${Date.now()}_${Math.random().toString(16).slice(2)}`,
       description: "",
+      photoUri: null,
     };
     const nextDamages = [...value.damages, newDamage];
     onChange({
@@ -86,11 +96,10 @@ export function DefectsForm({ value, onChange }: Props) {
             <SchemeSvg width="100%" height={140} />
           </View>
         ) : (
-          <View style={styles.photosPlaceholder}>
-            <Text style={styles.photosPlaceholderText}>
-              Фото повреждений (заглушка)
-            </Text>
-          </View>
+          <DamagePhotosUploadCard
+            damages={value.damages}
+            onPhotoChange={updateDamagePhoto}
+          />
         )}
       </View>
 
@@ -150,17 +159,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 8,
-  },
-  photosPlaceholder: {
-    height: 90,
-    borderRadius: 14,
-    backgroundColor: colors.surface.neutral,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  photosPlaceholderText: {
-    ...PR_TYPO.caption,
-    textAlign: "center",
   },
   divider: {
     height: 1,

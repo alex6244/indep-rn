@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { AppCard } from "../../../shared/ui/AppCard";
 import { colors } from "../../../shared/theme/colors";
-import { acText } from "./autoCredit.styles";
+import { acText, acTitle } from "./autoCredit.styles";
 import { radius } from "../../../shared/theme/radius";
 import { spacing } from "../../../shared/theme/spacing";
 import {
@@ -100,13 +100,18 @@ export function AutoCreditCarSummaryCard({
       </View>
 
       <View style={styles.body}>
-        <Text style={styles.creditFrom}>Кредит от {formatRubPerMonth(monthlyFrom)}</Text>
-
-        <View style={styles.priceRow}>
-          <Text style={styles.price}>{formatRub(vehicle.price)}</Text>
-          {vehicle.oldPrice ? (
-            <Text style={styles.oldPrice}>{formatRub(vehicle.oldPrice)}</Text>
-          ) : null}
+        <View style={styles.priceHeader}>
+          <Text style={styles.creditFrom}>
+            Кредит от {formatRubPerMonth(monthlyFrom)}
+          </Text>
+          <View style={styles.priceRow}>
+            <Text style={styles.price} numberOfLines={2}>
+              {formatRub(vehicle.price)}
+            </Text>
+            {vehicle.oldPrice ? (
+              <Text style={styles.oldPrice}>{formatRub(vehicle.oldPrice)}</Text>
+            ) : null}
+          </View>
         </View>
 
         <View style={styles.metricsGrid}>
@@ -170,7 +175,6 @@ const styles = StyleSheet.create({
     ...acText,
     color: "#fff",
     fontSize: 16,
-    fontWeight: "700",
   },
   lightboxCounter: {
     position: "absolute",
@@ -185,7 +189,6 @@ const styles = StyleSheet.create({
     ...acText,
     color: "#fff",
     fontSize: 14,
-    fontWeight: "600",
   },
   card: {
     overflow: "hidden",
@@ -212,28 +215,33 @@ const styles = StyleSheet.create({
     ...acText,
     color: colors.text.inverse,
     fontSize: 12,
-    fontWeight: "600",
   },
   body: {
-    padding: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingBottom: spacing.md,
+    paddingTop: spacing.lg,
+  },
+  priceHeader: {
+    marginBottom: spacing.md,
+    gap: spacing.md,
   },
   creditFrom: {
-    ...acText,
+    ...acTitle,
     fontSize: 15,
-    fontWeight: "700",
+    lineHeight: 20,
     color: colors.brand.primary,
-    marginBottom: spacing.sm,
   },
   priceRow: {
     flexDirection: "row",
-    alignItems: "baseline",
+    flexWrap: "wrap",
+    alignItems: "flex-end",
     gap: spacing.sm,
-    marginBottom: spacing.md,
   },
   price: {
-    ...acText,
-    fontSize: 22,
-    fontWeight: "700",
+    ...acTitle,
+    flexShrink: 1,
+    fontSize: 20,
+    lineHeight: 26,
     color: colors.text.primary,
   },
   oldPrice: {
@@ -263,19 +271,16 @@ const styles = StyleSheet.create({
   metricValue: {
     ...acText,
     fontSize: 15,
-    fontWeight: "600",
     color: colors.text.primary,
   },
   metricValueAccent: {
-    ...acText,
+    ...acTitle,
     fontSize: 17,
-    fontWeight: "700",
     color: colors.text.primary,
   },
   ptsTitle: {
-    ...acText,
+    ...acTitle,
     fontSize: 16,
-    fontWeight: "700",
     color: colors.text.primary,
     marginBottom: spacing.sm,
   },
@@ -296,7 +301,6 @@ const styles = StyleSheet.create({
   ptsValue: {
     ...acText,
     fontSize: 14,
-    fontWeight: "600",
     color: colors.text.primary,
     flex: 1,
     textAlign: "right",

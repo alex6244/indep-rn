@@ -64,8 +64,18 @@ export function usePickerReportConfirmController(router: Router) {
           return;
         }
         if (!cancelled) {
-          setDraftReport(parsed);
-          setDefectsMode(parsed?.defects?.mode ?? "scheme");
+          const normalized: DraftReport = {
+            ...parsed,
+            defects: {
+              ...parsed.defects,
+              damages: parsed.defects.damages.map((damage) => ({
+                ...damage,
+                photoUri: damage.photoUri ?? null,
+              })),
+            },
+          };
+          setDraftReport(normalized);
+          setDefectsMode(normalized.defects.mode ?? "scheme");
         }
       } catch {
         if (!cancelled) {

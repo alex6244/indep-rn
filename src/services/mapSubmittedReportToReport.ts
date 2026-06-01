@@ -85,9 +85,13 @@ export function mapSubmittedReportToReport(submitted: SubmittedReport): Report {
   const legalBad = legalItems.some((i) => i.tone === "bad");
   const commercialBad = commercialItems.some((i) => i.tone === "bad");
 
-  const defectPhotos = data.defects.mode === "photos"
-    ? data.defects.damages.map(() => PLACEHOLDER_CAR_IMAGE)
-    : [];
+  const defectPhotos =
+    data.defects.mode === "photos"
+      ? data.defects.damages
+          .map((d) => d.photoUri)
+          .filter((uri): uri is string => Boolean(uri?.trim()))
+          .map((uri) => ({ uri }))
+      : [];
 
   const summaryText =
     data.defects.damages

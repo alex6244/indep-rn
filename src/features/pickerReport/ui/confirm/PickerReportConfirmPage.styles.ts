@@ -78,6 +78,16 @@ export const styles = StyleSheet.create({
     ...PR_TYPO.caption,
     textAlign: "center",
   },
+  damagePhotosScroll: {
+    gap: 10,
+    paddingVertical: 4,
+  },
+  damagePhotoThumb: {
+    width: 120,
+    height: 120,
+    borderRadius: 12,
+    backgroundColor: colors.surface.neutral,
+  },
   checkList: {
     gap: 10,
   },

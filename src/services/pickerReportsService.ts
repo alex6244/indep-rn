@@ -104,7 +104,7 @@ const mockSubmittedReports: SubmittedReport[] = [
       },
       defects: {
         mode: "scheme",
-        damages: [{ id: "damage_1", description: "" }],
+        damages: [{ id: "damage_1", description: "", photoUri: null }],
         activeDamageId: "damage_1",
       },
     },

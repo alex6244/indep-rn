@@ -8,47 +8,28 @@ import { PR_TYPO } from "./pickerReport.styles";
 import { colors } from "../../../shared/theme/colors";
 import { InlineMessage } from "../../../shared/ui/InlineMessage";
 import { UploadMediaModal } from "./media/UploadMediaModal";
-import {
-  getUploadModalConfig,
-  type UploadMediaKind,
-} from "./media/uploadModalsConfig";
-
-type MediaKey = "salonPhoto" | "bodyPhoto" | "salonVideo" | "bodyVideo";
-
-export type MediaUploadState = Record<MediaKey, string | null>;
-
-type Row = {
-  key: MediaKey;
-  modalKind: UploadMediaKind;
-  label: string;
-};
+import { DAMAGE_PHOTO_MODAL_CONFIG } from "./media/uploadModalsConfig";
+import type { DamageDraft } from "../../../types/draftReport";
 
 type Props = {
-  value: MediaUploadState;
-  onChange: (next: MediaUploadState) => void;
+  damages: DamageDraft[];
+  onPhotoChange: (damageId: string, uri: string | null) => void;
 };
 
-const VIDEO_KINDS: UploadMediaKind[] = ["salon_video", "body_video"];
-
-/** Figma `photosBG.svg` viewBox. */
 const PHOTOS_BG_WIDTH = 335;
 const PHOTOS_BG_HEIGHT = 295;
-const CARD_MARGIN_H = 16;
+const CARD_MARGIN_H = 0;
 const CARD_PADDING_H = 16;
-/**
- * Y-offset for title + rows — lower rays of the burst in `photosBG.svg`
- * (viewBox y ≈ 155–200 of 295).
- */
 const CONTENT_TOP_RATIO = 0.53;
-const ROW_BLOCK_ESTIMATE = 230;
+const ROW_BLOCK_ESTIMATE = 56;
 
-export function MediaUploadCard({ value, onChange }: Props) {
+export function DamagePhotosUploadCard({ damages, onPhotoChange }: Props) {
   const { width: windowWidth } = useWindowDimensions();
-  const [activeModalKind, setActiveModalKind] = useState<UploadMediaKind | null>(null);
+  const [activeDamageId, setActiveDamageId] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
   const illustrationHeight = useMemo(() => {
-    const cardWidth = windowWidth - CARD_MARGIN_H * 2;
+    const cardWidth = windowWidth - 16 * 2 - 16 * 2;
     return Math.round(cardWidth * (PHOTOS_BG_HEIGHT / PHOTOS_BG_WIDTH));
   }, [windowWidth]);
 
@@ -57,34 +38,26 @@ export function MediaUploadCard({ value, onChange }: Props) {
     [illustrationHeight],
   );
 
+  const rowBlockEstimate = useMemo(
+    () => Math.max(ROW_BLOCK_ESTIMATE, damages.length * 52 + 40),
+    [damages.length],
+  );
+
   const sectionMinHeight = useMemo(
-    () => Math.max(illustrationHeight, contentTop + ROW_BLOCK_ESTIMATE),
-    [contentTop, illustrationHeight],
+    () => Math.max(illustrationHeight, contentTop + rowBlockEstimate),
+    [contentTop, illustrationHeight, rowBlockEstimate],
   );
 
-  const rows: Row[] = useMemo(
-    () => [
-      { key: "salonPhoto", modalKind: "salon_photo", label: "Фото салона" },
-      { key: "bodyPhoto", modalKind: "body_photo", label: "Фото кузова" },
-      { key: "salonVideo", modalKind: "salon_video", label: "Видео салона" },
-      { key: "bodyVideo", modalKind: "body_video", label: "Видео кузова" },
-    ],
-    [],
+  const activeDamage = useMemo(
+    () => damages.find((d) => d.id === activeDamageId),
+    [activeDamageId, damages],
   );
 
-  const activeRow = useMemo(
-    () => rows.find((row) => row.modalKind === activeModalKind),
-    [activeModalKind, rows],
-  );
-  const isModalVisible = activeModalKind !== null;
-  const modalConfig = activeModalKind ? getUploadModalConfig(activeModalKind) : null;
-
-  const closeModal = useCallback(() => setActiveModalKind(null), []);
-
-  const isVideoKind = activeModalKind !== null && VIDEO_KINDS.includes(activeModalKind);
+  const isModalVisible = activeDamageId !== null;
+  const closeModal = useCallback(() => setActiveDamageId(null), []);
 
   const handlePickPress = useCallback(async () => {
-    if (!activeRow) return;
+    if (!activeDamage) return;
 
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -93,21 +66,21 @@ export function MediaUploadCard({ value, onChange }: Props) {
       return;
     }
 
-    const options: ImagePicker.ImagePickerOptions = isVideoKind
-      ? { mediaTypes: ImagePicker.MediaTypeOptions.Videos, videoMaxDuration: 60 }
-      : { mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.8, allowsEditing: false };
-
-    const result = await ImagePicker.launchImageLibraryAsync(options);
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.8,
+      allowsEditing: false,
+    });
 
     closeModal();
 
     if (!result.canceled) {
-      onChange({ ...value, [activeRow.key]: result.assets[0].uri });
+      onPhotoChange(activeDamage.id, result.assets[0].uri);
     }
-  }, [activeRow, closeModal, isVideoKind, onChange, value]);
+  }, [activeDamage, closeModal, onPhotoChange]);
 
   const handleCameraPress = useCallback(async () => {
-    if (!activeRow) return;
+    if (!activeDamage) return;
 
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
@@ -116,22 +89,21 @@ export function MediaUploadCard({ value, onChange }: Props) {
       return;
     }
 
-    const options: ImagePicker.ImagePickerOptions = isVideoKind
-      ? { mediaTypes: ImagePicker.MediaTypeOptions.Videos, videoMaxDuration: 60 }
-      : { mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.8 };
-
-    const result = await ImagePicker.launchCameraAsync(options);
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.8,
+    });
 
     closeModal();
 
     if (!result.canceled) {
-      onChange({ ...value, [activeRow.key]: result.assets[0].uri });
+      onPhotoChange(activeDamage.id, result.assets[0].uri);
     }
-  }, [activeRow, closeModal, isVideoKind, onChange, value]);
+  }, [activeDamage, closeModal, onPhotoChange]);
 
-  const handleOpenModal = useCallback((kind: UploadMediaKind) => {
+  const handleOpenModal = useCallback((damageId: string) => {
     setNotice(null);
-    setActiveModalKind(kind);
+    setActiveDamageId(damageId);
   }, []);
 
   return (
@@ -146,31 +118,32 @@ export function MediaUploadCard({ value, onChange }: Props) {
         </View>
 
         <View style={[styles.contentLayer, { top: contentTop }]}>
-          <Text style={styles.title}>Добавьте фото авто</Text>
+          <Text style={styles.title}>Добавьте фото повреждений</Text>
 
           {notice ? <InlineMessage tone="info" message={notice} /> : null}
 
-          {rows.map((r) => {
-            const uri = value[r.key];
+          {damages.map((damage, index) => {
+            const uri = damage.photoUri ?? null;
             const added = uri !== null;
             const bg = added ? colors.status.successStrong : colors.brand.primary;
             const text = added ? "Добавлено" : "Добавить";
+            const label = damage.description.trim()
+              ? damage.description.trim()
+              : `Повреждение ${index + 1}`;
 
             return (
-              <View key={r.key} style={styles.row}>
-                <Text style={styles.rowLabel}>{r.label}</Text>
+              <View key={damage.id} style={styles.row}>
+                <Text style={styles.rowLabel} numberOfLines={2}>
+                  {label}
+                </Text>
                 <View style={styles.rowRight}>
                   {uri ? (
-                    <Image
-                      source={{ uri }}
-                      style={styles.preview}
-                      contentFit="cover"
-                    />
+                    <Image source={{ uri }} style={styles.preview} contentFit="cover" />
                   ) : null}
                   <TouchableOpacity
                     activeOpacity={0.9}
                     style={[styles.btn, { backgroundColor: bg }]}
-                    onPress={() => handleOpenModal(r.modalKind)}
+                    onPress={() => handleOpenModal(damage.id)}
                   >
                     <Text style={styles.btnText}>{text}</Text>
                   </TouchableOpacity>
@@ -182,14 +155,14 @@ export function MediaUploadCard({ value, onChange }: Props) {
       </View>
 
       <UploadMediaModal
-        visible={isModalVisible && Boolean(modalConfig)}
-        title={modalConfig?.title ?? ""}
-        intro={modalConfig?.intro}
-        bullets={modalConfig?.bullets}
-        minFilesText={modalConfig?.minFilesText}
-        mediaType={modalConfig?.mediaType}
-        pickLabel={modalConfig?.pickLabel}
-        closeLabel={modalConfig?.closeLabel}
+        visible={isModalVisible}
+        title={DAMAGE_PHOTO_MODAL_CONFIG.title}
+        intro={DAMAGE_PHOTO_MODAL_CONFIG.intro}
+        bullets={DAMAGE_PHOTO_MODAL_CONFIG.bullets}
+        minFilesText={DAMAGE_PHOTO_MODAL_CONFIG.minFilesText}
+        mediaType={DAMAGE_PHOTO_MODAL_CONFIG.mediaType}
+        pickLabel={DAMAGE_PHOTO_MODAL_CONFIG.pickLabel}
+        closeLabel={DAMAGE_PHOTO_MODAL_CONFIG.closeLabel}
         onPickPress={handlePickPress}
         onCameraPress={handleCameraPress}
         onClose={closeModal}
@@ -200,16 +173,14 @@ export function MediaUploadCard({ value, onChange }: Props) {
 
 const styles = StyleSheet.create({
   section: {
-    backgroundColor: colors.surface.card,
-    borderRadius: 18,
-    marginHorizontal: CARD_MARGIN_H,
-    marginBottom: 16,
+    borderRadius: 14,
     overflow: "hidden",
+    marginHorizontal: CARD_MARGIN_H,
   },
   cardInner: {
     position: "relative",
     paddingBottom: 16,
-    backgroundColor: colors.surface.card,
+    backgroundColor: colors.surface.neutral,
   },
   heroLayer: {
     position: "absolute",

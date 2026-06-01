@@ -1,25 +1,34 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Modal,
   Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from "react-native";
 
+import AddPhotoIllustration from "../../../../assets/addCar/addPhoto.svg";
+import AddVideoIllustration from "../../../../assets/addCar/addVideo.svg";
 import CloseIcon from "../../../../assets/icons/close.svg";
 import { PR_TYPO } from "../pickerReport.styles";
 import { shadowStyle } from "../../../../shared/theme/shadow";
 import { colors } from "../../../../shared/theme/colors";
+import type { UploadModalMediaType } from "./uploadModalsConfig";
+
+const HERO_ASPECT = 134 / 303;
 
 export type UploadMediaModalProps = {
   visible: boolean;
   title: string;
-  subtitle?: string;
-  primaryActionLabel?: string;
-  secondaryActionLabel?: string;
-  icon?: React.ReactNode;
+  intro?: string;
+  bullets?: string[];
+  minFilesText?: string;
+  mediaType?: UploadModalMediaType;
+  pickLabel?: string;
+  cameraLabel?: string;
+  closeLabel?: string;
   onPickPress: () => void;
   onCameraPress?: () => void;
   onClose: () => void;
@@ -28,47 +37,75 @@ export type UploadMediaModalProps = {
 export function UploadMediaModal({
   visible,
   title,
-  subtitle,
-  primaryActionLabel = "Выбрать файл",
-  secondaryActionLabel = "Закрыть",
-  icon,
+  intro,
+  bullets = [],
+  minFilesText,
+  mediaType = "photo",
+  pickLabel = "Выбрать файл",
+  cameraLabel = "Снять сейчас",
+  closeLabel = "Закрыть",
   onPickPress,
   onCameraPress,
   onClose,
 }: UploadMediaModalProps) {
+  const { width: windowWidth } = useWindowDimensions();
+
+  const heroHeight = useMemo(() => {
+    const cardInnerWidth = windowWidth - 16 * 2 - 16 * 2;
+    return Math.round(cardInnerWidth * HERO_ASPECT);
+  }, [windowWidth]);
+
+  const Illustration = mediaType === "video" ? AddVideoIllustration : AddPhotoIllustration;
+
   return (
     <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose} />
 
       <View style={[styles.center, { pointerEvents: "box-none" }]}>
         <View style={styles.card}>
-          <TouchableOpacity
-            accessibilityRole="button"
-            accessibilityLabel="Закрыть"
-            activeOpacity={0.9}
-            style={styles.closeBtn}
-            onPress={onClose}
-          >
-            <CloseIcon width={10} height={10} />
-          </TouchableOpacity>
+          <View style={styles.headerRow}>
+            <Text style={styles.title}>{title}</Text>
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel="Закрыть"
+              activeOpacity={0.9}
+              style={styles.closeBtn}
+              onPress={onClose}
+            >
+              <CloseIcon width={10} height={10} />
+            </TouchableOpacity>
+          </View>
 
-          <View style={styles.iconWrap}>{icon ?? <View style={styles.iconPlaceholder} />}</View>
+          {intro ? <Text style={styles.intro}>{intro}</Text> : null}
 
-          <Text style={styles.title}>{title}</Text>
-          {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+          {bullets.length > 0 ? (
+            <View style={styles.bulletList}>
+              {bullets.map((item) => (
+                <Text key={item} style={styles.bullet}>
+                  • {item}
+                </Text>
+              ))}
+            </View>
+          ) : null}
 
-          <TouchableOpacity activeOpacity={0.9} style={styles.primaryBtn} onPress={onPickPress}>
-            <Text style={styles.primaryBtnText}>{primaryActionLabel}</Text>
+          {minFilesText ? <Text style={styles.minFiles}>{minFilesText}</Text> : null}
+
+          <View style={[styles.hero, { height: heroHeight }]}>
+            <Illustration width="100%" height={heroHeight} preserveAspectRatio="xMidYMid slice" />
+          </View>
+
+          <TouchableOpacity activeOpacity={0.9} style={styles.actionBtn} onPress={onPickPress}>
+            <Text style={styles.actionBtnText}>{pickLabel}</Text>
           </TouchableOpacity>
 
           {onCameraPress ? (
-            <TouchableOpacity activeOpacity={0.9} style={styles.cameraBtn} onPress={onCameraPress}>
-              <Text style={styles.cameraBtnText}>Снять сейчас</Text>
+            <TouchableOpacity activeOpacity={0.9} style={styles.actionBtn} onPress={onCameraPress}>
+              <Text style={styles.actionBtnText}>{cameraLabel}</Text>
             </TouchableOpacity>
           ) : null}
 
-          <TouchableOpacity activeOpacity={0.9} style={styles.secondaryBtn} onPress={onClose}>
-            <Text style={styles.secondaryBtnText}>{secondaryActionLabel}</Text>
+          <TouchableOpacity activeOpacity={0.9} style={styles.closeActionBtn} onPress={onClose}>
+            <Text style={styles.closeActionBtnText}>{closeLabel}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -88,12 +125,11 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.surface.primary,
-    borderRadius: 20,
-    paddingTop: 18,
+    borderRadius: 16,
+    paddingTop: 16,
     paddingBottom: 14,
     paddingHorizontal: 16,
     ...(shadowStyle({
-      // Shadow raw values are kept intentionally for platform-specific shadow rendering.
       boxShadow: "0px 10px 18px rgba(0,0,0,0.12)",
       shadowColor: colors.overlay.shadow,
       shadowOpacity: 0.12,
@@ -102,81 +138,76 @@ const styles = StyleSheet.create({
       elevation: 10,
     }) as object),
     elevation: 10,
-    alignItems: "center",
+  },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    marginBottom: 10,
+    paddingRight: 4,
   },
   closeBtn: {
-    position: "absolute",
-    top: 10,
-    right: 10,
     width: 28,
     height: 28,
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.overlay.soft,
-  },
-  iconWrap: {
-    marginTop: 8,
-    marginBottom: 12,
-    width: 82,
-    height: 82,
-    borderRadius: 18,
-    backgroundColor: colors.surface.neutral,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  iconPlaceholder: {
-    width: 42,
-    height: 42,
-    borderRadius: 10,
-    backgroundColor: colors.surface.placeholder,
+    marginTop: -2,
+    marginLeft: 8,
   },
   title: {
-    ...PR_TYPO.sectionTitle,
-    textAlign: "center",
+    ...PR_TYPO.modalTitle,
+    flex: 1,
+    paddingRight: 8,
+  },
+  intro: {
+    ...PR_TYPO.modalBody,
+    color: colors.text.primary,
+    marginBottom: 6,
+  },
+  bulletList: {
     marginBottom: 8,
+    gap: 2,
   },
-  subtitle: {
-    ...PR_TYPO.confirmSubtitle,
-    textAlign: "center",
-    marginBottom: 14,
-    paddingHorizontal: 4,
+  bullet: {
+    ...PR_TYPO.modalBody,
+    color: colors.text.primary,
   },
-  primaryBtn: {
+  minFiles: {
+    ...PR_TYPO.modalBody,
+    color: colors.text.primary,
+    marginBottom: 12,
+  },
+  hero: {
     width: "100%",
     borderRadius: 12,
+    overflow: "hidden",
+    backgroundColor: "#D9D9D9",
+    marginBottom: 14,
+  },
+  actionBtn: {
+    width: "100%",
+    borderRadius: 22,
     height: 44,
-    backgroundColor: colors.brand.primary,
+    backgroundColor: colors.surface.inverse,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 8,
   },
-  primaryBtnText: {
+  actionBtnText: {
     ...PR_TYPO.buttonSmall,
   },
-  cameraBtn: {
+  closeActionBtn: {
     width: "100%",
-    borderRadius: 12,
-    height: 44,
-    backgroundColor: colors.surface.primary,
-    borderWidth: 1.5,
-    borderColor: colors.brand.primary,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 8,
-  },
-  cameraBtnText: {
-    ...PR_TYPO.link,
-  },
-  secondaryBtn: {
-    width: "100%",
-    borderRadius: 12,
+    borderRadius: 22,
     height: 44,
     backgroundColor: colors.surface.disabled,
     alignItems: "center",
     justifyContent: "center",
   },
-  secondaryBtnText: {
+  closeActionBtnText: {
     ...PR_TYPO.body,
+    color: colors.text.primary,
   },
 });

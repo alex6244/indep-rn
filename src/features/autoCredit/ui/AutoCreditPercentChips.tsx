@@ -62,7 +62,6 @@ const styles = StyleSheet.create({
   chipText: {
     ...acText,
     fontSize: 14,
-    fontWeight: "600",
     color: colors.text.primary,
   },
   chipTextActive: {

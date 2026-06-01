@@ -48,7 +48,6 @@ const styles = StyleSheet.create({
   fallbackLabel: {
     ...acText,
     fontSize: 12,
-    fontWeight: "700",
     color: colors.text.secondary,
   },
 });

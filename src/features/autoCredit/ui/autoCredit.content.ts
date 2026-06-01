@@ -46,12 +46,10 @@ export const AUTO_CREDIT_BANKS: AutoCreditBank[] = [
   { key: "sovcom", label: "Совкомбанк", Icon: SovcomBankIcon },
   { key: "tbank", label: "Т-Банк", Icon: TbankIcon },
   { key: "vtb", label: "ВТБ", Icon: VtbBankIcon },
-  { key: "sber", label: "Сбер" },
   { key: "otp", label: "ОТП", Icon: OtpBankIcon },
   { key: "zenit", label: "Зенит", Icon: ZenitBankIcon },
   { key: "gasprom", label: "Газпром", Icon: GaspromBankIcon },
   { key: "alfa", label: "Альфа", Icon: AlfaBankIcon },
-  { key: "absolut", label: "Абсолют" },
 ];
 
 export const AUTO_CREDIT_WHY_US: AutoCreditWhyUsItem[] = [

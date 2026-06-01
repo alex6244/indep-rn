@@ -45,6 +45,7 @@ export type DefectsMode = "scheme" | "photos";
 export type DamageDraft = {
   id: string;
   description: string;
+  photoUri: string | null;
 };
 
 export type DefectsState = {

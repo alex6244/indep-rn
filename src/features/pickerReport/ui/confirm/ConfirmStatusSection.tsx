@@ -1,5 +1,6 @@
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import React, { useMemo } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Image } from "expo-image";
 import SchemeSvg from "../../../../assets/auto/scheme.svg";
 import AlertBadgeIcon from "../../../../assets/icons/badges/alert.svg";
 import CheckBadgeIcon from "../../../../assets/icons/badges/check.svg";
@@ -28,6 +29,13 @@ export function ConfirmStatusSection({
   defectsMode,
   onChangeDefectsMode,
 }: Props) {
+  const damagePhotoUris = useMemo(
+    () =>
+      draftReport.defects.damages
+        .map((damage) => damage.photoUri)
+        .filter((uri): uri is string => Boolean(uri?.trim())),
+    [draftReport.defects.damages],
+  );
   const defectsTabs = [
     { key: "scheme" as const, label: "Схема повреждений" },
     { key: "photos" as const, label: "Фото повреждений" },
@@ -83,9 +91,19 @@ export function ConfirmStatusSection({
             <View style={styles.schemePreview}>
               <SchemeSvg width="100%" height={140} />
             </View>
+          ) : damagePhotoUris.length > 0 ? (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.damagePhotosScroll}
+            >
+              {damagePhotoUris.map((uri) => (
+                <Image key={uri} source={{ uri }} style={styles.damagePhotoThumb} contentFit="cover" />
+              ))}
+            </ScrollView>
           ) : (
             <View style={styles.photosPreview}>
-              <Text style={styles.photosPreviewText}>Фото повреждений (заглушка)</Text>
+              <Text style={styles.photosPreviewText}>Фото повреждений не добавлены</Text>
             </View>
           )}
         </View>

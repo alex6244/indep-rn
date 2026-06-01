@@ -142,7 +142,11 @@ describe("reportService contract", () => {
       owners: [],
       legalCleanliness: { pledge: true, registrationRestrictions: true, wanted: true },
       commercialUsage: { taxiPermission: true, carSharing: true, leasing: true },
-      defects: { mode: "scheme", damages: [{ id: "d1", description: "" }], activeDamageId: "d1" },
+      defects: {
+        mode: "scheme",
+        damages: [{ id: "d1", description: "", photoUri: null }],
+        activeDamageId: "d1",
+      },
     };
 
     const submitted = await reportService.submit(draft as never);
