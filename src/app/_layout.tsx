@@ -3,6 +3,7 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useLayoutEffect } from "react";
 import { LogBox } from "react-native";
+import { Provider } from "react-redux";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider } from "../contexts/AuthContext";
 import { FavoritesProvider } from "../contexts/FavoritesContext";
@@ -11,6 +12,7 @@ import { applyProjectFontDefaults } from "../shared/theme/applyFontDefaults";
 import { FONT_SOURCES } from "../shared/theme/fonts";
 import { colors } from "../shared/theme/colors";
 import { initSentryMonitoring } from "../shared/monitoring/sentry";
+import { store } from "../store/store";
 
 initSentryMonitoring();
 
@@ -44,23 +46,25 @@ export default function RootLayout() {
 
   return (
     <ErrorBoundary>
-      <SafeAreaProvider>
-        <AuthProvider>
-          <FavoritesProvider>
-            <Stack
-              screenOptions={{
-                headerShown: false,
-                contentStyle: { backgroundColor: colors.surface.neutral },
-              }}
-            >
-              <Stack.Screen name="(tabs)" />
-              <Stack.Screen name="(auth)" options={{ presentation: "modal" }} />
-              <Stack.Screen name="selection-confirm" />
-              <Stack.Screen name="auto/[id]" />
-            </Stack>
-          </FavoritesProvider>
-        </AuthProvider>
-      </SafeAreaProvider>
+      <Provider store={store}>
+        <SafeAreaProvider>
+          <AuthProvider>
+            <FavoritesProvider>
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                  contentStyle: { backgroundColor: colors.surface.neutral },
+                }}
+              >
+                <Stack.Screen name="(tabs)" />
+                <Stack.Screen name="(auth)" options={{ presentation: "modal" }} />
+                <Stack.Screen name="selection-confirm" />
+                <Stack.Screen name="auto/[id]" />
+              </Stack>
+            </FavoritesProvider>
+          </AuthProvider>
+        </SafeAreaProvider>
+      </Provider>
     </ErrorBoundary>
   );
 }

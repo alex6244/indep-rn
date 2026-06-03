@@ -12,6 +12,11 @@ export type AiSiteProfile = {
   catalogBannersUrl: string;
   locale: string;
   disclaimer: string;
+  /**
+   * For `monobrand` sites: canonical brand name from catalog API (e.g. "LADA", "KIA").
+   * When present, AI must not suggest other brands.
+   */
+  brand?: string;
 };
 
 export type AiChatCarBlock = {

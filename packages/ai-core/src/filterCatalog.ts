@@ -15,6 +15,33 @@ export function isCrossoverTitle(title: string): boolean {
   return CROSSOVER_TITLE_RE.test(title);
 }
 
+/** Round-robin по маркам, чтобы не отдавать 5× LADA подряд из начала каталога. */
+export function diversifyByBrand(items: AiCatalogItem[], limit: number): AiCatalogItem[] {
+  const queues = new Map<string, AiCatalogItem[]>();
+  for (const item of items) {
+    const key = item.brand;
+    const list = queues.get(key) ?? [];
+    list.push(item);
+    queues.set(key, list);
+  }
+
+  const brands = [...queues.keys()];
+  if (brands.length === 0) return [];
+
+  const result: AiCatalogItem[] = [];
+  let round = 0;
+  while (result.length < limit && round < items.length) {
+    for (const brand of brands) {
+      const queue = queues.get(brand);
+      if (!queue || queue.length === 0) continue;
+      result.push(queue.shift()!);
+      if (result.length >= limit) break;
+    }
+    round += 1;
+  }
+  return result;
+}
+
 export function filterAiCatalog(
   items: AiCatalogItem[],
   filter: CatalogFilter,
@@ -48,6 +75,11 @@ export function filterAiCatalog(
       (item) =>
         item.title.toLowerCase().includes(q) || item.brand.toLowerCase().includes(q),
     );
+  }
+
+  if (filter.bodyType === "crossover" && !filter.brand && list.length > 0) {
+    const pool = list.slice(0, Math.min(list.length, 40));
+    return diversifyByBrand(pool, limit);
   }
 
   return list.slice(0, limit);

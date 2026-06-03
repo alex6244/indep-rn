@@ -45,6 +45,70 @@ describe("buildRuleBasedReply", () => {
     }
   });
 
+  it('mixes brands for "кроссовер" on a LADA-heavy catalog slice', () => {
+    const catalog: AiCatalogItem[] = [
+      {
+        id: "1",
+        siteId: "indep",
+        brand: "LADA",
+        title: "LADA Niva Legend",
+        priceFrom: 900000,
+        imageUrl: "https://example.com/1.webp",
+        year: 2025,
+        condition: "new",
+        availability: "from_price",
+      },
+      {
+        id: "2",
+        siteId: "indep",
+        brand: "LADA",
+        title: "LADA Vesta Cross",
+        priceFrom: 1200000,
+        imageUrl: "https://example.com/2.webp",
+        year: 2025,
+        condition: "new",
+        availability: "from_price",
+      },
+      {
+        id: "3",
+        siteId: "indep",
+        brand: "LADA",
+        title: "LADA Granta Cross",
+        priceFrom: 1100000,
+        imageUrl: "https://example.com/3.webp",
+        year: 2025,
+        condition: "new",
+        availability: "from_price",
+      },
+      {
+        id: "4",
+        siteId: "indep",
+        brand: "KIA",
+        title: "KIA Sportage New",
+        priceFrom: 2500000,
+        imageUrl: "https://example.com/4.webp",
+        year: 2025,
+        condition: "new",
+        availability: "from_price",
+      },
+      {
+        id: "5",
+        siteId: "indep",
+        brand: "HAVAL",
+        title: "HAVAL Jolion",
+        priceFrom: 2000000,
+        imageUrl: "https://example.com/5.webp",
+        year: 2025,
+        condition: "new",
+        availability: "from_price",
+      },
+    ];
+    const reply = buildRuleBasedReply("кроссовер", catalog);
+    expect(reply.cars.length).toBeGreaterThan(1);
+    const brands = new Set(reply.cars.map((c) => c.brand));
+    expect(brands.size).toBeGreaterThan(1);
+  });
+
   it("filters by brand and budget", () => {
     const catalog: AiCatalogItem[] = [
       ...makeCatalog(),

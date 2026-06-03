@@ -22,7 +22,7 @@ export function buildWelcomeMessage(catalogSize: number): string {
 export function buildRuleBasedReply(
   userText: string,
   catalog: AiCatalogItem[],
-  options?: { selectedCount?: number },
+  options?: { selectedCount?: number; fixedBrand?: string },
 ): RuleBasedReply {
   const trimmed = userText.trim();
   if (!trimmed) {
@@ -47,6 +47,11 @@ export function buildRuleBasedReply(
     if (fromCatalog) intent.brand = fromCatalog;
   }
 
+  // Monobrand sites: always constrain suggestions to a fixed brand.
+  if (options?.fixedBrand) {
+    intent.brand = options.fixedBrand;
+  }
+
   let cars = filterAiCatalog(catalog, intent, 5);
 
   if (cars.length === 0 && intent.brand) {
@@ -58,6 +63,15 @@ export function buildRuleBasedReply(
   }
 
   if (cars.length === 0) {
+    if (options?.fixedBrand) {
+      const fixedBrand = options.fixedBrand;
+      return {
+        text: `По марке ${fixedBrand} сейчас нет позиций в загруженном каталоге. Уточните наличие у менеджера — можем оформить под заказ.`,
+        cars: [],
+        suggestLead: false,
+      };
+    }
+
     const askedBrand = resolveBrandFromCatalog(trimmed, catalog);
     if (askedBrand) {
       return {

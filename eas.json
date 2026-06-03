@@ -21,6 +21,19 @@
         "SENTRY_DISABLE_AUTO_UPLOAD": "true"
       }
     },
+    "preview-mock": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://indep.su/api/v1.0",
+        "EXPO_PUBLIC_AUTH_SOURCE": "mock",
+        "EXPO_PUBLIC_CATALOG_SOURCE": "mock",
+        "EXPO_PUBLIC_REPORTS_SOURCE": "mock",
+        "EXPO_PUBLIC_ALLOW_HTTP_DEV": "false",
+        "EXPO_PUBLIC_API_TIMEOUT_MS": "10000",
+        "EXPO_PUBLIC_ALLOW_INSECURE_TOKEN_STORAGE": "false",
+        "SENTRY_DISABLE_AUTO_UPLOAD": "true"
+      }
+    },
     "production": {
       "autoIncrement": true,
       "env": {

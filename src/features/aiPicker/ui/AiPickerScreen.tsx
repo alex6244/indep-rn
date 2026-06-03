@@ -14,12 +14,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BackCaretIcon from "../../../assets/icons/backCaret.svg";
 import {
   AI_PICKER_SERVER_UNAVAILABLE_MESSAGE,
-  fetchAiPickerMeta,
   isAiPickerApiEnabled,
   isAiPickerLocalFallbackEnabled,
-  postAiPickerChat,
-  postAiPickerLead,
 } from "../api/aiPickerApiClient";
+import { aiPickerApi } from "../api/aiPickerApi";
 import { getAiSiteProfile, loadAiCatalogWithMeta } from "../catalog/aiCatalogService";
 import {
   buildLeadSuccessMessage,
@@ -32,6 +30,7 @@ import { AiCarSuggestionCard } from "./AiCarSuggestionCard";
 import { aiPickerStyles as styles } from "./aiPicker.styles";
 import { AppButton } from "../../../shared/ui/AppButton";
 import { colors } from "../../../shared/theme/colors";
+import { useAppDispatch } from "../../../store/hooks";
 
 const SITE_ID = "indep";
 
@@ -57,6 +56,7 @@ export function AiPickerScreen() {
   const [apiServerWarning, setApiServerWarning] = useState<string | null>(null);
 
   const site = getAiSiteProfile(SITE_ID);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     let cancelled = false;
@@ -66,12 +66,30 @@ export function AiPickerScreen() {
       setUseRemoteApi(remote);
 
       if (remote) {
-        const meta = await fetchAiPickerMeta(SITE_ID);
+        let meta:
+          | {
+              catalogCount: number;
+              catalogSource: "api" | "seed";
+              welcomeText: string;
+              disclaimer: string;
+            }
+          | null = null;
+        let metaError: string | null = null;
+
+        try {
+          meta = await dispatch(
+            aiPickerApi.endpoints.getAiMeta.initiate(SITE_ID),
+          ).unwrap();
+        } catch (e) {
+          metaError = e instanceof Error ? e.message : "Не удалось связаться с сервером подбора";
+        }
+
         const { items, source } = await loadAiCatalogWithMeta(SITE_ID);
         if (cancelled) return;
         setCatalog(items);
-        if (!meta.ok) {
-          setApiServerWarning(meta.error);
+
+        if (!meta) {
+          setApiServerWarning(metaError);
           setCatalogSource(source);
           setMessages([
             {
@@ -82,12 +100,12 @@ export function AiPickerScreen() {
           ]);
         } else {
           setApiServerWarning(null);
-          setCatalogSource(meta.data.catalogSource ?? source);
+          setCatalogSource(meta.catalogSource ?? source);
           setMessages([
             {
               id: createMessageId(),
               role: "assistant",
-              text: meta.data.welcomeText ?? buildWelcomeMessage(items.length),
+              text: meta.welcomeText ?? buildWelcomeMessage(items.length),
             },
           ]);
         }
@@ -147,21 +165,31 @@ export function AiPickerScreen() {
     let reply: { text: string; cars: AiCatalogItem[] };
 
     if (useRemoteApi) {
-      const remote = await postAiPickerChat(SITE_ID, text, selectedIds.size);
-      if (remote.ok) {
-        reply = remote.data;
-      } else if (isAiPickerLocalFallbackEnabled()) {
-        reply = buildRuleBasedReply(text, catalog, {
-          selectedCount: selectedIds.size,
-        });
-      } else {
-        reply = { text: AI_PICKER_SERVER_UNAVAILABLE_MESSAGE, cars: [] };
+      try {
+        reply = await dispatch(
+          aiPickerApi.endpoints.sendAiChat.initiate({
+            siteId: SITE_ID,
+            message: text,
+            selectedCount: selectedIds.size,
+          }),
+        ).unwrap();
+      } catch {
+        if (isAiPickerLocalFallbackEnabled()) {
+          reply = buildRuleBasedReply(text, catalog, {
+            selectedCount: selectedIds.size,
+            fixedBrand: site.mode === "monobrand" ? site.brand : undefined,
+          });
+        } else {
+          reply = { text: AI_PICKER_SERVER_UNAVAILABLE_MESSAGE, cars: [] };
+        }
       }
     } else {
       reply = buildRuleBasedReply(text, catalog, {
         selectedCount: selectedIds.size,
+        fixedBrand: site.mode === "monobrand" ? site.brand : undefined,
       });
     }
+    // Offline path uses fixedBrand constraint above; remote path is constrained server-side.
 
     const assistantMsg: AiChatMessage =
       reply.cars.length > 0
@@ -180,7 +208,18 @@ export function AiPickerScreen() {
     setMessages((prev) => [...prev, assistantMsg]);
     setThinking(false);
     scrollToEnd();
-  }, [catalog, catalogLoading, draft, scrollToEnd, selectedIds.size, thinking, useRemoteApi]);
+  }, [
+    catalog,
+    catalogLoading,
+    draft,
+    scrollToEnd,
+    selectedIds.size,
+    thinking,
+    useRemoteApi,
+    dispatch,
+    site.mode,
+    site.brand,
+  ]);
 
   const submitLead = useCallback(() => {
     const normalized = normalizePhoneInput(phone);
@@ -195,11 +234,19 @@ export function AiPickerScreen() {
       let successText = buildLeadSuccessMessage(normalized, titles);
 
       if (useRemoteApi) {
-        const remote = await postAiPickerLead(SITE_ID, normalized, carIds);
-        if (remote.ok) {
-          successText = remote.data.message;
-        } else if (!isAiPickerLocalFallbackEnabled()) {
-          successText = `${AI_PICKER_SERVER_UNAVAILABLE_MESSAGE} Заявка не отправлена.`;
+        try {
+          const remote = await dispatch(
+            aiPickerApi.endpoints.sendAiLead.initiate({
+              siteId: SITE_ID,
+              phone: normalized,
+              carIds,
+            }),
+          ).unwrap();
+          successText = remote.message;
+        } catch {
+          if (!isAiPickerLocalFallbackEnabled()) {
+            successText = `${AI_PICKER_SERVER_UNAVAILABLE_MESSAGE} Заявка не отправлена.`;
+          }
         }
       } else if (__DEV__) {
         console.info("[ai-picker][lead]", {
@@ -220,7 +267,7 @@ export function AiPickerScreen() {
       setLeadSent(true);
       scrollToEnd();
     })();
-  }, [catalog, leadSent, phone, scrollToEnd, selectedIds, useRemoteApi]);
+  }, [catalog, leadSent, phone, scrollToEnd, selectedIds, useRemoteApi, dispatch]);
 
   const renderMessage = useCallback(
     ({ item }: { item: AiChatMessage }) => {
