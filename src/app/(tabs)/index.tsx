@@ -87,7 +87,7 @@ export default function HomeTab() {
       <BurgerMenu
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
-        items={getMainBurgerMenuItems()}
+        items={getMainBurgerMenuItems(user?.role)}
         footer={<MainBurgerMenuFooter onLogout={logout} />}
       />
 

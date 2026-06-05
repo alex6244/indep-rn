@@ -22,6 +22,7 @@ import { downloadReportPdf } from "../../services/reportPdfService";
 import { ReportsBanner } from "./ReportsBanner";
 import { ReportsPackageSelectModal } from "../reports/ReportsPackageSelectModal";
 import { useReportsPackagePurchaseModal } from "../reports/useReportsPackagePurchaseModal";
+import { useAuth } from "../../contexts/AuthContext";
 
 type Props = {
   name: string;
@@ -44,6 +45,7 @@ export function ClientProfileSection({
 }: Props) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
   const reportsPackageModal = useReportsPackagePurchaseModal();
@@ -120,7 +122,7 @@ export function ClientProfileSection({
       <BurgerMenu
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
-        items={getMainBurgerMenuItems()}
+        items={getMainBurgerMenuItems(user?.role)}
         footer={
           <ProfileLogoutRow
             onPress={() => {

@@ -36,7 +36,7 @@ export function AuthHeader() {
       <BurgerMenu
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
-        items={getMainBurgerMenuItems()}
+        items={getMainBurgerMenuItems(user?.role)}
         footer={user ? <MainBurgerMenuFooter onLogout={logout} /> : undefined}
       />
     </>

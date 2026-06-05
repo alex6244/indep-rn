@@ -25,6 +25,7 @@ import { ClientReportCard } from "./ClientReportCard";
 import { PickerReportsEmptyState } from "./PickerReportsEmptyState";
 import { pickerReportsService } from "../../services/pickerReportsService";
 import type { Report } from "../../types/report";
+import { useAuth } from "../../contexts/AuthContext";
 
 const addReportFabIcon = require("../../assets/profile/add-report-fab.png");
 
@@ -37,6 +38,7 @@ type Props = {
 export function PickerProfileSection({ name, phone, onLogout }: Props) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [balanceModalOpen, setBalanceModalOpen] = useState(false);
   const reportsPackageModal = useReportsPackagePurchaseModal();
@@ -167,7 +169,7 @@ export function PickerProfileSection({ name, phone, onLogout }: Props) {
       <BurgerMenu
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
-        items={getMainBurgerMenuItems()}
+        items={getMainBurgerMenuItems(user?.role)}
         footer={
           <ProfileLogoutRow
             onPress={() => {

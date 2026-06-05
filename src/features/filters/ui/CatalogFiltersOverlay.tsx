@@ -1,5 +1,7 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { spacing } from "../../../shared/theme/spacing";
 import { CarSearchFiltersBottomPanel } from "./CarSearchFiltersBottomPanel";
 import { CatalogFiltersFeaturesSection } from "./catalogFilters/CatalogFiltersFeaturesSection";
 import { CatalogFiltersHeader } from "./catalogFilters/CatalogFiltersHeader";
@@ -14,8 +16,8 @@ import { CatalogFiltersYearSection } from "./catalogFilters/CatalogFiltersYearSe
 import { catalogFilterStyles as styles } from "./catalogFilters/catalogFilters.styles";
 import type { CatalogFiltersOverlayProps } from "./catalogFilters/catalogFilters.types";
 
-export type { CatalogFiltersOverlayProps } from "./catalogFilters/catalogFilters.types";
 export { buildCatalogFiltersOverlayProps } from "./catalogFilters/buildCatalogFiltersOverlayProps";
+export type { CatalogFiltersOverlayProps } from "./catalogFilters/catalogFilters.types";
 
 export function CatalogFiltersOverlay({
   vehicle,
@@ -29,11 +31,18 @@ export function CatalogFiltersOverlay({
   features,
   footer,
 }: CatalogFiltersOverlayProps) {
+  const insets = useSafeAreaInsets();
+  const contentContainerStyle = {
+    ...styles.content,
+    // Keep header buttons below Dynamic Island / notch safe area.
+    paddingTop: insets.top + spacing.md,
+  };
+
   return (
     <View style={styles.root}>
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={contentContainerStyle}
         showsVerticalScrollIndicator={false}
       >
         <CatalogFiltersHeader onClose={footer.onClose} />

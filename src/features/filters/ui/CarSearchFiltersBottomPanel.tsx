@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "../../../shared/theme/colors";
 import { radius } from "../../../shared/theme/radius";
 import { spacing } from "../../../shared/theme/spacing";
@@ -20,9 +21,10 @@ export function CarSearchFiltersBottomPanel({
   onClose,
 }: CarSearchFiltersBottomPanelProps) {
   const safeCount = typeof filteredCount === "number" ? filteredCount : 0;
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={styles.filtersBottom}>
+    <View style={[styles.filtersBottom, { paddingBottom: spacing.lg + insets.bottom }]}>
       {error ? <Text style={styles.filtersError}>{error}</Text> : null}
 
       <Text style={styles.filtersFound}>Найдено {safeCount} объявлений</Text>

@@ -37,7 +37,7 @@ export const Header = ({
 }: HeaderProps) => {
   const [burgerOpen, setBurgerOpen] = useState(false);
   const insets = useSafeAreaInsets();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const router = useRouter();
 
   const useExternalBurger = typeof onOpenBurger === "function";
@@ -101,7 +101,7 @@ export const Header = ({
         <BurgerMenu
           open={burgerOpen}
           onClose={closeBurger}
-          items={getMainBurgerMenuItems()}
+          items={getMainBurgerMenuItems(user?.role)}
           footer={<MainBurgerMenuFooter onLogout={logout} />}
         />
       ) : null}

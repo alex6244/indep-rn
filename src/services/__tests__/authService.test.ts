@@ -36,7 +36,9 @@ jest.mock("../api", () => {
   };
 });
 
-const { api, tokenStorage, refreshTokenStorage, ApiError } = jest.requireMock("../api") as {
+const { api, tokenStorage, refreshTokenStorage, ApiError } = jest.requireMock(
+  "../api",
+) as {
   ApiError: new (status: number, message: string) => Error;
   api: {
     post: jest.Mock;
@@ -147,7 +149,10 @@ describe("authService contract", () => {
       user,
     });
 
-    const result = await authService.login({ email: "user@test.com", password: "123456" });
+    const result = await authService.login({
+      email: "user@test.com",
+      password: "123456",
+    });
 
     expect(result).toEqual(user);
     expect(tokenStorage.set).toHaveBeenCalledWith("access-token");
@@ -158,7 +163,9 @@ describe("authService contract", () => {
     const apiError = new ApiError(401, "Unauthorized");
     api.post.mockRejectedValue(apiError);
 
-    await expect(authService.login({ email: "user@test.com", password: "bad" })).rejects.toEqual({
+    await expect(
+      authService.login({ email: "user@test.com", password: "bad" }),
+    ).rejects.toEqual({
       code: "invalid_credentials",
       message: getDefaultAuthErrorMessage("invalid_credentials"),
     });
@@ -167,7 +174,9 @@ describe("authService contract", () => {
   it("login throws structured network_error on transport failure", async () => {
     api.post.mockRejectedValue(new TypeError("Network request failed"));
 
-    await expect(authService.login({ email: "user@test.com", password: "123456" })).rejects.toEqual({
+    await expect(
+      authService.login({ email: "user@test.com", password: "123456" }),
+    ).rejects.toEqual({
       code: "network_error",
       message: getDefaultAuthErrorMessage("network_error"),
     });
@@ -176,7 +185,9 @@ describe("authService contract", () => {
   it("login surfaces plain Error message as unknown auth error", async () => {
     api.post.mockRejectedValue(new Error("non-api-failure"));
 
-    await expect(authService.login({ email: "user@test.com", password: "123456" })).rejects.toEqual({
+    await expect(
+      authService.login({ email: "user@test.com", password: "123456" }),
+    ).rejects.toEqual({
       code: "unknown",
       message: "non-api-failure",
     });
@@ -220,7 +231,10 @@ describe("authService contract", () => {
       user,
     });
 
-    const result = await authService.login({ email: "legacy@test.com", password: "123456" });
+    const result = await authService.login({
+      email: "legacy@test.com",
+      password: "123456",
+    });
 
     expect(result).toEqual(user);
     expect(tokenStorage.set).toHaveBeenCalledWith("legacy-token");
@@ -254,7 +268,11 @@ describe("authService contract", () => {
   it("requestVerification calls backend endpoint", async () => {
     api.post.mockResolvedValue({ message: "Код отправлен" });
     await expect(
-      authService.requestVerification({ email: "user@test.com", name: "User Name", role: "client" }),
+      authService.requestVerification({
+        email: "user@test.com",
+        name: "User Name",
+        role: "client",
+      }),
     ).resolves.toEqual({
       message: "Код отправлен",
     });
@@ -279,6 +297,56 @@ describe("authService contract", () => {
     });
   });
 
+  it("requestVerification maps 429 into rate_limited auth error", async () => {
+    api.post.mockRejectedValue(new ApiError(429, "Too many requests"));
+    await expect(
+      authService.requestVerification({ email: "otp@test.com" }),
+    ).rejects.toEqual({
+      code: "rate_limited",
+      message: getDefaultAuthErrorMessage("rate_limited"),
+    });
+  });
+
+  it("requestVerification maps transport failure into network_error", async () => {
+    api.post.mockRejectedValue(new ApiError(0, "Network request failed"));
+    await expect(
+      authService.requestVerification({ email: "otp@test.com" }),
+    ).rejects.toEqual({
+      code: "network_error",
+      message: getDefaultAuthErrorMessage("network_error"),
+    });
+  });
+
+  it("requestVerification maps TypeError into network_error", async () => {
+    api.post.mockRejectedValue(new TypeError("Failed to fetch"));
+    await expect(
+      authService.requestVerification({ email: "otp@test.com" }),
+    ).rejects.toEqual({
+      code: "network_error",
+      message: getDefaultAuthErrorMessage("network_error"),
+    });
+  });
+
+  it("requestVerification surfaces backend message for 500 when not generic HTTP text", async () => {
+    api.post.mockRejectedValue(new ApiError(500, "SMTP connection timed out"));
+    await expect(
+      authService.requestVerification({ email: "otp@test.com" }),
+    ).rejects.toEqual({
+      code: "server_error",
+      message: "SMTP connection timed out",
+    });
+  });
+
+  it("requestVerification preserves backend validation message for 422", async () => {
+    api.post.mockRejectedValue(new ApiError(422, "E-mail не найден в системе"));
+    await expect(
+      authService.requestVerification({ email: "unknown@test.com" }),
+    ).rejects.toEqual({
+      code: "validation_error",
+      message: "E-mail не найден в системе",
+    });
+  });
+
   it("confirmVerification stores token and returns user", async () => {
     const user = {
       id: "u5",
@@ -293,7 +361,10 @@ describe("authService contract", () => {
     });
 
     await expect(
-      authService.confirmVerification({ email: "otp@test.com", code: "123456" }),
+      authService.confirmVerification({
+        email: "otp@test.com",
+        code: "123456",
+      }),
     ).resolves.toEqual(user);
     expect(tokenStorage.set).toHaveBeenCalledWith("otp-access-token");
     expect(api.post).toHaveBeenCalledWith("/auth/confirm-verification", {
@@ -319,7 +390,10 @@ describe("authService contract", () => {
     });
 
     await expect(
-      authService.confirmVerification({ email: "snake@test.com", code: "123456" }),
+      authService.confirmVerification({
+        email: "snake@test.com",
+        code: "123456",
+      }),
     ).resolves.toEqual(user);
     expect(tokenStorage.set).toHaveBeenCalledWith("snake-access");
     expect(refreshTokenStorage.set).toHaveBeenCalledWith("snake-refresh");
@@ -333,9 +407,9 @@ describe("authService contract", () => {
     expect(normalizeUserRole("REALTOR")).toBe("picker");
     expect(toApiRole("picker")).toBe("realtor");
     expect(toApiRole("client")).toBe("client");
-    expect(mapApiUserToDomain({ id: 1, email: "a@b.c", role: "realtor" })?.role).toBe(
-      "picker",
-    );
+    expect(
+      mapApiUserToDomain({ id: 1, email: "a@b.c", role: "realtor" })?.role,
+    ).toBe("picker");
   });
 
   it("confirmVerification applies picker role from payload when API user is client", async () => {
@@ -428,7 +502,10 @@ describe("authService contract", () => {
     });
 
     await expect(
-      authService.confirmVerification({ email: "api@test.com", code: "123456" }),
+      authService.confirmVerification({
+        email: "api@test.com",
+        code: "123456",
+      }),
     ).resolves.toEqual(user);
     expect(tokenStorage.set).toHaveBeenCalledWith("secret-api-token-once");
     expect(api.get).not.toHaveBeenCalled();
@@ -455,7 +532,10 @@ describe("authService contract", () => {
   it("confirmVerification maps 429 into rate_limited auth error", async () => {
     api.post.mockRejectedValue(new ApiError(429, "Too many requests"));
     await expect(
-      authService.confirmVerification({ email: "otp@test.com", code: "123456" }),
+      authService.confirmVerification({
+        email: "otp@test.com",
+        code: "123456",
+      }),
     ).rejects.toEqual({
       code: "rate_limited",
       message: getDefaultAuthErrorMessage("rate_limited"),
@@ -465,7 +545,10 @@ describe("authService contract", () => {
   it("confirmVerification preserves backend validation message for 422", async () => {
     api.post.mockRejectedValue(new ApiError(422, "Неверный или истёкший код"));
     await expect(
-      authService.confirmVerification({ email: "otp@test.com", code: "123456" }),
+      authService.confirmVerification({
+        email: "otp@test.com",
+        code: "123456",
+      }),
     ).rejects.toEqual({
       code: "validation_error",
       message: "Неверный или истёкший код",
@@ -477,11 +560,13 @@ describe("authService contract", () => {
       new ApiError(500, "SQLSTATE[42S22]: Column not found"),
     );
     await expect(
-      authService.confirmVerification({ email: "otp@test.com", code: "123456" }),
+      authService.confirmVerification({
+        email: "otp@test.com",
+        code: "123456",
+      }),
     ).rejects.toEqual({
       code: "server_error",
       message: "SQLSTATE[42S22]: Column not found",
     });
   });
 });
-

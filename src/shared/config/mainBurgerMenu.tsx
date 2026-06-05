@@ -9,8 +9,9 @@ import AutoCreditIcon from "../../assets/mainpage/services/2.svg";
 import { AiPickerMenuIcon } from "../../features/aiPicker/ui/AiPickerMenuIcon";
 import type { BurgerMenuItem } from "../ui/BurgerMenu";
 import { colors } from "../theme/colors";
+import type { UserRole } from "../../types/user";
 
-export function getMainBurgerMenuItems(): BurgerMenuItem[] {
+export function getMainBurgerMenuItems(role?: UserRole | null): BurgerMenuItem[] {
   return [
     {
       key: "favorites",
@@ -24,12 +25,16 @@ export function getMainBurgerMenuItems(): BurgerMenuItem[] {
       href: "/ai-picker" as Href,
       Icon: AiPickerMenuIcon,
     },
-    {
-      key: "selection",
-      label: "Подбор авто",
-      href: "/selection" as Href,
-      Icon: SelectionIcon,
-    },
+    ...(role === "picker"
+      ? [
+          {
+            key: "selection",
+            label: "Подбор авто",
+            href: "/selection" as Href,
+            Icon: SelectionIcon,
+          } satisfies BurgerMenuItem,
+        ]
+      : []),
     {
       key: "auto-credit",
       label: "Автокредит",
