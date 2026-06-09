@@ -3,6 +3,7 @@ import {
   formatVinInput,
   validateEngineVolume,
   validatePtsForm,
+  validatePtsFormFields,
   validateVin,
   validateYear,
   YEAR_MAX,
@@ -82,6 +83,31 @@ describe("validateYear", () => {
 
   it("rejects year below min", () => {
     expect(validateYear(String(YEAR_MIN - 1)).ok).toBe(false);
+  });
+});
+
+describe("validatePtsFormFields", () => {
+  it("returns all field errors", () => {
+    const errors = validatePtsFormFields({
+      vin: "",
+      year: "",
+      engineVolume: "",
+    });
+    expect(errors).toEqual({
+      vin: "Укажите VIN",
+      year: "Укажите год выпуска",
+      engineVolume: "Укажите объём двигателя",
+    });
+  });
+
+  it("returns null when valid", () => {
+    expect(
+      validatePtsFormFields({
+        vin: VALID_VIN,
+        year: String(YEAR_MAX),
+        engineVolume: "1.6",
+      }),
+    ).toBeNull();
   });
 });
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -9,9 +9,11 @@ import {
 } from "react-native";
 import DropdownIcon from "../../../assets/icons/dropdown.svg";
 import { colors } from "../../../shared/theme/colors";
+import type { PtsFormState } from "../../../types/draftReport";
 import {
   formatEngineVolumeInput,
   formatVinInput,
+  type PtsFormFieldErrors,
   validateEngineVolume,
   validateVin,
   validateYear,
@@ -19,28 +21,11 @@ import {
 import { YearBottomSheet } from "./YearBottomSheet";
 import { PR_TYPO } from "./pickerReport.styles";
 
-export type PtsType = "original" | "nonOriginal";
-
-export type PtsFormState = {
-  vin: string;
-  brand: string;
-  model: string;
-  year: string;
-  color: string;
-  engineVolume: string;
-  ptsType: PtsType;
-  hasElectronicPts: boolean;
-};
-
-type PtsFieldErrors = {
-  vin?: string;
-  year?: string;
-  engineVolume?: string;
-};
-
 type Props = {
   value: PtsFormState;
   onChange: (next: PtsFormState) => void;
+  externalErrors?: PtsFormFieldErrors;
+  submitAttempt?: number;
 };
 
 function Radio({
@@ -67,11 +52,19 @@ function Radio({
   );
 }
 
-export function PtsForm({ value, onChange }: Props) {
-  const [fieldErrors, setFieldErrors] = useState<PtsFieldErrors>({});
+export function PtsForm({ value, onChange, externalErrors, submitAttempt = 0 }: Props) {
+  const [fieldErrors, setFieldErrors] = useState<PtsFormFieldErrors>({});
   const [yearSheetVisible, setYearSheetVisible] = useState(false);
 
-  const clearFieldError = useCallback((field: keyof PtsFieldErrors) => {
+  useEffect(() => {
+    if (!externalErrors && submitAttempt === 0) return;
+    setFieldErrors((prev) => ({
+      ...prev,
+      ...(externalErrors ?? {}),
+    }));
+  }, [externalErrors, submitAttempt]);
+
+  const clearFieldError = useCallback((field: keyof PtsFormFieldErrors) => {
     setFieldErrors((prev) => {
       if (!prev[field]) return prev;
       const next = { ...prev };
@@ -80,7 +73,7 @@ export function PtsForm({ value, onChange }: Props) {
     });
   }, []);
 
-  const setFieldError = useCallback((field: keyof PtsFieldErrors, message: string | undefined) => {
+  const setFieldError = useCallback((field: keyof PtsFormFieldErrors, message: string | undefined) => {
     setFieldErrors((prev) => {
       if (!message) {
         if (!prev[field]) return prev;
@@ -178,18 +171,13 @@ export function PtsForm({ value, onChange }: Props) {
 
       <View style={styles.field}>
         <Text style={styles.label}>Цвет</Text>
-        <View style={styles.dropdownWrap}>
-          <TextInput
-            style={styles.dropdownInput}
-            value={value.color}
-            onChangeText={(t) => onChange({ ...value, color: t })}
-            placeholder="Укажите цвет"
-            placeholderTextColor={colors.text.muted}
-          />
-          <View style={styles.dropdownIconWrap}>
-            <DropdownIcon width={14} height={14} />
-          </View>
-        </View>
+        <TextInput
+          style={styles.input}
+          value={value.color}
+          onChangeText={(t) => onChange({ ...value, color: t })}
+          placeholder="Укажите цвет"
+          placeholderTextColor={colors.text.muted}
+        />
       </View>
 
       <View style={styles.field}>

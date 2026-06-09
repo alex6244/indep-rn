@@ -4,11 +4,12 @@ import { AI_PICKER_SERVER_UNAVAILABLE_MESSAGE } from "../api/aiPickerEnv";
 import { buildLeadSuccessMessage, normalizePhoneInput } from "../chat/ruleBasedReply";
 import type { AiCatalogItem, AiChatMessage } from "../types";
 import { useAppDispatch } from "../../../store/hooks";
-import { createMessageId } from "./aiPickerUtils";
+import { createMessageId, resolveSelectedCarTitles } from "./aiPickerUtils";
 
 type UseAiPickerLeadArgs = {
   siteId: string;
   catalog: AiCatalogItem[];
+  messages: AiChatMessage[];
   selectedIds: Set<string>;
   useRemoteApi: boolean;
   scrollToEnd: () => void;
@@ -18,6 +19,7 @@ type UseAiPickerLeadArgs = {
 export function useAiPickerLead({
   siteId,
   catalog,
+  messages,
   selectedIds,
   useRemoteApi,
   scrollToEnd,
@@ -92,6 +94,7 @@ export function useAiPickerLead({
     })();
   }, [
     catalog,
+    messages,
     dispatch,
     leadSent,
     leadSubmitting,

@@ -8,6 +8,7 @@ import { PR_TYPO } from "./pickerReport.styles";
 import { colors } from "../../../shared/theme/colors";
 import { InlineMessage } from "../../../shared/ui/InlineMessage";
 import { UploadMediaModal } from "./media/UploadMediaModal";
+import type { RequiredMediaKey } from "../../../shared/validation/mediaValidation";
 import {
   getUploadModalConfig,
   type UploadMediaKind,
@@ -26,6 +27,7 @@ type Row = {
 type Props = {
   value: MediaUploadState;
   onChange: (next: MediaUploadState) => void;
+  highlightKeys?: RequiredMediaKey[];
 };
 
 const VIDEO_KINDS: UploadMediaKind[] = ["salon_video", "body_video"];
@@ -42,7 +44,7 @@ const CARD_PADDING_H = 16;
 const CONTENT_TOP_RATIO = 0.53;
 const ROW_BLOCK_ESTIMATE = 230;
 
-export function MediaUploadCard({ value, onChange }: Props) {
+export function MediaUploadCard({ value, onChange, highlightKeys = [] }: Props) {
   const { width: windowWidth } = useWindowDimensions();
   const [activeModalKind, setActiveModalKind] = useState<UploadMediaKind | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -153,12 +155,20 @@ export function MediaUploadCard({ value, onChange }: Props) {
           {rows.map((r) => {
             const uri = value[r.key];
             const added = uri !== null;
+            const isHighlighted = highlightKeys.includes(r.key as RequiredMediaKey);
             const bg = added ? colors.status.successStrong : colors.brand.primary;
             const text = added ? "Добавлено" : "Добавить";
 
             return (
-              <View key={r.key} style={styles.row}>
-                <Text style={styles.rowLabel}>{r.label}</Text>
+              <View
+                key={r.key}
+                style={[styles.row, isHighlighted ? styles.rowHighlighted : null]}
+              >
+                <Text
+                  style={[styles.rowLabel, isHighlighted ? styles.rowLabelHighlighted : null]}
+                >
+                  {r.label}
+                </Text>
                 <View style={styles.rowRight}>
                   {uri ? (
                     <Image
@@ -233,11 +243,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 12,
+    borderRadius: 10,
+    paddingVertical: 4,
+    paddingHorizontal: 4,
+  },
+  rowHighlighted: {
+    borderWidth: 1,
+    borderColor: colors.brand.primary,
+    backgroundColor: colors.status.warningMutedBg,
   },
   rowLabel: {
     ...PR_TYPO.body,
     flex: 1,
     marginRight: 8,
+  },
+  rowLabelHighlighted: {
+    color: colors.text.warning,
   },
   rowRight: {
     flexDirection: "row",

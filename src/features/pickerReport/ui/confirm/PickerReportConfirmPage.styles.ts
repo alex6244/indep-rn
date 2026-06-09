@@ -201,6 +201,9 @@ export const styles = StyleSheet.create({
   },
   bottomBtnTextEdit: PR_TYPO.button,
   bottomBtnTextConfirm: PR_TYPO.button,
+  confirmBtnDisabled: {
+    opacity: 0.7,
+  },
   vinModalBackdrop: {
     flex: 1,
     backgroundColor: colors.overlay.backdrop,

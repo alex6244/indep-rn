@@ -33,6 +33,7 @@ export function usePickerReportConfirmController(router: Router) {
   const [loading, setLoading] = useState(true);
   const [defectsMode, setDefectsMode] = useState<DefectsMode>("scheme");
   const [vinModalOpen, setVinModalOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [notice, setNotice] = useState<{ tone: "error" | "success" | "info"; message: string } | null>(
     null,
   );
@@ -140,7 +141,7 @@ export function usePickerReportConfirmController(router: Router) {
   }, [draftReport, reportsForDuplicateCheck]);
 
   const handleConfirm = async () => {
-    if (!draftReport) return;
+    if (!draftReport || submitting) return;
 
     const ptsError = validatePtsForm(draftReport.pts);
     if (ptsError) {
@@ -156,6 +157,7 @@ export function usePickerReportConfirmController(router: Router) {
       return;
     }
 
+    setSubmitting(true);
     try {
       await pickerReportsService.submit(draftReport);
       await AsyncStorage.removeItem(PICKER_REPORT_DRAFT_STORAGE_KEY);
@@ -165,6 +167,8 @@ export function usePickerReportConfirmController(router: Router) {
         tone: "error",
         message: "Не удалось отправить отчёт. Попробуйте ещё раз.",
       });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -182,6 +186,7 @@ export function usePickerReportConfirmController(router: Router) {
     setVinModalOpen,
     handleConfirm,
     handleEdit,
+    submitting,
     notice,
     clearNotice: () => setNotice(null),
   };

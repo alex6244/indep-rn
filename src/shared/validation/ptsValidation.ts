@@ -13,6 +13,8 @@ export type PtsFormFields = {
   engineVolume: string;
 };
 
+export type PtsFormFieldErrors = Partial<Record<keyof PtsFormFields, string>>;
+
 /** Uppercase, no spaces — for duplicate check (may be partial). */
 export function normalizeVinForCompare(vin: string): string {
   return (vin ?? "").toUpperCase().replace(/\s+/g, "");
@@ -80,18 +82,27 @@ export function validateYear(value: string):
   return { ok: true, normalized: String(year) };
 }
 
-/** First failing PTS field message, or null if valid. */
-export function validatePtsForm(pts: PtsFormFields): string | null {
+/** Per-field PTS errors; null when the form is valid. */
+export function validatePtsFormFields(pts: PtsFormFields): PtsFormFieldErrors | null {
+  const errors: PtsFormFieldErrors = {};
+
   const vinResult = validateVin(pts.vin);
-  if (!vinResult.ok) return vinResult.message;
+  if (!vinResult.ok) errors.vin = vinResult.message;
 
   const yearResult = validateYear(pts.year);
-  if (!yearResult.ok) return yearResult.message;
+  if (!yearResult.ok) errors.year = yearResult.message;
 
   const volumeResult = validateEngineVolume(pts.engineVolume);
-  if (!volumeResult.ok) return volumeResult.message;
+  if (!volumeResult.ok) errors.engineVolume = volumeResult.message;
 
-  return null;
+  return Object.keys(errors).length > 0 ? errors : null;
+}
+
+/** First failing PTS field message, or null if valid. */
+export function validatePtsForm(pts: PtsFormFields): string | null {
+  const fieldErrors = validatePtsFormFields(pts);
+  if (!fieldErrors) return null;
+  return fieldErrors.vin ?? fieldErrors.year ?? fieldErrors.engineVolume ?? null;
 }
 
 /** Normalized PTS fields for draft storage after validation. */

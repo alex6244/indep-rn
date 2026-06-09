@@ -14,6 +14,7 @@ export function useAiPickerBootstrap(siteId: string) {
   const site = getAiSiteProfile(siteId);
 
   const [catalog, setCatalog] = useState<AiCatalogItem[]>([]);
+  const [catalogDisplayCount, setCatalogDisplayCount] = useState(0);
   const [catalogSource, setCatalogSource] = useState<"api" | "seed" | null>(null);
   const [useRemoteApi, setUseRemoteApi] = useState(false);
   const [catalogLoading, setCatalogLoading] = useState(true);
@@ -28,54 +29,83 @@ export function useAiPickerBootstrap(siteId: string) {
       setUseRemoteApi(remote);
 
       if (remote) {
-        const [metaResult, catalogResult] = await Promise.allSettled([
-          dispatch(aiPickerApi.endpoints.getAiMeta.initiate(siteId)).unwrap(),
-          dispatch(aiPickerApi.endpoints.getAiCatalog.initiate(siteId)).unwrap(),
-        ]);
+        const catalogTask = (async () => {
+          try {
+            return await dispatch(
+              aiPickerApi.endpoints.getAiCatalog.initiate(siteId),
+            ).unwrap();
+          } catch {
+            return null;
+          }
+        })();
 
-        if (cancelled) return;
-
-        let items: AiCatalogItem[] = [];
-        let source: "api" | "seed" | null = null;
-
-        if (catalogResult.status === "fulfilled") {
-          items = catalogResult.value.items;
-          source = catalogResult.value.catalogSource;
-        } else if (isAiPickerLocalFallbackEnabled()) {
-          const local = await loadAiCatalogWithMeta(siteId);
+        try {
+          const meta = await dispatch(
+            aiPickerApi.endpoints.getAiMeta.initiate(siteId),
+          ).unwrap();
           if (cancelled) return;
-          items = local.items;
-          source = local.source;
-        }
 
-        setCatalog(items);
-
-        if (metaResult.status === "fulfilled") {
           setApiServerWarning(null);
-          setCatalogSource(metaResult.value.catalogSource ?? source);
+          setCatalogSource(meta.catalogSource);
+          setCatalogDisplayCount(meta.catalogCount);
           setWelcomeText(
-            metaResult.value.welcomeText ?? buildWelcomeMessage(items.length),
+            meta.welcomeText ?? buildWelcomeMessage(meta.catalogCount),
           );
-        } else {
-          const metaError =
-            metaResult.reason instanceof Error
-              ? metaResult.reason.message
-              : "Не удалось связаться с сервером подбора";
-          setApiServerWarning(
-            catalogResult.status === "fulfilled" ? null : metaError,
-          );
+          setCatalogLoading(false);
+
+          const catalogData = await catalogTask;
+          if (cancelled || !catalogData) return;
+
+          setCatalog(catalogData.items);
+          if (catalogData.items.length > 0) {
+            setCatalogDisplayCount(catalogData.items.length);
+            setCatalogSource(catalogData.catalogSource);
+          }
+        } catch (metaError) {
+          const catalogData = await catalogTask;
+          if (cancelled) return;
+
+          let items: AiCatalogItem[] = [];
+          let source: "api" | "seed" | null = null;
+
+          if (catalogData) {
+            items = catalogData.items;
+            source = catalogData.catalogSource;
+          } else if (isAiPickerLocalFallbackEnabled()) {
+            const local = await loadAiCatalogWithMeta(siteId);
+            if (cancelled) return;
+            items = local.items;
+            source = local.source;
+          }
+
+          setCatalog(items);
+          setCatalogDisplayCount(items.length);
           setCatalogSource(source);
-          setWelcomeText(buildWelcomeMessage(items.length));
+
+          if (items.length > 0) {
+            setApiServerWarning(null);
+            setWelcomeText(buildWelcomeMessage(items.length));
+          } else {
+            const message =
+              metaError instanceof Error
+                ? metaError.message
+                : "Не удалось связаться с сервером подбора";
+            setApiServerWarning(message);
+            setWelcomeText(buildWelcomeMessage(0));
+          }
+
+          setCatalogLoading(false);
         }
       } else {
         setApiServerWarning(null);
         const { items, source } = await loadAiCatalogWithMeta(siteId);
         if (cancelled) return;
         setCatalog(items);
+        setCatalogDisplayCount(items.length);
         setCatalogSource(source);
         setWelcomeText(buildWelcomeMessage(items.length));
+        setCatalogLoading(false);
       }
-      setCatalogLoading(false);
     })();
     return () => {
       cancelled = true;
@@ -85,6 +115,7 @@ export function useAiPickerBootstrap(siteId: string) {
   return {
     site,
     catalog,
+    catalogDisplayCount,
     catalogSource,
     useRemoteApi,
     catalogLoading,

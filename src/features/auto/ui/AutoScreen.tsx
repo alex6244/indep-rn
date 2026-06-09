@@ -107,9 +107,8 @@ export default function AutoScreen() {
   }, [checkAuth, reportsPackageModal]);
 
   const handleOpenCredit = React.useCallback(() => {
-    if (!car) return;
-    router.push({ pathname: "/auto-credit", params: { carId: String(car.id) } } as Href);
-  }, [car, router]);
+    router.push("/auto-credit" as Href);
+  }, [router]);
 
   const handleFavoriteChange = React.useCallback(
     (next: boolean) => {

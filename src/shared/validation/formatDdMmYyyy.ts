@@ -150,3 +150,54 @@ export function validateAllOwnersDates(
   }
   return null;
 }
+
+export type OwnerFieldErrors = Partial<Record<OwnerDateField, string>>;
+
+function validateOwnerRowFieldErrors(owner: {
+  startDate: string;
+  endDate: string;
+}): OwnerFieldErrors {
+  const errors: OwnerFieldErrors = {};
+
+  const startError = validateOwnerDateField(owner.startDate, "startDate");
+  if (startError) errors.startDate = startError;
+
+  const endError = validateOwnerDateField(owner.endDate, "endDate");
+  if (endError) {
+    errors.endDate = endError;
+  } else if (
+    !startError &&
+    owner.startDate.trim() &&
+    owner.endDate.trim() &&
+    !isEndDateOnOrAfterStart(owner.startDate, owner.endDate)
+  ) {
+    errors.endDate = "Дата окончания не может быть раньше даты начала.";
+  }
+
+  return errors;
+}
+
+/** All owner date errors keyed by owner id; firstError for banner text. */
+export function collectAllOwnerDateErrors(
+  owners: { id: string; startDate: string; endDate: string }[],
+): {
+  errorsByOwnerId: Record<string, OwnerFieldErrors>;
+  firstError: OwnerDateFieldError | null;
+} {
+  const errorsByOwnerId: Record<string, OwnerFieldErrors> = {};
+  let firstError: OwnerDateFieldError | null = null;
+
+  for (const owner of owners) {
+    const rowErrors = validateOwnerRowFieldErrors(owner);
+    if (Object.keys(rowErrors).length === 0) continue;
+
+    errorsByOwnerId[owner.id] = rowErrors;
+
+    if (!firstError) {
+      const field: OwnerDateField = rowErrors.startDate ? "startDate" : "endDate";
+      firstError = { field, message: rowErrors[field]! };
+    }
+  }
+
+  return { errorsByOwnerId, firstError };
+}

@@ -67,6 +67,7 @@ export function PickerReportConfirmPage() {
         bottomPadding={insets.bottom + 12}
         onEdit={controller.handleEdit}
         onConfirm={controller.handleConfirm}
+        submitting={controller.submitting}
       />
 
       <ConfirmModals

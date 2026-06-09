@@ -224,23 +224,6 @@ export const catalogStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  carAddressRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginTop: 10,
-    gap: 4,
-    paddingRight: 4,
-  },
-  carAddressIcon: {
-    marginTop: 2,
-  },
-  carAddress: {
-    ...typography.caption,
-    flex: 1,
-    fontSize: 11,
-    color: colors.icon.muted,
-    lineHeight: 15,
-  },
   btn: {
     paddingVertical: 10,
     paddingHorizontal: 16,

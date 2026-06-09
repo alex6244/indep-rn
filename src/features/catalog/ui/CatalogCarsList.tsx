@@ -14,7 +14,6 @@ import {
   View,
 } from "react-native";
 import { Image } from "expo-image";
-import { Feather } from "@expo/vector-icons";
 import type { Car } from "../../../types/car";
 import { FavoriteButton } from "../../favorites/ui/FavoriteButton";
 import { buildCarModelLine, buildCarSpecsLine } from "../utils/buildCarSpecsLine";
@@ -135,11 +134,6 @@ function CatalogCarCard({
             onChange={(next: boolean) => setFavorite(String(car.id), next)}
           />
         </View>
-      </View>
-
-      <View style={styles.carAddressRow}>
-        <Feather name="map-pin" size={12} color={colors.icon.muted} style={styles.carAddressIcon} />
-        <Text style={styles.carAddress}>{car.address}</Text>
       </View>
     </View>
   );

@@ -9,10 +9,16 @@ import type { DefectsState } from "../DefectsForm";
 import type { LegalCleanlinessState } from "../LegalCleanlinessForm";
 import type { CommercialUsageState } from "../CommercialUsageForm";
 import type { MediaUploadState } from "../MediaUploadCard";
-import type { PtsFormState } from "../PtsForm";
 import type { OwnerDraft } from "../OwnersForm";
-import { validateAllOwnersDates } from "../../../../shared/validation/formatDdMmYyyy";
-import { normalizePtsForm, validatePtsForm } from "../../../../shared/validation/ptsValidation";
+import type { PtsFormState } from "../../../../types/draftReport";
+import { collectAllOwnerDateErrors } from "../../../../shared/validation/formatDdMmYyyy";
+import { validateMileage } from "../../../../shared/validation/mileageValidation";
+import {
+  getMissingRequiredMediaKeys,
+  validateMediaUpload,
+} from "../../../../shared/validation/mediaValidation";
+import { normalizePtsForm, validatePtsFormFields } from "../../../../shared/validation/ptsValidation";
+import type { CreateReportValidationFeedback } from "./createReportValidation";
 
 export function usePickerReportCreateController() {
   const router = useRouter();
@@ -80,6 +86,18 @@ export function usePickerReportCreateController() {
   const [notice, setNotice] = useState<{ tone: "error" | "info" | "success"; message: string } | null>(
     null,
   );
+  const [validationFeedback, setValidationFeedback] =
+    useState<CreateReportValidationFeedback | null>(null);
+  const [submitAttempt, setSubmitAttempt] = useState(0);
+
+  const failValidation = useCallback((feedback: CreateReportValidationFeedback) => {
+    setSubmitAttempt((attempt) => attempt + 1);
+    setValidationFeedback(feedback);
+    setNotice({
+      tone: "error",
+      message: feedback.message,
+    });
+  }, []);
 
   const goToProfile = useCallback(() => {
     router.push("/(tabs)/profile" as Href);
@@ -87,6 +105,11 @@ export function usePickerReportCreateController() {
 
   const onChangeMedia = useCallback((next: MediaUploadState) => {
     setDraftReport((p) => ({ ...p, media: next }));
+    if (!validateMediaUpload(next)) {
+      setValidationFeedback((prev) =>
+        prev?.scrollTo === "media" ? null : prev,
+      );
+    }
   }, []);
 
   const onChangeGeneralInfo = useCallback((next: Record<string, boolean>) => {
@@ -95,14 +118,31 @@ export function usePickerReportCreateController() {
 
   const onChangePts = useCallback((next: PtsFormState) => {
     setDraftReport((p) => ({ ...p, pts: next }));
+    if (!validatePtsFormFields(next)) {
+      setValidationFeedback((prev) =>
+        prev?.scrollTo === "pts" ? null : prev,
+      );
+    }
   }, []);
 
   const onChangeMileage = useCallback((next: string) => {
     setDraftReport((p) => ({ ...p, mileage: next }));
+    const result = validateMileage(next);
+    if (result.ok) {
+      setValidationFeedback((prev) =>
+        prev?.scrollTo === "mileage" ? null : prev,
+      );
+    }
   }, []);
 
   const onChangeOwners = useCallback((next: OwnerDraft[]) => {
     setDraftReport((p) => ({ ...p, owners: next }));
+    const { firstError } = collectAllOwnerDateErrors(next);
+    if (!firstError) {
+      setValidationFeedback((prev) =>
+        prev?.scrollTo === "owners" ? null : prev,
+      );
+    }
   }, []);
 
   const onChangeLegalCleanliness = useCallback((next: LegalCleanlinessState) => {
@@ -118,27 +158,57 @@ export function usePickerReportCreateController() {
   }, []);
 
   const saveDraftAndContinue = useCallback(async () => {
-    const ptsError = validatePtsForm(draftReport.pts);
-    if (ptsError) {
-      setNotice({
-        tone: "error",
-        message: ptsError,
+    const mediaError = validateMediaUpload(draftReport.media);
+    if (mediaError) {
+      failValidation({
+        scrollTo: "media",
+        message: mediaError,
+        missingMediaKeys: getMissingRequiredMediaKeys(draftReport.media),
       });
       return;
     }
 
-    const ownersDateError = validateAllOwnersDates(draftReport.owners);
-    if (ownersDateError) {
-      setNotice({
-        tone: "error",
-        message: ownersDateError.message,
+    const ptsErrors = validatePtsFormFields(draftReport.pts);
+    if (ptsErrors) {
+      failValidation({
+        scrollTo: "pts",
+        message:
+          ptsErrors.vin ??
+          ptsErrors.year ??
+          ptsErrors.engineVolume ??
+          "Заполните данные ПТС",
+        ptsErrors,
       });
       return;
     }
+
+    const mileageResult = validateMileage(draftReport.mileage);
+    if (!mileageResult.ok) {
+      failValidation({
+        scrollTo: "mileage",
+        message: mileageResult.message,
+        mileageError: mileageResult.message,
+      });
+      return;
+    }
+
+    const { errorsByOwnerId, firstError } = collectAllOwnerDateErrors(draftReport.owners);
+    if (firstError) {
+      failValidation({
+        scrollTo: "owners",
+        message: firstError.message,
+        ownersErrors: errorsByOwnerId,
+      });
+      return;
+    }
+
+    setValidationFeedback(null);
+    setNotice(null);
 
     const normalizedDraft = {
       ...draftReport,
       pts: normalizePtsForm(draftReport.pts),
+      mileage: mileageResult.normalized,
     };
 
     try {
@@ -156,7 +226,7 @@ export function usePickerReportCreateController() {
 
     setDraftReport(normalizedDraft);
     router.push("/selection-confirm" as Href);
-  }, [draftReport, router]);
+  }, [draftReport, failValidation, router]);
 
   return {
     user,
@@ -175,6 +245,7 @@ export function usePickerReportCreateController() {
     goToProfile,
     notice,
     clearNotice: () => setNotice(null),
+    validationFeedback,
+    submitAttempt,
   };
 }
-

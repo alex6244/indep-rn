@@ -86,11 +86,21 @@ AI_API_RATE_LIMIT_ENABLED=true
 
 ## Шаг 5. Запуск через pm2
 
+**Важно:** старт только из **корня монорепо**, не из отдельной папки `ai-api/`. В `ecosystem.config.cjs` задан `AI_API_REPO_ROOT` — иначе не найдутся `packages/ai-core` и `src/data/ai/`.
+
 ```bash
 cd /opt/indep-rn
+pm2 delete ai-api 2>/dev/null || true
 pm2 start ai-api/ecosystem.config.cjs
 pm2 save
 pm2 startup   # выполни команду, которую выведет pm2
+```
+
+Проверка пути в pm2:
+
+```bash
+pm2 env ai-api | grep AI_API_REPO_ROOT
+# ожидание: AI_API_REPO_ROOT=/opt/indep-rn
 ```
 
 Локально на сервере:
@@ -132,7 +142,10 @@ certbot --nginx -d ai-api.indep.su
 cd /opt/indep-rn
 git pull
 cd ai-api && npm install
-pm2 restart ai-api
+cd ..
+pm2 delete ai-api 2>/dev/null || true
+pm2 start ai-api/ecosystem.config.cjs
+pm2 save
 ```
 
 ---

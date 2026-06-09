@@ -1,6 +1,6 @@
 import Slider from "@react-native-community/slider";
-import { useLocalSearchParams, useRouter, type Href } from "expo-router";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "expo-router";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BackCaretIcon from "../../../assets/icons/backCaret.svg";
-import { cars as mockCars } from "../../../data/cars";
 import { colors } from "../../../shared/theme/colors";
 import { acText, acTitle } from "./autoCredit.styles";
 import { radius } from "../../../shared/theme/radius";
@@ -20,102 +19,97 @@ import { spacing } from "../../../shared/theme/spacing";
 import { AppButton } from "../../../shared/ui/AppButton";
 import { AppCard } from "../../../shared/ui/AppCard";
 import {
-  calcDownPayment,
-  calcLoanAmount,
+  adjustTermMonths,
+  calcLoanPrincipal,
   calcMonthlyPayment,
+  canAdjustTermMonths,
+  clampDownPayment,
+  clampTermMonths,
   formatRub,
-  formatTermYears,
+  formatTermMonths,
+  snapCreditStep,
 } from "../lib/autoCreditCalculations";
-import { mapCarToCreditVehicle } from "../lib/mapCarToCreditVehicle";
 import { AutoCreditBanksStrip } from "./AutoCreditBanksStrip";
-import { AutoCreditCarSummaryCard } from "./AutoCreditCarSummaryCard";
 import { AutoCreditContactForm } from "./AutoCreditContactForm";
+import { AutoCreditOfferCard } from "./AutoCreditOfferCard";
 import { AutoCreditPercentChips } from "./AutoCreditPercentChips";
 import {
   AUTO_CREDIT_BANKS,
   AUTO_CREDIT_WHY_US,
-  CREDIT_TERM_YEARS,
-  DEFAULT_DOWN_PAYMENT_PERCENT,
-  DEFAULT_TERM_YEARS,
-  DOWN_PAYMENT_PERCENTS,
-  type AutoCreditVehicle,
+  CREDIT_AMOUNT_MAX,
+  CREDIT_AMOUNT_MIN,
+  CREDIT_AMOUNT_STEP,
+  CREDIT_TERM_MONTHS_MAX,
+  CREDIT_TERM_MONTHS_MIN,
+  CREDIT_TERM_MONTH_PRESETS,
+  DEFAULT_CREDIT_AMOUNT,
+  DEFAULT_DOWN_PAYMENT,
+  DEFAULT_TERM_MONTHS,
 } from "./autoCredit.content";
+
+function formatAmountShort(value: number): string {
+  if (value >= 1_000_000) {
+    const millions = value / 1_000_000;
+    return Number.isInteger(millions) ? `${millions} млн` : `${millions.toFixed(1)} млн`;
+  }
+  return `${Math.round(value / 1000)} тыс.`;
+}
 
 export function AutoCreditScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const params = useLocalSearchParams<{ carId?: string | string[] }>();
-  const rawCarId = params.carId;
-  const carId = Array.isArray(rawCarId) ? rawCarId[0] : rawCarId;
 
-  const [vehicle, setVehicle] = useState<AutoCreditVehicle>(() =>
-    mapCarToCreditVehicle(mockCars[0]),
-  );
-  const [downPaymentPercent, setDownPaymentPercent] = useState(
-    DEFAULT_DOWN_PAYMENT_PERCENT,
-  );
-  const [termYears, setTermYears] = useState(DEFAULT_TERM_YEARS);
+  const [creditAmount, setCreditAmount] = useState(DEFAULT_CREDIT_AMOUNT);
+  const [downPayment, setDownPayment] = useState(DEFAULT_DOWN_PAYMENT);
+  const [termMonths, setTermMonths] = useState(DEFAULT_TERM_MONTHS);
 
-  useEffect(() => {
-    if (!carId) return;
-    const fromCatalog = mockCars.find((car) => String(car.id) === carId);
-    if (fromCatalog) {
-      setVehicle(mapCarToCreditVehicle(fromCatalog));
-    }
-  }, [carId]);
-
-  const downPayment = useMemo(
-    () => calcDownPayment(vehicle.price, downPaymentPercent),
-    [vehicle.price, downPaymentPercent],
-  );
-  const loanAmount = useMemo(
-    () => calcLoanAmount(vehicle.price, downPaymentPercent),
-    [vehicle.price, downPaymentPercent],
+  const loanPrincipal = useMemo(
+    () => calcLoanPrincipal(creditAmount, downPayment),
+    [creditAmount, downPayment],
   );
   const monthlyPayment = useMemo(
-    () => calcMonthlyPayment(loanAmount, termYears),
-    [loanAmount, termYears],
+    () => calcMonthlyPayment(loanPrincipal, termMonths),
+    [loanPrincipal, termMonths],
   );
-  const monthlyFrom = useMemo(() => {
-    const maxTerm = CREDIT_TERM_YEARS[CREDIT_TERM_YEARS.length - 1];
-    const minDownPercent = DOWN_PAYMENT_PERCENTS[0];
-    const minLoan = calcLoanAmount(vehicle.price, minDownPercent);
-    return calcMonthlyPayment(minLoan, maxTerm);
-  }, [vehicle.price]);
 
   const handleBack = useCallback(() => {
     router.back();
   }, [router]);
 
-  const handleOpenCatalog = useCallback(() => {
-    router.push("/(tabs)/catalog" as Href);
-  }, [router]);
+  const handleSubmit = useCallback(async (_payload: { name: string; phone: string }) => {
+    await new Promise((resolve) => {
+      setTimeout(resolve, 500);
+    });
+  }, []);
 
-  const handleSubmit = useCallback(
-    async (_payload: { name: string; phone: string }) => {
-      await new Promise((resolve) => {
-        setTimeout(resolve, 500);
-      });
+  const handleCreditAmountChange = useCallback((value: number) => {
+    const snapped = snapCreditStep(value, CREDIT_AMOUNT_STEP, CREDIT_AMOUNT_MIN, CREDIT_AMOUNT_MAX);
+    setCreditAmount(snapped);
+    setDownPayment((prev) => clampDownPayment(prev, snapped));
+  }, []);
+
+  const handleDownPaymentChange = useCallback(
+    (value: number) => {
+      const snapped = snapCreditStep(value, CREDIT_AMOUNT_STEP, 0, creditAmount);
+      setDownPayment(clampDownPayment(snapped, creditAmount));
     },
-    [],
+    [creditAmount],
   );
 
-  const snapDownPaymentPercent = useCallback((value: number) => {
-    const snapped = DOWN_PAYMENT_PERCENTS.reduce((prev, curr) =>
-      Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev,
-    );
-    setDownPaymentPercent(snapped);
+  const handleDecreaseTerm = useCallback(() => {
+    setTermMonths((current) => adjustTermMonths(current, -1));
   }, []);
 
-  const snapTermYears = useCallback((value: number) => {
-    const snapped = CREDIT_TERM_YEARS.reduce((prev, curr) =>
-      Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev,
-    );
-    setTermYears(snapped);
+  const handleIncreaseTerm = useCallback(() => {
+    setTermMonths((current) => adjustTermMonths(current, 1));
   }, []);
 
-  const scrollRef = React.useRef<ScrollView>(null);
-  const formSectionY = React.useRef(0);
+  const handleTermMonthsChange = useCallback((value: number) => {
+    setTermMonths(clampTermMonths(value));
+  }, []);
+
+  const scrollRef = useRef<ScrollView>(null);
+  const formSectionY = useRef(0);
 
   const scrollToForm = useCallback(() => {
     scrollRef.current?.scrollTo({ y: Math.max(0, formSectionY.current - spacing.lg), animated: true });
@@ -142,116 +136,120 @@ export function AutoCreditScreen() {
           ]}
           keyboardShouldPersistTaps="handled"
         >
-        <Pressable
-          style={styles.backRow}
-          onPress={handleBack}
-          accessibilityRole="button"
-          accessibilityLabel="Назад"
-        >
-          <BackCaretIcon width={18} height={18} />
-          <Text style={styles.backLabel}>Назад</Text>
-        </Pressable>
+          <Pressable
+            style={styles.backRow}
+            onPress={handleBack}
+            accessibilityRole="button"
+            accessibilityLabel="Назад"
+          >
+            <BackCaretIcon width={18} height={18} />
+            <Text style={styles.backLabel}>Назад</Text>
+          </Pressable>
 
-        <Text style={styles.pageTitle}>Подбор выгодного автокредита</Text>
+          <Text style={styles.pageTitle}>Подбор выгодного автокредита</Text>
 
-        <Text style={styles.sectionLabel}>Выберите автомобиль</Text>
-        <Pressable
-          style={styles.carPicker}
-          onPress={handleOpenCatalog}
-          accessibilityRole="button"
-          accessibilityLabel="Выберите автомобиль из каталога"
-        >
-          <View style={styles.carPickerText}>
-            <Text style={styles.carPickerTitle}>{vehicle.title}</Text>
-            <Text style={styles.carPickerSubtitle}>
-              {vehicle.brand} {vehicle.model} · {vehicle.year} г.
-            </Text>
-          </View>
-          <Text style={styles.carPickerAction}>Изменить</Text>
-        </Pressable>
-
-        <Text style={styles.sectionLabel}>Первоначальный взнос</Text>
-        <Text style={styles.sectionValue}>
-          {formatRub(downPayment)} ({downPaymentPercent}%)
-        </Text>
-        <Slider
-          style={styles.slider}
-          minimumValue={DOWN_PAYMENT_PERCENTS[0]}
-          maximumValue={DOWN_PAYMENT_PERCENTS[DOWN_PAYMENT_PERCENTS.length - 1]}
-          step={10}
-          value={downPaymentPercent}
-          minimumTrackTintColor={colors.brand.primary}
-          maximumTrackTintColor={colors.icon.placeholder}
-          thumbTintColor={colors.brand.primary}
-          onValueChange={snapDownPaymentPercent}
-          accessibilityLabel="Первоначальный взнос"
-        />
-        <AutoCreditPercentChips
-          values={DOWN_PAYMENT_PERCENTS}
-          selected={downPaymentPercent}
-          onSelect={setDownPaymentPercent}
-        />
-
-        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>
-          Срок кредита
-        </Text>
-        <Text style={styles.sectionValue}>{formatTermYears(termYears)}</Text>
-        <Slider
-          style={styles.slider}
-          minimumValue={CREDIT_TERM_YEARS[0]}
-          maximumValue={CREDIT_TERM_YEARS[CREDIT_TERM_YEARS.length - 1]}
-          step={1}
-          value={termYears}
-          minimumTrackTintColor={colors.brand.primary}
-          maximumTrackTintColor={colors.icon.placeholder}
-          thumbTintColor={colors.brand.primary}
-          onValueChange={snapTermYears}
-          accessibilityLabel="Срок кредита"
-        />
-        <View style={styles.termChipsWrap}>
-          <AutoCreditPercentChips
-            values={CREDIT_TERM_YEARS}
-            selected={termYears}
-            onSelect={setTermYears}
-            formatLabel={formatTermYears}
-            getAccessibilityLabel={formatTermYears}
+          <Text style={styles.sectionLabel}>Сумма кредита</Text>
+          <Text style={styles.sectionValue}>{formatRub(creditAmount)}</Text>
+          <Slider
+            style={styles.slider}
+            minimumValue={CREDIT_AMOUNT_MIN}
+            maximumValue={CREDIT_AMOUNT_MAX}
+            step={CREDIT_AMOUNT_STEP}
+            value={creditAmount}
+            minimumTrackTintColor={colors.brand.primary}
+            maximumTrackTintColor={colors.icon.placeholder}
+            thumbTintColor={colors.brand.primary}
+            onValueChange={handleCreditAmountChange}
+            accessibilityLabel="Сумма кредита"
           />
-        </View>
+          <View style={styles.sliderRange}>
+            <Text style={styles.sliderRangeText}>{formatAmountShort(CREDIT_AMOUNT_MIN)}</Text>
+            <Text style={styles.sliderRangeText}>{formatAmountShort(CREDIT_AMOUNT_MAX)}</Text>
+          </View>
 
-        <AutoCreditBanksStrip banks={AUTO_CREDIT_BANKS} />
+          <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>
+            Первоначальный взнос
+          </Text>
+          <Text style={styles.sectionValue}>{formatRub(downPayment)}</Text>
+          <Slider
+            style={styles.slider}
+            minimumValue={0}
+            maximumValue={creditAmount}
+            step={CREDIT_AMOUNT_STEP}
+            value={downPayment}
+            minimumTrackTintColor={colors.brand.primary}
+            maximumTrackTintColor={colors.icon.placeholder}
+            thumbTintColor={colors.brand.primary}
+            onValueChange={handleDownPaymentChange}
+            accessibilityLabel="Первоначальный взнос"
+          />
+          <View style={styles.sliderRange}>
+            <Text style={styles.sliderRangeText}>0 ₽</Text>
+            <Text style={styles.sliderRangeText}>{formatRub(creditAmount)}</Text>
+          </View>
 
-        <AutoCreditCarSummaryCard
-          vehicle={vehicle}
-          monthlyFrom={monthlyFrom}
-          downPayment={downPayment}
-          termYears={termYears}
-          monthlyPayment={monthlyPayment}
-        />
+          <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>Срок кредита</Text>
+          <Text style={styles.sectionValue}>{formatTermMonths(termMonths)}</Text>
+          <Slider
+            style={styles.slider}
+            minimumValue={CREDIT_TERM_MONTHS_MIN}
+            maximumValue={CREDIT_TERM_MONTHS_MAX}
+            step={1}
+            value={termMonths}
+            minimumTrackTintColor={colors.brand.primary}
+            maximumTrackTintColor={colors.icon.placeholder}
+            thumbTintColor={colors.brand.primary}
+            onValueChange={handleTermMonthsChange}
+            accessibilityLabel="Срок кредита"
+          />
+          <View style={styles.sliderRange}>
+            <Text style={styles.sliderRangeText}>{formatTermMonths(CREDIT_TERM_MONTHS_MIN)}</Text>
+            <Text style={styles.sliderRangeText}>{formatTermMonths(CREDIT_TERM_MONTHS_MAX)}</Text>
+          </View>
+          <AutoCreditPercentChips
+            values={CREDIT_TERM_MONTH_PRESETS}
+            selected={termMonths}
+            onSelect={handleTermMonthsChange}
+            formatLabel={(months) => `${months}`}
+            getAccessibilityLabel={(months) => `${months} месяцев`}
+          />
 
-        <View
-          style={styles.formSection}
-          onLayout={(event) => {
-            formSectionY.current = event.nativeEvent.layout.y;
-          }}
-        >
-          <AutoCreditContactForm onSubmit={handleSubmit} />
-        </View>
+          <AutoCreditOfferCard
+            monthlyPayment={monthlyPayment}
+            termMonths={termMonths}
+            canDecreaseTerm={canAdjustTermMonths(termMonths, -1)}
+            canIncreaseTerm={canAdjustTermMonths(termMonths, 1)}
+            onDecreaseTerm={handleDecreaseTerm}
+            onIncreaseTerm={handleIncreaseTerm}
+            onGetOffer={scrollToForm}
+          />
 
-        <View style={styles.whySection}>
-          <Text style={styles.whyTitle}>Почему мы?</Text>
-          {AUTO_CREDIT_WHY_US.map((item) => (
-            <AppCard key={item.id} style={styles.whyCard} muted padded>
-              <Text style={styles.whyCardTitle}>{item.title}</Text>
-              <Text style={styles.whyCardText}>{item.text}</Text>
-            </AppCard>
-          ))}
-        </View>
+          <AutoCreditBanksStrip banks={AUTO_CREDIT_BANKS} />
+
+          <View
+            style={styles.formSection}
+            onLayout={(event) => {
+              formSectionY.current = event.nativeEvent.layout.y;
+            }}
+          >
+            <AutoCreditContactForm onSubmit={handleSubmit} />
+          </View>
+
+          <View style={styles.whySection}>
+            <Text style={styles.whyTitle}>Почему мы?</Text>
+            {AUTO_CREDIT_WHY_US.map((item) => (
+              <AppCard key={item.id} style={styles.whyCard} muted padded>
+                <Text style={styles.whyCardTitle}>{item.title}</Text>
+                <Text style={styles.whyCardText}>{item.text}</Text>
+              </AppCard>
+            ))}
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
 
       <View style={[styles.stickyBar, { paddingBottom: stickyBarPadding }]}>
         <View style={styles.stickyTextWrap}>
-          <Text style={styles.stickyLabel}>Платёж от</Text>
+          <Text style={styles.stickyLabel}>Платёж</Text>
           <Text style={styles.stickyAmount}>{formatRub(monthlyPayment)} / мес</Text>
         </View>
         <AppButton label="Оставить заявку" onPress={scrollToForm} style={styles.stickyBtn} />
@@ -336,42 +334,20 @@ const styles = StyleSheet.create({
     color: colors.text.primary,
     marginBottom: spacing.sm,
   },
-  carPicker: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: colors.surface.primary,
-    borderRadius: radius.lg,
-    padding: spacing.md,
-    marginBottom: spacing.xl,
-    gap: spacing.md,
-  },
-  carPickerText: {
-    flex: 1,
-  },
-  carPickerTitle: {
-    ...acTitle,
-    fontSize: 16,
-    color: colors.text.primary,
-    marginBottom: 4,
-  },
-  carPickerSubtitle: {
-    ...acText,
-    fontSize: 13,
-    color: colors.text.secondary,
-  },
-  carPickerAction: {
-    ...acText,
-    fontSize: 14,
-    color: colors.brand.primary,
-  },
   slider: {
     width: "100%",
     minHeight: 40,
     marginBottom: spacing.xs,
   },
-  termChipsWrap: {
+  sliderRange: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: spacing.lg,
+  },
+  sliderRangeText: {
+    ...acText,
+    fontSize: 12,
+    color: colors.text.muted,
   },
   formSection: {
     marginBottom: spacing.xxl,
@@ -403,12 +379,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     color: colors.text.secondary,
-  },
-  disclaimer: {
-    ...acText,
-    fontSize: 12,
-    lineHeight: 17,
-    color: colors.text.muted,
-    marginTop: spacing.sm,
   },
 });

@@ -1,5 +1,28 @@
+import type { AiCatalogItem, AiChatMessage } from "../types";
+
 export function createMessageId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+/** Titles for lead confirmation when local catalog is empty (remote chat). */
+export function resolveSelectedCarTitles(
+  catalog: AiCatalogItem[],
+  selectedIds: Set<string>,
+  messages: AiChatMessage[],
+): string[] {
+  const byId = new Map<string, string>();
+  for (const item of catalog) {
+    byId.set(item.id, item.title);
+  }
+  for (const message of messages) {
+    if (!("cars" in message)) continue;
+    for (const car of message.cars) {
+      byId.set(car.id, car.title);
+    }
+  }
+  return [...selectedIds]
+    .map((id) => byId.get(id))
+    .filter((title): title is string => typeof title === "string" && title.length > 0);
 }
 
 export function formatCatalogSourceLabel(

@@ -21,26 +21,18 @@ export type AutoCreditWhyUsItem = {
   text: string;
 };
 
-export type AutoCreditVehicle = {
-  id: string;
-  brand: string;
-  model: string;
-  title: string;
-  price: number;
-  oldPrice?: number;
-  year: number;
-  images: string[];
-  vin: string;
-  color: string;
-  engineVolume: string;
-  ptsStatus: string;
-};
+export const CREDIT_AMOUNT_MIN = 50_000;
+export const CREDIT_AMOUNT_MAX = 7_000_000;
+export const CREDIT_AMOUNT_STEP = 50_000;
+export const DEFAULT_CREDIT_AMOUNT = 1_350_000;
 
-export const DOWN_PAYMENT_PERCENTS = [10, 20, 30, 40, 50, 60, 70] as const;
-export const CREDIT_TERM_YEARS = [1, 2, 3, 4, 5, 6, 7] as const;
+export const DEFAULT_DOWN_PAYMENT = 0;
 
-export const DEFAULT_DOWN_PAYMENT_PERCENT = 70;
-export const DEFAULT_TERM_YEARS = 7;
+export const CREDIT_TERM_MONTHS_MIN = 12;
+export const CREDIT_TERM_MONTHS_MAX = 84;
+export const CREDIT_TERM_MONTHS_STEP = 1;
+export const DEFAULT_TERM_MONTHS = 36;
+export const CREDIT_TERM_MONTH_PRESETS = [12, 24, 36, 48, 60, 72, 84] as const;
 
 export const AUTO_CREDIT_BANKS: AutoCreditBank[] = [
   { key: "sovcom", label: "Совкомбанк", Icon: SovcomBankIcon },
@@ -74,3 +66,6 @@ export const AUTO_CREDIT_WHY_US: AutoCreditWhyUsItem[] = [
     text: "От первого звонка до передачи ключей — мы рядом. Проверяем документы, сопровождаем на сделке, помогаем с переоформлением и даём рекомендации по дальнейшей эксплуатации.",
   },
 ];
+
+export const AUTO_CREDIT_DISCLAIMER =
+  "Все расчёты приведены в информационных целях и не являются публичной офертой.";

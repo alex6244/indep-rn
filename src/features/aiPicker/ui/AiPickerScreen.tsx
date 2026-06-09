@@ -35,6 +35,7 @@ export function AiPickerScreen() {
   const {
     site,
     catalog,
+    catalogDisplayCount,
     catalogSource,
     useRemoteApi,
     catalogLoading,
@@ -79,6 +80,7 @@ export function AiPickerScreen() {
   } = useAiPickerLead({
     siteId: SITE_ID,
     catalog,
+    messages,
     selectedIds,
     useRemoteApi,
     scrollToEnd,
@@ -150,7 +152,7 @@ export function AiPickerScreen() {
           <Text style={styles.headerSubtitle}>
             Новые автомобили · {site.displayName}
             {catalogSource
-              ? ` · ${formatCatalogSourceLabel(catalogSource, catalog.length)}`
+              ? ` · ${formatCatalogSourceLabel(catalogSource, catalogDisplayCount)}`
               : ""}
           </Text>
           {apiServerWarning ? (

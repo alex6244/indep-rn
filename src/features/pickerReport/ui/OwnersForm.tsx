@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -13,6 +13,7 @@ import {
   DD_MM_YYYY_PLACEHOLDER,
   formatDdMmYyyyInput,
   type OwnerDateField,
+  type OwnerFieldErrors,
   validateOwnerDates,
 } from "../../../shared/validation/formatDdMmYyyy";
 import { PR_TYPO } from "./pickerReport.styles";
@@ -26,11 +27,11 @@ export type OwnerDraft = {
   endDate: string;
 };
 
-type OwnerFieldErrors = Partial<Record<OwnerDateField, string>>;
-
 type Props = {
   value: OwnerDraft[];
   onChange: (next: OwnerDraft[]) => void;
+  externalErrorsByOwnerId?: Record<string, OwnerFieldErrors>;
+  submitAttempt?: number;
 };
 
 function RadioOption({
@@ -69,8 +70,19 @@ function validateOwnerFieldErrors(owner: OwnerDraft): OwnerFieldErrors {
   return { [rowError.field]: rowError.message };
 }
 
-export function OwnersForm({ value, onChange }: Props) {
+export function OwnersForm({
+  value,
+  onChange,
+  externalErrorsByOwnerId,
+  submitAttempt = 0,
+}: Props) {
   const [fieldErrors, setFieldErrors] = useState<Record<string, OwnerFieldErrors>>({});
+
+  useEffect(() => {
+    if (!externalErrorsByOwnerId && submitAttempt === 0) return;
+    if (!externalErrorsByOwnerId) return;
+    setFieldErrors((prev) => ({ ...prev, ...externalErrorsByOwnerId }));
+  }, [externalErrorsByOwnerId, submitAttempt]);
 
   const setOwnerErrors = useCallback((ownerId: string, errors: OwnerFieldErrors) => {
     setFieldErrors((prev) => {
