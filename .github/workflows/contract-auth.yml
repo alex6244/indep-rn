@@ -1,0 +1,21 @@
+name: Auth contract (staging)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  contract-auth:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npm run test:contract:auth
+        env:
+          CONTRACT_TEST: "1"
+          CONTRACT_API_URL: ${{ secrets.CONTRACT_API_URL }}
+          CONTRACT_AUTH_EMAIL: ${{ secrets.CONTRACT_AUTH_EMAIL }}
+          CONTRACT_AUTH_OTP: ${{ secrets.CONTRACT_AUTH_OTP }}

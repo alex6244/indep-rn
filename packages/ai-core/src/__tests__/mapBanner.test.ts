@@ -1,4 +1,4 @@
-import { mapBannerToAiCatalogItem, mapBannerListToAiCatalog } from "../mapBannerToAiCatalogItem";
+import { mapBannerListToAiCatalog, mapBannerToAiCatalogItem } from "../mapBanner";
 
 describe("mapBannerToAiCatalogItem", () => {
   it("maps banner row to AiCatalogItem", () => {

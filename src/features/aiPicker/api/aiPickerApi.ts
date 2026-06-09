@@ -1,7 +1,12 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { envBool, envString } from "../../../config/env";
+import { envString } from "../../../config/env";
 import type { AiCatalogItem } from "../types";
-import type { AiPickerChatReply, AiPickerMeta } from "./aiPickerApiClient";
+import {
+  AI_PICKER_RATE_LIMIT_MESSAGE,
+  type AiPickerCatalog,
+  type AiPickerChatReply,
+  type AiPickerMeta,
+} from "./aiPickerEnv";
 
 export type SendAiChatArgs = {
   siteId: string;
@@ -17,9 +22,6 @@ export type SendAiLeadArgs = {
 
 const AI_FETCH_TIMEOUT_MS = 15_000;
 
-export const AI_PICKER_RATE_LIMIT_MESSAGE =
-  "Слишком много сообщений. Подождите минуту и попробуйте снова.";
-
 function getAiBaseUrl(): string {
   const url = envString("EXPO_PUBLIC_AI_API_URL");
   if (!url) throw new Error("AI API URL is not configured");
@@ -27,9 +29,6 @@ function getAiBaseUrl(): string {
 }
 
 function parseApiErrorMessage(payload: unknown, status: number): string {
-  if (status === 429) {
-    return AI_PICKER_RATE_LIMIT_MESSAGE;
-  }
   if (payload && typeof payload === "object" && "error" in payload) {
     const err = (payload as { error: unknown }).error;
     if (typeof err === "object" && err !== null && "message" in err) {
@@ -38,9 +37,9 @@ function parseApiErrorMessage(payload: unknown, status: number): string {
         return message;
       }
     }
-    if (typeof err === "string" && err.length > 0) {
-      return err;
-    }
+  }
+  if (status === 429) {
+    return AI_PICKER_RATE_LIMIT_MESSAGE;
   }
   return `AI server responded with HTTP ${status}`;
 }
@@ -98,15 +97,37 @@ export const aiPickerApi = createApi({
       },
     }),
 
+    getAiCatalog: builder.query<AiPickerCatalog, string>({
+      async queryFn(siteId) {
+        const data = (await aiFetch(`/v1/sites/${siteId}/catalog`)) as {
+          items: AiCatalogItem[];
+          catalogSource: "api" | "seed";
+        };
+
+        return {
+          data: {
+            items: data.items ?? [],
+            catalogSource: data.catalogSource,
+          },
+        };
+      },
+    }),
+
     sendAiChat: builder.mutation<AiPickerChatReply, SendAiChatArgs>({
       async queryFn(args) {
         const data = (await aiFetch("/v1/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(args),
-        })) as { text: string; cars: AiCatalogItem[] };
+        })) as { text: string; cars: AiCatalogItem[]; suggestLead?: boolean };
 
-        return { data: { text: data.text, cars: data.cars ?? [] } };
+        return {
+          data: {
+            text: data.text,
+            cars: data.cars ?? [],
+            suggestLead: data.suggestLead,
+          },
+        };
       },
     }),
 
@@ -123,7 +144,3 @@ export const aiPickerApi = createApi({
     }),
   }),
 });
-
-export function isAiPickerRtkEnabled(): boolean {
-  return envString("EXPO_PUBLIC_AI_API_URL") !== null && !envBool("EXPO_PUBLIC_ALLOW_HTTP_DEV");
-}

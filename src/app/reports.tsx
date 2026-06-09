@@ -92,7 +92,7 @@ export default function ReportsScreen() {
             reports={reports}
             onOpenReport={openReportDetails}
             showPdfDownload={!isPicker}
-            onPdfUnavailable={() => setInfoMessage("PDF пока недоступен")}
+            onPdfError={(message) => setInfoMessage(message)}
           />
         )}
       </ScrollView>

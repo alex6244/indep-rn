@@ -32,6 +32,7 @@
     "lint": "expo lint src e2e",
     "typecheck": "tsc --noEmit",
     "test": "jest",
+    "test:contract:auth": "cross-env CONTRACT_TEST=1 jest --config jest.contract.config.js",
     "ai-api:install": "npm install --prefix ai-api",
     "ai-api:dev": "npm run dev --prefix ai-api",
     "figma:pull": "node scripts/figma/pull.mjs",

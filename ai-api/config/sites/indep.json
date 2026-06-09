@@ -1,9 +1,0 @@
-{
-  "siteId": "indep",
-  "displayName": "Indep",
-  "mode": "multibrand",
-  "allowOrder": true,
-  "catalogBannersUrl": "https://indep.su/api/get-cars-to-banners",
-  "locale": "ru",
-  "disclaimer": "Цены указаны «от». Не является публичной офертой. Уточняйте наличие у менеджера."
-}

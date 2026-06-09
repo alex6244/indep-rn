@@ -5,8 +5,15 @@ import {
   buildWelcomeMessage,
   normalizePhoneInput,
 } from "../../../packages/ai-core/src/index";
-import { ensureCatalog, getCatalog, getSite } from "../catalog/catalogStore.js";
+import {
+  catalogObservabilityFields,
+  ensureCatalog,
+  getCatalog,
+  getSite,
+  refreshCatalog,
+} from "../catalog/catalogStore.js";
 import type { AiCatalogItem } from "../types.js";
+import { apiError } from "../lib/apiError.js";
 import { requireBrowserClientKey } from "../middleware/clientKey.js";
 import {
   rateLimitMiddleware,
@@ -42,9 +49,13 @@ export const v1 = new Hono();
 
 v1.get("/sites/:siteId/meta", rateLimitMiddleware("meta"), async (c) => {
   const siteId = c.req.param("siteId") ?? "";
-  if (!siteId) return c.json({ error: "invalid_site" }, 400);
+  if (!siteId) {
+    return c.json(apiError("invalid_site", "siteId is required"), 400);
+  }
   const site = getSite(siteId);
-  if (!site) return c.json({ error: "site_not_found" }, 404);
+  if (!site) {
+    return c.json(apiError("site_not_found", "Site not found"), 404);
+  }
 
   const catalog = await ensureCatalog(siteId);
   return c.json({
@@ -54,6 +65,26 @@ v1.get("/sites/:siteId/meta", rateLimitMiddleware("meta"), async (c) => {
     catalogCount: catalog.items.length,
     catalogSource: catalog.source,
     welcomeText: buildWelcomeMessage(catalog.items.length),
+    ...catalogObservabilityFields(catalog),
+  });
+});
+
+v1.get("/sites/:siteId/catalog", rateLimitMiddleware("meta"), async (c) => {
+  const siteId = c.req.param("siteId") ?? "";
+  if (!siteId) {
+    return c.json(apiError("invalid_site", "siteId is required"), 400);
+  }
+  const site = getSite(siteId);
+  if (!site) {
+    return c.json(apiError("site_not_found", "Site not found"), 404);
+  }
+
+  const catalog = await ensureCatalog(siteId);
+  return c.json({
+    siteId,
+    items: catalog.items,
+    catalogSource: catalog.source,
+    ...catalogObservabilityFields(catalog),
   });
 });
 
@@ -64,7 +95,7 @@ v1.post(
   async (c) => {
     const body = await c.req.json().catch(() => null);
     if (!body || typeof body.message !== "string" || typeof body.siteId !== "string") {
-      return c.json({ error: "invalid_body" }, 400);
+      return c.json(apiError("invalid_body", "Invalid request body"), 400);
     }
 
     const messageCheck = validateChatMessage(body.message);
@@ -73,7 +104,9 @@ v1.post(
     }
 
     const site = getSite(body.siteId);
-    if (!site) return c.json({ error: "site_not_found" }, 404);
+    if (!site) {
+      return c.json(apiError("site_not_found", "Site not found"), 404);
+    }
 
     const catalog = await ensureCatalog(body.siteId);
     const selectedCount =
@@ -82,7 +115,10 @@ v1.post(
     const fixedBrand =
       site.mode === "monobrand" ? site.brand : undefined;
     if (site.mode === "monobrand" && (!fixedBrand || fixedBrand.length === 0)) {
-      return c.json({ error: "site_brand_not_configured" }, 500);
+      return c.json(
+        apiError("site_brand_not_configured", "Monobrand site has no brand configured"),
+        500,
+      );
     }
 
     const reply = buildRuleBasedReply(messageCheck.message, catalog.items, {
@@ -111,7 +147,7 @@ v1.post(
       typeof body.phone !== "string" ||
       !Array.isArray(body.carIds)
     ) {
-      return c.json({ error: "invalid_body" }, 400);
+      return c.json(apiError("invalid_body", "Invalid request body"), 400);
     }
 
     const phoneRawCheck = validateLeadPhoneRaw(body.phone);
@@ -120,10 +156,14 @@ v1.post(
     }
 
     const site = getSite(body.siteId);
-    if (!site) return c.json({ error: "site_not_found" }, 404);
+    if (!site) {
+      return c.json(apiError("site_not_found", "Site not found"), 404);
+    }
 
     const phone = normalizePhoneInput(body.phone);
-    if (!phone) return c.json({ error: "invalid_phone" }, 400);
+    if (!phone) {
+      return c.json(apiError("invalid_phone", "Invalid phone number"), 400);
+    }
 
     const carIds = body.carIds.filter((id: unknown) => typeof id === "string");
     const carIdsCheck = validateCarIds(carIds);
@@ -131,7 +171,7 @@ v1.post(
       return c.json(carIdsCheck.body, 400);
     }
     if (carIdsCheck.carIds.length === 0) {
-      return c.json({ error: "no_cars" }, 400);
+      return c.json(apiError("no_cars", "At least one car must be selected"), 400);
     }
 
     const record: LeadRecord = {
@@ -161,10 +201,37 @@ v1.post(
 /** Dev-only: list leads when AI_API_DEV_LEADS=true and X-Dev-Key matches AI_API_DEV_KEY. */
 v1.get("/leads", (c) => {
   if (!isDevLeadsListingEnabled()) {
-    return c.json({ error: "not_found" }, 404);
+    return c.json(apiError("not_found", "Not found"), 404);
   }
   if (!isDevKeyValid(c.req.header("X-Dev-Key"))) {
-    return c.json({ error: "forbidden" }, 403);
+    return c.json(apiError("forbidden", "Forbidden"), 403);
   }
   return c.json({ leads });
+});
+
+/** Dev-only: force catalog refresh for a site. */
+v1.post("/admin/catalog/:siteId/refresh", async (c) => {
+  if (!isDevLeadsListingEnabled()) {
+    return c.json(apiError("not_found", "Not found"), 404);
+  }
+  if (!isDevKeyValid(c.req.header("X-Dev-Key"))) {
+    return c.json(apiError("forbidden", "Forbidden"), 403);
+  }
+
+  const siteId = c.req.param("siteId") ?? "";
+  if (!siteId) {
+    return c.json(apiError("invalid_site", "siteId is required"), 400);
+  }
+
+  const site = getSite(siteId);
+  if (!site) {
+    return c.json(apiError("site_not_found", "Site not found"), 404);
+  }
+
+  const catalog = await refreshCatalog(siteId);
+  return c.json({
+    catalogCount: catalog.items.length,
+    catalogSource: catalog.source,
+    ...catalogObservabilityFields(catalog),
+  });
 });

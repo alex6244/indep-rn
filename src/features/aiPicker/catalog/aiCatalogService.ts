@@ -1,8 +1,7 @@
 import indepSeed from "../../../data/ai/indep-banner-catalog.seed.json";
 import indepSite from "../../../data/ai/sites/indep.json";
+import { mapBannerListToAiCatalog, type BannerCatalogRow } from "@indep/ai-core";
 import type { AiCatalogItem, AiSiteProfile } from "../types";
-import type { BannerCatalogRow } from "./bannerApiTypes";
-import { mapBannerListToAiCatalog } from "./mapBannerToAiCatalogItem";
 
 const SITE_PROFILES: Record<string, AiSiteProfile> = {
   indep: indepSite as AiSiteProfile,

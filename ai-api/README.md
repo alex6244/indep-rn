@@ -31,6 +31,38 @@ EXPO_PUBLIC_AI_API_URL=http://localhost:8787
 
 На реальном устройстве вместо `localhost` — IP компьютера в локальной сети.
 
+EAS preview (`eas.json` → `build.preview.env`) задаёт `EXPO_PUBLIC_AI_API_URL` для internal-сборок.
+
+## Staging deploy
+
+Пошагово для **Selectel VPS**: [docs/DEPLOY-AI-API-SELECTEL.md](../docs/DEPLOY-AI-API-SELECTEL.md)
+
+Минимальный чеклист перед preview/TestFlight:
+
+1. Задеплойте `ai-api` на хост с HTTPS (Selectel VPS + nginx, или другой VPS).
+2. Задайте env на сервере (см. `.env.example` в `ai-api/`).
+3. На prod: `npm run start:prod` (или `pm2 start ai-api/ecosystem.config.cjs` из корня репо).
+4. Обновите URL в `eas.json` → `EXPO_PUBLIC_AI_API_URL` (без trailing slash).
+
+**Health-check:**
+
+```bash
+curl -sS https://<your-ai-api-host>/health
+curl -sS https://<your-ai-api-host>/v1/sites/indep/meta
+```
+
+**Smoke lead:**
+
+```bash
+curl -sS -X POST https://<your-ai-api-host>/v1/leads \
+  -H "Content-Type: application/json" \
+  -d '{"siteId":"indep","phone":"+79991234567","carIds":["test-id-1"]}'
+```
+
+Ожидание: HTTP 200, тело содержит `"ok":true` и `"message"`.
+
+Целевой staging URL в репозитории: `https://ai-api.indep.su` — замените после фактического деплоя.
+
 ## Сейчас
 
 - Каталог: `get-cars-to-banners` (indep.su) + fallback JSON из `../src/data/ai/`

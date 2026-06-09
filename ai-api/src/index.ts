@@ -4,13 +4,18 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { registerSite, ensureCatalog, getCatalog } from "./catalog/catalogStore.js";
+import {
+  catalogObservabilityFields,
+  ensureCatalog,
+  getCatalog,
+  registerSite,
+} from "./catalog/catalogStore.js";
 import type { AiSiteProfile } from "./types.js";
 import { v1 } from "./routes/v1.js";
 import { resolveCorsOrigin } from "./middleware/cors.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const CONFIG_DIR = path.resolve(__dirname, "../config/sites");
+const CONFIG_DIR = path.resolve(__dirname, "../../src/data/ai/sites");
 
 const app = new Hono();
 
@@ -29,6 +34,10 @@ app.get("/health", (c) => {
     ok: true,
     catalogCount: indep?.items.length ?? 0,
     catalogSource: indep?.source ?? null,
+    ...(indep ? catalogObservabilityFields(indep) : {
+      catalogLoadedAt: null,
+      catalogAgeSec: null,
+    }),
   });
 });
 

@@ -1,3 +1,4 @@
+// Local contract = mocked JSON fixtures. Live staging OTP contract: authService.staging.contract.test.ts
 import { clientReportsService as reportsService } from "../clientReportsService";
 
 jest.mock("../api", () => {

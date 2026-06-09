@@ -1,4 +1,12 @@
-export type { AiCatalogAvailability, AiCatalogItem } from "./types";
+export type {
+  AiCatalogAvailability,
+  AiCatalogItem,
+  AiCatalogSource,
+  AiSiteMode,
+  AiSiteProfile,
+  BannerCatalogRow,
+} from "./types";
+export { mapBannerListToAiCatalog, mapBannerToAiCatalogItem } from "./mapBanner";
 export type { CatalogFilter } from "./filterCatalog";
 export { diversifyByBrand, filterAiCatalog, isCrossoverTitle } from "./filterCatalog";
 export { parseUserIntent } from "./parseUserIntent";

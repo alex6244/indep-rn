@@ -1,18 +1,7 @@
-import type { AiCatalogItem } from "../types.js";
-
-type BannerRow = {
-  id: number;
-  mark_name: string;
-  model_name?: string;
-  full_name: string;
-  preview: string;
-  mark_logo?: string;
-  price_new: number;
-  price_old: number;
-};
+import type { AiCatalogItem, BannerCatalogRow } from "./types";
 
 export function mapBannerToAiCatalogItem(
-  row: BannerRow,
+  row: BannerCatalogRow,
   siteId: string,
   year = new Date().getFullYear(),
 ): AiCatalogItem {
@@ -33,7 +22,10 @@ export function mapBannerToAiCatalogItem(
   };
 }
 
-export function mapBannerListToAiCatalog(rows: unknown[], siteId: string): AiCatalogItem[] {
+export function mapBannerListToAiCatalog(
+  rows: unknown[],
+  siteId: string,
+): AiCatalogItem[] {
   const result: AiCatalogItem[] = [];
   for (const row of rows) {
     if (!row || typeof row !== "object") continue;

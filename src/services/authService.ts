@@ -31,7 +31,7 @@ type ConfirmVerificationPayload = {
 };
 
 /** Reads access token from common API shapes (camelCase, Laravel snake_case, `api_token`, nested `tokens`). */
-function pickAccessToken(source: unknown): string | null {
+export function pickAccessToken(source: unknown): string | null {
   if (!source || typeof source !== "object") return null;
   const o = source as Record<string, unknown>;
   for (const key of ["accessToken", "token", "access_token", "api_token"] as const) {
