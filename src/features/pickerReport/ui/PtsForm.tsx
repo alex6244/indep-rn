@@ -1,7 +1,22 @@
-import React from "react";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useCallback, useState } from "react";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import DropdownIcon from "../../../assets/icons/dropdown.svg";
 import { colors } from "../../../shared/theme/colors";
+import {
+  formatEngineVolumeInput,
+  formatVinInput,
+  validateEngineVolume,
+  validateVin,
+  validateYear,
+} from "../../../shared/validation/ptsValidation";
+import { YearBottomSheet } from "./YearBottomSheet";
 import { PR_TYPO } from "./pickerReport.styles";
 
 export type PtsType = "original" | "nonOriginal";
@@ -15,6 +30,12 @@ export type PtsFormState = {
   engineVolume: string;
   ptsType: PtsType;
   hasElectronicPts: boolean;
+};
+
+type PtsFieldErrors = {
+  vin?: string;
+  year?: string;
+  engineVolume?: string;
 };
 
 type Props = {
@@ -46,32 +67,43 @@ function Radio({
   );
 }
 
-function DropdownLikeInput({
-  value,
-  placeholder,
-  onChangeText,
-}: {
-  value: string;
-  placeholder: string;
-  onChangeText: (v: string) => void;
-}) {
-  return (
-    <View style={styles.dropdownWrap}>
-      <TextInput
-        style={styles.dropdownInput}
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        placeholderTextColor={colors.text.muted}
-      />
-      <View style={styles.dropdownIconWrap}>
-        <DropdownIcon width={14} height={14} />
-      </View>
-    </View>
-  );
-}
-
 export function PtsForm({ value, onChange }: Props) {
+  const [fieldErrors, setFieldErrors] = useState<PtsFieldErrors>({});
+  const [yearSheetVisible, setYearSheetVisible] = useState(false);
+
+  const clearFieldError = useCallback((field: keyof PtsFieldErrors) => {
+    setFieldErrors((prev) => {
+      if (!prev[field]) return prev;
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  }, []);
+
+  const setFieldError = useCallback((field: keyof PtsFieldErrors, message: string | undefined) => {
+    setFieldErrors((prev) => {
+      if (!message) {
+        if (!prev[field]) return prev;
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      }
+      return { ...prev, [field]: message };
+    });
+  }, []);
+
+  const handleVinBlur = useCallback(() => {
+    const result = validateVin(value.vin);
+    setFieldError("vin", result.ok ? undefined : result.message);
+  }, [setFieldError, value.vin]);
+
+  const handleEngineBlur = useCallback(() => {
+    const result = validateEngineVolume(value.engineVolume);
+    setFieldError("engineVolume", result.ok ? undefined : result.message);
+  }, [setFieldError, value.engineVolume]);
+
+  const yearLabel = value.year.trim() || "Укажите год выпуска";
+
   return (
     <View style={styles.card}>
       <Text style={styles.title}>Заполните данные из ПТС</Text>
@@ -79,12 +111,20 @@ export function PtsForm({ value, onChange }: Props) {
       <View style={styles.field}>
         <Text style={styles.label}>VIN</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, fieldErrors.vin ? styles.inputError : null]}
           value={value.vin}
-          onChangeText={(t) => onChange({ ...value, vin: t })}
+          onChangeText={(t) => {
+            clearFieldError("vin");
+            onChange({ ...value, vin: formatVinInput(t) });
+          }}
+          onBlur={handleVinBlur}
           placeholder="Введите VIN"
           placeholderTextColor={colors.text.muted}
+          autoCapitalize="characters"
+          autoCorrect={false}
+          maxLength={20}
         />
+        {fieldErrors.vin ? <Text style={styles.errorText}>{fieldErrors.vin}</Text> : null}
       </View>
 
       <View style={styles.field}>
@@ -111,31 +151,65 @@ export function PtsForm({ value, onChange }: Props) {
 
       <View style={styles.field}>
         <Text style={styles.label}>Год выпуска</Text>
-        <DropdownLikeInput
-          value={value.year}
-          placeholder="Укажите год выпуска"
-          onChangeText={(t) => onChange({ ...value, year: t })}
-        />
+        <Pressable
+          onPress={() => setYearSheetVisible(true)}
+          accessibilityRole="button"
+          accessibilityLabel={`Год выпуска: ${yearLabel}`}
+        >
+          <View style={styles.dropdownWrap} pointerEvents="none">
+            <TextInput
+              style={[
+                styles.dropdownInput,
+                fieldErrors.year ? styles.inputError : null,
+                !value.year.trim() && styles.dropdownPlaceholder,
+              ]}
+              value={value.year}
+              placeholder="Укажите год выпуска"
+              placeholderTextColor={colors.text.muted}
+              editable={false}
+            />
+            <View style={styles.dropdownIconWrap}>
+              <DropdownIcon width={14} height={14} />
+            </View>
+          </View>
+        </Pressable>
+        {fieldErrors.year ? <Text style={styles.errorText}>{fieldErrors.year}</Text> : null}
       </View>
 
       <View style={styles.field}>
         <Text style={styles.label}>Цвет</Text>
-        <DropdownLikeInput
-          value={value.color}
-          placeholder="Укажите цвет"
-          onChangeText={(t) => onChange({ ...value, color: t })}
-        />
+        <View style={styles.dropdownWrap}>
+          <TextInput
+            style={styles.dropdownInput}
+            value={value.color}
+            onChangeText={(t) => onChange({ ...value, color: t })}
+            placeholder="Укажите цвет"
+            placeholderTextColor={colors.text.muted}
+          />
+          <View style={styles.dropdownIconWrap}>
+            <DropdownIcon width={14} height={14} />
+          </View>
+        </View>
       </View>
 
       <View style={styles.field}>
         <Text style={styles.label}>Объём двигателя</Text>
-        <DropdownLikeInput
+        <TextInput
+          style={[styles.input, fieldErrors.engineVolume ? styles.inputError : null]}
           value={value.engineVolume}
-          placeholder="Укажите объём двигателя"
-          onChangeText={(t) =>
-            onChange({ ...value, engineVolume: t })
-          }
+          onChangeText={(t) => {
+            clearFieldError("engineVolume");
+            onChange({ ...value, engineVolume: formatEngineVolumeInput(t) });
+          }}
+          onBlur={handleEngineBlur}
+          placeholder="1.6"
+          placeholderTextColor={colors.text.muted}
+          keyboardType="decimal-pad"
+          maxLength={3}
         />
+        {fieldErrors.engineVolume ? (
+          <Text style={styles.errorText}>{fieldErrors.engineVolume}</Text>
+        ) : null}
       </View>
 
       <View style={styles.radioGroup}>
@@ -169,6 +243,25 @@ export function PtsForm({ value, onChange }: Props) {
           />
         </View>
       </View>
+
+      <YearBottomSheet
+        visible={yearSheetVisible}
+        yearText={value.year}
+        onApply={(year) => {
+          clearFieldError("year");
+          const yearResult = validateYear(year);
+          if (!yearResult.ok) {
+            setFieldError("year", yearResult.message);
+            return;
+          }
+          onChange({ ...value, year: yearResult.normalized });
+        }}
+        onReset={() => {
+          clearFieldError("year");
+          onChange({ ...value, year: "" });
+        }}
+        onClose={() => setYearSheetVisible(false)}
+      />
     </View>
   );
 }
@@ -199,6 +292,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface.neutral,
     paddingHorizontal: 14,
   },
+  inputError: {
+    borderWidth: 1,
+    borderColor: colors.brand.primary,
+  },
+  errorText: {
+    ...PR_TYPO.caption,
+    color: colors.text.warning,
+    marginTop: 6,
+  },
   dropdownWrap: {
     position: "relative",
   },
@@ -209,6 +311,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface.neutral,
     paddingHorizontal: 14,
     paddingRight: 32,
+    color: colors.text.primary,
+  },
+  dropdownPlaceholder: {
+    color: colors.text.muted,
   },
   dropdownIconWrap: {
     position: "absolute",
@@ -247,4 +353,3 @@ const styles = StyleSheet.create({
   radioLabel: PR_TYPO.radio,
   radioLabelActive: PR_TYPO.radioActive,
 });
-

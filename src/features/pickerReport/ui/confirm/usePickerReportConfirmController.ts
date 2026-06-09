@@ -4,12 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import type { Report } from "../../../../types/report";
 import { pickerReportsService } from "../../../../services/pickerReportsService";
 import { clientReportsService } from "../../../../services/clientReportsService";
+import { normalizeVinForCompare, validatePtsForm } from "../../../../shared/validation/ptsValidation";
 import {
   type DraftReport,
   PICKER_REPORT_DRAFT_STORAGE_KEY,
 } from "../pickerReportTypes";
-
-const normalizeVin = (vin: string) => (vin ?? "").toUpperCase().replace(/\s+/g, "");
 
 function isValidDraftReport(obj: unknown): obj is DraftReport {
   if (!obj || typeof obj !== "object") return false;
@@ -121,7 +120,7 @@ export function usePickerReportConfirmController(router: Router) {
 
   const isVinDuplicate = useMemo(() => {
     if (!draftReport) return false;
-    const inputVin = normalizeVin(draftReport.pts?.vin ?? "");
+    const inputVin = normalizeVinForCompare(draftReport.pts?.vin ?? "");
     if (!inputVin) return false;
 
     for (const report of reportsForDuplicateCheck) {
@@ -129,7 +128,7 @@ export function usePickerReportConfirmController(router: Router) {
       const mockVin = vinRow?.value;
       if (!mockVin) continue;
 
-      const mockNormalized = normalizeVin(mockVin).replace(/\*/g, "");
+      const mockNormalized = normalizeVinForCompare(mockVin).replace(/\*/g, "");
       if (!mockNormalized) continue;
 
       if (inputVin.includes(mockNormalized) || mockNormalized.includes(inputVin)) {
@@ -142,6 +141,15 @@ export function usePickerReportConfirmController(router: Router) {
 
   const handleConfirm = async () => {
     if (!draftReport) return;
+
+    const ptsError = validatePtsForm(draftReport.pts);
+    if (ptsError) {
+      setNotice({
+        tone: "error",
+        message: ptsError,
+      });
+      return;
+    }
 
     if (isVinDuplicate) {
       setVinModalOpen(true);

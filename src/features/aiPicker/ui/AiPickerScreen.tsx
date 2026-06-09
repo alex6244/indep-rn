@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BackCaretIcon from "../../../assets/icons/backCaret.svg";
 import { AppButton } from "../../../shared/ui/AppButton";
 import { colors } from "../../../shared/theme/colors";
+import { spacing } from "../../../shared/theme/spacing";
 import { formatCatalogSourceLabel, shouldShowLeadCta } from "../hooks/aiPickerUtils";
 import { useAiPickerBootstrap } from "../hooks/useAiPickerBootstrap";
 import { useAiPickerChat } from "../hooks/useAiPickerChat";
@@ -135,11 +136,16 @@ export function AiPickerScreen() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={0}
     >
-      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
-        <Pressable onPress={() => router.back()} hitSlop={12} accessibilityLabel="Назад">
+      <View style={[styles.header, { paddingTop: insets.top + spacing.md }]}>
+        <Pressable
+          style={styles.headerBack}
+          onPress={() => router.back()}
+          hitSlop={12}
+          accessibilityLabel="Назад"
+        >
           <BackCaretIcon width={24} height={24} />
         </Pressable>
-        <View style={{ flex: 1 }}>
+        <View style={styles.headerBody}>
           <Text style={styles.headerTitle}>Подбор с ИИ</Text>
           <Text style={styles.headerSubtitle}>
             Новые автомобили · {site.displayName}

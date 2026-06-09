@@ -12,6 +12,7 @@ import type { MediaUploadState } from "../MediaUploadCard";
 import type { PtsFormState } from "../PtsForm";
 import type { OwnerDraft } from "../OwnersForm";
 import { validateAllOwnersDates } from "../../../../shared/validation/formatDdMmYyyy";
+import { normalizePtsForm, validatePtsForm } from "../../../../shared/validation/ptsValidation";
 
 export function usePickerReportCreateController() {
   const router = useRouter();
@@ -117,6 +118,15 @@ export function usePickerReportCreateController() {
   }, []);
 
   const saveDraftAndContinue = useCallback(async () => {
+    const ptsError = validatePtsForm(draftReport.pts);
+    if (ptsError) {
+      setNotice({
+        tone: "error",
+        message: ptsError,
+      });
+      return;
+    }
+
     const ownersDateError = validateAllOwnersDates(draftReport.owners);
     if (ownersDateError) {
       setNotice({
@@ -126,10 +136,15 @@ export function usePickerReportCreateController() {
       return;
     }
 
+    const normalizedDraft = {
+      ...draftReport,
+      pts: normalizePtsForm(draftReport.pts),
+    };
+
     try {
       await AsyncStorage.setItem(
         PICKER_REPORT_DRAFT_STORAGE_KEY,
-        JSON.stringify(draftReport),
+        JSON.stringify(normalizedDraft),
       );
     } catch {
       setNotice({
@@ -139,6 +154,7 @@ export function usePickerReportCreateController() {
       return;
     }
 
+    setDraftReport(normalizedDraft);
     router.push("/selection-confirm" as Href);
   }, [draftReport, router]);
 

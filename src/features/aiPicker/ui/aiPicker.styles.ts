@@ -11,22 +11,30 @@ export const aiPickerStyles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     paddingHorizontal: spacing.md,
-    paddingBottom: spacing.sm,
+    paddingBottom: spacing.md,
     gap: spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: colors.border.muted,
     backgroundColor: colors.surface.primary,
   },
+  headerBack: {
+    marginTop: 2,
+  },
+  headerBody: {
+    flex: 1,
+    minWidth: 0,
+    gap: spacing.xs,
+  },
   headerTitle: {
     ...figmaText.titleBold,
     color: colors.text.primary,
-    flex: 1,
   },
   headerSubtitle: {
     ...figmaText.caption,
     color: colors.text.muted,
+    flexShrink: 1,
   },
   list: {
     flex: 1,

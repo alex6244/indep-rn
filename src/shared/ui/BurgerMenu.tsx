@@ -17,6 +17,8 @@ export type BurgerMenuItem = {
   key: string;
   label: string;
   href?: Href;
+  /** Use replace instead of push (e.g. «О нас» → главная). */
+  replace?: boolean;
   Icon?: React.ComponentType<{ width?: number; height?: number }>;
   onPress?: () => void;
 };
@@ -72,7 +74,10 @@ export function BurgerMenu({
               onPress={() => {
                 onClose();
                 if (it.onPress) return it.onPress();
-                if (it.href) router.push(it.href);
+                if (it.href) {
+                  if (it.replace) router.replace(it.href);
+                  else router.push(it.href);
+                }
               }}
             >
               {it.Icon ? (

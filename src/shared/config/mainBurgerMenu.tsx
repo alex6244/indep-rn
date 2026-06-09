@@ -44,7 +44,8 @@ export function getMainBurgerMenuItems(role?: UserRole | null): BurgerMenuItem[]
     {
       key: "about",
       label: "О нас",
-      href: "/about" as Href,
+      href: "/(tabs)" as Href,
+      replace: true,
       Icon: AboutIcon,
     },
   ];
