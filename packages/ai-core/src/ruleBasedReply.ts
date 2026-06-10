@@ -59,7 +59,15 @@ export function buildRuleBasedReply(
   }
 
   if (cars.length === 0 && intent.maxPrice) {
-    cars = filterAiCatalog(catalog, { maxPrice: intent.maxPrice }, 5);
+    cars = filterAiCatalog(
+      catalog,
+      {
+        maxPrice: intent.maxPrice,
+        bodyType: intent.bodyType,
+        brand: intent.brand,
+      },
+      5,
+    );
   }
 
   if (cars.length === 0) {
@@ -82,9 +90,13 @@ export function buildRuleBasedReply(
     }
 
     const hint =
-      intent.bodyType === "crossover"
-        ? "По кроссоверам в каталоге мало подсказок в названиях — укажите марку или бюджет, например: «KIA кроссовер до 3 млн»."
-        : "Не нашёл по запросу. Уточните марку (например, KIA, BELGEE) или бюджет «до 2,5 млн».";
+      intent.profile === "compact"
+        ? "Не нашёл компактных вариантов в загруженном каталоге. Уточните бюджет или марку — например: «KIA до 2 млн»."
+        : intent.bodyType === "crossover"
+          ? "По кроссоверам в каталоге мало подсказок в названиях — укажите марку или бюджет, например: «KIA кроссовер до 3 млн»."
+          : intent.bodyType === "sedan"
+            ? "По седанам не нашёл точных совпадений — укажите марку или бюджет, например: «KIA седан до 2 млн»."
+            : "Не нашёл по запросу. Уточните марку (например, KIA, BELGEE) или бюджет «до 2,5 млн».";
 
     return {
       text: hint,
@@ -96,6 +108,9 @@ export function buildRuleBasedReply(
   const filters: string[] = [];
   if (intent.brand) filters.push(`марка — ${intent.brand}`);
   if (intent.bodyType === "crossover") filters.push("кроссоверы");
+  if (intent.bodyType === "sedan") filters.push("седаны");
+  if (intent.bodyType === "hatchback") filters.push("хэтчбеки");
+  if (intent.profile === "compact") filters.push("компактные авто");
   if (intent.maxPrice) {
     filters.push(`бюджет до ${new Intl.NumberFormat("ru-RU").format(intent.maxPrice)} ₽`);
   }

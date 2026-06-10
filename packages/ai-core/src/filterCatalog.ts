@@ -1,11 +1,15 @@
 import type { AiCatalogItem } from "./types";
 
+export type BodyType = "crossover" | "sedan" | "hatchback";
+
 export type CatalogFilter = {
   brand?: string;
   maxPrice?: number;
   minPrice?: number;
   query?: string;
-  bodyType?: "crossover";
+  bodyType?: BodyType;
+  /** Компактные/доступные авто — для «молодой девушке», «первый авто» и т.п. */
+  profile?: "compact";
 };
 
 const CROSSOVER_TITLE_RE =
@@ -13,6 +17,21 @@ const CROSSOVER_TITLE_RE =
 
 export function isCrossoverTitle(title: string): boolean {
   return CROSSOVER_TITLE_RE.test(title);
+}
+
+const HATCHBACK_TITLE_RE =
+  /(picanto|polo|fabia|rio(?!\s+x)|sandero|хэтч|hatch|i20|kalina)/i;
+
+const SEDAN_MODEL_RE =
+  /(седан|sedan|cerato|ceed(?!\s+sw)|solaris|logan|granta(?!\s+cross)|vesta(?!\s+cross)|octavia|rapid|camry|corolla|elantra|aura|emgrand|preface|arrizo)/i;
+
+export function isHatchbackTitle(title: string): boolean {
+  return HATCHBACK_TITLE_RE.test(title);
+}
+
+export function isSedanTitle(title: string): boolean {
+  if (isCrossoverTitle(title) || isHatchbackTitle(title)) return false;
+  return SEDAN_MODEL_RE.test(title);
 }
 
 /** Round-robin по маркам, чтобы не отдавать 5× LADA подряд из начала каталога. */
@@ -42,11 +61,37 @@ export function diversifyByBrand(items: AiCatalogItem[], limit: number): AiCatal
   return result;
 }
 
+/** Доступные компактные модели с разнообразием по маркам. */
+export function filterAffordableCompact(
+  items: AiCatalogItem[],
+  maxPrice: number,
+  limit = 5,
+): AiCatalogItem[] {
+  const affordable = items
+    .filter((item) => item.priceFrom <= maxPrice)
+    .sort((a, b) => a.priceFrom - b.priceFrom);
+
+  const preferred = affordable.filter(
+    (item) =>
+      !isCrossoverTitle(item.title) &&
+      (isHatchbackTitle(item.title) ||
+        isSedanTitle(item.title) ||
+        item.priceFrom <= 1_400_000),
+  );
+
+  const pool = (preferred.length > 0 ? preferred : affordable).slice(0, 50);
+  return diversifyByBrand(pool, limit);
+}
+
 export function filterAiCatalog(
   items: AiCatalogItem[],
   filter: CatalogFilter,
   limit = 5,
 ): AiCatalogItem[] {
+  if (filter.profile === "compact" && typeof filter.maxPrice === "number") {
+    return filterAffordableCompact(items, filter.maxPrice, limit);
+  }
+
   let list = items;
 
   if (filter.brand) {
@@ -69,6 +114,14 @@ export function filterAiCatalog(
     list = list.filter((item) => isCrossoverTitle(item.title));
   }
 
+  if (filter.bodyType === "sedan") {
+    list = list.filter((item) => isSedanTitle(item.title));
+  }
+
+  if (filter.bodyType === "hatchback") {
+    list = list.filter((item) => isHatchbackTitle(item.title));
+  }
+
   if (filter.query) {
     const q = filter.query.toLowerCase();
     list = list.filter(
@@ -77,7 +130,13 @@ export function filterAiCatalog(
     );
   }
 
-  if (filter.bodyType === "crossover" && !filter.brand && list.length > 0) {
+  if (
+    (filter.bodyType === "crossover" ||
+      filter.bodyType === "sedan" ||
+      filter.bodyType === "hatchback") &&
+    !filter.brand &&
+    list.length > 0
+  ) {
     const pool = list.slice(0, Math.min(list.length, 40));
     return diversifyByBrand(pool, limit);
   }

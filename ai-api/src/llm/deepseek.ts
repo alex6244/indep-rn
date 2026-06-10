@@ -16,7 +16,7 @@ export function isDeepSeekEnabled(): boolean {
 
 export async function completeDeepSeekChat(
   messages: DeepSeekMessage[],
-  options?: { signal?: AbortSignal },
+  options?: { signal?: AbortSignal; jsonObject?: boolean },
 ): Promise<string> {
   const apiKey = getApiKey();
   if (!apiKey) {
@@ -27,7 +27,7 @@ export async function completeDeepSeekChat(
     process.env.DEEPSEEK_API_BASE_URL ?? "https://api.deepseek.com"
   ).replace(/\/$/, "");
   const model = process.env.DEEPSEEK_MODEL ?? "deepseek-chat";
-  const timeoutMs = envInt("DEEPSEEK_TIMEOUT_MS", 12_000);
+  const timeoutMs = envInt("DEEPSEEK_TIMEOUT_MS", 20_000);
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -45,6 +45,7 @@ export async function completeDeepSeekChat(
         stream: false,
         temperature: 0.6,
         max_tokens: envInt("DEEPSEEK_MAX_TOKENS", 400),
+        ...(options?.jsonObject ? { response_format: { type: "json_object" } } : {}),
       }),
       signal: options?.signal ?? controller.signal,
     });

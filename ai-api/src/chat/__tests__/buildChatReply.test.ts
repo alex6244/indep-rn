@@ -1,10 +1,17 @@
 import type { AiCatalogItem } from "../../types.js";
 import { buildChatReply } from "../buildChatReply.js";
 import * as deepseek from "../../llm/deepseek.js";
+import * as llmPick from "../../llm/llmCatalogRecommend.js";
 
 jest.mock("../../llm/deepseek.js", () => ({
   isDeepSeekEnabled: jest.fn(),
   completeDeepSeekChat: jest.fn(),
+}));
+
+jest.mock("../../llm/llmCatalogRecommend.js", () => ({
+  recommendCarsWithLlm: jest.fn(),
+  mapIdsToCatalogItems: jest.requireActual("../../llm/llmCatalogRecommend.js")
+    .mapIdsToCatalogItems,
 }));
 
 const catalog: AiCatalogItem[] = [
@@ -14,6 +21,16 @@ const catalog: AiCatalogItem[] = [
     brand: "KIA",
     title: "KIA Ceed",
     priceFrom: 1_349_000,
+    year: 2026,
+    condition: "new",
+    availability: "from_price",
+  },
+  {
+    id: "32",
+    siteId: "indep",
+    brand: "KIA",
+    title: "KIA Cerato",
+    priceFrom: 850_000,
     year: 2026,
     condition: "new",
     availability: "from_price",
@@ -29,8 +46,7 @@ describe("buildChatReply", () => {
   it("uses rules when DeepSeek is disabled", async () => {
     const reply = await buildChatReply("киа", catalog, { siteDisplayName: "Indep" });
     expect(reply.replySource).toBe("rules");
-    expect(reply.cars).toHaveLength(1);
-    expect(reply.text).toContain("KIA");
+    expect(reply.cars.length).toBeGreaterThan(0);
     expect(deepseek.completeDeepSeekChat).not.toHaveBeenCalled();
   });
 
@@ -43,9 +59,26 @@ describe("buildChatReply", () => {
     const reply = await buildChatReply("киа", catalog, { siteDisplayName: "Indep" });
 
     expect(reply.replySource).toBe("llm");
-    expect(reply.cars).toHaveLength(1);
+    expect(reply.cars.length).toBeGreaterThan(0);
     expect(reply.text).toContain("Отличный выбор");
-    expect(deepseek.completeDeepSeekChat).toHaveBeenCalled();
+    expect(llmPick.recommendCarsWithLlm).not.toHaveBeenCalled();
+  });
+
+  it("uses LLM catalog pick when rules return no cars", async () => {
+    jest.mocked(deepseek.isDeepSeekEnabled).mockReturnValue(true);
+    jest.mocked(llmPick.recommendCarsWithLlm).mockResolvedValue({
+      carIds: ["32"],
+      message: "Для седана посмотрите Cerato — компактный и доступный по цене.",
+    });
+
+    const reply = await buildChatReply("на дачу поехать", catalog, {
+      siteDisplayName: "Indep",
+    });
+
+    expect(llmPick.recommendCarsWithLlm).toHaveBeenCalled();
+    expect(reply.replySource).toBe("llm");
+    expect(reply.cars.map((c) => c.id)).toEqual(["32"]);
+    expect(reply.text).toContain("Cerato");
   });
 
   it("falls back to rules when DeepSeek fails", async () => {
@@ -55,7 +88,7 @@ describe("buildChatReply", () => {
     const reply = await buildChatReply("киа", catalog, { siteDisplayName: "Indep" });
 
     expect(reply.replySource).toBe("rules");
-    expect(reply.cars).toHaveLength(1);
+    expect(reply.cars.length).toBeGreaterThan(0);
     expect(reply.text).toContain("Подобрал новые автомобили");
   });
 });

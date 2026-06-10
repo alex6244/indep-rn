@@ -17,6 +17,10 @@ const BRAND_ALIASES: Record<string, string[]> = {
 };
 
 const CROSSOVER_RE = /кроссовер|внедорож|паркетник|\bsuv\b|джип/i;
+const SEDAN_RE = /седан|sedan/i;
+const HATCHBACK_RE = /хэтч|хетч|hatchback|\bhatch\b/i;
+const YOUNG_DRIVER_RE =
+  /девушк|молод(ой|ая|ым|ым)|перв(ый|ая|ое)\s+авто|для\s+город|компакт/i;
 
 export function parseUserIntent(text: string): CatalogFilter {
   const normalized = text.toLowerCase().replace(/\s+/g, " ");
@@ -24,7 +28,11 @@ export function parseUserIntent(text: string): CatalogFilter {
 
   if (CROSSOVER_RE.test(normalized)) {
     filter.bodyType = "crossover";
-  } else {
+  } else if (SEDAN_RE.test(normalized)) {
+    filter.bodyType = "sedan";
+  } else if (HATCHBACK_RE.test(normalized)) {
+    filter.bodyType = "hatchback";
+  } else if (!YOUNG_DRIVER_RE.test(normalized)) {
     filter.query = normalized;
   }
 
@@ -49,6 +57,11 @@ export function parseUserIntent(text: string): CatalogFilter {
 
   if (/дешев|бюджет|недорог|подешевле/.test(normalized) && !filter.maxPrice) {
     filter.maxPrice = 2_500_000;
+  }
+
+  if (YOUNG_DRIVER_RE.test(normalized)) {
+    if (!filter.maxPrice) filter.maxPrice = 2_500_000;
+    if (!filter.bodyType && !filter.brand) filter.profile = "compact";
   }
 
   return filter;
