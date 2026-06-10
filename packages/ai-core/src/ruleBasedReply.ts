@@ -93,16 +93,19 @@ export function buildRuleBasedReply(
     };
   }
 
-  const parts: string[] = ["Подобрал новые автомобили с ценой «от»:"];
-  if (intent.brand) parts.push(`марка — ${intent.brand}`);
-  if (intent.bodyType === "crossover") parts.push("кроссоверы");
+  const filters: string[] = [];
+  if (intent.brand) filters.push(`марка — ${intent.brand}`);
+  if (intent.bodyType === "crossover") filters.push("кроссоверы");
   if (intent.maxPrice) {
-    parts.push(`бюджет до ${new Intl.NumberFormat("ru-RU").format(intent.maxPrice)} ₽`);
+    filters.push(`бюджет до ${new Intl.NumberFormat("ru-RU").format(intent.maxPrice)} ₽`);
   }
-  parts.push(`(${cars.length} вариантов). Отметьте понравившиеся и оставьте телефон.`);
+  const filterText = filters.length > 0 ? `: ${filters.join(", ")}` : "";
+  const text =
+    `Подобрал новые автомобили с ценой «от»${filterText} ` +
+    `(${cars.length} вариантов). Отметьте понравившиеся и оставьте телефон.`;
 
   return {
-    text: parts.join(", ").replace(", (", " ("),
+    text,
     cars,
     suggestLead: (options?.selectedCount ?? 0) > 0,
   };

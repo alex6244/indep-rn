@@ -30,10 +30,12 @@ app.use(
 
 app.get("/health", (c) => {
   const indep = getCatalog("indep");
+  const deepSeekConfigured = Boolean(process.env.DEEPSEEK_API_KEY?.trim());
   return c.json({
     ok: true,
     catalogCount: indep?.items.length ?? 0,
     catalogSource: indep?.source ?? null,
+    deepSeekConfigured,
     ...(indep ? catalogObservabilityFields(indep) : {
       catalogLoadedAt: null,
       catalogAgeSec: null,

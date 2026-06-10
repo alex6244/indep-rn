@@ -20,7 +20,7 @@ export type SendAiLeadArgs = {
   carIds: string[];
 };
 
-const AI_FETCH_TIMEOUT_MS = 15_000;
+const AI_FETCH_TIMEOUT_MS = 30_000;
 
 function getAiBaseUrl(): string {
   const url = envString("EXPO_PUBLIC_AI_API_URL");

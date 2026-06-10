@@ -1,10 +1,10 @@
 import { Hono } from "hono";
 import {
   buildLeadSuccessMessage,
-  buildRuleBasedReply,
   buildWelcomeMessage,
   normalizePhoneInput,
 } from "../../../packages/ai-core/src/index";
+import { buildChatReply } from "../chat/buildChatReply.js";
 import {
   catalogObservabilityFields,
   ensureCatalog,
@@ -121,9 +121,10 @@ v1.post(
       );
     }
 
-    const reply = buildRuleBasedReply(messageCheck.message, catalog.items, {
+    const reply = await buildChatReply(messageCheck.message, catalog.items, {
       selectedCount,
       fixedBrand,
+      siteDisplayName: site.displayName,
     });
 
     return c.json({
@@ -131,6 +132,7 @@ v1.post(
       cars: reply.cars,
       suggestLead: reply.suggestLead,
       catalogSource: catalog.source,
+      replySource: reply.replySource,
     });
   },
 );

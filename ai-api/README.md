@@ -67,7 +67,7 @@ curl -sS -X POST https://<your-ai-api-host>/v1/leads \
 
 - Каталог: `get-cars-to-banners` (indep.su) + fallback JSON из `../src/data/ai/`
 - Ответы: **правила** из `packages/ai-core` (общий код с приложением)
-- DeepSeek — позже через `DEEPSEEK_API_KEY`
+- DeepSeek — `DEEPSEEK_API_KEY` в `.env` на сервере; машины из каталога (rules), текст от LLM; fallback на rules
 - `GET /v1/leads` — только dev: `AI_API_DEV_LEADS=true` + заголовок `X-Dev-Key: <AI_API_DEV_KEY>`
 
 ## Защита от злоупотреблений
