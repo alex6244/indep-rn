@@ -1,6 +1,6 @@
 import { useCallback, useState, type Dispatch, type SetStateAction } from "react";
 import { aiPickerApi } from "../api/aiPickerApi";
-import { AI_PICKER_SERVER_UNAVAILABLE_MESSAGE } from "../api/aiPickerEnv";
+import { resolveAiPickerRemoteError } from "../api/resolveAiPickerRemoteError";
 import { buildLeadSuccessMessage, normalizePhoneInput } from "../chat/ruleBasedReply";
 import type { AiCatalogItem, AiChatMessage } from "../types";
 import { useAppDispatch } from "../../../store/hooks";
@@ -59,11 +59,7 @@ export function useAiPickerLead({
             assistantText = remote.message;
             leadAccepted = true;
           } catch (error) {
-            const detail =
-              error instanceof Error && error.message.trim().length > 0
-                ? error.message
-                : AI_PICKER_SERVER_UNAVAILABLE_MESSAGE;
-            assistantText = `${detail} Заявка не отправлена.`;
+            assistantText = `${resolveAiPickerRemoteError(error)} Заявка не отправлена.`;
           }
         } else {
           if (__DEV__) {

@@ -1,4 +1,4 @@
-import { useRouter, type Href } from "expo-router";
+import { router, useRouter, type Href } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import AboutIcon from "../../assets/icons/burger/about.svg";
@@ -11,7 +11,33 @@ import type { BurgerMenuItem } from "../ui/BurgerMenu";
 import { colors } from "../theme/colors";
 import type { UserRole } from "../../types/user";
 
-export function getMainBurgerMenuItems(role?: UserRole | null): BurgerMenuItem[] {
+type MainBurgerMenuOptions = {
+  /** Если задан — гость уходит на auth вместо /ai-picker */
+  checkAuth?: () => boolean;
+};
+
+export function getMainBurgerMenuItems(
+  role?: UserRole | null,
+  options?: MainBurgerMenuOptions,
+): BurgerMenuItem[] {
+  const aiPickerItem: BurgerMenuItem = options?.checkAuth
+    ? {
+        key: "ai-picker",
+        label: "Подбор новых авто с ИИ",
+        Icon: AiPickerMenuIcon,
+        onPress: () => {
+          if (options.checkAuth?.()) {
+            router.push("/ai-picker" as Href);
+          }
+        },
+      }
+    : {
+        key: "ai-picker",
+        label: "Подбор новых авто с ИИ",
+        href: "/ai-picker" as Href,
+        Icon: AiPickerMenuIcon,
+      };
+
   return [
     {
       key: "favorites",
@@ -19,12 +45,7 @@ export function getMainBurgerMenuItems(role?: UserRole | null): BurgerMenuItem[]
       href: "/(tabs)/favorites" as Href,
       Icon: FavIcon,
     },
-    {
-      key: "ai-picker",
-      label: "Подбор новых авто с ИИ",
-      href: "/ai-picker" as Href,
-      Icon: AiPickerMenuIcon,
-    },
+    aiPickerItem,
     ...(role === "picker"
       ? [
           {

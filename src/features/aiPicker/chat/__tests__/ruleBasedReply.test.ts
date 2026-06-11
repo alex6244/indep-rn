@@ -161,12 +161,23 @@ describe("buildRuleBasedReply", () => {
         condition: "new",
         availability: "from_price",
       },
+      {
+        id: "5",
+        siteId: "indep",
+        brand: "LADA",
+        title: "LADA Granta Седан",
+        priceFrom: 649_900,
+        imageUrl: "https://example.com/5.webp",
+        year: 2025,
+        condition: "new",
+        availability: "from_price",
+      },
     ];
     const reply = buildRuleBasedReply("для молодой девушки", catalog);
     expect(reply.cars.length).toBeGreaterThan(0);
     expect(reply.cars.every((c) => c.priceFrom <= 2_500_000)).toBe(true);
     expect(reply.cars.some((c) => /picanto|rio|sandero/i.test(c.title))).toBe(true);
-    expect(reply.cars.some((c) => /sportage/i.test(c.title))).toBe(false);
+    expect(reply.cars.some((c) => /sportage|granta/i.test(c.title))).toBe(false);
   });
 
   it("filters by brand and budget", () => {

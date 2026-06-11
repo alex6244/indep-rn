@@ -7,10 +7,8 @@ import {
   buildCatalogFiltersOverlayProps,
   CatalogFiltersOverlay,
 } from "../../features/filters/ui/CatalogFiltersOverlay";
-import {
-  getMainBurgerMenuItems,
-  MainBurgerMenuFooter,
-} from "../../shared/config/mainBurgerMenu";
+import { MainBurgerMenuFooter } from "../../shared/config/mainBurgerMenu";
+import { useMainBurgerMenuItems } from "../../shared/config/useMainBurgerMenuItems";
 import { BurgerMenu } from "../../shared/ui/BurgerMenu";
 import { CatalogFiltersDrawer } from "../../widgets/catalog/CatalogFiltersDrawer";
 import { ReportsPackageSelectModal } from "../../widgets/reports/ReportsPackageSelectModal";
@@ -18,6 +16,7 @@ import { useReportsPackagePurchaseModal } from "../../widgets/reports/useReports
 
 export default function CatalogTab() {
   const { user, logout } = useAuth();
+  const burgerItems = useMainBurgerMenuItems();
   const [menuOpen, setMenuOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const reportsPackageModal = useReportsPackagePurchaseModal();
@@ -60,7 +59,7 @@ export default function CatalogTab() {
       <BurgerMenu
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
-        items={getMainBurgerMenuItems(user?.role)}
+        items={burgerItems}
         footer={<MainBurgerMenuFooter onLogout={logout} />}
       />
     </CatalogView>

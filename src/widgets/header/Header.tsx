@@ -11,10 +11,8 @@ import Logo from "../../assets/logo.svg";
 import { figmaText } from "../../shared/theme/typography";
 import FavNavIcon from "../../assets/icons/burger/favourites.svg";
 import { useAuth } from "../../contexts/AuthContext";
-import {
-  getMainBurgerMenuItems,
-  MainBurgerMenuFooter,
-} from "../../shared/config/mainBurgerMenu";
+import { MainBurgerMenuFooter } from "../../shared/config/mainBurgerMenu";
+import { useMainBurgerMenuItems } from "../../shared/config/useMainBurgerMenuItems";
 import { BurgerButton } from "../../shared/ui/BurgerButton";
 import { BurgerMenu } from "../../shared/ui/BurgerMenu";
 
@@ -39,6 +37,7 @@ export const Header = ({
   const insets = useSafeAreaInsets();
   const { user, logout } = useAuth();
   const router = useRouter();
+  const burgerItems = useMainBurgerMenuItems();
 
   const useExternalBurger = typeof onOpenBurger === "function";
 
@@ -101,7 +100,7 @@ export const Header = ({
         <BurgerMenu
           open={burgerOpen}
           onClose={closeBurger}
-          items={getMainBurgerMenuItems(user?.role)}
+          items={burgerItems}
           footer={<MainBurgerMenuFooter onLogout={logout} />}
         />
       ) : null}

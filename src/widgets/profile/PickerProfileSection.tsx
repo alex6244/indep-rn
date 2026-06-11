@@ -3,7 +3,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Image } from "expo-image";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { getMainBurgerMenuItems } from "../../shared/config/mainBurgerMenu";
+import { useMainBurgerMenuItems } from "../../shared/config/useMainBurgerMenuItems";
 import { BurgerMenu } from "../../shared/ui/BurgerMenu";
 import { BalanceModal } from "./BalanceModal";
 import { ProfileIdentityCard } from "./ProfileIdentityCard";
@@ -39,6 +39,7 @@ export function PickerProfileSection({ name, phone, onLogout }: Props) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
+  const burgerItems = useMainBurgerMenuItems();
   const [menuOpen, setMenuOpen] = useState(false);
   const [balanceModalOpen, setBalanceModalOpen] = useState(false);
   const reportsPackageModal = useReportsPackagePurchaseModal();
@@ -169,7 +170,7 @@ export function PickerProfileSection({ name, phone, onLogout }: Props) {
       <BurgerMenu
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
-        items={getMainBurgerMenuItems(user?.role)}
+        items={burgerItems}
         footer={
           <ProfileLogoutRow
             onPress={() => {

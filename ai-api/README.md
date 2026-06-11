@@ -81,6 +81,18 @@ curl -sS -X POST https://<your-ai-api-host>/v1/leads \
 
 `X-AI-Client-Key` **не** защищает мобилку (секрет в APK извлекается). Rate limit — основная защита.
 
+## Auth (ИИ только для залогиненных)
+
+Мобилка шлёт `Authorization: Bearer <access_token>`. `ai-api` проверяет токен запросом к Laravel `GET /me`.
+
+| Env | Описание |
+|-----|----------|
+| `AI_API_AUTH_REQUIRED` | `true` в production по умолчанию; `false` для локального dev без Laravel |
+| `AI_API_AUTH_ME_URL` | Полный URL, напр. `https://indep.su/api/v1.0/me` |
+| `AI_API_AUTH_API_BASE` | Альтернатива: база API + `/me` |
+
+Без валидного токена: `401` + `{ "error": { "code": "unauthorized", ... } }`.
+
 ### Проверка rate limit
 
 ```bash

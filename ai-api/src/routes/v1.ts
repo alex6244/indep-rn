@@ -15,9 +15,8 @@ import {
 import type { AiCatalogItem } from "../types.js";
 import { apiError } from "../lib/apiError.js";
 import { requireBrowserClientKey } from "../middleware/clientKey.js";
-import {
-  rateLimitMiddleware,
-} from "../middleware/rateLimit.js";
+import { rateLimitMiddleware } from "../middleware/rateLimit.js";
+import { requireUserAuth } from "../middleware/requireUserAuth.js";
 import {
   validateCarIds,
   validateChatMessage,
@@ -47,7 +46,7 @@ function isDevKeyValid(header: string | undefined): boolean {
 
 export const v1 = new Hono();
 
-v1.get("/sites/:siteId/meta", rateLimitMiddleware("meta"), async (c) => {
+v1.get("/sites/:siteId/meta", rateLimitMiddleware("meta"), requireUserAuth(), async (c) => {
   const siteId = c.req.param("siteId") ?? "";
   if (!siteId) {
     return c.json(apiError("invalid_site", "siteId is required"), 400);
@@ -69,7 +68,7 @@ v1.get("/sites/:siteId/meta", rateLimitMiddleware("meta"), async (c) => {
   });
 });
 
-v1.get("/sites/:siteId/catalog", rateLimitMiddleware("meta"), async (c) => {
+v1.get("/sites/:siteId/catalog", rateLimitMiddleware("meta"), requireUserAuth(), async (c) => {
   const siteId = c.req.param("siteId") ?? "";
   if (!siteId) {
     return c.json(apiError("invalid_site", "siteId is required"), 400);
@@ -91,6 +90,7 @@ v1.get("/sites/:siteId/catalog", rateLimitMiddleware("meta"), async (c) => {
 v1.post(
   "/chat",
   rateLimitMiddleware("chat"),
+  requireUserAuth(),
   requireBrowserClientKey(),
   async (c) => {
     const body = await c.req.json().catch(() => null);
@@ -140,6 +140,7 @@ v1.post(
 v1.post(
   "/leads",
   rateLimitMiddleware("leads"),
+  requireUserAuth(),
   requireBrowserClientKey(),
   async (c) => {
     const body = await c.req.json().catch(() => null);

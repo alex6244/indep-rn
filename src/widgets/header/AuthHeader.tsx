@@ -4,10 +4,8 @@ import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../../contexts/AuthContext";
 import { colors } from "../../shared/theme/colors";
-import {
-  getMainBurgerMenuItems,
-  MainBurgerMenuFooter,
-} from "../../shared/config/mainBurgerMenu";
+import { MainBurgerMenuFooter } from "../../shared/config/mainBurgerMenu";
+import { useMainBurgerMenuItems } from "../../shared/config/useMainBurgerMenuItems";
 import { BurgerButton } from "../../shared/ui/BurgerButton";
 import { BurgerMenu } from "../../shared/ui/BurgerMenu";
 
@@ -16,6 +14,7 @@ export function AuthHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const insets = useSafeAreaInsets();
   const { user, logout } = useAuth();
+  const burgerItems = useMainBurgerMenuItems();
 
   return (
     <>
@@ -36,7 +35,7 @@ export function AuthHeader() {
       <BurgerMenu
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
-        items={getMainBurgerMenuItems(user?.role)}
+        items={burgerItems}
         footer={user ? <MainBurgerMenuFooter onLogout={logout} /> : undefined}
       />
     </>

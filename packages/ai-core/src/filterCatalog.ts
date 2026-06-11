@@ -34,6 +34,18 @@ export function isSedanTitle(title: string): boolean {
   return SEDAN_MODEL_RE.test(title);
 }
 
+/** Бюджетные «рабочие» седаны — не для профиля «молодой девушке». */
+const BUDGET_SEDAN_RE =
+  /(granta(?!\s+cross)|vesta(?!\s+cross)|logan|kalina|priora)/i;
+
+const CITY_COMPACT_RE =
+  /(picanto|rio|sandero|polo|fabia|i20|solaris\s+hc|cerato|ceed(?!\s+sw)|city\s+m|eonix)/i;
+
+export function isCityCompactTitle(title: string): boolean {
+  if (isCrossoverTitle(title) || BUDGET_SEDAN_RE.test(title)) return false;
+  return isHatchbackTitle(title) || CITY_COMPACT_RE.test(title);
+}
+
 /** Round-robin по маркам, чтобы не отдавать 5× LADA подряд из начала каталога. */
 export function diversifyByBrand(items: AiCatalogItem[], limit: number): AiCatalogItem[] {
   const queues = new Map<string, AiCatalogItem[]>();
@@ -71,16 +83,20 @@ export function filterAffordableCompact(
     .filter((item) => item.priceFrom <= maxPrice)
     .sort((a, b) => a.priceFrom - b.priceFrom);
 
-  const preferred = affordable.filter(
-    (item) =>
-      !isCrossoverTitle(item.title) &&
-      (isHatchbackTitle(item.title) ||
-        isSedanTitle(item.title) ||
-        item.priceFrom <= 1_400_000),
-  );
+  const preferred = affordable.filter((item) => isCityCompactTitle(item.title));
 
-  const pool = (preferred.length > 0 ? preferred : affordable).slice(0, 50);
-  return diversifyByBrand(pool, limit);
+  let pool = preferred;
+  if (pool.length < limit) {
+    const extra = affordable.filter(
+      (item) =>
+        !isCrossoverTitle(item.title) &&
+        !BUDGET_SEDAN_RE.test(item.title) &&
+        !pool.some((p) => p.id === item.id),
+    );
+    pool = [...pool, ...extra];
+  }
+
+  return diversifyByBrand(pool.slice(0, 50), limit);
 }
 
 export function filterAiCatalog(

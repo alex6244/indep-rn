@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { aiPickerApi } from "../api/aiPickerApi";
-import {
-  AI_PICKER_SERVER_UNAVAILABLE_MESSAGE,
-  isAiPickerLocalFallbackEnabled,
-} from "../api/aiPickerEnv";
+import { isAiPickerLocalFallbackEnabled } from "../api/aiPickerEnv";
+import { isAiPickerUnauthorizedError } from "../api/aiPickerApiError";
+import { resolveAiPickerRemoteError } from "../api/resolveAiPickerRemoteError";
 import { buildRuleBasedReply } from "../chat/ruleBasedReply";
 import type { AiCatalogItem, AiChatMessage, AiSiteProfile } from "../types";
 import { useAppDispatch } from "../../../store/hooks";
@@ -75,14 +74,16 @@ export function useAiPickerChat({
             selectedCount,
           }),
         ).unwrap();
-      } catch {
-        if (isAiPickerLocalFallbackEnabled()) {
+      } catch (error) {
+        if (isAiPickerUnauthorizedError(error)) {
+          reply = { text: resolveAiPickerRemoteError(error), cars: [] };
+        } else if (isAiPickerLocalFallbackEnabled()) {
           reply = buildRuleBasedReply(text, catalog, {
             selectedCount,
             fixedBrand: site.mode === "monobrand" ? site.brand : undefined,
           });
         } else {
-          reply = { text: AI_PICKER_SERVER_UNAVAILABLE_MESSAGE, cars: [] };
+          reply = { text: resolveAiPickerRemoteError(error), cars: [] };
         }
       }
     } else {

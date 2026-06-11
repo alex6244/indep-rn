@@ -1,7 +1,10 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { envString } from "../../../config/env";
 import type { AiCatalogItem } from "../types";
+import { buildAiAuthHeaders } from "./aiPickerAuthHeaders";
+import { AiPickerApiError } from "./aiPickerApiError";
 import {
+  AI_PICKER_AUTH_REQUIRED_MESSAGE,
   AI_PICKER_RATE_LIMIT_MESSAGE,
   type AiPickerCatalog,
   type AiPickerChatReply,
@@ -28,20 +31,33 @@ function getAiBaseUrl(): string {
   return url.replace(/\/$/, "");
 }
 
-function parseApiErrorMessage(payload: unknown, status: number): string {
+export function parseAiApiError(
+  payload: unknown,
+  status: number,
+): { message: string; code?: string } {
   if (payload && typeof payload === "object" && "error" in payload) {
     const err = (payload as { error: unknown }).error;
-    if (typeof err === "object" && err !== null && "message" in err) {
-      const message = (err as { message: unknown }).message;
-      if (typeof message === "string" && message.length > 0) {
-        return message;
+    if (typeof err === "object" && err !== null) {
+      const message =
+        "message" in err && typeof (err as { message: unknown }).message === "string"
+          ? (err as { message: string }).message
+          : undefined;
+      const code =
+        "code" in err && typeof (err as { code: unknown }).code === "string"
+          ? (err as { code: string }).code
+          : undefined;
+      if (message && message.length > 0) {
+        return { message, code };
       }
     }
   }
-  if (status === 429) {
-    return AI_PICKER_RATE_LIMIT_MESSAGE;
+  if (status === 401 || status === 403) {
+    return { message: AI_PICKER_AUTH_REQUIRED_MESSAGE, code: "unauthorized" };
   }
-  return `AI server responded with HTTP ${status}`;
+  if (status === 429) {
+    return { message: AI_PICKER_RATE_LIMIT_MESSAGE, code: "rate_limited" };
+  }
+  return { message: `AI server responded with HTTP ${status}` };
 }
 
 async function aiFetch(
@@ -53,8 +69,13 @@ async function aiFetch(
   const timeout = setTimeout(() => controller.abort(), AI_FETCH_TIMEOUT_MS);
 
   try {
+    const authHeaders = await buildAiAuthHeaders(init);
     const res = await fetch(`${baseUrl}${path}`, {
       ...init,
+      headers: {
+        ...authHeaders,
+        ...(init?.headers as Record<string, string> | undefined),
+      },
       signal: controller.signal,
     });
     let payload: unknown = null;
@@ -64,7 +85,8 @@ async function aiFetch(
       payload = null;
     }
     if (!res.ok) {
-      throw new Error(parseApiErrorMessage(payload, res.status));
+      const { message, code } = parseAiApiError(payload, res.status);
+      throw new AiPickerApiError(message, res.status, code);
     }
     return payload;
   } finally {

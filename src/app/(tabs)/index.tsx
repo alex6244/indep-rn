@@ -1,8 +1,6 @@
 import { BurgerMenu } from "@/src/shared/ui/BurgerMenu";
-import {
-  getMainBurgerMenuItems,
-  MainBurgerMenuFooter,
-} from "@/src/shared/config/mainBurgerMenu";
+import { MainBurgerMenuFooter } from "@/src/shared/config/mainBurgerMenu";
+import { useMainBurgerMenuItems } from "@/src/shared/config/useMainBurgerMenuItems";
 import { useRouter, type Href } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -35,6 +33,7 @@ export default function HomeTab() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { user, logout } = useAuth();
+  const burgerItems = useMainBurgerMenuItems();
   const [menuOpen, setMenuOpen] = useState(false);
   const reportsPackageModal = useReportsPackagePurchaseModal();
   const [roleView, setRoleView] = useState<UserRole>(
@@ -87,7 +86,7 @@ export default function HomeTab() {
       <BurgerMenu
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
-        items={getMainBurgerMenuItems(user?.role)}
+        items={burgerItems}
         footer={<MainBurgerMenuFooter onLogout={logout} />}
       />
 

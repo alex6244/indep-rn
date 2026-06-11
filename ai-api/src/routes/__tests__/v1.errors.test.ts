@@ -35,4 +35,22 @@ describe("v1 error responses", () => {
     expect(body.error.code).toBe("invalid_body");
     expect(typeof body.error.message).toBe("string");
   });
+
+  it("returns 401 for chat without bearer when auth is required", async () => {
+    process.env.AI_API_AUTH_REQUIRED = "true";
+    process.env.AI_API_AUTH_ME_URL = "https://example.com/me";
+
+    const res = await app.request("/v1/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ siteId: "indep", message: "kia" }),
+    });
+    expect(res.status).toBe(401);
+
+    const body = (await res.json()) as { error: { code: string; message: string } };
+    expect(body.error.code).toBe("unauthorized");
+
+    delete process.env.AI_API_AUTH_REQUIRED;
+    delete process.env.AI_API_AUTH_ME_URL;
+  });
 });
