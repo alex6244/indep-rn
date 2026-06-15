@@ -1,6 +1,8 @@
 import {
   extractBearerToken,
   isAuthRequired,
+  isMockAuthAllowed,
+  isMockDevToken,
   validateTokenWithMe,
 } from "../requireUserAuth.js";
 
@@ -52,5 +54,15 @@ describe("requireUserAuth helpers", () => {
     await expect(
       validateTokenWithMe("https://example.com/me", "token", fetchImpl),
     ).resolves.toBe(false);
+  });
+
+  it("isMockDevToken matches app mock bearer format", () => {
+    expect(isMockDevToken("mock_client_1_1718123456789")).toBe(true);
+    expect(isMockDevToken("eyJhbGciOiJIUzI1NiJ9")).toBe(false);
+  });
+
+  it("isMockAuthAllowed is false by default", () => {
+    delete process.env.AI_API_ALLOW_MOCK_AUTH;
+    expect(isMockAuthAllowed()).toBe(false);
   });
 });

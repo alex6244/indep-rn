@@ -8,9 +8,12 @@ import { PICKER_REPORT_DRAFT_STORAGE_KEY } from "./../pickerReportTypes";
 import type { DefectsState } from "../DefectsForm";
 import type { LegalCleanlinessState } from "../LegalCleanlinessForm";
 import type { CommercialUsageState } from "../CommercialUsageForm";
-import type { MediaUploadState } from "../MediaUploadCard";
 import type { OwnerDraft } from "../OwnersForm";
-import type { PtsFormState } from "../../../../types/draftReport";
+import {
+  createEmptyMediaUploadState,
+  type MediaUploadState,
+  type PtsFormState,
+} from "../../../../types/draftReport";
 import { collectAllOwnerDateErrors } from "../../../../shared/validation/formatDdMmYyyy";
 import { validateMileage } from "../../../../shared/validation/mileageValidation";
 import {
@@ -28,12 +31,7 @@ export function usePickerReportCreateController() {
 
   const initialDraftReport = useMemo<DraftReport>(
     () => ({
-      media: {
-        salonPhoto: null,
-        bodyPhoto: null,
-        salonVideo: null,
-        bodyVideo: null,
-      },
+      media: createEmptyMediaUploadState(),
       generalInfo: {
         "ПТС оригинал": false,
         "Заводская оптика": false,

@@ -10,7 +10,9 @@ export type UploadModalConfigItem = {
   title: string;
   intro: string;
   bullets: string[];
+  minFiles: number;
   minFilesText: string;
+  required: boolean;
   mediaType: UploadModalMediaType;
   pickLabel: string;
   closeLabel: string;
@@ -19,39 +21,51 @@ export type UploadModalConfigItem = {
 const SALON_BULLETS = ["спидометра", "мультимедийной системы"];
 const BODY_BULLETS = ["подкапотное пространство", "багажник"];
 
+function minFilesLabel(count: number): string {
+  return `Необходимо загрузить минимум ${count} файлов.`;
+}
+
 export const UPLOAD_MODAL_CONFIG: Record<UploadMediaKind, UploadModalConfigItem> = {
-  salon_photo: {
-    title: "Добавьте фото салона",
-    intro: "В обязательном порядке загрузите фотографии:",
-    bullets: SALON_BULLETS,
-    minFilesText: "Необходимо загрузить минимум 12 файлов.",
-    mediaType: "photo",
-    pickLabel: "Выбрать фото",
-    closeLabel: "Закрыть",
-  },
   body_photo: {
     title: "Добавьте фото кузова",
     intro: "В обязательном порядке загрузите фотографии:",
     bullets: BODY_BULLETS,
-    minFilesText: "Необходимо загрузить минимум 12 файлов.",
+    minFiles: 10,
+    minFilesText: minFilesLabel(10),
+    required: true,
+    mediaType: "photo",
+    pickLabel: "Выбрать фото",
+    closeLabel: "Закрыть",
+  },
+  salon_photo: {
+    title: "Добавьте фото салона",
+    intro: "В обязательном порядке загрузите фотографии:",
+    bullets: SALON_BULLETS,
+    minFiles: 5,
+    minFilesText: minFilesLabel(5),
+    required: true,
     mediaType: "photo",
     pickLabel: "Выбрать фото",
     closeLabel: "Закрыть",
   },
   salon_video: {
     title: "Добавьте видео салона",
-    intro: "В обязательном порядке загрузите видео:",
+    intro: "Рекомендуется загрузить видео:",
     bullets: SALON_BULLETS,
-    minFilesText: "Необходимо загрузить минимум 3 файла.",
+    minFiles: 3,
+    minFilesText: minFilesLabel(3),
+    required: false,
     mediaType: "video",
     pickLabel: "Выбрать видео",
     closeLabel: "Закрыть",
   },
   body_video: {
     title: "Добавьте видео кузова",
-    intro: "В обязательном порядке загрузите видео:",
+    intro: "Рекомендуется загрузить видео:",
     bullets: BODY_BULLETS,
-    minFilesText: "Необходимо загрузить минимум 3 файла.",
+    minFiles: 3,
+    minFilesText: minFilesLabel(3),
+    required: false,
     mediaType: "video",
     pickLabel: "Выбрать видео",
     closeLabel: "Закрыть",
@@ -65,7 +79,9 @@ export const DAMAGE_PHOTO_MODAL_CONFIG: UploadModalConfigItem = {
   title: "Добавьте фото повреждения",
   intro: "В обязательном порядке загрузите фотографии:",
   bullets: ["повреждения крупным планом", "участка кузова с дефектом"],
-  minFilesText: "Необходимо загрузить минимум 1 файл.",
+  minFiles: 1,
+  minFilesText: minFilesLabel(1),
+  required: true,
   mediaType: "photo",
   pickLabel: "Выбрать фото",
   closeLabel: "Закрыть",

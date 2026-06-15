@@ -1,7 +1,11 @@
+import { config as loadEnv } from "dotenv";
 import { serve } from "@hono/node-server";
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+loadEnv({ path: path.join(__dirname, "..", ".env") });
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import {
@@ -14,7 +18,6 @@ import type { AiSiteProfile } from "./types.js";
 import { v1 } from "./routes/v1.js";
 import { resolveCorsOrigin } from "./middleware/cors.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CONFIG_DIR = path.resolve(__dirname, "../../src/data/ai/sites");
 
 const app = new Hono();
@@ -24,7 +27,7 @@ app.use(
   cors({
     origin: resolveCorsOrigin,
     allowMethods: ["GET", "POST", "OPTIONS"],
-    allowHeaders: ["Content-Type", "X-AI-Client-Key", "X-Dev-Key"],
+    allowHeaders: ["Content-Type", "Authorization", "X-AI-Client-Key", "X-Dev-Key"],
   }),
 );
 

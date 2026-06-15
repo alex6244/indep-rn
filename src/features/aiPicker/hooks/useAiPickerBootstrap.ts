@@ -4,7 +4,11 @@ import {
   isAiPickerApiEnabled,
   isAiPickerLocalFallbackEnabled,
 } from "../api/aiPickerEnv";
-import { getAiSiteProfile, loadAiCatalogWithMeta } from "../catalog/aiCatalogService";
+import {
+  getAiSiteProfile,
+  loadAiCatalogSeedOnly,
+  loadAiCatalogWithMeta,
+} from "../catalog/aiCatalogService";
 import { buildWelcomeMessage } from "../chat/ruleBasedReply";
 import type { AiCatalogItem } from "../types";
 import { useAppDispatch } from "../../../store/hooks";
@@ -20,6 +24,7 @@ export function useAiPickerBootstrap(siteId: string) {
   const [catalogLoading, setCatalogLoading] = useState(true);
   const [apiServerWarning, setApiServerWarning] = useState<string | null>(null);
   const [welcomeText, setWelcomeText] = useState<string | null>(null);
+  const [disclaimer, setDisclaimer] = useState<string>(site.disclaimer);
 
   useEffect(() => {
     let cancelled = false;
@@ -51,6 +56,7 @@ export function useAiPickerBootstrap(siteId: string) {
           setWelcomeText(
             meta.welcomeText ?? buildWelcomeMessage(meta.catalogCount),
           );
+          setDisclaimer(meta.disclaimer ?? site.disclaimer);
           setCatalogLoading(false);
 
           const catalogData = await catalogTask;
@@ -72,7 +78,8 @@ export function useAiPickerBootstrap(siteId: string) {
             items = catalogData.items;
             source = catalogData.catalogSource;
           } else if (isAiPickerLocalFallbackEnabled()) {
-            const local = await loadAiCatalogWithMeta(siteId);
+            // Remote mode: do not bypass ai-api with a second live banners fetch.
+            const local = loadAiCatalogSeedOnly(siteId);
             if (cancelled) return;
             items = local.items;
             source = local.source;
@@ -81,6 +88,8 @@ export function useAiPickerBootstrap(siteId: string) {
           setCatalog(items);
           setCatalogDisplayCount(items.length);
           setCatalogSource(source);
+
+          setDisclaimer(site.disclaimer);
 
           if (items.length > 0) {
             setApiServerWarning(null);
@@ -104,6 +113,7 @@ export function useAiPickerBootstrap(siteId: string) {
         setCatalogDisplayCount(items.length);
         setCatalogSource(source);
         setWelcomeText(buildWelcomeMessage(items.length));
+        setDisclaimer(site.disclaimer);
         setCatalogLoading(false);
       }
     })();
@@ -121,5 +131,6 @@ export function useAiPickerBootstrap(siteId: string) {
     catalogLoading,
     apiServerWarning,
     welcomeText,
+    disclaimer,
   };
 }

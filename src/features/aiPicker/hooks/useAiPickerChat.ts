@@ -61,9 +61,12 @@ export function useAiPickerChat({
     setMessages((prev) => [...prev, userMsg]);
     scrollToEnd();
 
-    await new Promise((r) => setTimeout(r, 400));
-
-    let reply: { text: string; cars: AiCatalogItem[]; suggestLead?: boolean };
+    let reply: {
+      text: string;
+      cars: AiCatalogItem[];
+      suggestLead?: boolean;
+      replySource?: "llm" | "rules";
+    };
 
     if (useRemoteApi) {
       try {
@@ -74,8 +77,16 @@ export function useAiPickerChat({
             selectedCount,
           }),
         ).unwrap();
+        if (__DEV__ && reply.replySource) {
+          console.info("[ai-picker][chat] replySource:", reply.replySource);
+        }
       } catch (error) {
-        if (isAiPickerUnauthorizedError(error)) {
+        if (isAiPickerUnauthorizedError(error) && isAiPickerLocalFallbackEnabled()) {
+          reply = buildRuleBasedReply(text, catalog, {
+            selectedCount,
+            fixedBrand: site.mode === "monobrand" ? site.brand : undefined,
+          });
+        } else if (isAiPickerUnauthorizedError(error)) {
           reply = { text: resolveAiPickerRemoteError(error), cars: [] };
         } else if (isAiPickerLocalFallbackEnabled()) {
           reply = buildRuleBasedReply(text, catalog, {

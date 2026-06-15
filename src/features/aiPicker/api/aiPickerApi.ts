@@ -24,6 +24,8 @@ export type SendAiLeadArgs = {
 };
 
 const AI_FETCH_TIMEOUT_MS = 30_000;
+/** LLM chat can take 30–60s (DeepSeek + catalog pick). */
+const AI_CHAT_FETCH_TIMEOUT_MS = 90_000;
 
 function getAiBaseUrl(): string {
   const url = envString("EXPO_PUBLIC_AI_API_URL");
@@ -63,10 +65,11 @@ export function parseAiApiError(
 async function aiFetch(
   path: string,
   init?: RequestInit,
+  timeoutMs: number = AI_FETCH_TIMEOUT_MS,
 ): Promise<unknown> {
   const baseUrl = getAiBaseUrl();
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), AI_FETCH_TIMEOUT_MS);
+  const timeout = setTimeout(() => controller.abort("timeout"), timeoutMs);
 
   try {
     const authHeaders = await buildAiAuthHeaders(init);
@@ -137,17 +140,30 @@ export const aiPickerApi = createApi({
 
     sendAiChat: builder.mutation<AiPickerChatReply, SendAiChatArgs>({
       async queryFn(args) {
-        const data = (await aiFetch("/v1/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(args),
-        })) as { text: string; cars: AiCatalogItem[]; suggestLead?: boolean };
+        const data = (await aiFetch(
+          "/v1/chat",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(args),
+          },
+          AI_CHAT_FETCH_TIMEOUT_MS,
+        )) as {
+          text: string;
+          cars: AiCatalogItem[];
+          suggestLead?: boolean;
+          replySource?: "llm" | "rules";
+        };
 
         return {
           data: {
             text: data.text,
             cars: data.cars ?? [],
             suggestLead: data.suggestLead,
+            replySource:
+              data.replySource === "llm" || data.replySource === "rules"
+                ? data.replySource
+                : undefined,
           },
         };
       },

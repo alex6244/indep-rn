@@ -44,7 +44,7 @@ export function GeneralInfoCheckboxes({ value, onChange }: Props) {
                 checked && { backgroundColor: colors.status.success, borderColor: colors.status.success },
               ]}
             >
-              {checked ? <CheckIcon width={12} height={12} /> : null}
+              {checked ? <CheckIcon width={18} height={18} /> : null}
             </View>
             <Text style={styles.label}>{label}</Text>
           </TouchableOpacity>
@@ -74,9 +74,9 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   box: {
-    width: 18,
-    height: 18,
-    borderRadius: 3,
+    width: 28,
+    height: 28,
+    borderRadius: 4,
     borderWidth: 1,
     borderColor: colors.border.input,
     alignItems: "center",

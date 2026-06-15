@@ -66,19 +66,24 @@ function countOwners(owners: DraftReport["owners"], type: "jur" | "phys"): numbe
   return owners.filter((o) => o.type === type).length;
 }
 
+function flattenMediaUris(media: DraftReport["media"]): string[] {
+  return [
+    ...media.bodyPhoto,
+    ...media.salonPhoto,
+    ...media.bodyVideo,
+    ...media.salonVideo,
+  ].filter((uri) => uri.trim().length > 0);
+}
+
 /** Maps picker submitted report (draft payload) into shared Report UI model. */
 export function mapSubmittedReportToReport(submitted: SubmittedReport): Report {
   const { data } = submitted;
   const { pts } = data;
-  const heroImage = toImageSource(data.media.bodyPhoto ?? data.media.salonPhoto);
-  const carouselImages: (ImageSource | number)[] = [
-    data.media.bodyPhoto,
-    data.media.salonPhoto,
-    data.media.bodyVideo,
-    data.media.salonVideo,
-  ]
-    .filter((uri): uri is string => Boolean(uri?.trim()))
-    .map((uri) => ({ uri }));
+  const heroUri = data.media.bodyPhoto[0] ?? data.media.salonPhoto[0] ?? null;
+  const heroImage = toImageSource(heroUri);
+  const carouselImages: (ImageSource | number)[] = flattenMediaUris(data.media).map((uri) => ({
+    uri,
+  }));
 
   const legalItems = buildLegalItems(data);
   const commercialItems = buildCommercialItems(data);

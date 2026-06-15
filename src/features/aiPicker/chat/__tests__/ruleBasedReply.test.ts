@@ -29,10 +29,10 @@ function makeCatalog(): AiCatalogItem[] {
 }
 
 describe("buildRuleBasedReply", () => {
-  it('returns no cars for vague request "на дачу поехать"', () => {
+  it('returns crossovers for "на дачу поехать" when catalog has SUVs', () => {
     const reply = buildRuleBasedReply("на дачу поехать", makeCatalog());
-    expect(reply.cars).toHaveLength(0);
-    expect(reply.text).toMatch(/уточните|не нашёл/i);
+    expect(reply.cars.length).toBeGreaterThan(0);
+    expect(reply.cars.some((c) => /sportage/i.test(c.title))).toBe(true);
   });
 
   it('returns sedans for "седан хочу" when sedans exist in catalog', () => {

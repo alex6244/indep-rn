@@ -167,6 +167,16 @@ pm2 save
 
 ---
 
+## После деплоя: smoke-deploy
+
+На сервере (из клонированного репо, ai-api уже в pm2):
+
+```bash
+cd /opt/indep-rn/ai-api && npm run smoke:deploy
+```
+
+Проверяет монорепо-пути (`packages/ai-core`, `src/data/ai/`) и локальный `/health` (`catalogCount > 0`).
+
 ## Smoke (с ПК)
 
 ```bash

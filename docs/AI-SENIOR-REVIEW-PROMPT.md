@@ -1,177 +1,203 @@
-# Промпт: senior-оценка ИИ-части indep-rn
+# Промпт: senior code review ИИ-части indep-rn
 
-Скопируйте блок ниже в **новый чат Cursor (Agent)** с доступом к репозиторию.  
-Цель: **всесторонняя оценка** модуля ИИ-подбора — не переписать проект, а дать зрелый вердикт для команды, ревью и roadmap.
+Скопируйте блок **«Текст промпта»** ниже в **новый чат Cursor (Agent)** с открытым репозиторием `indep-rn`.
 
-**Не смешивать** с правками кода в том же чате — только анализ и приоритеты.
+**Цель:** независимая сеньорская оценка модуля ИИ-подбора — архитектура, безопасность, продукт, LLM, тесты, деплой.  
+**Не смешивать** с правками кода в том же чате — только анализ, риски и приоритеты.
+
+**Вне скоупа:** корпоративный Laravel (`indep.su/api/v1.0`), CRM, переписывание всего стека на Nest/LangChain без ROI.
+
+---
+
+## Контекст (для себя)
+
+| Слой | Путь | Роль |
+|------|------|------|
+| Shared-логика | `packages/ai-core/` | intent, фильтр каталога, rule-based ответы, mapBanner, eonixPolicy |
+| BFF ИИ | `ai-api/` | Hono, каталог с `indep.su`, DeepSeek, auth, rate limit, leads |
+| Мобилка | `src/features/aiPicker/` | UI, RTK Query, hooks, offline fallback |
+| Конфиг сайта | `src/data/ai/sites/*.json` | siteId, catalogBannersUrl |
+| Seed-каталог | `src/data/ai/*.seed.json` | офлайн fallback |
+| Маршрут | `src/app/ai-picker.tsx` | экран без бизнес-логики |
+| Env | `EXPO_PUBLIC_AI_API_URL`, `ai-api/.env` | локал / staging / prod |
+| Деплой | `docs/DEPLOY-AI-API-SELECTEL.md`, `ai-api/ecosystem.config.cjs` | VPS + nginx + pm2 |
+
+Поток данных:
+
+```
+Expo (aiPicker) → ai-api (localhost / ai-api.n-avtosalon.ru)
+                      → indep.su/api/get-cars-to-banners (каталог)
+                      → DeepSeek API (подбор + текст, если ключ есть)
+                      → indep.su/api/v1.0/me (auth, если AI_API_AUTH_REQUIRED)
+```
 
 ---
 
 ## Текст промпта (копировать отсюда)
 
 ```
-Ты — senior fullstack (React Native / Expo, TypeScript, Node BFF, продукт e-commerce/auto). Проведи **независимую оценку ИИ-части** репозитория `indep-rn`. Пиши по-русски, термины TS/RN/API — на английском где уместно. Не анализируй корпоративный Laravel. Не предлагай «переписать всё на Nest/LangChain» без обоснования ROI.
+Ты — senior fullstack (React Native / Expo, TypeScript, Node BFF, e-commerce/auto). Проведи **независимый code review ИИ-части** репозитория `indep-rn`. Пиши по-русски; термины TS/RN/API — на английском где уместно.
 
-### Скоуп: что считать «ИИ-частью»
-
-**Обязательно прочитай код в:**
-- `packages/ai-core/` — правила, фильтр каталога, intent
-- `ai-api/` — Hono, `src/routes/v1.ts`, `src/catalog/`, `src/middleware/`, `config/sites/`
-- `src/features/aiPicker/` — UI, API, каталог, тесты
-- `src/data/ai/` — seed, site profiles
-- `src/app/ai-picker.tsx`, `src/shared/config/mainBurgerMenu.tsx`
-- `src/features/aiPicker/api/aiPickerApi.ts`, `aiPickerApiClient.ts`
-- `src/store/store.ts` (Redux только для AI)
-- `src/config/env.ts` — `EXPO_PUBLIC_AI_*`
-- `eas.json` — env в APK-сборках для AI
-- `docs/AI-ROADMAP.md`, `ai-api/README.md`, `docs/BACKEND-CARS.md`
-
-**Вне скоупа:** остальные features (auth, catalog app, reports), если не пересекаются с AI env/навигацией.
-
-### Как работать
-
-1. Краткая **карта файлов** (дерево + кто за что отвечает) — 15–25 строк.
-2. Читай **реальный код**, не только docs.
-3. Запусти: `npm run typecheck`, `npm test`, `npm run typecheck --prefix ai-api`. Зафиксируй результат.
-4. Отдельно проверь: дубли app ↔ ai-api, поведение при падении API, monobrand (`fixedBrand`), защита от abuse (rate limit, CORS).
-5. Не трать время на `node_modules`, `.expo`, figma raw.
+**Режим:** только анализ. Не вноси правки в код. Не предлагай «переписать всё» без обоснования ROI.
 
 ---
 
-### Оси оценки (все обязательны)
+### 1. Скоуп — что обязательно прочитать
 
-#### 1. Продукт и UX
-- Понятно ли пользователю, что это **правила**, а не «магический GPT»? (disclaimer, тексты)
-- Сценарий: запрос → карточки → выбор → лид — где трение?
-- Пустой/непонятный запрос — адекватный ответ без «рандомных 5 LADA»?
-- Индикатор каталога api/seed, предупреждение при недоступном сервере
-- Готовность к monobrand (только своя марка) vs multibrand Indep
-- Что не хватает для дилера: согласие на ПДн, повтор отправки лида, FAQ
+**Shared:**
+- `packages/ai-core/src/` — parseUserIntent, filterCatalog, ruleBasedReply, mapBanner, eonixPolicy, types
+- `packages/ai-core/src/__tests__/`
 
-#### 2. Архитектура и границы
-- Роль `ai-core` vs `ai-api` vs `aiPicker` — нет ли утечки бизнес-логики в UI?
-- Зачем отдельный BFF, а не Laravel — убедительно ли для текущей стадии?
-- Двойной каталог (клиент `loadAiCatalogWithMeta` + сервер `ensureCatalog`) — риск рассинхрона
-- RTK Query: оправдан ли scope; мёртвый код (`aiPickerApiClient`, `isAiPickerRtkEnabled`)
-- Версионирование `/v1`, расширяемость под `/v2` и DeepSeek
-- Monorepo: что вынести в shared (mapBanner, types, site config)
+**BFF:**
+- `ai-api/src/index.ts` — CORS, health, dotenv
+- `ai-api/src/routes/v1.ts` — meta, catalog, chat, leads
+- `ai-api/src/chat/buildChatReply.ts` — rules → LLM fallback
+- `ai-api/src/llm/` — deepseek, llmCatalogRecommend
+- `ai-api/src/catalog/catalogStore.ts` — sync, TTL, seed fallback
+- `ai-api/src/middleware/` — cors, rateLimit, requireUserAuth, requestLimits, clientKey
+- `ai-api/src/lib/` — apiError, env
+- `ai-api/.env.example`, `ai-api/README.md`
+- `ai-api/src/**/__tests__/`
 
-#### 3. Качество кода и TypeScript
-- Типы на границе API (cast vs zod)
-- Размер/сложность `AiPickerScreen.tsx`
-- Единообразие ошибок (старый `{ error: string }` vs новый `{ error: { code, message } }`)
-- Тесты: что покрыто, что критично добавить
+**Мобилка:**
+- `src/features/aiPicker/ui/AiPickerScreen.tsx`
+- `src/features/aiPicker/hooks/` — bootstrap, chat, lead
+- `src/features/aiPicker/api/` — aiPickerApi (RTK Query), auth headers, errors
+- `src/features/aiPicker/catalog/aiCatalogService.ts`
+- `src/app/ai-picker.tsx`
+- `src/features/aiPicker/**/__tests__/`
 
-#### 4. Безопасность и abuse
-- Rate limit, CORS, лимиты body, client key — достаточно ли для MVP в интернете?
-- Публичный chat/leads без user auth — осознанные риски
-- PII (телефон в логах, in-memory leads)
-- Готовность к prompt injection при появлении LLM
-- Секреты только на сервере, не в `EXPO_PUBLIC_*`
+**Конфиг и доки:**
+- `src/data/ai/sites/indep.json`
+- `eas.json` → EXPO_PUBLIC_AI_API_URL
+- `docs/AI-ROADMAP.md`, `docs/DEMO.md`, `docs/DEPLOY-AI-API-SELECTEL.md`
 
-#### 5. Данные и каталог
-- Источник ~248 машин: banner API + seed
-- Актуальность цен «от», id машин для лидов
-- Связь с будущим `GET /cars` (`docs/BACKEND-CARS.md`)
-
-#### 6. Интеграции и эксплуатация
-- Лиды: куда идут сейчас vs куда должны (CRM, webhook, Laravel)
-- Деплой `ai-api` (есть ли инструкция, health)
-- APK/EAS: какие env в профилях; работает ли AI на устройстве (localhost vs LAN)
-- Наблюдаемость: логи, метрики, события (telemetry) — пробелы
-
-#### 7. Готовность к roadmap (AI-ROADMAP)
-- DeepSeek: куда вставить, что оставить rule-based, guardrails
-- LangGraph — нужен ли на горизонте 6 мес или overkill
-- Monobrand onboarding (новый `config/sites/*.json`)
-- Оценка трудозатрат: MVP prod-ready vs «демо в офисе»
-
-#### 8. Сравнение с альтернативами (кратко, без фанатизма)
-- ai-api (Hono) vs всё в Laravel
-- RTK Query vs только Zustand/fetch для 3 эндпоинтов
-- Rules-first vs LLM-first
-- Таблица: альтернатива | плюс | минус | вердикт для **этого** проекта
+**Связанное (кратко):**
+- `src/contexts/AuthContext.tsx`, `src/services/api/tokenStorage.ts` — как токен попадает в ai-api
+- `src/shared/config/` — пункт меню «Подбор с ИИ», auth gate если есть
 
 ---
 
-### Формат ответа (строго)
+### 2. Оси ревью (пройди все)
 
-## Executive summary (7–10 предложений)
-Для PM/тимлида: зрелость, можно ли показывать клиенту, главный блокер.
+#### A. Архитектура и границы модулей
+- Разделение `ai-core` / `ai-api` / `aiPicker`: нет ли дублирования (mapBanner, parseUserIntent, ruleBasedReply)?
+- Правильно ли BFF отделён от мобилки? Можно ли переиспользовать ai-api для веб-виджета дилера?
+- Зависимости: ai-api тянет `packages/ai-core` и `src/data/ai` через относительные пути — хрупкость при деплое?
+- Single responsibility: AiPickerScreen, hooks, RTK endpoints — размер и coupling.
+- Offline / remote: `useRemoteApi`, `isAiPickerLocalFallbackEnabled`, seed — согласованность поведения.
 
-## Карта системы
-Mermaid: Мобилка → ai-api → ai-core → каталог; offline path.
+#### B. API-контракты и ошибки
+- Формат ответов `/v1/chat`, `/v1/leads`, `/meta`, `/catalog` — стабильность для клиента.
+- Единый формат ошибок (`apiError`) vs что парсит `aiPickerApi.parseAiApiError`.
+- Коды: 401 unauthorized, 429 rate limit, 400 validation — покрыты ли на клиенте?
+- `suggestLead`, `replySource`, `catalogSource` — используются ли на клиенте или мёртвые поля?
+- Версионирование `/v1` — готовность к breaking changes.
 
-## Оценки 1–5
+#### C. Безопасность
+- `requireUserAuth` + `AI_API_AUTH_ME_URL`: обход через curl, mock-токены в dev.
+- CORS: web Expo (`localhost:8081`) vs RN (без Origin) vs prod nginx.
+- Rate limit: in-memory, обход с разных IP, достаточно ли для DeepSeek cost control.
+- `POST /v1/leads`: спам, валидация phone/carIds, PII в логах.
+- Секреты: `DEEPSEEK_API_KEY` только на сервере? Утечки в клиентский bundle?
+- `AI_API_DEV_LEADS`, admin refresh — не открыты ли в prod.
 
-| Ось | Оценка | Одна фраза |
-|-----|--------|------------|
-| Продукт/UX | | |
-| Архитектура | | |
-| Код/TS | | |
-| Безопасность | | |
-| Данные/каталог | | |
-| Эксплуатация/интеграции | | |
-| Готовность к LLM | | |
-| Тестируемость | | |
+#### D. LLM (DeepSeek) и качество подбора
+- Когда rules vs LLM vs LLM catalog pick — понятная и предсказуемая матрица?
+- Промпты: галлюцинации, carIds не из каталога, post-filter.
+- Таймауты, fallback при ошибке API, стоимость токенов.
+- Бизнес-правила вроде `eonixPolicy` — достаточно ли или нужен общий механизм «brand tiers»?
+- Качество на запросах: «на дачу», «семейный», «KIA до 2,5 млн», «самая дешевая» — оцени ожидаемое поведение по коду.
 
-**Итоговая оценка ИИ-модуля (1–5):** …
+#### E. Каталог и данные
+- Источник `get-cars-to-banners`: price_new/price_old, актуальность, TTL кэша.
+- Поведение при падении indep.su: stale cache vs seed.
+- 248 машин в LLM subset — риск пропустить релевантные модели.
+- Монобренд-сайты: `fixedBrand`, конфиги в `src/data/ai/sites/`.
 
-## Сильные стороны (5–7 буллетов)
-Конкретно, со ссылкой на файлы/паттерны.
+#### F. Мобильный UX и продукт
+- Auth gate: можно ли открыть `/ai-picker` без логина; сообщения об ошибках («Failed to fetch» vs человекочитаемые).
+- Состояния: catalogLoading, thinking, leadSent, apiServerWarning.
+- Выбор авто + заявка: happy path и edge cases (0 выбранных, повторная заявка).
+- Цены «от», зачёркнутая priceWas — корректность и disclaimer.
+- Доступность, web vs native parity.
 
-## Слабые стороны и риски (5–7 буллетов)
-Раздели: «баг сейчас» vs «долг».
+#### G. Тесты и наблюдаемость
+- Покрытие: ai-core, ai-api middleware, RTK auth headers, ruleBasedReply.
+- Чего не хватает: интеграционные тесты chat E2E, contract tests ai-api.
+- Логирование: catalog refresh, LLM failures, lead submissions.
+- `/health`: deepSeekConfigured, catalogAgeSec — достаточно для алертов?
 
-## P0 — до показа внешнему пользователю / prod
-Файл → проблема → последствие → рекомендация (1–3 предложения).
+#### H. DevOps и эксплуатация
+- Локальный dev: dotenv, `AI_API_AUTH_REQUIRED=false`, CORS Authorization.
+- Prod: pm2, nginx, `AI_API_REPO_ROOT`, 502 при падении процесса.
+- EAS preview env vs `.env` разработчика.
+- Чеклист перед демо из `docs/DEMO.md` — что реально работает сейчас.
 
-## P1 — следующий спринт (2–4 недели)
+---
 
-## P2 — backlog
+### 3. Формат ответа (строго)
 
-## Вопросы к бизнесу/бэкенду
-Что нельзя решить по коду.
+#### Executive summary (5–8 предложений)
+Вердикт: готовность к demo / internal preview / production. Главный риск.
 
-## Рекомендуемая последовательность работ (5–8 шагов)
-С зависимостями (например: CRM лидов → потом LLM).
+#### Карта системы
+Короткая схема (mermaid или ASCII): клиент → ai-api → каталог / LLM / auth.
 
-## Вердикт senior-ревьюера
-Одним абзацем: «брать в прод / только internal demo / нужен ещё X недель».
+#### Findings table
 
-### Ограничения
-- Не выдумывай файлы.
-- Не генерируй огромные диффы.
-- Отделяй факты из кода от гипотез (помечай «гипотеза»).
-- Учти уже сделанное: `packages/ai-core`, rate limit, P0 без fallback LADA (проверь в коде, не по памяти).
+| ID | Severity | Область | Файл(ы) | Проблема | Рекомендация | Effort |
+|----|----------|---------|---------|----------|--------------|--------|
+| F-01 | P0/P1/P2 | Security / … | `path` | … | … | S/M/L |
+
+Severity:
+- **P0** — блокер prod / утечка / спам / обход auth / потеря лидов
+- **P1** — заметный техдолг, баги на edge cases, плохой DX
+- **P2** — polish, тесты, доки
+
+Минимум **12 findings**, если код позволяет; не выдумывай проблемы ради количества.
+
+#### Сильные стороны (3–5 пунктов)
+Что сделано зрело.
+
+#### Пробелы в тестах
+Конкретные сценарии + предложенный файл теста.
+
+#### Roadmap (2 горизонта)
+- **До demo (1–2 недели):** max 5 задач, только P0–P1
+- **До production (1–2 месяца):** max 7 задач
+
+#### Вопросы к команде
+3–5 вопросов, без ответа на которые нельзя принять решение (CRM лидов, auth policy, monobrand и т.д.).
+
+---
+
+### 4. Запреты
+
+- Не предлагай переносить ai-api в Laravel без явного trade-off.
+- Не критикуй отсутствие Redis/K8s, если in-memory MVP обоснован.
+- Не раздувай отчёт пересказом README — только выводы с путями к файлам.
+- Если файл не читал — не делай вид, что читал; напиши «не проверял».
+
+---
+
+### 5. Быстрые smoke-команды (выполни если есть shell)
+
+```bash
+curl -s http://localhost:8787/health
+# или staging:
+curl -s https://ai-api.n-avtosalon.ru/health
+
+npm test -- --testPathPattern="ai-core|ai-api|aiPicker" --no-coverage
+```
+
+Укажи в отчёте, что реально запускал.
 ```
 
 ---
 
-## Короткая версия
+## После ревью
 
-```txt
-Senior-оценка ИИ-модуля indep-rn: прочитай ai-core, ai-api, aiPicker, data/ai, env, eas.json. Запусти typecheck и tests. Оцени продукт, архитектуру, security/abuse, каталог, лиды, APK/env, готовность к DeepSeek/monobrand. Формат: executive summary, mermaid, таблица 1–5 по осям, P0/P1/P2, сильные/слабые стороны, вердикт prod vs demo. Laravel вне скоупа. По-русски.
-```
-
----
-
-## Советы по использованию
-
-| Совет | Зачем |
-|--------|--------|
-| Новый чат, Agent | Нужен обход файлов и скрипты |
-| После отчёта — отдельные чаты по `FIX-AI-P0`, `FIX-AI-ABUSE` | Не смешивать оценку и код |
-| Сравнить с прошлым аудитом (`CODE-AUDIT-PROMPT`) | Видеть прогресс |
-| Дать контекст: «готовим APK для дилера» / «готовим monobrand HAVAL» | Вердикт точнее |
-
----
-
-## Связанные промпты
-
-| Файл | Когда |
-|------|--------|
-| [CODE-AUDIT-PROMPT.md](./CODE-AUDIT-PROMPT.md) | Аудит всего репо |
-| [FIX-AI-ABUSE-PROMPT.md](./FIX-AI-ABUSE-PROMPT.md) | Защита от спама API |
-| [AI-ROADMAP.md](./AI-ROADMAP.md) | План фич |
-| [RTK-AI-MIGRATION-PROMPT.md](./RTK-AI-MIGRATION-PROMPT.md) | Миграция RTK (исторически) |
+1. P0 — отдельные задачи / PR до следующего demo.
+2. Обновить `docs/AI-ROADMAP.md` по итогам (статус, новые пункты).
+3. Промпт можно переиспользовать после крупных изменений (DeepSeek, CRM лидов, monobrand).

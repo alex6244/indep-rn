@@ -7,6 +7,10 @@ export type AiCatalogItem = {
   siteId: string;
   brand: string;
   title: string;
+  /** From banner `model_name` or parsed from `full_name`. */
+  model?: string;
+  /** Normalized text for catalog search (built in mapBanner). */
+  searchText?: string;
   priceFrom: number;
   priceWas?: number;
   imageUrl: string;

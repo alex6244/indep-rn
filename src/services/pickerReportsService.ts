@@ -1,5 +1,6 @@
 import { api, classifyApiError } from "./api";
 import type { DraftReport } from "../types/draftReport";
+import { createEmptyMediaUploadState } from "../types/draftReport";
 import type { Report } from "../types/report";
 import type { SubmittedReport } from "../types/submittedReport";
 import { mapApiReportToReport } from "./clientReportsService";
@@ -73,12 +74,7 @@ const mockSubmittedReports: SubmittedReport[] = [
     status: "pending",
     createdAt: "2026-01-01T00:00:00.000Z",
     data: {
-      media: {
-        salonPhoto: null,
-        bodyPhoto: null,
-        salonVideo: null,
-        bodyVideo: null,
-      },
+      media: createEmptyMediaUploadState(),
       generalInfo: {},
       pts: {
         vin: "MOCKVIN1234567890",

@@ -1,7 +1,6 @@
-import { filterAiCatalog } from "./filterCatalog";
+import { searchCatalog } from "./searchCatalog";
 import type { AiCatalogItem } from "./types";
 import { resolveBrandFromCatalog } from "./resolveBrandFromCatalog";
-import { parseUserIntent } from "./parseUserIntent";
 
 export type RuleBasedReply = {
   text: string;
@@ -41,34 +40,10 @@ export function buildRuleBasedReply(
     };
   }
 
-  const intent = parseUserIntent(trimmed);
-  if (!intent.brand) {
-    const fromCatalog = resolveBrandFromCatalog(trimmed, catalog);
-    if (fromCatalog) intent.brand = fromCatalog;
-  }
-
-  // Monobrand sites: always constrain suggestions to a fixed brand.
-  if (options?.fixedBrand) {
-    intent.brand = options.fixedBrand;
-  }
-
-  let cars = filterAiCatalog(catalog, intent, 5);
-
-  if (cars.length === 0 && intent.brand) {
-    cars = filterAiCatalog(catalog, { brand: intent.brand }, 5);
-  }
-
-  if (cars.length === 0 && intent.maxPrice) {
-    cars = filterAiCatalog(
-      catalog,
-      {
-        maxPrice: intent.maxPrice,
-        bodyType: intent.bodyType,
-        brand: intent.brand,
-      },
-      5,
-    );
-  }
+  const { items: cars, intent } = searchCatalog(trimmed, catalog, {
+    limit: 5,
+    fixedBrand: options?.fixedBrand,
+  });
 
   if (cars.length === 0) {
     if (options?.fixedBrand) {

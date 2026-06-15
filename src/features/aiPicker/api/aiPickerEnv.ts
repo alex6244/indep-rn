@@ -17,6 +17,7 @@ export type AiPickerChatReply = {
   text: string;
   cars: AiCatalogItem[];
   suggestLead?: boolean;
+  replySource?: "llm" | "rules";
 };
 
 function baseUrl(): string | null {
@@ -36,6 +37,9 @@ export const AI_PICKER_AUTH_REQUIRED_MESSAGE =
 
 export const AI_PICKER_SERVER_UNAVAILABLE_MESSAGE =
   "Сервер подбора временно недоступен. Попробуйте позже или отключите EXPO_PUBLIC_AI_API_URL для офлайн-режима.";
+
+export const AI_PICKER_CHAT_TIMEOUT_MESSAGE =
+  "ИИ думает дольше обычного. Подождите и попробуйте ещё раз или упростите запрос.";
 
 // Keep in sync with ai-api/src/lib/apiError.ts RATE_LIMITED_MESSAGE
 export const AI_PICKER_RATE_LIMIT_MESSAGE =

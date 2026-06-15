@@ -45,6 +45,7 @@
         "EXPO_PUBLIC_ALLOW_HTTP_DEV": "false",
         "EXPO_PUBLIC_API_TIMEOUT_MS": "10000",
         "EXPO_PUBLIC_ALLOW_INSECURE_TOKEN_STORAGE": "false",
+        "EXPO_PUBLIC_AI_API_URL": "https://ai-api.n-avtosalon.ru",
         "EXPO_PUBLIC_REQUIRE_REFRESH_ROTATION": "false",
         "EXPO_PUBLIC_SENTRY_ENVIRONMENT": "production",
         "SENTRY_DISABLE_AUTO_UPLOAD": "true"

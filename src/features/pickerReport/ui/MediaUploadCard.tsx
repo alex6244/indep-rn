@@ -1,27 +1,35 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
 
 import PhotosBg from "../../../assets/addCar/photosBG.svg";
+import type { MediaKey, MediaUploadState } from "../../../types/draftReport";
+import type { RequiredMediaKey } from "../../../shared/validation/mediaValidation";
 import { PR_TYPO } from "./pickerReport.styles";
 import { colors } from "../../../shared/theme/colors";
 import { InlineMessage } from "../../../shared/ui/InlineMessage";
+import { MediaPreviewModal } from "./media/MediaPreviewModal";
 import { UploadMediaModal } from "./media/UploadMediaModal";
-import type { RequiredMediaKey } from "../../../shared/validation/mediaValidation";
 import {
   getUploadModalConfig,
   type UploadMediaKind,
 } from "./media/uploadModalsConfig";
 
-type MediaKey = "salonPhoto" | "bodyPhoto" | "salonVideo" | "bodyVideo";
-
-export type MediaUploadState = Record<MediaKey, string | null>;
+export type { MediaUploadState };
 
 type Row = {
   key: MediaKey;
   modalKind: UploadMediaKind;
   label: string;
+  required: boolean;
 };
 
 type Props = {
@@ -37,16 +45,22 @@ const PHOTOS_BG_WIDTH = 335;
 const PHOTOS_BG_HEIGHT = 295;
 const CARD_MARGIN_H = 16;
 const CARD_PADDING_H = 16;
-/**
- * Y-offset for title + rows — lower rays of the burst in `photosBG.svg`
- * (viewBox y ≈ 155–200 of 295).
- */
 const CONTENT_TOP_RATIO = 0.53;
 const ROW_BLOCK_ESTIMATE = 230;
+
+const MEDIA_ROWS: Row[] = [
+  { key: "bodyPhoto", modalKind: "body_photo", label: "Фото кузова", required: true },
+  { key: "salonPhoto", modalKind: "salon_photo", label: "Фото салона", required: true },
+  { key: "salonVideo", modalKind: "salon_video", label: "Видео салона", required: false },
+  { key: "bodyVideo", modalKind: "body_video", label: "Видео кузова", required: false },
+];
 
 export function MediaUploadCard({ value, onChange, highlightKeys = [] }: Props) {
   const { width: windowWidth } = useWindowDimensions();
   const [activeModalKind, setActiveModalKind] = useState<UploadMediaKind | null>(null);
+  const [preview, setPreview] = useState<{ uris: string[]; mediaType: "photo" | "video" } | null>(
+    null,
+  );
   const [notice, setNotice] = useState<string | null>(null);
 
   const illustrationHeight = useMemo(() => {
@@ -64,19 +78,9 @@ export function MediaUploadCard({ value, onChange, highlightKeys = [] }: Props) 
     [contentTop, illustrationHeight],
   );
 
-  const rows: Row[] = useMemo(
-    () => [
-      { key: "salonPhoto", modalKind: "salon_photo", label: "Фото салона" },
-      { key: "bodyPhoto", modalKind: "body_photo", label: "Фото кузова" },
-      { key: "salonVideo", modalKind: "salon_video", label: "Видео салона" },
-      { key: "bodyVideo", modalKind: "body_video", label: "Видео кузова" },
-    ],
-    [],
-  );
-
   const activeRow = useMemo(
-    () => rows.find((row) => row.modalKind === activeModalKind),
-    [activeModalKind, rows],
+    () => MEDIA_ROWS.find((row) => row.modalKind === activeModalKind),
+    [activeModalKind],
   );
   const isModalVisible = activeModalKind !== null;
   const modalConfig = activeModalKind ? getUploadModalConfig(activeModalKind) : null;
@@ -84,6 +88,16 @@ export function MediaUploadCard({ value, onChange, highlightKeys = [] }: Props) 
   const closeModal = useCallback(() => setActiveModalKind(null), []);
 
   const isVideoKind = activeModalKind !== null && VIDEO_KINDS.includes(activeModalKind);
+
+  const appendUris = useCallback(
+    (key: MediaKey, uris: string[]) => {
+      if (uris.length === 0) return;
+      const existing = value[key];
+      const merged = [...existing, ...uris.filter((uri) => !existing.includes(uri))];
+      onChange({ ...value, [key]: merged });
+    },
+    [onChange, value],
+  );
 
   const handlePickPress = useCallback(async () => {
     if (!activeRow) return;
@@ -96,17 +110,29 @@ export function MediaUploadCard({ value, onChange, highlightKeys = [] }: Props) 
     }
 
     const options: ImagePicker.ImagePickerOptions = isVideoKind
-      ? { mediaTypes: ImagePicker.MediaTypeOptions.Videos, videoMaxDuration: 60 }
-      : { mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.8, allowsEditing: false };
+      ? {
+          mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+          videoMaxDuration: 60,
+          allowsMultipleSelection: true,
+        }
+      : {
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          quality: 0.8,
+          allowsEditing: false,
+          allowsMultipleSelection: true,
+        };
 
     const result = await ImagePicker.launchImageLibraryAsync(options);
 
     closeModal();
 
     if (!result.canceled) {
-      onChange({ ...value, [activeRow.key]: result.assets[0].uri });
+      appendUris(
+        activeRow.key,
+        result.assets.map((asset) => asset.uri),
+      );
     }
-  }, [activeRow, closeModal, isVideoKind, onChange, value]);
+  }, [activeRow, appendUris, closeModal, isVideoKind]);
 
   const handleCameraPress = useCallback(async () => {
     if (!activeRow) return;
@@ -126,15 +152,25 @@ export function MediaUploadCard({ value, onChange, highlightKeys = [] }: Props) 
 
     closeModal();
 
-    if (!result.canceled) {
-      onChange({ ...value, [activeRow.key]: result.assets[0].uri });
+    if (!result.canceled && result.assets[0]?.uri) {
+      appendUris(activeRow.key, [result.assets[0].uri]);
     }
-  }, [activeRow, closeModal, isVideoKind, onChange, value]);
+  }, [activeRow, appendUris, closeModal, isVideoKind]);
 
   const handleOpenModal = useCallback((kind: UploadMediaKind) => {
     setNotice(null);
     setActiveModalKind(kind);
   }, []);
+
+  const handleOpenPreview = useCallback(
+    (row: Row) => {
+      const uris = value[row.key];
+      if (uris.length === 0) return;
+      const config = getUploadModalConfig(row.modalKind);
+      setPreview({ uris, mediaType: config.mediaType });
+    },
+    [value],
+  );
 
   return (
     <View style={styles.section}>
@@ -152,12 +188,16 @@ export function MediaUploadCard({ value, onChange, highlightKeys = [] }: Props) 
 
           {notice ? <InlineMessage tone="info" message={notice} /> : null}
 
-          {rows.map((r) => {
-            const uri = value[r.key];
-            const added = uri !== null;
-            const isHighlighted = highlightKeys.includes(r.key as RequiredMediaKey);
+          {MEDIA_ROWS.map((r) => {
+            const uris = value[r.key];
+            const config = getUploadModalConfig(r.modalKind);
+            const added = uris.length >= config.minFiles;
             const bg = added ? colors.status.successStrong : colors.brand.primary;
             const text = added ? "Добавлено" : "Добавить";
+            const isHighlighted = highlightKeys.includes(r.key as RequiredMediaKey);
+            const previewUri = uris[0];
+            const countLabel =
+              uris.length > 0 ? `${uris.length}/${config.minFiles}` : null;
 
             return (
               <View
@@ -168,14 +208,22 @@ export function MediaUploadCard({ value, onChange, highlightKeys = [] }: Props) 
                   style={[styles.rowLabel, isHighlighted ? styles.rowLabelHighlighted : null]}
                 >
                   {r.label}
+                  {r.required ? <Text style={styles.requiredMark}> *</Text> : null}
                 </Text>
                 <View style={styles.rowRight}>
-                  {uri ? (
-                    <Image
-                      source={{ uri }}
-                      style={styles.preview}
-                      contentFit="cover"
-                    />
+                  {countLabel ? <Text style={styles.countLabel}>{countLabel}</Text> : null}
+                  {previewUri ? (
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel={`Просмотр: ${r.label}`}
+                      onPress={() => handleOpenPreview(r)}
+                    >
+                      <Image
+                        source={{ uri: previewUri }}
+                        style={styles.preview}
+                        contentFit="cover"
+                      />
+                    </Pressable>
                   ) : null}
                   <TouchableOpacity
                     activeOpacity={0.9}
@@ -203,6 +251,13 @@ export function MediaUploadCard({ value, onChange, highlightKeys = [] }: Props) 
         onPickPress={handlePickPress}
         onCameraPress={handleCameraPress}
         onClose={closeModal}
+      />
+
+      <MediaPreviewModal
+        visible={preview !== null}
+        uris={preview?.uris ?? []}
+        mediaType={preview?.mediaType}
+        onClose={() => setPreview(null)}
       />
     </View>
   );
@@ -260,11 +315,20 @@ const styles = StyleSheet.create({
   rowLabelHighlighted: {
     color: colors.text.warning,
   },
+  requiredMark: {
+    color: colors.brand.primary,
+  },
   rowRight: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
     flexShrink: 0,
+  },
+  countLabel: {
+    ...PR_TYPO.caption,
+    color: colors.text.muted,
+    minWidth: 36,
+    textAlign: "right",
   },
   preview: {
     width: 40,

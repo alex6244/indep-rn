@@ -39,9 +39,10 @@ const BUDGET_SEDAN_RE =
   /(granta(?!\s+cross)|vesta(?!\s+cross)|logan|kalina|priora)/i;
 
 const CITY_COMPACT_RE =
-  /(picanto|rio|sandero|polo|fabia|i20|solaris\s+hc|cerato|ceed(?!\s+sw)|city\s+m|eonix)/i;
+  /(picanto|rio|sandero|polo|fabia|i20|solaris\s+hc|cerato|ceed(?!\s+sw))/i;
 
-export function isCityCompactTitle(title: string): boolean {
+export function isCityCompactTitle(title: string, brand?: string): boolean {
+  if (brand && /^eonix$/i.test(brand.trim())) return false;
   if (isCrossoverTitle(title) || BUDGET_SEDAN_RE.test(title)) return false;
   return isHatchbackTitle(title) || CITY_COMPACT_RE.test(title);
 }
@@ -83,7 +84,9 @@ export function filterAffordableCompact(
     .filter((item) => item.priceFrom <= maxPrice)
     .sort((a, b) => a.priceFrom - b.priceFrom);
 
-  const preferred = affordable.filter((item) => isCityCompactTitle(item.title));
+  const preferred = affordable.filter((item) =>
+    isCityCompactTitle(item.title, item.brand),
+  );
 
   let pool = preferred;
   if (pool.length < limit) {

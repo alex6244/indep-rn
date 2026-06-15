@@ -1,35 +1,30 @@
 import {
-  diversifyByBrand,
-  filterAffordableCompact,
-  filterAiCatalog,
-} from "../../../packages/ai-core/src/filterCatalog.js";
-import { parseUserIntent } from "../../../packages/ai-core/src/parseUserIntent.js";
+  EONIX_LLM_GUIDANCE,
+  withoutEonixUnlessEligible,
+} from "../../../packages/ai-core/src/eonixPolicy.js";
+import { diversifyByBrand } from "../../../packages/ai-core/src/filterCatalog.js";
+import { searchCatalog } from "../../../packages/ai-core/src/searchCatalog.js";
 import type { AiCatalogItem } from "../types.js";
 import { completeDeepSeekChat } from "./deepseek.js";
 
 const LLM_CATALOG_LINES = 70;
+const LLM_CATALOG_KEEP_ALL_MAX = 80;
 
-function pickCatalogForLlm(userText: string, catalog: AiCatalogItem[]): AiCatalogItem[] {
-  const intent = parseUserIntent(userText);
+function capCatalogForLlm(pool: AiCatalogItem[]): AiCatalogItem[] {
+  if (pool.length <= LLM_CATALOG_KEEP_ALL_MAX) return pool;
+  return diversifyByBrand(pool, LLM_CATALOG_LINES);
+}
 
-  if (intent.profile === "compact" && intent.maxPrice) {
-    return filterAffordableCompact(catalog, intent.maxPrice, LLM_CATALOG_LINES);
+/** @internal exported for tests */
+export function pickCatalogForLlm(userText: string, catalog: AiCatalogItem[]): AiCatalogItem[] {
+  const scopedCatalog = withoutEonixUnlessEligible(catalog, userText);
+  const result = searchCatalog(userText, scopedCatalog, { limit: LLM_CATALOG_LINES });
+
+  if (result.items.length > 0) {
+    return capCatalogForLlm(result.items);
   }
 
-  if (intent.maxPrice) {
-    const affordable = catalog
-      .filter((item) => item.priceFrom <= intent.maxPrice!)
-      .sort((a, b) => a.priceFrom - b.priceFrom);
-    return diversifyByBrand(affordable.slice(0, 100), LLM_CATALOG_LINES);
-  }
-
-  if (intent.bodyType) {
-    const filtered = filterAiCatalog(catalog, intent, LLM_CATALOG_LINES);
-    if (filtered.length > 0) return filtered;
-  }
-
-  const sorted = [...catalog].sort((a, b) => a.priceFrom - b.priceFrom);
-  return diversifyByBrand(sorted.slice(0, 120), LLM_CATALOG_LINES);
+  return diversifyByBrand(scopedCatalog, LLM_CATALOG_LINES);
 }
 
 export type LlmCatalogRecommendation = {
@@ -77,6 +72,7 @@ export async function recommendCarsWithLlm(
           `${limit} вариантов из каталога под запрос клиента. ` +
           "Верни JSON: {\"carIds\":[\"id1\",\"id2\"],\"message\":\"текст\"}. " +
           "carIds — только id из списка каталога, не выдумывай модели. " +
+          `${EONIX_LLM_GUIDANCE} ` +
           "message — 2–4 предложения по-русски: почему эти варианты, цены «от», предложи отметить и оставить телефон.",
       },
       {
@@ -90,7 +86,9 @@ export async function recommendCarsWithLlm(
   const parsed = parseRecommendation(raw);
   if (!parsed) return null;
 
-  const allowed = new Set(catalog.map((car) => car.id));
+  const allowed = new Set(
+    withoutEonixUnlessEligible(catalog, userText).map((car) => car.id),
+  );
   const carIds = [...new Set(parsed.carIds.filter((id) => allowed.has(id)))].slice(
     0,
     limit,

@@ -34,6 +34,11 @@ export async function loadAiCatalog(siteId = "indep"): Promise<AiCatalogItem[]> 
   return result.items;
 }
 
+/** Offline seed only — no direct banners fetch (use when ai-api is configured but unreachable). */
+export function loadAiCatalogSeedOnly(siteId = "indep"): AiCatalogLoadResult {
+  return { items: loadSeedCatalog(siteId), source: "seed" };
+}
+
 export async function loadAiCatalogWithMeta(siteId = "indep"): Promise<AiCatalogLoadResult> {
   const site = getAiSiteProfile(siteId);
 

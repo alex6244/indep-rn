@@ -22,6 +22,8 @@ describe("mapBannerToAiCatalogItem", () => {
       siteId: "indep",
       brand: "KIA",
       title: "KIA Rio",
+      model: "Rio",
+      searchText: "kia rio",
       priceFrom: 1_500_000,
       priceWas: 1_700_000,
       condition: "new",

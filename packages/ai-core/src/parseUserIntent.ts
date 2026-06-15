@@ -1,22 +1,9 @@
+import { detectBrandFromText } from "./brandAliases";
 import type { CatalogFilter } from "./filterCatalog";
 
-const BRAND_ALIASES: Record<string, string[]> = {
-  KIA: ["kia", "киа"],
-  HAVAL: ["haval", "хавал", "хавейл"],
-  LADA: ["lada", "лада", "ваз"],
-  GEELY: ["geely", "джили", "гили"],
-  BELGEE: ["belgee", "белджи", "белги"],
-  CHERY: ["chery", "чери"],
-  HYUNDAI: ["hyundai", "хендай", "хёндай", "хюндай"],
-  RENAULT: ["renault", "рено"],
-  SKODA: ["skoda", "шкода"],
-  SOLARIS: ["solaris", "солярис"],
-  UAZ: ["uaz", "уаз"],
-  BMW: ["bmw", "бмв"],
-  MERCEDES: ["mercedes", "мерседес", "мерс"],
-};
-
 const CROSSOVER_RE = /кроссовер|внедорож|паркетник|\bsuv\b|джип/i;
+const DACHA_RE = /дач|загород|деревн|просёл|бездорож|грунтов/i;
+const FAMILY_RE = /семейн|дет(ей|и|ям)|большой\s+багаж/i;
 const SEDAN_RE = /седан|sedan/i;
 const HATCHBACK_RE = /хэтч|хетч|hatchback|\bhatch\b/i;
 const YOUNG_DRIVER_RE =
@@ -26,8 +13,11 @@ export function parseUserIntent(text: string): CatalogFilter {
   const normalized = text.toLowerCase().replace(/\s+/g, " ");
   const filter: CatalogFilter = {};
 
-  if (CROSSOVER_RE.test(normalized)) {
+  if (CROSSOVER_RE.test(normalized) || DACHA_RE.test(normalized)) {
     filter.bodyType = "crossover";
+  } else if (FAMILY_RE.test(normalized)) {
+    filter.bodyType = "crossover";
+    if (!filter.maxPrice) filter.maxPrice = 3_500_000;
   } else if (SEDAN_RE.test(normalized)) {
     filter.bodyType = "sedan";
   } else if (HATCHBACK_RE.test(normalized)) {
@@ -36,12 +26,8 @@ export function parseUserIntent(text: string): CatalogFilter {
     filter.query = normalized;
   }
 
-  for (const [brand, aliases] of Object.entries(BRAND_ALIASES)) {
-    if (aliases.some((alias) => normalized.includes(alias))) {
-      filter.brand = brand;
-      break;
-    }
-  }
+  const brand = detectBrandFromText(normalized);
+  if (brand) filter.brand = brand;
 
   const millionMatch = normalized.match(/до\s*(\d+(?:[.,]\d+)?)\s*млн/);
   if (millionMatch) {

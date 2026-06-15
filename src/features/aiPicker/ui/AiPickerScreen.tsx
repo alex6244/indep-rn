@@ -41,6 +41,7 @@ export function AiPickerScreen() {
     catalogLoading,
     apiServerWarning,
     welcomeText,
+    disclaimer,
   } = useAiPickerBootstrap(SITE_ID);
 
   const scrollToEnd = useCallback(() => {
@@ -216,7 +217,7 @@ export function AiPickerScreen() {
             disabled={!draft.trim() || thinking || catalogLoading || leadSent}
           />
         </View>
-        <Text style={styles.disclaimer}>{site.disclaimer}</Text>
+        <Text style={styles.disclaimer}>{disclaimer}</Text>
       </View>
     </KeyboardAvoidingView>
   );

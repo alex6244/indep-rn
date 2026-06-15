@@ -36,9 +36,7 @@ export function useAiPickerLead({
     const normalized = normalizePhoneInput(phone);
     if (!normalized || selectedIds.size === 0 || leadSent || leadSubmitting) return;
 
-    const titles = catalog
-      .filter((c) => selectedIds.has(c.id))
-      .map((c) => c.title);
+    const titles = resolveSelectedCarTitles(catalog, selectedIds, messages);
     const carIds = [...selectedIds];
 
     void (async () => {

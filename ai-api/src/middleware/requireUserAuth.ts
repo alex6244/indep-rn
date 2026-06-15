@@ -25,6 +25,15 @@ export function extractBearerToken(header: string | undefined): string | null {
   return token && token.length > 0 ? token : null;
 }
 
+/** Токен из EXPO_PUBLIC_AUTH_SOURCE=mock (`mock_<userId>_<ts>`, userId может содержать `_`). */
+export function isMockDevToken(token: string): boolean {
+  return /^mock_.+_\d+$/.test(token);
+}
+
+export function isMockAuthAllowed(): boolean {
+  return envBool("AI_API_ALLOW_MOCK_AUTH", false);
+}
+
 export async function validateTokenWithMe(
   meUrl: string,
   token: string,
@@ -60,6 +69,11 @@ export function requireUserAuth() {
     const token = extractBearerToken(c.req.header("Authorization"));
     if (!token) {
       return c.json(apiError("unauthorized", "Требуется авторизация"), 401);
+    }
+
+    if (isMockAuthAllowed() && isMockDevToken(token)) {
+      await next();
+      return;
     }
 
     const meUrl = getAuthMeUrl();

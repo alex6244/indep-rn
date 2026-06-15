@@ -7,6 +7,7 @@ import { clientReportsService } from "../../../../services/clientReportsService"
 import { normalizeVinForCompare, validatePtsForm } from "../../../../shared/validation/ptsValidation";
 import {
   type DraftReport,
+  migrateMediaUploadState,
   PICKER_REPORT_DRAFT_STORAGE_KEY,
 } from "../pickerReportTypes";
 
@@ -66,6 +67,7 @@ export function usePickerReportConfirmController(router: Router) {
         if (!cancelled) {
           const normalized: DraftReport = {
             ...parsed,
+            media: migrateMediaUploadState(parsed.media),
             defects: {
               ...parsed.defects,
               damages: parsed.defects.damages.map((damage) => ({

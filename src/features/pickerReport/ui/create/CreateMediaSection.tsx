@@ -1,6 +1,7 @@
 import React from "react";
+import type { MediaUploadState } from "../../../../types/draftReport";
 import type { RequiredMediaKey } from "../../../../shared/validation/mediaValidation";
-import { MediaUploadCard, type MediaUploadState } from "../MediaUploadCard";
+import { MediaUploadCard } from "../MediaUploadCard";
 
 type Props = {
   value: MediaUploadState;

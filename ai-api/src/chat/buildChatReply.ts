@@ -1,5 +1,6 @@
 import {
   buildRuleBasedReply,
+  EONIX_LLM_GUIDANCE,
   type RuleBasedReply,
 } from "../../../packages/ai-core/src/index.js";
 import type { AiCatalogItem } from "../types.js";
@@ -19,6 +20,7 @@ function buildLlmSystemPrompt(siteDisplayName: string): string {
     `Ты ИИ-консультант автосалона «${siteDisplayName}» по НОВЫМ автомобилям. ` +
     "Цены в каталоге указаны «от». Отвечай кратко по-русски (2–4 предложения), дружелюбно и по делу. " +
     "НЕ придумывай автомобили, марки, цены и наличие — опирайся только на список кандидатов ниже. " +
+    `${EONIX_LLM_GUIDANCE} ` +
     "Если кандидаты есть — кратко прокомментируй подбор и предложи отметить понравившиеся и оставить телефон."
   );
 }
