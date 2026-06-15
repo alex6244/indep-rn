@@ -34,6 +34,7 @@ export function useAiPickerChat({
   const [draft, setDraft] = useState("");
   const [thinking, setThinking] = useState(false);
   const [leadSuggested, setLeadSuggested] = useState(false);
+  const [chatUsesLocalFallback, setChatUsesLocalFallback] = useState(false);
 
   useEffect(() => {
     if (!welcomeText || messages.length > 0) return;
@@ -68,6 +69,8 @@ export function useAiPickerChat({
       replySource?: "llm" | "rules";
     };
 
+    let usedLocalFallback = false;
+
     if (useRemoteApi) {
       try {
         reply = await dispatch(
@@ -82,6 +85,7 @@ export function useAiPickerChat({
         }
       } catch (error) {
         if (isAiPickerUnauthorizedError(error) && isAiPickerLocalFallbackEnabled()) {
+          usedLocalFallback = true;
           reply = buildRuleBasedReply(text, catalog, {
             selectedCount,
             fixedBrand: site.mode === "monobrand" ? site.brand : undefined,
@@ -89,6 +93,7 @@ export function useAiPickerChat({
         } else if (isAiPickerUnauthorizedError(error)) {
           reply = { text: resolveAiPickerRemoteError(error), cars: [] };
         } else if (isAiPickerLocalFallbackEnabled()) {
+          usedLocalFallback = true;
           reply = buildRuleBasedReply(text, catalog, {
             selectedCount,
             fixedBrand: site.mode === "monobrand" ? site.brand : undefined,
@@ -98,10 +103,15 @@ export function useAiPickerChat({
         }
       }
     } else {
+      usedLocalFallback = true;
       reply = buildRuleBasedReply(text, catalog, {
         selectedCount,
         fixedBrand: site.mode === "monobrand" ? site.brand : undefined,
       });
+    }
+
+    if (usedLocalFallback) {
+      setChatUsesLocalFallback(true);
     }
 
     setLeadSuggested(reply.suggestLead === true);
@@ -144,6 +154,7 @@ export function useAiPickerChat({
     setDraft,
     thinking,
     leadSuggested,
+    chatUsesLocalFallback,
     sendUserMessage,
   };
 }

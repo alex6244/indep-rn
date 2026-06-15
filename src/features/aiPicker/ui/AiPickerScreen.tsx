@@ -15,7 +15,7 @@ import BackCaretIcon from "../../../assets/icons/backCaret.svg";
 import { AppButton } from "../../../shared/ui/AppButton";
 import { colors } from "../../../shared/theme/colors";
 import { spacing } from "../../../shared/theme/spacing";
-import { formatCatalogSourceLabel, shouldShowLeadCta } from "../hooks/aiPickerUtils";
+import { formatCatalogSourceLabel, formatAiPickerConnectionLabel, shouldShowLeadCta } from "../hooks/aiPickerUtils";
 import { useAiPickerBootstrap } from "../hooks/useAiPickerBootstrap";
 import { useAiPickerChat } from "../hooks/useAiPickerChat";
 import { useAiPickerLead } from "../hooks/useAiPickerLead";
@@ -59,6 +59,7 @@ export function AiPickerScreen() {
     setDraft,
     thinking,
     leadSuggested,
+    chatUsesLocalFallback,
     sendUserMessage,
   } = useAiPickerChat({
     siteId: SITE_ID,
@@ -98,6 +99,14 @@ export function AiPickerScreen() {
   }, []);
 
   const showLeadCta = shouldShowLeadCta(leadSuggested, selectedCount, leadSent);
+
+  const connectionLabel = formatAiPickerConnectionLabel({
+    useRemoteApi,
+    catalogSource,
+    chatUsesLocalFallback,
+  });
+  const isLocalMode =
+    !useRemoteApi || catalogSource === "seed" || chatUsesLocalFallback;
 
   useEffect(() => {
     if (showLeadCta) {
@@ -156,6 +165,11 @@ export function AiPickerScreen() {
               ? ` · ${formatCatalogSourceLabel(catalogSource, catalogDisplayCount)}`
               : ""}
           </Text>
+          {!catalogLoading ? (
+            <Text style={isLocalMode ? styles.statusLocal : styles.statusRemote}>
+              {connectionLabel}
+            </Text>
+          ) : null}
           {apiServerWarning ? (
             <Text style={styles.disclaimer}>{apiServerWarning}</Text>
           ) : null}

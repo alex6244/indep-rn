@@ -34,6 +34,21 @@ export function formatCatalogSourceLabel(
     : `Каталог: офлайн (${count})`;
 }
 
+/** Как сейчас работает подбор: сервер ai-api или локальный fallback. */
+export function formatAiPickerConnectionLabel(opts: {
+  useRemoteApi: boolean;
+  catalogSource: "api" | "seed" | null;
+  chatUsesLocalFallback: boolean;
+}): string {
+  if (!opts.useRemoteApi) {
+    return "Режим: только в приложении";
+  }
+  if (opts.catalogSource === "seed" || opts.chatUsesLocalFallback) {
+    return "Режим: локально (сервер ИИ не используется)";
+  }
+  return "Режим: сервер ИИ";
+}
+
 export const LEAD_SUGGEST_HINT =
   "Можете оставить телефон — менеджер перезвонит.";
 

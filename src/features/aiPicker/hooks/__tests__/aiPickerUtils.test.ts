@@ -1,4 +1,8 @@
-import { resolveSelectedCarTitles, shouldShowLeadCta } from "../aiPickerUtils";
+import {
+  formatAiPickerConnectionLabel,
+  resolveSelectedCarTitles,
+  shouldShowLeadCta,
+} from "../aiPickerUtils";
 import type { AiCatalogItem, AiChatMessage } from "../../types";
 
 describe("resolveSelectedCarTitles", () => {
@@ -27,6 +31,48 @@ describe("resolveSelectedCarTitles", () => {
     expect(resolveSelectedCarTitles(catalog, new Set(["99"]), messages)).toEqual([
       "KIA Sportage New",
     ]);
+  });
+});
+
+describe("formatAiPickerConnectionLabel", () => {
+  it("shows server mode when remote api catalog works", () => {
+    expect(
+      formatAiPickerConnectionLabel({
+        useRemoteApi: true,
+        catalogSource: "api",
+        chatUsesLocalFallback: false,
+      }),
+    ).toBe("Режим: сервер ИИ");
+  });
+
+  it("shows local mode when catalog is seed", () => {
+    expect(
+      formatAiPickerConnectionLabel({
+        useRemoteApi: true,
+        catalogSource: "seed",
+        chatUsesLocalFallback: false,
+      }),
+    ).toContain("локально");
+  });
+
+  it("shows local mode when chat fell back", () => {
+    expect(
+      formatAiPickerConnectionLabel({
+        useRemoteApi: true,
+        catalogSource: "api",
+        chatUsesLocalFallback: true,
+      }),
+    ).toContain("локально");
+  });
+
+  it("shows offline when ai-api url is not configured", () => {
+    expect(
+      formatAiPickerConnectionLabel({
+        useRemoteApi: false,
+        catalogSource: "seed",
+        chatUsesLocalFallback: false,
+      }),
+    ).toBe("Режим: только в приложении");
   });
 });
 

@@ -36,6 +36,14 @@ export const aiPickerStyles = StyleSheet.create({
     color: colors.text.muted,
     flexShrink: 1,
   },
+  statusRemote: {
+    ...figmaText.caption,
+    color: colors.status.success,
+  },
+  statusLocal: {
+    ...figmaText.caption,
+    color: colors.status.warning,
+  },
   list: {
     flex: 1,
   },
