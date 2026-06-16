@@ -7,8 +7,6 @@ export type {
   BannerCatalogRow,
 } from "./types";
 export { mapBannerListToAiCatalog, mapBannerToAiCatalogItem } from "./mapBanner";
-export type { CatalogFilter } from "./filterCatalog";
-export { diversifyByBrand, filterAiCatalog, isCrossoverTitle } from "./filterCatalog";
 export { parseUserIntent } from "./parseUserIntent";
 export {
   EONIX_LLM_GUIDANCE,

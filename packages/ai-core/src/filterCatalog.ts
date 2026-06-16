@@ -102,6 +102,7 @@ export function filterAffordableCompact(
   return diversifyByBrand(pool.slice(0, 50), limit);
 }
 
+/** @deprecated Legacy v1 filter — use `searchCatalog` instead. Kept for internal helpers only. */
 export function filterAiCatalog(
   items: AiCatalogItem[],
   filter: CatalogFilter,

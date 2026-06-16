@@ -9,6 +9,7 @@ type EasBuildProfile = {
 type EasConfig = {
   build: {
     preview: EasBuildProfile;
+    "preview-mock": EasBuildProfile;
     production: EasBuildProfile;
   };
 };
@@ -25,5 +26,14 @@ describe("eas.json production AI API env", () => {
     expect(productionUrl).toBe(previewUrl);
     expect(productionUrl).toMatch(/^https:\/\//);
     expect(productionUrl?.endsWith("/")).toBe(false);
+  });
+
+  it("sets EXPO_PUBLIC_AI_API_URL and fallback in preview-mock for demo", () => {
+    const mockEnv = eas.build["preview-mock"].env;
+    const previewUrl = eas.build.preview.env?.EXPO_PUBLIC_AI_API_URL;
+
+    expect(mockEnv?.EXPO_PUBLIC_AI_API_URL).toBe(previewUrl);
+    expect(mockEnv?.EXPO_PUBLIC_AI_API_FALLBACK_LOCAL).toBe("true");
+    expect(mockEnv?.EXPO_PUBLIC_AUTH_SOURCE).toBe("mock");
   });
 });
