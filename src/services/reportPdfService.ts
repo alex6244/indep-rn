@@ -1,20 +1,28 @@
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
+import { escapeHtml } from "../shared/utils/escapeHtml";
 import type { Report } from "../types/report";
+
+function e(value: string | undefined | null): string {
+  return escapeHtml(value ?? "");
+}
 
 function buildHtml(report: Report): string {
   const checksHtml = report.checks
     ? report.checks
         .map((c) => {
           const color = c.tone === "ok" ? "#4DB95C" : c.tone === "bad" ? "#DB4431" : "#6B757C";
-          return `<li style="color:${color};margin-bottom:4px;">&#9679; ${c.label}</li>`;
+          return `<li style="color:${color};margin-bottom:4px;">&#9679; ${e(c.label)}</li>`;
         })
         .join("")
     : "";
 
   const ptsHtml = report.ptsData
     ? report.ptsData
-        .map((row) => `<tr><td style="color:#666;padding:4px 8px 4px 0;">${row.label}</td><td style="font-weight:600;padding:4px 0;">${row.value}</td></tr>`)
+        .map(
+          (row) =>
+            `<tr><td style="color:#666;padding:4px 8px 4px 0;">${e(row.label)}</td><td style="font-weight:600;padding:4px 0;">${e(row.value)}</td></tr>`,
+        )
         .join("")
     : "";
 
@@ -23,9 +31,9 @@ function buildHtml(report: Report): string {
         .map(
           (p) => `
           <div style="border:1px solid #eee;border-radius:8px;padding:10px;margin-bottom:8px;">
-            <div style="font-weight:700;color:#DB4431;">${p.amountText}</div>
-            <div style="font-size:12px;color:#666;">${p.dateText}</div>
-            <div style="font-size:12px;margin-top:4px;">${p.descriptionText}</div>
+            <div style="font-weight:700;color:#DB4431;">${e(p.amountText)}</div>
+            <div style="font-size:12px;color:#666;">${e(p.dateText)}</div>
+            <div style="font-size:12px;margin-top:4px;">${e(p.descriptionText)}</div>
           </div>`,
         )
         .join("")
@@ -55,11 +63,11 @@ function buildHtml(report: Report): string {
 </head>
 <body>
   <div class="header">
-    <div class="meta">${report.subtitle ?? ""} &nbsp;|&nbsp; ${report.bodyTypeText ?? ""} &nbsp;|&nbsp; ${report.yearText ?? ""}</div>
-    <h1>${report.title}</h1>
-    <div class="price">${report.price}</div>
-    ${report.creditText ? `<div class="credit">${report.creditText}</div>` : ""}
-    ${report.city ? `<div class="meta">📍 ${report.city}</div>` : ""}
+    <div class="meta">${e(report.subtitle)} &nbsp;|&nbsp; ${e(report.bodyTypeText)} &nbsp;|&nbsp; ${e(report.yearText)}</div>
+    <h1>${e(report.title)}</h1>
+    <div class="price">${e(report.price)}</div>
+    ${report.creditText ? `<div class="credit">${e(report.creditText)}</div>` : ""}
+    ${report.city ? `<div class="meta">📍 ${e(report.city)}</div>` : ""}
     ${checksHtml ? `<ul class="checks">${checksHtml}</ul>` : ""}
   </div>
 
@@ -67,30 +75,30 @@ function buildHtml(report: Report): string {
 
   <div class="section">
     <h2>Пробег</h2>
-    <p style="font-size:16px;font-weight:700;">${report.mileageText}</p>
+    <p style="font-size:16px;font-weight:700;">${e(report.mileageText)}</p>
   </div>
 
   <div class="section">
     <h2>Владельцы</h2>
     <table>
-      <tr><td style="color:#666;padding:4px 8px 4px 0;">${report.owners.jur.title}</td><td style="font-weight:600;">${report.owners.jur.value}</td></tr>
-      <tr><td style="color:#666;padding:4px 8px 4px 0;">${report.owners.phys.title}</td><td style="font-weight:600;">${report.owners.phys.value}</td></tr>
+      <tr><td style="color:#666;padding:4px 8px 4px 0;">${e(report.owners.jur.title)}</td><td style="font-weight:600;">${e(report.owners.jur.value)}</td></tr>
+      <tr><td style="color:#666;padding:4px 8px 4px 0;">${e(report.owners.phys.title)}</td><td style="font-weight:600;">${e(report.owners.phys.value)}</td></tr>
     </table>
   </div>
 
   <div class="section">
     <h2>Юридическая чистота</h2>
-    <span class="badge ${report.legalCleanliness.badgeText.toLowerCase().includes("чист") ? "badge-ok" : "badge-bad"}">${report.legalCleanliness.badgeText}</span>
+    <span class="badge ${report.legalCleanliness.badgeText.toLowerCase().includes("чист") ? "badge-ok" : "badge-bad"}">${e(report.legalCleanliness.badgeText)}</span>
     <ul style="margin-top:10px;padding-left:18px;">
-      ${report.legalCleanliness.items.map((i) => `<li style="color:${i.tone === "ok" ? "#4DB95C" : "#DB4431"};margin-bottom:4px;">${i.text}</li>`).join("")}
+      ${report.legalCleanliness.items.map((i) => `<li style="color:${i.tone === "ok" ? "#4DB95C" : "#DB4431"};margin-bottom:4px;">${e(i.text)}</li>`).join("")}
     </ul>
   </div>
 
   <div class="section">
     <h2>Коммерческое использование</h2>
-    <span class="badge ${report.commercialUsage.badgeText.toLowerCase().includes("не") ? "badge-ok" : "badge-bad"}">${report.commercialUsage.badgeText}</span>
+    <span class="badge ${report.commercialUsage.badgeText.toLowerCase().includes("не") ? "badge-ok" : "badge-bad"}">${e(report.commercialUsage.badgeText)}</span>
     <ul style="margin-top:10px;padding-left:18px;">
-      ${report.commercialUsage.items.map((i) => `<li style="color:${i.tone === "ok" ? "#4DB95C" : "#DB4431"};margin-bottom:4px;">${i.text}</li>`).join("")}
+      ${report.commercialUsage.items.map((i) => `<li style="color:${i.tone === "ok" ? "#4DB95C" : "#DB4431"};margin-bottom:4px;">${e(i.text)}</li>`).join("")}
     </ul>
   </div>
 
@@ -101,8 +109,8 @@ function buildHtml(report: Report): string {
 
   <div class="section">
     <h2>Оценка стоимости</h2>
-    <p style="font-size:14px;">${report.costEstimation.text}</p>
-    <p style="font-size:16px;font-weight:700;">${report.costEstimation.rangeText}</p>
+    <p style="font-size:14px;">${e(report.costEstimation.text)}</p>
+    <p style="font-size:16px;font-weight:700;">${e(report.costEstimation.rangeText)}</p>
   </div>
 
   <div class="footer">
@@ -110,6 +118,11 @@ function buildHtml(report: Report): string {
   </div>
 </body>
 </html>`;
+}
+
+/** @internal Exported for unit tests. */
+export function buildReportPdfHtml(report: Report): string {
+  return buildHtml(report);
 }
 
 export async function downloadReportPdf(report: Report): Promise<void> {
